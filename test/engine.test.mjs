@@ -8,6 +8,7 @@ import {
   readFileSync,
   readdirSync,
   rmSync,
+  symlinkSync,
   unlinkSync,
   writeFileSync
 } from "node:fs";
@@ -52,6 +53,12 @@ const historicalContractPath = path.join(
   "fixtures",
   "governed-message-artifact-family.1.5.contract.json"
 );
+const previousInterpretationContractPath = path.join(
+  packageRoot,
+  "test",
+  "fixtures",
+  "governed-message-artifact-family.1.6.contract.json"
+);
 
 function sha256(bytes) {
   return `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
@@ -61,6 +68,13 @@ function makeWorkspace(t) {
   const workspacePath = mkdtempSync(
     path.join(os.tmpdir(), "governed-artifacts-")
   );
+  const packageLinkPath = path.join(
+    workspacePath,
+    "node_modules",
+    "contract-driven-artifact-governance-engine"
+  );
+  mkdirSync(path.dirname(packageLinkPath), { recursive: true });
+  symlinkSync(packageRoot, packageLinkPath, "junction");
   t.after(() => rmSync(workspacePath, { recursive: true, force: true }));
   return workspacePath;
 }
@@ -164,6 +178,63 @@ test("the contract makes every governed control surface explicit", () => {
     "contract-only"
   );
   assert.deepEqual(
+    profile.operationAuthorities.mutationAuthority,
+    {
+      authorityType: "single-source-mutation-authority.v1",
+      consumerAuthoredAuthority: {
+        cardinality: "exactly-one",
+        source: "contract",
+        target: "contract"
+      },
+      controlEvidenceMutation: {
+        createOrReplace: "contract-declared-control-paths-only",
+        remove: "forbidden"
+      },
+      derivedContractMutation: {
+        admittedOperations: ["migrate", "reconcile"],
+        target: "contract"
+      },
+      governedArtifactMutation: {
+        authoritySource: "validated-contract",
+        create: "declared-projections-only",
+        interpretationBase: "digest-bound",
+        remove: "forbidden",
+        replace: "declared-projections-only",
+        undeclaredState: "observe-and-reject"
+      }
+    }
+  );
+  assert.deepEqual(profile.operationAuthorities.bodyPurity, {
+    allowedExecutableForms: [
+      "single-semantic-invocation",
+      "direct-return",
+      "declared-port-binding"
+    ],
+    applicability: "artifacts-declaring-projection-mappings",
+    authorityOperation: "executeSemanticProjection",
+    consumerRelaxation: "forbidden",
+    exactCardinality: {
+      exportedResponsibilities: 1,
+      resultFlows: 1,
+      semanticInvocations: 1
+    },
+    forbiddenExecutableMechanics: [
+      "branch",
+      "iteration",
+      "exception-handling",
+      "throw",
+      "object-construction",
+      "serialization",
+      "normalization",
+      "validation",
+      "fallback",
+      "retry",
+      "state-mutation"
+    ],
+    profileType: "semantic-execution-body.v1",
+    semanticAuthorityLocation: "contract"
+  });
+  assert.deepEqual(
     Object.keys(contract.interpretationBase).sort(),
     [
       "conformanceProfile",
@@ -193,7 +264,7 @@ test("the contract makes every governed control surface explicit", () => {
       (dependency) =>
         dependency.specifier.length > 0 &&
         dependency.allowedImports.length > 0 &&
-        dependency.allowedInvocations.length > 0 &&
+        Array.isArray(dependency.allowedInvocations) &&
         dependency.authority.authorityType.length > 0
     ),
     true
@@ -287,7 +358,7 @@ test("historical schemas and digest-to-digest migration authority are durable", 
     registry.schemaCatalog.digest,
     sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
   );
-  assert.equal(registry.migrations.length, 1);
+  assert.equal(registry.migrations.length, 2);
   const edge = registry.migrations[0];
   for (const digest of [
     edge.sourceSchemaDigest,
@@ -385,6 +456,58 @@ test("migration is candidate-first, contract-only, and idempotent", (t) => {
   assert.equal(replay.writeDisposition, "CONTRACT_UNCHANGED");
 });
 
+test("interpretation-only migration is admitted without schema churn", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = path.join(
+    workspacePath,
+    "governed-artifact.contract.json"
+  );
+  writeFileSync(
+    contractPath,
+    readFileSync(previousInterpretationContractPath)
+  );
+  const preview = migrateContract({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    preview.migrationDisposition,
+    "CONTRACT_MIGRATION_REQUIRED"
+  );
+  assert.equal(
+    preview.sourceSchemaDigest,
+    preview.targetSchemaDigest
+  );
+  assert.equal(
+    preview.migrationId,
+    "artifact-contract.1.6-to-1.7"
+  );
+  assert.equal(
+    preview.diff.some(
+      (change) =>
+        change.path ===
+        "/interpretationBase/conformanceProfile/identity"
+    ),
+    true
+  );
+
+  const written = migrateContract({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(written.migrationDisposition, "CONTRACT_MIGRATED");
+  const replay = migrateContract({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    replay.migrationDisposition,
+    "MIGRATION_NOT_REQUIRED"
+  );
+  assert.deepEqual(replay.diff, []);
+});
+
 test("commitment reconciliation is deterministic and never projects artifacts", (t) => {
   const workspacePath = makeWorkspace(t);
   const contractPath = copyContract(workspacePath, (contract) => {
@@ -403,8 +526,8 @@ test("commitment reconciliation is deterministic and never projects artifacts", 
   assert.deepEqual(
     preview.diff.map((change) => change.path),
     [
-      "/artifacts/5/proof/contentSha256",
-      "/artifacts/5/proof/expectedByteLength"
+      "/artifacts/6/proof/contentSha256",
+      "/artifacts/6/proof/expectedByteLength"
     ]
   );
   assert.deepEqual(readFileSync(contractPath), before);
@@ -532,6 +655,19 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
     projection.projectionDisposition,
     "ARTIFACT_FAMILY_PROJECTED"
   );
+  assert.equal(
+    projection.mutationAuthority.authority
+      .consumerAuthoredAuthority.source,
+    "contract"
+  );
+  assert.equal(
+    projection.mutationAuthority.removalDisposition,
+    "FORBIDDEN"
+  );
+  assert.equal(
+    projection.mutationAuthority.undeclaredStateDisposition,
+    "OBSERVE_AND_REJECT"
+  );
   const first = proveGovernedArtifactFamily({
     contractPath: exampleContractPath,
     workspacePath,
@@ -541,6 +677,47 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   assert.equal(
     first.artifactFamily.authorityClosureDisposition,
     "ARTIFACT_AUTHORITY_CLOSED"
+  );
+  assert.equal(
+    first.checks.find(
+      (check) =>
+        check.checkId === "evaluate-semantic-execution-bodies"
+    ).disposition,
+    "SEMANTIC_EXECUTION_BODY_CLOSED"
+  );
+  const projectedBodyObservation =
+    first.artifactFamily.artifactObservations.find(
+      (observation) =>
+        observation.artifactId === "message-projector.v1"
+    ).sourceAuthorityObservation;
+  assert.deepEqual(projectedBodyObservation.decisions, []);
+  assert.deepEqual(projectedBodyObservation.iterations, []);
+  assert.deepEqual(projectedBodyObservation.failures, []);
+  assert.deepEqual(
+    projectedBodyObservation.projections.filter(
+      (entry) =>
+        entry.responsibilityDeclaration === "projectMessage"
+    ),
+    []
+  );
+  assert.deepEqual(
+    projectedBodyObservation.semanticOperations.filter(
+      (entry) =>
+        entry.responsibilityDeclaration === "projectMessage"
+    ),
+    [
+      {
+        responsibilityDeclaration: "projectMessage",
+        edgeKind: "invocation",
+        operation: "executeSemanticProjection",
+        argumentExpressions: [
+          "projectMessageAuthority",
+          "messageSchema",
+          "value"
+        ],
+        occurrences: 1
+      }
+    ]
   );
   assert.equal(first.artifactFamily.proofDisposition, "PROOF_COMPLETE");
   assert.equal(first.proofOperation.mode, "read-only");
@@ -559,8 +736,8 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   );
   assert.equal(first.trustPosture, "CONFORMS");
   assert.equal(first.trustDisposition, "TRUSTED");
-  assert.equal(first.artifactFamily.declaredArtifactCount, 8);
-  assert.equal(first.artifactFamily.observedArtifactCount, 8);
+  assert.equal(first.artifactFamily.declaredArtifactCount, 9);
+  assert.equal(first.artifactFamily.observedArtifactCount, 9);
 
   const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
   const profile = JSON.parse(
@@ -955,6 +1132,15 @@ test("declared artifact scope coexists with ordinary repository state and closes
     ),
     true
   );
+  projectArtifactFamily({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(
+    readFileSync(forbiddenPath, "utf8"),
+    "SECRET=not-admitted\n"
+  );
   unlinkSync(forbiddenPath);
 
   const undeclaredPath = path.join(
@@ -982,6 +1168,38 @@ test("declared artifact scope coexists with ordinary repository state and closes
       "src/generated/escape.mjs"
     ),
     true
+  );
+
+  const declaredPath = path.join(
+    workspacePath,
+    "contracts",
+    "message.json"
+  );
+  writeFileSync(declaredPath, "{}\n");
+  const surplusBytes = readFileSync(undeclaredPath);
+  const restored = projectArtifactFamily({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(
+    restored.projectionDisposition,
+    "ARTIFACT_FAMILY_PROJECTED"
+  );
+  assert.equal(
+    sha256(readFileSync(declaredPath)),
+    JSON.parse(readFileSync(contractPath, "utf8")).artifacts.find(
+      (artifact) => artifact.artifactId === "message-contract.v1"
+    ).proof.contentSha256
+  );
+  assert.deepEqual(readFileSync(undeclaredPath), surplusBytes);
+  const stillOpen = evaluateConformance({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    stillOpen.artifactFamily.conformanceDisposition,
+    "ARTIFACT_UNDECLARED"
   );
 });
 
@@ -1228,40 +1446,54 @@ test("authority closure emits deterministic findings for source escape routes", 
       mutate: (text) => `${text}\nfunction convenienceHelper() {}\n`
     },
     {
-      expectedFindingId: "UNDECLARED_DECISION_PATH",
-      mutate: (text) => `${text}\nconst fallbackValue = value ?? {};\n`
-    },
-    {
-      expectedFindingId: "UNDECLARED_ITERATION_OR_CONTINUATION",
-      mutate: (text) => `${text}\nfor (;;) {}\n`
-    },
-    {
-      expectedFindingId: "UNDECLARED_PROJECTION_LOGIC",
+      expectedFindingId:
+        "DECLARED_SEMANTICS_DO_NOT_AUTHORIZE_BODY_BRANCHING",
       mutate: (text) =>
         text.replace(
-          "{ message: value.message }",
-          "{ text: value.message }"
+          "  return executeSemanticProjection",
+          "  if (!value) return \"\";\n  return executeSemanticProjection"
         )
     },
     {
-      expectedFindingId: "UNDECLARED_SEMANTIC_EDGE",
+      expectedFindingId: "LOCAL_ITERATION_FORBIDDEN",
       mutate: (text) =>
         text.replace(
-          "{ message: value.message }, null, 2",
-          "{ message: value.message }, null, 4"
+          "  return executeSemanticProjection",
+          "  for (;;) break;\n  return executeSemanticProjection"
         )
     },
     {
-      expectedFindingId: "UNDECLARED_FAILURE_POLICY",
+      expectedFindingId: "LOCAL_RESULT_CONSTRUCTION_FORBIDDEN",
       mutate: (text) =>
         text.replace(
-          "Message contract is invalid.",
-          "Message contract is rejected."
+          "  return executeSemanticProjection",
+          "  const dto = { message: value.message };\n  return executeSemanticProjection"
         )
     },
     {
-      expectedFindingId: "DECLARED_RESULT_CONTRACT_MISSING",
-      mutate: (text) => text.replace("  return `", "  void `")
+      expectedFindingId:
+        "EXECUTION_MECHANIC_OUTSIDE_TRUSTED_BOUNDARY",
+      mutate: (text) =>
+        text.replace(
+          "  return executeSemanticProjection(projectMessageAuthority, messageSchema, value);",
+          "  return JSON.stringify(executeSemanticProjection(projectMessageAuthority, messageSchema, value));"
+        )
+    },
+    {
+      expectedFindingId: "LOCAL_FAILURE_MECHANIC_FORBIDDEN",
+      mutate: (text) =>
+        text.replace(
+          "  return executeSemanticProjection",
+          "  try { throw new Error(\"local\"); } catch {}\n  return executeSemanticProjection"
+        )
+    },
+    {
+      expectedFindingId: "RESULT_FLOW_NOT_DIRECT",
+      mutate: (text) =>
+        text.replace(
+          "  return executeSemanticProjection",
+          "  void executeSemanticProjection"
+        )
     }
   ];
 

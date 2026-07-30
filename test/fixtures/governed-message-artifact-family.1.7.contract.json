@@ -72,58 +72,6 @@
       "relativePath": "contracts/message.json"
     },
     {
-      "artifactId": "message-projector-authority.v1",
-      "artifactKind": "semantic-execution-authority",
-      "mediaType": "application/json",
-      "projection": {
-        "authority": {
-          "authorityType": "canonical-json-value.v1",
-          "value": {
-            "authorityType": "semantic-projection-authority.v1",
-            "failure": {
-              "failurePolicyId": "invalid-message-failure.v1",
-              "message": "Message contract is invalid."
-            },
-            "input": {
-              "schemaArtifactId": "message-schema.v1"
-            },
-            "projection": {
-              "fields": [
-                {
-                  "outputField": "message",
-                  "sourcePath": [
-                    "message"
-                  ]
-                }
-              ],
-              "projectionMappingId": "message-output-dto.v1"
-            },
-            "result": {
-              "resultContractId": "projected-message-json.v1",
-              "serialization": "json-two-space-lf"
-            }
-          }
-        },
-        "authorityId": "message-projector-semantic-authority.v1",
-        "projectorId": "canonical-json-value-projector.v1"
-      },
-      "proof": {
-        "contentSha256": "sha256:99e7c4623f2beb14eeb0e56038e4bcfcfef9b6eb9a1fa1d19042f0c8cbe17b9b",
-        "expectedByteLength": 553,
-        "verifierIds": [
-          "content-digest-verifier.v1"
-        ]
-      },
-      "purpose": "Materializes the contract-declared message projection semantics as runtime data.",
-      "relationships": [
-        {
-          "artifactId": "message-schema.v1",
-          "relationshipType": "reads"
-        }
-      ],
-      "relativePath": "contracts/project-message.authority.json"
-    },
-    {
       "artifactId": "message-projector.v1",
       "artifactKind": "javascript-module",
       "mediaType": "text/javascript",
@@ -132,222 +80,6 @@
           "authorityType": "lossless-source-tokens.v1",
           "language": "javascript",
           "tokens": [
-            {
-              "kind": "ImportKeyword",
-              "text": "import"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "OpenBraceToken",
-              "text": "{"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "Identifier",
-              "text": "executeSemanticProjection"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "CloseBraceToken",
-              "text": "}"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "FromKeyword",
-              "text": "from"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "StringLiteral",
-              "text": "\"contract-driven-artifact-governance-engine\""
-            },
-            {
-              "kind": "SemicolonToken",
-              "text": ";"
-            },
-            {
-              "kind": "NewLineTrivia",
-              "text": "\n"
-            },
-            {
-              "kind": "ImportKeyword",
-              "text": "import"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "Identifier",
-              "text": "messageSchema"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "FromKeyword",
-              "text": "from"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "StringLiteral",
-              "text": "\"../contracts/message.schema.json\""
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "WithKeyword",
-              "text": "with"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "OpenBraceToken",
-              "text": "{"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "TypeKeyword",
-              "text": "type"
-            },
-            {
-              "kind": "ColonToken",
-              "text": ":"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "StringLiteral",
-              "text": "\"json\""
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "CloseBraceToken",
-              "text": "}"
-            },
-            {
-              "kind": "SemicolonToken",
-              "text": ";"
-            },
-            {
-              "kind": "NewLineTrivia",
-              "text": "\n"
-            },
-            {
-              "kind": "ImportKeyword",
-              "text": "import"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "Identifier",
-              "text": "projectMessageAuthority"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "FromKeyword",
-              "text": "from"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "StringLiteral",
-              "text": "\"../contracts/project-message.authority.json\""
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "WithKeyword",
-              "text": "with"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "OpenBraceToken",
-              "text": "{"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "TypeKeyword",
-              "text": "type"
-            },
-            {
-              "kind": "ColonToken",
-              "text": ":"
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "StringLiteral",
-              "text": "\"json\""
-            },
-            {
-              "kind": "WhitespaceTrivia",
-              "text": " "
-            },
-            {
-              "kind": "CloseBraceToken",
-              "text": "}"
-            },
-            {
-              "kind": "SemicolonToken",
-              "text": ";"
-            },
-            {
-              "kind": "NewLineTrivia",
-              "text": "\n"
-            },
-            {
-              "kind": "NewLineTrivia",
-              "text": "\n"
-            },
             {
               "kind": "ExportKeyword",
               "text": "export"
@@ -397,40 +129,40 @@
               "text": "  "
             },
             {
-              "kind": "ReturnKeyword",
-              "text": "return"
+              "kind": "IfKeyword",
+              "text": "if"
             },
             {
               "kind": "WhitespaceTrivia",
               "text": " "
-            },
-            {
-              "kind": "Identifier",
-              "text": "executeSemanticProjection"
             },
             {
               "kind": "OpenParenToken",
               "text": "("
             },
             {
-              "kind": "Identifier",
-              "text": "projectMessageAuthority"
+              "kind": "ExclamationToken",
+              "text": "!"
             },
             {
-              "kind": "CommaToken",
-              "text": ","
+              "kind": "Identifier",
+              "text": "value"
             },
             {
               "kind": "WhitespaceTrivia",
               "text": " "
             },
             {
-              "kind": "Identifier",
-              "text": "messageSchema"
+              "kind": "BarBarToken",
+              "text": "||"
             },
             {
-              "kind": "CommaToken",
-              "text": ","
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeOfKeyword",
+              "text": "typeof"
             },
             {
               "kind": "WhitespaceTrivia",
@@ -439,6 +171,166 @@
             {
               "kind": "Identifier",
               "text": "value"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "ExclamationEqualsEqualsToken",
+              "text": "!=="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"object\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "BarBarToken",
+              "text": "||"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeOfKeyword",
+              "text": "typeof"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "message"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "ExclamationEqualsEqualsToken",
+              "text": "!=="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"string\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "BarBarToken",
+              "text": "||"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "message"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "length"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "EqualsEqualsEqualsToken",
+              "text": "==="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NumericLiteral",
+              "text": "0"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": "    "
+            },
+            {
+              "kind": "ThrowKeyword",
+              "text": "throw"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NewKeyword",
+              "text": "new"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "Error"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"Message contract is invalid.\""
             },
             {
               "kind": "CloseParenToken",
@@ -453,12 +345,132 @@
               "text": "\n"
             },
             {
+              "kind": "WhitespaceTrivia",
+              "text": "  "
+            },
+            {
               "kind": "CloseBraceToken",
               "text": "}"
             },
             {
               "kind": "NewLineTrivia",
               "text": "\n"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": "  "
+            },
+            {
+              "kind": "ReturnKeyword",
+              "text": "return"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TemplateHead",
+              "text": "`${"
+            },
+            {
+              "kind": "Identifier",
+              "text": "JSON"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "stringify"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "message"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "message"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NullKeyword",
+              "text": "null"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NumericLiteral",
+              "text": "2"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "Unknown",
+              "text": "\\"
+            },
+            {
+              "kind": "Identifier",
+              "text": "n"
+            },
+            {
+              "kind": "NoSubstitutionTemplateLiteral",
+              "text": "`;\n}\n"
             }
           ]
         },
@@ -466,8 +478,8 @@
         "projectorId": "lossless-source-token-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:86ed7080b7613b3ad28896f6648b30371bf9bd5389b1a891a34c23ceab07370d",
-        "expectedByteLength": 403,
+        "contentSha256": "sha256:3c40ec92f987cd612160005081a6c6a61a92fb99ffac293832f84324a5f4790e",
+        "expectedByteLength": 280,
         "verifierIds": [
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
@@ -479,14 +491,6 @@
         {
           "artifactId": "message-contract.v1",
           "relationshipType": "projects"
-        },
-        {
-          "artifactId": "message-projector-authority.v1",
-          "relationshipType": "reads"
-        },
-        {
-          "artifactId": "message-schema.v1",
-          "relationshipType": "reads"
         }
       ],
       "relativePath": "src/project-message.mjs",
@@ -533,7 +537,8 @@
           "NullishCoalescingExpression",
           "SwitchStatement",
           "TryStatement",
-          "WhileStatement"
+          "WhileStatement",
+          "WithStatement"
         ],
         "iterations": [],
         "projectionMappings": [
@@ -560,7 +565,7 @@
           {
             "declaration": "projectMessage",
             "functionKind": "function-declaration",
-            "purpose": "Binds one declared input to the trusted semantic execution authority.",
+            "purpose": "Validates and projects one admitted message value.",
             "responsibilityId": "project-message.v1",
             "responsibilityType": "function"
           }
@@ -576,7 +581,7 @@
             "resultContractId": "projected-message-json.v1",
             "resultKind": "projected-json-text",
             "source": {
-              "expression": "executeSemanticProjection(projectMessageAuthority,messageSchema,value)",
+              "expression": "`${JSON.stringify({message:value.message},null,2)}\\n`",
               "occurrences": 1,
               "responsibilityId": "project-message.v1",
               "returnKind": "explicit-return",
@@ -623,63 +628,6 @@
             "occurrences": 1,
             "operation": "JSON.stringify",
             "purpose": "Serializes the declared message projection mapping.",
-            "responsibilityId": "project-message.v1"
-          },
-          {
-            "argumentExpressions": [],
-            "authorities": [
-              {
-                "authorityType": "dependency-authority",
-                "dependencyId": "message-projector-schema-data.v1"
-              }
-            ],
-            "edgeId": "bind-message-schema-authority.v1",
-            "edgeKind": "reference",
-            "occurrences": 1,
-            "operation": "messageSchema",
-            "purpose": "Binds the declared input schema as semantic execution data.",
-            "responsibilityId": "project-message.v1"
-          },
-          {
-            "argumentExpressions": [],
-            "authorities": [
-              {
-                "authorityType": "dependency-authority",
-                "dependencyId": "message-projector-authority-data.v1"
-              }
-            ],
-            "edgeId": "bind-project-message-authority.v1",
-            "edgeKind": "reference",
-            "occurrences": 1,
-            "operation": "projectMessageAuthority",
-            "purpose": "Binds the declared projection authority as semantic execution data.",
-            "responsibilityId": "project-message.v1"
-          },
-          {
-            "argumentExpressions": [
-              "projectMessageAuthority",
-              "messageSchema",
-              "value"
-            ],
-            "authorities": [
-              {
-                "authorityType": "dependency-authority",
-                "dependencyId": "semantic-projection-runtime.v1"
-              },
-              {
-                "authorityType": "runtime-authority",
-                "runtimeAuthorityId": "semantic-projection-runtime.v1"
-              },
-              {
-                "authorityType": "result-authority",
-                "resultContractId": "projected-message-json.v1"
-              }
-            ],
-            "edgeId": "execute-project-message-semantics.v1",
-            "edgeKind": "invocation",
-            "occurrences": 1,
-            "operation": "executeSemanticProjection",
-            "purpose": "Forwards the declared input and semantic data through the trusted runtime.",
             "responsibilityId": "project-message.v1"
           }
         ]
@@ -1898,8 +1846,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:0b737b527314e3fadce4d5a9f7fd55d6f95343a973efc9af7b8c2e788f2e13e6",
-        "expectedByteLength": 22886,
+        "contentSha256": "sha256:72afc49f6fe6809685763745a64f872642ccd7ee51e34d51014f3d2bf788d04e",
+        "expectedByteLength": 20218,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -1978,9 +1926,6 @@
         "authority": {
           "authorityType": "canonical-json-value.v1",
           "value": {
-            "dependencies": {
-              "contract-driven-artifact-governance-engine": "0.9.0"
-            },
             "name": "governed-message-artifact-family",
             "private": true,
             "scripts": {
@@ -1995,8 +1940,8 @@
         "projectorId": "canonical-json-value-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:75765f3c1e0b48936198cb9dc4401e72d82de34076a4ba05fc6a22d9fb08143f",
-        "expectedByteLength": 307,
+        "contentSha256": "sha256:ca1a131ff9ef01b1dc4721f7b0afe8a31736a361043f05f97c09abb0ca919563",
+        "expectedByteLength": 224,
         "verifierIds": [
           "content-digest-verifier.v1"
         ]
@@ -2046,26 +1991,10 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.8.0",
+    "contractVersion": "1.7.0",
     "status": "admitted"
   },
   "dependencies": [
-    {
-      "allowedImports": [
-        "default"
-      ],
-      "allowedInvocations": [],
-      "authority": {
-        "authorityType": "port-authority.v1",
-        "effect": "read-semantic-authority",
-        "portId": "message-projector-authority-data.v1"
-      },
-      "dependencyId": "message-projector-authority-data.v1",
-      "specifier": "../contracts/project-message.authority.json",
-      "usedByArtifacts": [
-        "message-projector.v1"
-      ]
-    },
     {
       "allowedImports": [
         "projectMessage"
@@ -2084,22 +2013,6 @@
       "usedByArtifacts": [
         "message-command.v1",
         "message-verification.v1"
-      ]
-    },
-    {
-      "allowedImports": [
-        "default"
-      ],
-      "allowedInvocations": [],
-      "authority": {
-        "authorityType": "port-authority.v1",
-        "effect": "read-semantic-schema",
-        "portId": "message-projector-schema-data.v1"
-      },
-      "dependencyId": "message-projector-schema-data.v1",
-      "specifier": "../contracts/message.schema.json",
-      "usedByArtifacts": [
-        "message-projector.v1"
       ]
     },
     {
@@ -2138,24 +2051,6 @@
         "message-command.v1",
         "message-verification.v1"
       ]
-    },
-    {
-      "allowedImports": [
-        "executeSemanticProjection"
-      ],
-      "allowedInvocations": [
-        "executeSemanticProjection"
-      ],
-      "authority": {
-        "authorityType": "port-authority.v1",
-        "effect": "execute-semantic-authority",
-        "portId": "semantic-projection-runtime.v1"
-      },
-      "dependencyId": "semantic-projection-runtime.v1",
-      "specifier": "contract-driven-artifact-governance-engine",
-      "usedByArtifacts": [
-        "message-projector.v1"
-      ]
     }
   ],
   "effects": [
@@ -2191,15 +2086,15 @@
   ],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:7f4e8bd250fe3a7d51096f904923b6a340b578cfc1318989fbde8aa746805c52",
-      "identity": "closed-world-artifact-conformance.v3"
+      "digest": "sha256:8a0d4baca4577f62152a4e2aeb25a0e5ecb445a6a196fdad06c0ad3ce7359f8f",
+      "identity": "closed-world-artifact-conformance.v2"
     },
     "engine": {
-      "digest": "sha256:f72f0f4583328ebfe429ae60b446d87b4a86c8c285f91e7b51a674986f68c41a",
-      "identity": "governed-artifact-engine.0.9.0"
+      "digest": "sha256:d2e0c9c942d76b6acce4c0afa29b518227013ba08fd6018e1c570c9d96532c26",
+      "identity": "governed-artifact-engine.0.8.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:449296be1550db3858206828678e506dc66de68ba7745b12d37ea49778d02f2e",
+      "digest": "sha256:1959a1e707547d75b0aa3999943b6da873123237a8780afc6a94ddf38c45a6ff",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
@@ -2229,14 +2124,6 @@
       "usedByArtifacts": [
         "message-command.v1",
         "message-verification.v1"
-      ]
-    },
-    {
-      "invocation": "executeSemanticProjection",
-      "purpose": "Executes contract-declared validation, DTO projection, failure, and result serialization semantics.",
-      "runtimeAuthorityId": "semantic-projection-runtime.v1",
-      "usedByArtifacts": [
-        "message-projector.v1"
       ]
     },
     {

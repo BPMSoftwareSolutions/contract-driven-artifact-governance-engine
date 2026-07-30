@@ -41,12 +41,70 @@
         "contract-version",
         "derived-content-commitments"
       ]
+    },
+    {
+      "introducedAuthorities": [
+        "single-source-mutation-authority"
+      ],
+      "migrationAuthority": {
+        "digest": "sha256:7a4ea84f3fa60fc4c0f7e006709c0f2917443e153e5d5f839fd12ee2a2bb25f8",
+        "relativePath": "migrations/artifact-contract.1.6-to-1.7.json"
+      },
+      "migrationId": "artifact-contract.1.6-to-1.7",
+      "preservedAuthorities": [
+        "artifact-identities",
+        "artifact-paths",
+        "artifact-projection-authorities",
+        "artifact-relationships",
+        "artifact-verifier-selections",
+        "claim-identities",
+        "command-evaluations",
+        "dependency-authorities",
+        "effect-authorities",
+        "exclusions",
+        "runtime-authorities",
+        "source-authorities",
+        "subject-authority",
+        "workspace-authority"
+      ],
+      "removedAuthorities": [],
+      "sourceInterpretationBase": {
+        "conformanceProfile": {
+          "digest": "sha256:6c9b5612ce0bac2ed7ed5c2449cd3feb0b9b2f8bccf63cda3e32ab711068c285",
+          "identity": "closed-world-artifact-conformance.v1"
+        },
+        "engine": {
+          "digest": "sha256:4c7f51b19cc66720437e64b9cb4c5ca024aeb067e416860c5d2dcc2b4a009faf",
+          "identity": "governed-artifact-engine.0.7.0"
+        },
+        "migrationRegistry": {
+          "digest": "sha256:773ac0cc309d8d849aa557540b3859c1cde4ee288d91ac713980f7a21bef7c7a",
+          "identity": "governed-artifact-migration-registry.v1"
+        }
+      },
+      "sourceSchemaDigest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
+      "targetInterpretationBase": {
+        "conformanceProfile": {
+          "digest": "sha256:8a0d4baca4577f62152a4e2aeb25a0e5ecb445a6a196fdad06c0ad3ce7359f8f",
+          "identity": "closed-world-artifact-conformance.v2"
+        },
+        "engine": {
+          "digest": "sha256:d2e0c9c942d76b6acce4c0afa29b518227013ba08fd6018e1c570c9d96532c26",
+          "identity": "governed-artifact-engine.0.8.0"
+        }
+      },
+      "targetSchemaDigest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
+      "transformedAuthorities": [
+        "contract-version",
+        "derived-content-commitments",
+        "interpretation-base"
+      ]
     }
   ],
   "registryId": "governed-artifact-migration-registry.v1",
   "registryType": "digest-to-digest-migration-registry.v1",
   "schemaCatalog": {
-    "digest": "sha256:a9302be4b9410a585f915d86f5d3c8a67f564ccaa67be6e2afb517125424ed20",
+    "digest": "sha256:9f08bc1a82eac5b0f8337113239fb9f4b4544b68256f8380b64c5934338e950f",
     "identity": "governed-artifact-schema-catalog.v1"
   }
 }

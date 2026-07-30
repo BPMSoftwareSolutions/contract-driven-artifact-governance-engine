@@ -22,10 +22,16 @@ The contract supplies consumer-owned authority:
 - the selected verification authorities; and
 - independent content digests and byte lengths for projected artifacts.
 
-Artifact files are projections. Durable change begins in the admitted contract.
-The contract is the only authored mutation authority in the consumer workspace;
-every governed CLI, API, UI, document, schema, and supporting artifact is
-replace-only projected state.
+Artifact files are projections. Durable consumer-authored change begins in the
+admitted contract. The contract is the single consumer-authored mutation
+authority for an artifact family. Every derived mutation must be a
+deterministic consequence of that validated contract under its digest-bound
+interpretation base.
+
+Projection has positive path authority only: it may create or replace declared
+artifact paths and declared control evidence. It never removes a path.
+Undeclared state is observed, reported, and trust-blocking, but absence from the
+contract is never interpreted as authority to destroy workspace state.
 
 ## Trusted interpretation base
 
@@ -185,16 +191,22 @@ closed disposition.
 
 ## Operation authorities
 
-The conformance profile separates five operation classes:
+The conformance profile separates seven operation classes:
 
 - `authoredMutation` grants sole authored change authority to the contract and
   forbids authored changes to governed artifacts;
+- `mutationAuthority` requires exactly one consumer-authored source, confines
+  governed artifact writes to create-or-replace operations on declared
+  projections, and forbids removal;
+- `bodyPurity` requires projected DTO bodies to contain exactly one semantic
+  execution invocation and one direct result flow, with no local decisions,
+  construction, failure, or serialization mechanics;
 - `projection` permits `project --write` to replace only declared projections,
-  and only when write mode is explicit; and
+  and only when write mode is explicit;
 - `proof` is read-only, forbids artifact projection and subject mutation, and
-  permits an explicitly requested receipt only outside the governed subject.
+  permits an explicitly requested receipt only outside the governed subject;
 - `reconciliation` projects candidates only in memory and may change only
-  `contentSha256` and `expectedByteLength` in the contract.
+  `contentSha256` and `expectedByteLength` in the contract; and
 - `migration` interprets the source through its exact historical schema and
   may replace only the contract after an exact candidate diff.
 
@@ -207,6 +219,73 @@ Conformance captures the interpretation authority and evaluated subject before
 and after evaluation. A change during that interval produces
 `EVALUATION_INVALIDATED_BY_MUTATION`, `PROOF_INCOMPLETE`, and `REJECTED`.
 Stable proof records `PROOF_SUBJECT_UNCHANGED`.
+
+## Single-source mutation authority
+
+The content-addressed conformance profile admits one mutation law:
+
+```text
+Consumer-authored authority
+    = contract only
+
+Governed artifact mutation
+    = create declared projection
+    + replace declared projection
+
+Undeclared state
+    = observe + reject trust
+
+Removal
+    = forbidden
+```
+
+The projection ledger and conformance receipt bind this authority. Contract
+commitment reconciliation and admitted migration are derived contract
+mutations; neither writes artifacts. Projection and explicit control-evidence
+writes remain deterministic consequences of the validated contract.
+
+This is intentionally conservative. A removed, relocated, or unexpectedly
+created artifact remains visible as `ARTIFACT_UNDECLARED` until an operator
+performs an explicit repository correction. The engine identifies the exact
+path and refuses trust, but does not infer destructive authority from omission.
+
+## Semantic execution body purity
+
+Semantic declaration authorizes meaning; it does not authorize equivalent
+mechanics in a projected code body. DTO fields, validation outcomes, failure
+outcomes, and serialization posture are materialized as a governed
+`semantic-execution-authority` data artifact. The projected function binds that
+data and the declared input schema to the trusted `executeSemanticProjection`
+runtime:
+
+```javascript
+export function projectMessage(value) {
+  return executeSemanticProjection(projectMessageAuthority, messageSchema, value);
+}
+```
+
+The body-purity law is fixed by the conformance profile and cannot be relaxed
+by adding source declarations. For a semantic execution body, conformance
+requires:
+
+```text
+exactly one exported responsibility
+exactly one semantic execution invocation
+exactly one direct result flow
+zero local decisions
+zero local iterations
+zero local failure mechanics
+zero local DTO construction
+zero local serialization or normalization
+zero additional execution
+```
+
+A locally coded branch produces
+`DECLARED_SEMANTICS_DO_NOT_AUTHORIZE_BODY_BRANCHING`; DTO construction produces
+`LOCAL_RESULT_CONSTRUCTION_FORBIDDEN`; serialization outside the runtime
+produces `EXECUTION_MECHANIC_OUTSIDE_TRUSTED_BOUNDARY`. The semantic authority
+remains rich and contract-owned, while the projected body remains an executable
+wire rather than a second authoring surface.
 
 ## Commitment reconciliation
 
@@ -304,6 +383,10 @@ digest, operation, dependency, effect, runtime, and source authorities,
 artifact authority IDs, projector IDs, projection modes, and content
 commitments. A missing or altered ledger produces
 `PROJECTION_IDENTITY_MISMATCH`.
+
+`project --write` creates missing declared artifacts and replaces drifted
+declared artifacts. It does not remove undeclared paths, exact exclusions, or
+state outside the governed scope.
 
 ## Verifiers
 

@@ -1,0 +1,50 @@
+{
+  "fieldClassifications": [
+    {
+      "disposition": "transformed",
+      "pathPattern": "/artifacts/*/proof/contentSha256"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/artifacts/*/proof/expectedByteLength"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/contract/contractVersion"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/conformanceProfile/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/conformanceProfile/identity"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/engine/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/engine/identity"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/migrationRegistry/digest"
+    }
+  ],
+  "migrationId": "artifact-contract.1.6-to-1.7",
+  "migrationType": "governed-artifact-contract-migration.v1",
+  "sourceContractVersion": "1.6.0",
+  "targetContractVersion": "1.7.0",
+  "transformations": [
+    {
+      "operation": "set-value",
+      "path": "/contract/contractVersion",
+      "value": "1.7.0"
+    },
+    {
+      "operation": "introduce-interpretation-base"
+    }
+  ]
+}

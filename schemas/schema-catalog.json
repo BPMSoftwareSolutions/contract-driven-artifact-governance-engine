@@ -3,14 +3,20 @@
   "catalogType": "content-addressed-schema-catalog.v1",
   "schemas": [
     {
-      "contractVersion": "1.5.0",
+      "contractVersions": [
+        "1.5.0"
+      ],
       "digest": "sha256:4a4dd139e045c1435e406d178a6535f1a790bca254f1c7ca2886e38ca01debdb",
       "relativePath": "catalog/sha256-4a4dd139e045c1435e406d178a6535f1a790bca254f1c7ca2886e38ca01debdb.schema.json",
       "schemaId": "https://canonical.local/schemas/governed-artifact-contract.schema.json",
       "status": "historical"
     },
     {
-      "contractVersion": "1.6.0",
+      "contractVersions": [
+        "1.6.0",
+        "1.7.0",
+        "1.8.0"
+      ],
       "digest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
       "relativePath": "governed-artifact-contract.schema.json",
       "schemaId": "https://canonical.local/schemas/governed-artifact-contract.schema.json",

@@ -14,6 +14,15 @@ import {
   validateContract,
   writeCanonicalReceipt
 } from "../lib/governed-artifact-engine.mjs";
+import {
+  DEFAULT_RELEASE_AUTHORITY_PATH,
+  DEFAULT_RELEASE_SCHEMA_PATH,
+  evaluateReleaseBoundary,
+  evaluateReleaseReceiptClaim,
+  observeReleasePackage,
+  validateReleaseAuthority,
+  writeCanonicalReleaseReceipt
+} from "../lib/governed-release-boundary.mjs";
 
 function usage() {
   return [
@@ -25,12 +34,20 @@ function usage() {
     "  governed-artifacts evaluate --contract <path> --workspace <path> [--write-receipt] [inputs]",
     "  governed-artifacts prove --contract <path> --workspace <path> [--check] [--write-receipt] [inputs]",
     "  governed-artifacts claim --contract <path> --workspace <path> --receipt <path> --claim <claim> [inputs]",
+    "  governed-artifacts release-observe --workspace <path>",
+    "  governed-artifacts release-validate [release inputs]",
+    "  governed-artifacts release-check --workspace <path> [--write-receipt] [release inputs]",
+    "  governed-artifacts release-claim --workspace <path> --release-receipt <path> --claim RELEASE_READY [release inputs]",
     "",
     "Inputs:",
     "  --schema <path>",
     "  --projector-registry <path>",
     "  --verifier-registry <path>",
-    "  --observed-at <ISO-8601 timestamp>"
+    "  --observed-at <ISO-8601 timestamp>",
+    "",
+    "Release inputs:",
+    "  --release-authority <path>",
+    "  --release-schema <path>"
   ].join("\n");
 }
 
@@ -43,6 +60,8 @@ function parseArguments(argv) {
     schemaPath: DEFAULT_SCHEMA_PATH,
     projectorRegistryPath: DEFAULT_PROJECTOR_REGISTRY_PATH,
     verifierRegistryPath: DEFAULT_VERIFIER_REGISTRY_PATH,
+    releaseAuthorityPath: DEFAULT_RELEASE_AUTHORITY_PATH,
+    releaseSchemaPath: DEFAULT_RELEASE_SCHEMA_PATH,
     mode: "write",
     writeReceipt: false
   };
@@ -76,6 +95,12 @@ function parseArguments(argv) {
         options.receiptPath = value;
       } else if (argument === "--claim") {
         options.claim = value;
+      } else if (argument === "--release-authority") {
+        options.releaseAuthorityPath = value;
+      } else if (argument === "--release-schema") {
+        options.releaseSchemaPath = value;
+      } else if (argument === "--release-receipt") {
+        options.releaseReceiptPath = value;
       } else {
         throw new Error(`Unknown argument: ${argument}`);
       }
@@ -85,6 +110,41 @@ function parseArguments(argv) {
 }
 
 function execute(operation, options) {
+  if (operation === "release-observe") {
+    if (!options.workspacePath) {
+      throw new Error("Release observation requires --workspace.");
+    }
+    return observeReleasePackage(options);
+  }
+  if (operation === "release-validate") {
+    return validateReleaseAuthority(options);
+  }
+  if (operation === "release-check") {
+    if (!options.workspacePath) {
+      throw new Error("Release evaluation requires --workspace.");
+    }
+    const receipt = evaluateReleaseBoundary(options);
+    if (options.writeReceipt && receipt.receiptType) {
+      writeCanonicalReleaseReceipt(options, receipt);
+    }
+    return receipt;
+  }
+  if (operation === "release-claim") {
+    if (
+      !options.workspacePath ||
+      !options.releaseReceiptPath ||
+      !options.claim
+    ) {
+      throw new Error(
+        "Release claim evaluation requires --workspace, --release-receipt, and --claim."
+      );
+    }
+    return evaluateReleaseReceiptClaim(
+      options,
+      JSON.parse(readFileSync(options.releaseReceiptPath, "utf8")),
+      options.claim
+    );
+  }
   if (operation === "claim") {
     if (
       !options.contractPath ||
@@ -141,6 +201,16 @@ try {
       result.contractValidationDisposition === "SCHEMA_DIGEST_MISMATCH" ||
       result.trustDisposition === "REJECTED" ||
       result.claimDisposition === "CLAIM_EXCEEDS_EVIDENCE" ||
+      result.authorityValidationDisposition ===
+        "RELEASE_AUTHORITY_INVALID" ||
+      result.authorityValidationDisposition ===
+        "RELEASE_SCHEMA_NOT_ADMITTED" ||
+      result.authorityValidationDisposition ===
+        "RELEASE_SCHEMA_DIGEST_MISMATCH" ||
+      result.conformanceDisposition === "RELEASE_BOUNDARY_DRIFT" ||
+      result.conformanceDisposition === "RELEASE_OBSERVATION_FAILED" ||
+      result.trustDisposition === "RELEASE_REJECTED" ||
+      result.claimDisposition === "RELEASE_CLAIM_EXCEEDS_EVIDENCE" ||
       (result.projectionDisposition !== undefined &&
         result.projectionDisposition !== "ARTIFACT_FAMILY_PROJECTED");
     process.exitCode = rejected ? 1 : 0;

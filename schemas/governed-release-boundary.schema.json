@@ -1,0 +1,405 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonical.local/schemas/governed-release-boundary.schema.json",
+  "title": "Governed npm Release Boundary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "release",
+    "schema",
+    "package",
+    "toolchain",
+    "dependencyLock",
+    "packing",
+    "archive",
+    "receipt",
+    "claims"
+  ],
+  "properties": {
+    "release": {
+      "$ref": "#/$defs/releaseIdentity"
+    },
+    "schema": {
+      "$ref": "#/$defs/admittedDependency"
+    },
+    "package": {
+      "$ref": "#/$defs/packageAuthority"
+    },
+    "toolchain": {
+      "$ref": "#/$defs/toolchainAuthority"
+    },
+    "dependencyLock": {
+      "$ref": "#/$defs/fileAuthority"
+    },
+    "packing": {
+      "$ref": "#/$defs/packingAuthority"
+    },
+    "archive": {
+      "$ref": "#/$defs/archiveAuthority"
+    },
+    "receipt": {
+      "$ref": "#/$defs/receiptAuthority"
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/claimAuthority"
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 160
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "sha1": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//)[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$",
+      "minLength": 1,
+      "maxLength": 320
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "releaseIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "releaseId",
+        "authorityVersion",
+        "status"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "governed-npm-release-boundary.v1"
+        },
+        "releaseId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "authorityVersion": {
+          "$ref": "#/$defs/semver"
+        },
+        "status": {
+          "const": "admitted"
+        }
+      }
+    },
+    "admittedDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "digest"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "packageAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "manifestPath",
+        "publishedPaths",
+        "exports",
+        "binaries"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(?:@[a-z0-9._-]+/)?[a-z0-9._-]+$"
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "manifestPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "publishedPaths": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          },
+          "uniqueItems": true
+        },
+        "exports": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/exportAuthority"
+          }
+        },
+        "binaries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binaryAuthority"
+          }
+        }
+      }
+    },
+    "exportAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subpath",
+        "target"
+      ],
+      "properties": {
+        "subpath": {
+          "type": "string",
+          "pattern": "^\\.(?:/[A-Za-z0-9._-]+)*$"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^\\./[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$"
+        }
+      }
+    },
+    "binaryAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "target"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9._-]+$"
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^\\./[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$"
+        }
+      }
+    },
+    "toolchainAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeVersion",
+        "packageManager",
+        "packageManagerVersion"
+      ],
+      "properties": {
+        "nodeVersion": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "packageManager": {
+          "const": "npm"
+        },
+        "packageManagerVersion": {
+          "$ref": "#/$defs/semver"
+        }
+      }
+    },
+    "fileAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relativePath",
+        "sha256"
+      ],
+      "properties": {
+        "relativePath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "packingAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command",
+        "lifecyclePolicy",
+        "forbiddenLifecycleScripts",
+        "bundledDependencies",
+        "entries"
+      ],
+      "properties": {
+        "command": {
+          "const": [
+            "npm",
+            "pack",
+            "--json",
+            "--ignore-scripts"
+          ]
+        },
+        "lifecyclePolicy": {
+          "const": "forbidden"
+        },
+        "forbiddenLifecycleScripts": {
+          "const": [
+            "prepack",
+            "prepare",
+            "postpack"
+          ]
+        },
+        "bundledDependencies": {
+          "const": []
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/archiveEntryAuthority"
+          }
+        }
+      }
+    },
+    "archiveEntryAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relativePath",
+        "size",
+        "mode",
+        "sha256"
+      ],
+      "properties": {
+        "relativePath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 511
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "archiveAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fileName",
+        "size",
+        "unpackedSize",
+        "entryCount",
+        "sha256",
+        "shasum",
+        "integrity"
+      ],
+      "properties": {
+        "fileName": {
+          "type": "string",
+          "pattern": "^[a-z0-9._-]+\\.tgz$"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unpackedSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "entryCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "shasum": {
+          "$ref": "#/$defs/sha1"
+        },
+        "integrity": {
+          "type": "string",
+          "pattern": "^sha512-[A-Za-z0-9+/]+={0,2}$"
+        }
+      }
+    },
+    "receiptAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receiptType",
+        "relativePath",
+        "requiredEvidence"
+      ],
+      "properties": {
+        "receiptType": {
+          "const": "governed-release-boundary-receipt.v1"
+        },
+        "relativePath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "requiredEvidence": {
+          "const": [
+            "release-authority-identity",
+            "schema-identity",
+            "package-metadata",
+            "toolchain-identity",
+            "dependency-lock-identity",
+            "lifecycle-policy",
+            "archive-entry-observations",
+            "archive-identity",
+            "release-findings",
+            "claim-policies",
+            "trust-disposition"
+          ]
+        }
+      }
+    },
+    "claimAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimId",
+        "claim",
+        "requiredConformanceDisposition",
+        "requiredProofDisposition",
+        "requiredTrustDisposition"
+      ],
+      "properties": {
+        "claimId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "claim": {
+          "const": "RELEASE_READY"
+        },
+        "requiredConformanceDisposition": {
+          "const": "RELEASE_BOUNDARY_CLOSED"
+        },
+        "requiredProofDisposition": {
+          "const": "RELEASE_PROOF_COMPLETE"
+        },
+        "requiredTrustDisposition": {
+          "const": "RELEASE_TRUSTED"
+        }
+      }
+    }
+  }
+}

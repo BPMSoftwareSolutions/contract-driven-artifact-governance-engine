@@ -23,6 +23,13 @@ import {
   proveGovernedArtifactFamily,
   validateContract
 } from "../lib/governed-artifact-engine.mjs";
+import {
+  DEFAULT_RELEASE_AUTHORITY_PATH,
+  evaluateReleaseBoundary,
+  evaluateReleaseClaim,
+  evaluateReleaseReceiptClaim,
+  validateReleaseAuthority
+} from "../lib/governed-release-boundary.mjs";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const exampleContractPath = path.join(
@@ -821,6 +828,130 @@ test("payload drift stays distinct and completion claims cannot exceed receipt e
   assert.equal(
     evaluateTrustClaim(trustedReceipt, "UNDECLARED_CLAIM").claimDisposition,
     "CLAIM_EXCEEDS_EVIDENCE"
+  );
+});
+
+test("the npm archive closes against its external release authority", () => {
+  const authorityBytes = readFileSync(DEFAULT_RELEASE_AUTHORITY_PATH);
+  assert.deepEqual(
+    authorityBytes,
+    canonicalJsonBytes(
+      JSON.parse(authorityBytes.toString("utf8"))
+    )
+  );
+  const validation = validateReleaseAuthority({
+    workspacePath: packageRoot
+  });
+  assert.equal(
+    validation.authorityValidationDisposition,
+    "RELEASE_AUTHORITY_VALID"
+  );
+
+  const receipt = evaluateReleaseBoundary({
+    workspacePath: packageRoot
+  });
+  assert.equal(
+    receipt.conformanceDisposition,
+    "RELEASE_BOUNDARY_CLOSED"
+  );
+  assert.equal(receipt.proofDisposition, "RELEASE_PROOF_COMPLETE");
+  assert.equal(receipt.trustDisposition, "RELEASE_TRUSTED");
+  assert.equal(receipt.findings.length, 0);
+  assert.equal(
+    receipt.observations.packing.entries.some(
+      (entry) =>
+        entry.relativePath ===
+        "release/governed-npm-release-boundary.json"
+    ),
+    false
+  );
+  assert.equal(
+    evaluateReleaseClaim(receipt, "RELEASE_READY").claimDisposition,
+    "RELEASE_CLAIM_ADMITTED"
+  );
+  assert.equal(
+    evaluateReleaseReceiptClaim(
+      {
+        workspacePath: packageRoot
+      },
+      receipt,
+      "RELEASE_READY"
+    ).claimDisposition,
+    "RELEASE_CLAIM_ADMITTED"
+  );
+});
+
+test("release entry, archive, toolchain, and receipt drift fail closed", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const authority = JSON.parse(
+    readFileSync(DEFAULT_RELEASE_AUTHORITY_PATH, "utf8")
+  );
+  authority.packing.entries[0].sha256 =
+    "sha256:0000000000000000000000000000000000000000000000000000000000000000";
+  authority.archive.sha256 =
+    "sha256:0000000000000000000000000000000000000000000000000000000000000000";
+  authority.toolchain.nodeVersion = "v0.0.0";
+  const authorityPath = path.join(
+    workspacePath,
+    "drifted-release-authority.json"
+  );
+  writeFileSync(authorityPath, canonicalJsonBytes(authority));
+  const receipt = evaluateReleaseBoundary({
+    workspacePath: packageRoot,
+    releaseAuthorityPath: authorityPath
+  });
+  assert.equal(
+    receipt.conformanceDisposition,
+    "RELEASE_BOUNDARY_DRIFT"
+  );
+  assert.equal(receipt.proofDisposition, "RELEASE_PROOF_INCOMPLETE");
+  assert.equal(receipt.trustDisposition, "RELEASE_REJECTED");
+  assert.equal(
+    receipt.findings.some(
+      (finding) => finding.findingId === "RELEASE_ENTRY_DRIFT"
+    ),
+    true
+  );
+  assert.equal(
+    receipt.findings.some(
+      (finding) => finding.findingId === "RELEASE_ARCHIVE_DRIFT"
+    ),
+    true
+  );
+  assert.equal(
+    receipt.findings.some(
+      (finding) => finding.findingId === "RELEASE_TOOLCHAIN_DRIFT"
+    ),
+    true
+  );
+
+  const observed = receipt.observations;
+  assert.equal(
+    observed.archive.entryCount,
+    observed.packing.entries.length
+  );
+  assert.equal(
+    observed.archive.unpackedSize,
+    observed.packing.entries.reduce(
+      (total, entry) => total + entry.size,
+      0
+    )
+  );
+
+  const trustedReceipt = evaluateReleaseBoundary({
+    workspacePath: packageRoot
+  });
+  const fabricated = structuredClone(trustedReceipt);
+  fabricated.archive = { sha256: "fabricated" };
+  assert.equal(
+    evaluateReleaseReceiptClaim(
+      {
+        workspacePath: packageRoot
+      },
+      fabricated,
+      "RELEASE_READY"
+    ).claimDisposition,
+    "RELEASE_CLAIM_EXCEEDS_EVIDENCE"
   );
 });
 

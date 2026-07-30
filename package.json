@@ -4,7 +4,8 @@
   "description": "Schema-governed projection, observation, conformance evaluation, and trust disposition for declared artifact families.",
   "type": "module",
   "exports": {
-    ".": "./lib/governed-artifact-engine.mjs"
+    ".": "./lib/governed-artifact-engine.mjs",
+    "./release-boundary": "./lib/governed-release-boundary.mjs"
   },
   "files": [
     "bin",
@@ -21,7 +22,8 @@
   "scripts": {
     "test": "node --test test/engine.test.mjs",
     "pack:check": "npm pack --dry-run",
-    "prove": "npm audit --audit-level=moderate && npm test && npm run pack:check"
+    "release:check": "node bin/governed-artifacts.mjs release-check --workspace .",
+    "prove": "npm audit --audit-level=moderate && npm test && npm run pack:check && npm run release:check"
   },
   "dependencies": {
     "ajv": "8.20.0",

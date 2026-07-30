@@ -118,6 +118,33 @@ Runtime availability grants no authority. Installed packages, Node built-ins,
 workspace modules, and global effects are prohibited unless they resolve
 through the contract.
 
+## Release boundary
+
+The repository-level npm archive has a separate admitted authority:
+`release/governed-npm-release-boundary.json`. It is intentionally outside the
+published archive. Including an archive authority inside the archive whose
+digest it declares would create a self-reference.
+
+The release authority declares:
+
+- package name, version, published paths, exports, and command binaries;
+- the exact Node and npm versions used to pack;
+- the dependency-lock digest;
+- the exact `npm pack --json --ignore-scripts` operation;
+- a forbidden packing-lifecycle-script policy;
+- the complete archive entry inventory, including path, size, mode, and
+  SHA-256 for every entry;
+- archive size, unpacked size, entry count, SHA-256, npm shasum, and
+  SHA-512 integrity;
+- canonical release-receipt evidence; and
+- the proof requirements for the `RELEASE_READY` claim.
+
+Release evaluation creates the archive in an isolated temporary directory,
+parses the gzip and tar bytes independently, checks tar-header checksums, and
+compares every observation with the authority. Any entry, metadata, toolchain,
+lockfile, lifecycle, or archive difference produces
+`RELEASE_BOUNDARY_DRIFT` and `RELEASE_REJECTED`.
+
 ## Projectors
 
 The admitted projector registry contains four data-driven projectors:
@@ -237,6 +264,43 @@ requires `CONTRACT_AUTHORITY_CLOSED`, `ARTIFACT_AUTHORITY_CLOSED`,
 `PROOF_COMPLETE`, and `TRUSTED` in the same receipt. Claim evaluation
 re-observes the workspace and rejects a supplied receipt that differs from the
 current canonical evidence.
+
+Observe the npm release archive without granting trust:
+
+```text
+governed-artifacts release-observe --workspace .
+```
+
+Validate the external release authority:
+
+```text
+governed-artifacts release-validate \
+  --release-authority release/governed-npm-release-boundary.json
+```
+
+Evaluate the release boundary and write its canonical receipt:
+
+```text
+governed-artifacts release-check \
+  --workspace . \
+  --release-authority release/governed-npm-release-boundary.json \
+  --write-receipt
+```
+
+Admit a release claim only against current canonical evidence:
+
+```text
+governed-artifacts release-claim \
+  --workspace . \
+  --release-authority release/governed-npm-release-boundary.json \
+  --release-receipt .governance/releases/npm-release.receipt.json \
+  --claim RELEASE_READY
+```
+
+Successful release evaluation yields `RELEASE_BOUNDARY_CLOSED`,
+`RELEASE_PROOF_COMPLETE`, and `RELEASE_TRUSTED`. A current release receipt can
+then admit `RELEASE_READY`. The repository's `npm run prove` command includes
+this release check after audit, tests, and the npm dry-run inspection.
 
 Each operation also accepts explicit `--schema`, `--projector-registry`, and
 `--verifier-registry` paths. Their exact file digests must equal the admitted

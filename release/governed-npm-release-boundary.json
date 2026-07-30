@@ -1,0 +1,169 @@
+{
+  "archive": {
+    "entryCount": 11,
+    "fileName": "contract-driven-artifact-governance-engine-0.3.0.tgz",
+    "integrity": "sha512-zYVLrJEh+I5YUOqWfV5qOCRCkRkpzTdLqUjsKZwp9J6uGd1GScFy3pNCZlgccoh28m9xal/3MCL/Sw+rVw5rbA==",
+    "sha256": "sha256:31bfd872fb5ac4fed9315fc04ff3c532059d71ce3a108915a67f73d153dac5fe",
+    "shasum": "a941abf0393add4b2135dc132944601484a055b8",
+    "size": 51476,
+    "unpackedSize": 321783
+  },
+  "claims": [
+    {
+      "claim": "RELEASE_READY",
+      "claimId": "npm-release-ready.v1",
+      "requiredConformanceDisposition": "RELEASE_BOUNDARY_CLOSED",
+      "requiredProofDisposition": "RELEASE_PROOF_COMPLETE",
+      "requiredTrustDisposition": "RELEASE_TRUSTED"
+    }
+  ],
+  "dependencyLock": {
+    "relativePath": "package-lock.json",
+    "sha256": "sha256:42caf3ad08be66ec5d0975dbeb126e0bec3a6b99c9e27d811b4078f632b85770"
+  },
+  "package": {
+    "binaries": [
+      {
+        "name": "governed-artifacts",
+        "target": "./bin/governed-artifacts.mjs"
+      }
+    ],
+    "exports": [
+      {
+        "subpath": ".",
+        "target": "./lib/governed-artifact-engine.mjs"
+      },
+      {
+        "subpath": "./release-boundary",
+        "target": "./lib/governed-release-boundary.mjs"
+      }
+    ],
+    "manifestPath": "package.json",
+    "name": "contract-driven-artifact-governance-engine",
+    "publishedPaths": [
+      "bin",
+      "examples",
+      "lib",
+      "registries",
+      "schemas",
+      "test",
+      "README.md"
+    ],
+    "version": "0.3.0"
+  },
+  "packing": {
+    "bundledDependencies": [],
+    "command": [
+      "npm",
+      "pack",
+      "--json",
+      "--ignore-scripts"
+    ],
+    "entries": [
+      {
+        "mode": 420,
+        "relativePath": "bin/governed-artifacts.mjs",
+        "sha256": "sha256:1484d69283d389011b3993cba21fb7c7002fccb1ad88e317cd3f26fe38247d59",
+        "size": 8099
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/governed-message-artifact-family.contract.json",
+        "sha256": "sha256:8ef4685e929b356d768b47bb43e55f8e689fdb592b61fa21a2a000253269cae2",
+        "size": 65386
+      },
+      {
+        "mode": 420,
+        "relativePath": "lib/governed-artifact-engine.mjs",
+        "sha256": "sha256:663ad4a90a33e2638f6a82c5ff6ac0ec3758f3e2d7350430dce647280d6b8f17",
+        "size": 132439
+      },
+      {
+        "mode": 420,
+        "relativePath": "lib/governed-release-boundary.mjs",
+        "sha256": "sha256:3f108ec9bae637f8717c8259d7fe24ff148fc550844c48efd20ea00998e3050b",
+        "size": 24605
+      },
+      {
+        "mode": 420,
+        "relativePath": "package.json",
+        "sha256": "sha256:a62fd26305663b97b6c97e182ea074c7394b3f98c677bb0cef241667ff91aceb",
+        "size": 1003
+      },
+      {
+        "mode": 420,
+        "relativePath": "README.md",
+        "sha256": "sha256:438e0d928258d7a0196c4d4bc1bbc423fe35718bca34742e397891caaa3478d9",
+        "size": 12190
+      },
+      {
+        "mode": 420,
+        "relativePath": "registries/projector-registry.json",
+        "sha256": "sha256:9e16e2900614a6fab8c08d295cde81f4b7c7453e7202ded1312444a187bd826f",
+        "size": 852
+      },
+      {
+        "mode": 420,
+        "relativePath": "registries/verifier-registry.json",
+        "sha256": "sha256:d9dcd0b53c54904a44ce15896d047d9360a6d48c5379dc3a2ebf3b8cab691f36",
+        "size": 1225
+      },
+      {
+        "mode": 420,
+        "relativePath": "schemas/governed-artifact-contract.schema.json",
+        "sha256": "sha256:3b0cbc893eafe37e4b58e1267e641d04c617c7dca35127e44b6c9bbaa31521bc",
+        "size": 37237
+      },
+      {
+        "mode": 420,
+        "relativePath": "schemas/governed-release-boundary.schema.json",
+        "sha256": "sha256:e18488c464570ce88eecddbb1d26b923076b7a97c915529cdad3661e80b1098e",
+        "size": 9276
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/engine.test.mjs",
+        "sha256": "sha256:87e2ceb1fec3b492834f2827b7ef55da9730dd4c3dbf188657fb6129eb9016e1",
+        "size": 29471
+      }
+    ],
+    "forbiddenLifecycleScripts": [
+      "prepack",
+      "prepare",
+      "postpack"
+    ],
+    "lifecyclePolicy": "forbidden"
+  },
+  "receipt": {
+    "receiptType": "governed-release-boundary-receipt.v1",
+    "relativePath": ".governance/releases/npm-release.receipt.json",
+    "requiredEvidence": [
+      "release-authority-identity",
+      "schema-identity",
+      "package-metadata",
+      "toolchain-identity",
+      "dependency-lock-identity",
+      "lifecycle-policy",
+      "archive-entry-observations",
+      "archive-identity",
+      "release-findings",
+      "claim-policies",
+      "trust-disposition"
+    ]
+  },
+  "release": {
+    "authorityType": "governed-npm-release-boundary.v1",
+    "authorityVersion": "1.0.0",
+    "releaseId": "contract-driven-artifact-governance-engine-release.v1",
+    "status": "admitted"
+  },
+  "schema": {
+    "digest": "sha256:e18488c464570ce88eecddbb1d26b923076b7a97c915529cdad3661e80b1098e",
+    "identity": "https://canonical.local/schemas/governed-release-boundary.schema.json"
+  },
+  "toolchain": {
+    "nodeVersion": "v20.19.0",
+    "packageManager": "npm",
+    "packageManagerVersion": "10.8.2"
+  }
+}

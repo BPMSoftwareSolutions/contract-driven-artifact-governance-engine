@@ -19,6 +19,7 @@ import {
   DEFAULT_RELEASE_SCHEMA_PATH,
   evaluateReleaseBoundary,
   evaluateReleaseReceiptClaim,
+  materializeReleaseArtifact,
   observeReleasePackage,
   validateReleaseAuthority,
   writeCanonicalReleaseReceipt
@@ -36,6 +37,7 @@ function usage() {
     "  governed-artifacts claim --contract <path> --workspace <path> --receipt <path> --claim <claim> [inputs]",
     "  governed-artifacts release-observe --workspace <path>",
     "  governed-artifacts release-validate [release inputs]",
+    "  governed-artifacts release-materialize --workspace <path> [release inputs]",
     "  governed-artifacts release-check --workspace <path> [--write-receipt] [release inputs]",
     "  governed-artifacts release-claim --workspace <path> --release-receipt <path> --claim RELEASE_READY [release inputs]",
     "",
@@ -129,6 +131,12 @@ function execute(operation, options) {
     }
     return receipt;
   }
+  if (operation === "release-materialize") {
+    if (!options.workspacePath) {
+      throw new Error("Release materialization requires --workspace.");
+    }
+    return materializeReleaseArtifact(options);
+  }
   if (operation === "release-claim") {
     if (
       !options.workspacePath ||
@@ -208,6 +216,7 @@ try {
       result.authorityValidationDisposition ===
         "RELEASE_SCHEMA_DIGEST_MISMATCH" ||
       result.conformanceDisposition === "RELEASE_BOUNDARY_DRIFT" ||
+      result.conformanceDisposition === "RELEASE_CANDIDATE_DRIFT" ||
       result.conformanceDisposition === "RELEASE_OBSERVATION_FAILED" ||
       result.trustDisposition === "RELEASE_REJECTED" ||
       result.claimDisposition === "RELEASE_CLAIM_EXCEEDS_EVIDENCE" ||

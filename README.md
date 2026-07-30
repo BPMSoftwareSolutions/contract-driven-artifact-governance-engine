@@ -125,6 +125,11 @@ The repository-level npm archive has a separate admitted authority:
 published archive. Including an archive authority inside the archive whose
 digest it declares would create a self-reference.
 
+Durable archives live exclusively under `release/artifacts`. Historical
+archives remain declared with exact path, size, and digest. The current archive
+must be materialized at its declared path; missing, additional, or altered
+files make the release boundary red.
+
 The release authority declares:
 
 - package name, version, published paths, exports, and command binaries;
@@ -136,13 +141,16 @@ The release authority declares:
   SHA-256 for every entry;
 - archive size, unpacked size, entry count, SHA-256, npm shasum, and
   SHA-512 integrity;
+- the exclusive durable release directory and every admitted archive path;
 - canonical release-receipt evidence; and
 - the proof requirements for the `RELEASE_READY` claim.
 
 Release evaluation creates the archive in an isolated temporary directory,
 parses the gzip and tar bytes independently, checks tar-header checksums, and
-compares every observation with the authority. Any entry, metadata, toolchain,
-lockfile, lifecycle, or archive difference produces
+compares every observation with the authority. It separately observes the
+durable release directory and compares its complete inventory and file
+digests. Any entry, metadata, toolchain, lockfile, lifecycle, archive, missing
+durable artifact, additional durable artifact, or durable byte difference produces
 `RELEASE_BOUNDARY_DRIFT` and `RELEASE_REJECTED`.
 
 ## Projectors
@@ -278,6 +286,16 @@ governed-artifacts release-validate \
   --release-authority release/governed-npm-release-boundary.json
 ```
 
+Materialize the current archive only after the reproducible candidate conforms:
+
+```text
+governed-artifacts release-materialize \
+  --workspace . \
+  --release-authority release/governed-npm-release-boundary.json
+```
+
+The repository shorthand is `npm run release:materialize`.
+
 Evaluate the release boundary and write its canonical receipt:
 
 ```text
@@ -300,7 +318,8 @@ governed-artifacts release-claim \
 Successful release evaluation yields `RELEASE_BOUNDARY_CLOSED`,
 `RELEASE_PROOF_COMPLETE`, and `RELEASE_TRUSTED`. A current release receipt can
 then admit `RELEASE_READY`. The repository's `npm run prove` command includes
-this release check after audit, tests, and the npm dry-run inspection.
+this release check after audit, tests, and the npm dry-run inspection. Archive
+reproducibility without durable artifact conformance is insufficient.
 
 Each operation also accepts explicit `--schema`, `--projector-registry`, and
 `--verifier-registry` paths. Their exact file digests must equal the admitted

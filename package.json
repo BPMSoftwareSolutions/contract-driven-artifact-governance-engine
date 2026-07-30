@@ -22,6 +22,7 @@
   "scripts": {
     "test": "node --test test/engine.test.mjs",
     "pack:check": "npm pack --dry-run",
+    "release:materialize": "node bin/governed-artifacts.mjs release-materialize --workspace .",
     "release:check": "node bin/governed-artifacts.mjs release-check --workspace .",
     "prove": "npm audit --audit-level=moderate && npm test && npm run pack:check && npm run release:check"
   },

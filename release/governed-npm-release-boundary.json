@@ -2,11 +2,11 @@
   "archive": {
     "entryCount": 11,
     "fileName": "contract-driven-artifact-governance-engine-0.3.0.tgz",
-    "integrity": "sha512-zYVLrJEh+I5YUOqWfV5qOCRCkRkpzTdLqUjsKZwp9J6uGd1GScFy3pNCZlgccoh28m9xal/3MCL/Sw+rVw5rbA==",
-    "sha256": "sha256:31bfd872fb5ac4fed9315fc04ff3c532059d71ce3a108915a67f73d153dac5fe",
-    "shasum": "a941abf0393add4b2135dc132944601484a055b8",
-    "size": 51476,
-    "unpackedSize": 321783
+    "integrity": "sha512-x3xOA84it6SOHMKjSgMHzMQK1Ms4sA4SXWe00a0t1/0CcjZBJvgLPRVqzDItpNg1pLtifXMnRrx+ubibFMxTmQ==",
+    "sha256": "sha256:37a449ddfd9f03bea513b1190dc854fc5fd52b745e9db87b2e4ef866c3dfdef3",
+    "shasum": "845fa6704a53bd0d6fdaaa5a9781110d566ce905",
+    "size": 53994,
+    "unpackedSize": 336230
   },
   "claims": [
     {
@@ -17,6 +17,35 @@
       "requiredTrustDisposition": "RELEASE_TRUSTED"
     }
   ],
+  "delivery": {
+    "artifactDirectory": "release/artifacts",
+    "artifacts": [
+      {
+        "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.1.0.tgz",
+        "releaseVersion": "0.1.0",
+        "role": "historical",
+        "sha256": "sha256:1c0154f67b56c3c8daa2a95ac1378db922eb8573b1b54a74813a1bd7833508ff",
+        "size": 17899
+      },
+      {
+        "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.2.0.tgz",
+        "releaseVersion": "0.2.0",
+        "role": "historical",
+        "sha256": "sha256:b07d6c4433d14e504467bf4d73251236385866715fc02594046fa67c488cda29",
+        "size": 21951
+      },
+      {
+        "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.3.0.tgz",
+        "releaseVersion": "0.3.0",
+        "role": "current",
+        "sha256": "sha256:37a449ddfd9f03bea513b1190dc854fc5fd52b745e9db87b2e4ef866c3dfdef3",
+        "size": 53994
+      }
+    ],
+    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.3.0.tgz",
+    "exclusiveInventory": true,
+    "materializationPolicy": "write-current-after-candidate-conformance"
+  },
   "dependencyLock": {
     "relativePath": "package-lock.json",
     "sha256": "sha256:42caf3ad08be66ec5d0975dbeb126e0bec3a6b99c9e27d811b4078f632b85770"
@@ -63,8 +92,8 @@
       {
         "mode": 420,
         "relativePath": "bin/governed-artifacts.mjs",
-        "sha256": "sha256:1484d69283d389011b3993cba21fb7c7002fccb1ad88e317cd3f26fe38247d59",
-        "size": 8099
+        "sha256": "sha256:a00ff92fcde02780377162b4d06d9bf262778f1243687ee2db23807260302363",
+        "size": 8491
       },
       {
         "mode": 420,
@@ -81,20 +110,20 @@
       {
         "mode": 420,
         "relativePath": "lib/governed-release-boundary.mjs",
-        "sha256": "sha256:3f108ec9bae637f8717c8259d7fe24ff148fc550844c48efd20ea00998e3050b",
-        "size": 24605
+        "sha256": "sha256:f5e51a8daddd3fa036f993d703c49299708d91c7896716e9119d0a96c89e4a87",
+        "size": 34143
       },
       {
         "mode": 420,
         "relativePath": "package.json",
-        "sha256": "sha256:a62fd26305663b97b6c97e182ea074c7394b3f98c677bb0cef241667ff91aceb",
-        "size": 1003
+        "sha256": "sha256:1b8af4923cc9c35100917c8658984a73d8215d02fc130d580ad4b6d89bf39c80",
+        "size": 1099
       },
       {
         "mode": 420,
         "relativePath": "README.md",
-        "sha256": "sha256:438e0d928258d7a0196c4d4bc1bbc423fe35718bca34742e397891caaa3478d9",
-        "size": 12190
+        "sha256": "sha256:bd61c9816c8bcadc1033c62fabec0938de9173ba14ae8aa92004a7249f1a4852",
+        "size": 13062
       },
       {
         "mode": 420,
@@ -117,14 +146,14 @@
       {
         "mode": 420,
         "relativePath": "schemas/governed-release-boundary.schema.json",
-        "sha256": "sha256:e18488c464570ce88eecddbb1d26b923076b7a97c915529cdad3661e80b1098e",
-        "size": 9276
+        "sha256": "sha256:241c05c27c04ab1e2db8b3b96cbbbd7eb51e8c0ff9eecf478a3b9a7d2d501e0c",
+        "size": 10893
       },
       {
         "mode": 420,
         "relativePath": "test/engine.test.mjs",
-        "sha256": "sha256:87e2ceb1fec3b492834f2827b7ef55da9730dd4c3dbf188657fb6129eb9016e1",
-        "size": 29471
+        "sha256": "sha256:5631a0959dd87b75c49faa796906bf53122bf12d050b27a4a319811a6fac0347",
+        "size": 31403
       }
     ],
     "forbiddenLifecycleScripts": [
@@ -146,6 +175,7 @@
       "lifecycle-policy",
       "archive-entry-observations",
       "archive-identity",
+      "durable-release-artifact-observations",
       "release-findings",
       "claim-policies",
       "trust-disposition"
@@ -153,12 +183,12 @@
   },
   "release": {
     "authorityType": "governed-npm-release-boundary.v1",
-    "authorityVersion": "1.0.0",
+    "authorityVersion": "1.1.0",
     "releaseId": "contract-driven-artifact-governance-engine-release.v1",
     "status": "admitted"
   },
   "schema": {
-    "digest": "sha256:e18488c464570ce88eecddbb1d26b923076b7a97c915529cdad3661e80b1098e",
+    "digest": "sha256:241c05c27c04ab1e2db8b3b96cbbbd7eb51e8c0ff9eecf478a3b9a7d2d501e0c",
     "identity": "https://canonical.local/schemas/governed-release-boundary.schema.json"
   },
   "toolchain": {

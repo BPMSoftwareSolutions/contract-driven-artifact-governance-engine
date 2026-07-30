@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   mkdtempSync,
@@ -857,8 +858,22 @@ test("the npm archive closes against its external release authority", () => {
   assert.equal(receipt.proofDisposition, "RELEASE_PROOF_COMPLETE");
   assert.equal(receipt.trustDisposition, "RELEASE_TRUSTED");
   assert.equal(receipt.findings.length, 0);
+  assert.deepEqual(
+    receipt.observations.delivery.missingPaths,
+    []
+  );
+  assert.deepEqual(
+    receipt.observations.delivery.undeclaredPaths,
+    []
+  );
   assert.equal(
-    receipt.observations.packing.entries.some(
+    receipt.observations.delivery.artifactObservations.filter(
+      (artifact) => artifact.role === "current" && artifact.exists
+    ).length,
+    1
+  );
+  assert.equal(
+    receipt.observations.candidate.packing.entries.some(
       (entry) =>
         entry.relativePath ===
         "release/governed-npm-release-boundary.json"
@@ -881,7 +896,7 @@ test("the npm archive closes against its external release authority", () => {
   );
 });
 
-test("release entry, archive, toolchain, and receipt drift fail closed", (t) => {
+test("release candidate, durable artifact, toolchain, archive, and receipt drift fail closed", (t) => {
   const workspacePath = makeWorkspace(t);
   const authority = JSON.parse(
     readFileSync(DEFAULT_RELEASE_AUTHORITY_PATH, "utf8")
@@ -890,7 +905,29 @@ test("release entry, archive, toolchain, and receipt drift fail closed", (t) => 
     "sha256:0000000000000000000000000000000000000000000000000000000000000000";
   authority.archive.sha256 =
     "sha256:0000000000000000000000000000000000000000000000000000000000000000";
+  authority.delivery.artifacts.find(
+    (artifact) => artifact.role === "current"
+  ).sha256 = authority.archive.sha256;
   authority.toolchain.nodeVersion = "v0.0.0";
+  authority.delivery.artifacts = authority.delivery.artifacts.filter(
+    (artifact) => artifact.releaseVersion !== "0.1.0"
+  );
+  authority.delivery.artifacts.find(
+    (artifact) => artifact.releaseVersion === "0.2.0"
+  ).sha256 =
+    "sha256:0000000000000000000000000000000000000000000000000000000000000000";
+  authority.delivery.artifacts.push({
+    releaseVersion: "9.9.9",
+    role: "historical",
+    relativePath:
+      "release/artifacts/contract-driven-artifact-governance-engine-9.9.9.tgz",
+    size: 1,
+    sha256:
+      "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  });
+  authority.delivery.artifacts.sort((left, right) =>
+    left.relativePath.localeCompare(right.relativePath)
+  );
   const authorityPath = path.join(
     workspacePath,
     "drifted-release-authority.json"
@@ -924,8 +961,21 @@ test("release entry, archive, toolchain, and receipt drift fail closed", (t) => 
     ),
     true
   );
+  for (const findingId of [
+    "RELEASE_ARTIFACT_MISSING",
+    "RELEASE_ARTIFACT_UNDECLARED",
+    "RELEASE_ARTIFACT_CONTENT_MISMATCH"
+  ]) {
+    assert.equal(
+      receipt.findings.some(
+        (finding) => finding.findingId === findingId
+      ),
+      true,
+      findingId
+    );
+  }
 
-  const observed = receipt.observations;
+  const observed = receipt.observations.candidate;
   assert.equal(
     observed.archive.entryCount,
     observed.packing.entries.length
@@ -953,6 +1003,23 @@ test("release entry, archive, toolchain, and receipt drift fail closed", (t) => 
     ).claimDisposition,
     "RELEASE_CLAIM_EXCEEDS_EVIDENCE"
   );
+  const commandResult = spawnSync(
+    process.execPath,
+    [
+      path.join(packageRoot, "bin", "governed-artifacts.mjs"),
+      "release-check",
+      "--workspace",
+      packageRoot,
+      "--release-authority",
+      authorityPath
+    ],
+    {
+      cwd: packageRoot,
+      encoding: "utf8",
+      shell: false
+    }
+  );
+  assert.equal(commandResult.status, 1);
 });
 
 test("the published surface uses only governed-artifact language", () => {

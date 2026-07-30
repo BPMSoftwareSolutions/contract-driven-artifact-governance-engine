@@ -12,6 +12,7 @@
     "dependencyLock",
     "packing",
     "archive",
+    "delivery",
     "receipt",
     "claims"
   ],
@@ -36,6 +37,9 @@
     },
     "archive": {
       "$ref": "#/$defs/archiveAuthority"
+    },
+    "delivery": {
+      "$ref": "#/$defs/deliveryAuthority"
     },
     "receipt": {
       "$ref": "#/$defs/receiptAuthority"
@@ -341,6 +345,70 @@
         }
       }
     },
+    "deliveryAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactDirectory",
+        "currentArtifactPath",
+        "exclusiveInventory",
+        "materializationPolicy",
+        "artifacts"
+      ],
+      "properties": {
+        "artifactDirectory": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "currentArtifactPath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "exclusiveInventory": {
+          "const": true
+        },
+        "materializationPolicy": {
+          "const": "write-current-after-candidate-conformance"
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/durableArtifactAuthority"
+          }
+        }
+      }
+    },
+    "durableArtifactAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "releaseVersion",
+        "role",
+        "relativePath",
+        "size",
+        "sha256"
+      ],
+      "properties": {
+        "releaseVersion": {
+          "$ref": "#/$defs/semver"
+        },
+        "role": {
+          "enum": [
+            "current",
+            "historical"
+          ]
+        },
+        "relativePath": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
     "receiptAuthority": {
       "type": "object",
       "additionalProperties": false,
@@ -366,6 +434,7 @@
             "lifecycle-policy",
             "archive-entry-observations",
             "archive-identity",
+            "durable-release-artifact-observations",
             "release-findings",
             "claim-policies",
             "trust-disposition"

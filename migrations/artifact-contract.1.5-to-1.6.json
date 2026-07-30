@@ -1,0 +1,187 @@
+{
+  "fieldClassifications": [
+    {
+      "disposition": "removed",
+      "pathPattern": "/artifacts/*/mutabilityPosture"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/artifacts/*/ownership"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/artifacts/*/projection/mode"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/artifacts/*/proof/contentDigestRequired"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/artifacts/*/proof/contentSha256"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/artifacts/*/proof/expectedByteLength"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/authorityClosure"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/claims/*/requiredAuthorityClosureDisposition"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/claims/*/requiredConformanceDisposition"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/claims/*/requiredProofDisposition"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/claims/*/requiredScopeDisposition"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/claims/*/requiredTrustDisposition"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/conformance/evaluationOrder"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/conformance/failClosed"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/conformance/terminalDispositions"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/contract/contractVersion"
+    },
+    {
+      "disposition": "introduced",
+      "pathPattern": "/interpretationBase"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/operationAuthorities"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/projectionLedger/ledgerType"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/projectionLedger/requiredEvidence"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/projectorRegistry"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/receipt/receiptType"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/receipt/requiredEvidence"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/schema"
+    },
+    {
+      "disposition": "removed",
+      "pathPattern": "/verifierRegistry"
+    }
+  ],
+  "migrationId": "artifact-contract.1.5-to-1.6",
+  "migrationType": "governed-artifact-contract-migration.v1",
+  "sourceContractVersion": "1.5.0",
+  "targetContractVersion": "1.6.0",
+  "transformations": [
+    {
+      "operation": "set-value",
+      "path": "/contract/contractVersion",
+      "value": "1.6.0"
+    },
+    {
+      "operation": "introduce-interpretation-base"
+    },
+    {
+      "fields": [
+        "schema",
+        "projectorRegistry",
+        "verifierRegistry",
+        "authorityClosure",
+        "operationAuthorities"
+      ],
+      "operation": "remove-fields",
+      "selector": "$"
+    },
+    {
+      "fields": [
+        "ownership",
+        "mutabilityPosture"
+      ],
+      "operation": "remove-fields",
+      "selector": "$.artifacts[*]"
+    },
+    {
+      "fields": [
+        "mode"
+      ],
+      "operation": "remove-fields",
+      "selector": "$.artifacts[*].projection"
+    },
+    {
+      "fields": [
+        "contentDigestRequired"
+      ],
+      "operation": "remove-fields",
+      "selector": "$.artifacts[*].proof"
+    },
+    {
+      "fields": [
+        "failClosed",
+        "evaluationOrder",
+        "terminalDispositions"
+      ],
+      "operation": "remove-fields",
+      "selector": "$.conformance"
+    },
+    {
+      "fields": [
+        "ledgerType",
+        "requiredEvidence"
+      ],
+      "operation": "remove-fields",
+      "selector": "$.projectionLedger"
+    },
+    {
+      "fields": [
+        "receiptType",
+        "requiredEvidence"
+      ],
+      "operation": "remove-fields",
+      "selector": "$.receipt"
+    },
+    {
+      "fields": [
+        "requiredConformanceDisposition",
+        "requiredAuthorityClosureDisposition",
+        "requiredScopeDisposition",
+        "requiredProofDisposition",
+        "requiredTrustDisposition"
+      ],
+      "operation": "remove-fields",
+      "selector": "$.claims[*]"
+    }
+  ]
+}

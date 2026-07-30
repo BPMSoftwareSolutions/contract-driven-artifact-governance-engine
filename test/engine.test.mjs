@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  existsSync,
   mkdtempSync,
   mkdirSync,
   readFileSync,
@@ -15,14 +16,19 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
+  DEFAULT_CONFORMANCE_PROFILE_PATH,
+  DEFAULT_MIGRATION_REGISTRY_PATH,
+  DEFAULT_SCHEMA_CATALOG_PATH,
   canonicalJsonBytes,
   evaluateConformance,
   evaluateReceiptClaim,
   evaluateTrustClaim,
   inspectSourceAuthority,
+  migrateContract,
   projectArtifactFamily,
   projectGovernedArtifactContractMarkdown,
   proveGovernedArtifactFamily,
+  reconcileContractCommitments,
   resolveArtifactPlan,
   validateContract
 } from "../lib/governed-artifact-engine.mjs";
@@ -39,6 +45,12 @@ const exampleContractPath = path.join(
   packageRoot,
   "examples",
   "governed-message-artifact-family.contract.json"
+);
+const historicalContractPath = path.join(
+  packageRoot,
+  "test",
+  "fixtures",
+  "governed-message-artifact-family.1.5.contract.json"
 );
 
 function sha256(bytes) {
@@ -88,17 +100,20 @@ test("the admitted example contract is valid", () => {
 
 test("the contract makes every governed control surface explicit", () => {
   const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
+  const profile = JSON.parse(
+    readFileSync(DEFAULT_CONFORMANCE_PROFILE_PATH, "utf8")
+  );
   assert.equal(
-    contract.authorityClosure.authorityType,
+    profile.authorityClosure.authorityType,
     "closed-world-authority-closure.v1"
   );
   assert.equal(
-    Object.values(contract.authorityClosure.coverage).every(
+    Object.values(profile.authorityClosure.coverage).every(
       (disposition) => disposition === "exact"
     ),
     true
   );
-  assert.deepEqual(contract.authorityClosure.resolution, {
+  assert.deepEqual(profile.authorityClosure.resolution, {
     ambiguousObservations: "reject",
     ambientAuthority: "forbidden",
     cardinality: "exactly-one",
@@ -114,18 +129,18 @@ test("the contract makes every governed control surface explicit", () => {
     contract.workspace.governedScope.inventoryMode,
     "exclusive-subtree"
   );
-  assert.deepEqual(contract.operationAuthorities.authoredMutation, {
+  assert.deepEqual(profile.operationAuthorities.authoredMutation, {
     governedArtifacts: "forbidden",
     posture: "sole-authored-change-authority",
     target: "contract"
   });
-  assert.deepEqual(contract.operationAuthorities.projection, {
+  assert.deepEqual(profile.operationAuthorities.projection, {
     artifactPosture: "replace-by-projection",
     operation: "project",
     subjectMutation: "declared-projections-only",
     writeMode: "explicit-only"
   });
-  assert.deepEqual(contract.operationAuthorities.proof, {
+  assert.deepEqual(profile.operationAuthorities.proof, {
     artifactProjection: "forbidden",
     declaredEvaluations: "read-only",
     mode: "read-only",
@@ -137,13 +152,39 @@ test("the contract makes every governed control surface explicit", () => {
     subjectMutation: "forbidden"
   });
   assert.equal(
+    profile.operationAuthorities.reconciliation.artifactProjection,
+    "forbidden"
+  );
+  assert.equal(
+    profile.operationAuthorities.reconciliation.trustIssuance,
+    "forbidden"
+  );
+  assert.equal(
+    profile.operationAuthorities.migration.targetMutation,
+    "contract-only"
+  );
+  assert.deepEqual(
+    Object.keys(contract.interpretationBase).sort(),
+    [
+      "conformanceProfile",
+      "engine",
+      "migrationRegistry",
+      "projectorRegistry",
+      "schema",
+      "verifierRegistry"
+    ]
+  );
+  assert.equal(contract.authorityClosure, undefined);
+  assert.equal(contract.operationAuthorities, undefined);
+  assert.equal(
     contract.artifacts.every(
       (artifact) =>
         typeof artifact.relativePath === "string" &&
         artifact.relativePath.length > 0 &&
-        artifact.ownership === "contract-owned" &&
-        artifact.mutabilityPosture === "replace-by-projection" &&
-        artifact.projection.mode === "projected"
+        artifact.ownership === undefined &&
+        artifact.mutabilityPosture === undefined &&
+        artifact.projection.mode === undefined &&
+        artifact.proof.contentDigestRequired === undefined
     ),
     true
   );
@@ -229,14 +270,179 @@ test("the contract makes every governed control surface explicit", () => {
   assert.equal(
     contract.claims.every(
       (claim) =>
-        claim.requiredConformanceDisposition.length > 0 &&
-        claim.requiredAuthorityClosureDisposition.length > 0 &&
-        claim.requiredScopeDisposition.length > 0 &&
-        claim.requiredProofDisposition.length > 0 &&
-        claim.requiredTrustDisposition.length > 0
+        Object.keys(claim).sort().join(",") === "claim,claimId"
     ),
     true
   );
+});
+
+test("historical schemas and digest-to-digest migration authority are durable", () => {
+  const catalog = JSON.parse(
+    readFileSync(DEFAULT_SCHEMA_CATALOG_PATH, "utf8")
+  );
+  const registry = JSON.parse(
+    readFileSync(DEFAULT_MIGRATION_REGISTRY_PATH, "utf8")
+  );
+  assert.equal(
+    registry.schemaCatalog.digest,
+    sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
+  );
+  assert.equal(registry.migrations.length, 1);
+  const edge = registry.migrations[0];
+  for (const digest of [
+    edge.sourceSchemaDigest,
+    edge.targetSchemaDigest
+  ]) {
+    const entry = catalog.schemas.find(
+      (schema) => schema.digest === digest
+    );
+    assert.ok(entry);
+    assert.equal(
+      sha256(
+        readFileSync(
+          path.join(
+            path.dirname(DEFAULT_SCHEMA_CATALOG_PATH),
+            ...entry.relativePath.split("/")
+          )
+        )
+      ),
+      digest
+    );
+  }
+  assert.equal(edge.preservedAuthorities.length > 0, true);
+  assert.equal(edge.transformedAuthorities.length > 0, true);
+  assert.equal(edge.introducedAuthorities.length > 0, true);
+  assert.equal(edge.removedAuthorities.length > 0, true);
+});
+
+test("migration is candidate-first, contract-only, and idempotent", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = path.join(
+    workspacePath,
+    "governed-artifact.contract.json"
+  );
+  writeFileSync(
+    contractPath,
+    readFileSync(historicalContractPath)
+  );
+  const sourceBytes = readFileSync(contractPath);
+  const preview = migrateContract({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    preview.migrationDisposition,
+    "CONTRACT_MIGRATION_REQUIRED"
+  );
+  assert.equal(preview.diff.length > 0, true);
+  assert.equal(
+    preview.diff.every((change) => change.path.startsWith("/")),
+    true
+  );
+  assert.deepEqual(readFileSync(contractPath), sourceBytes);
+  assert.equal(
+    existsSync(
+      path.join(
+        workspacePath,
+        "governed-message-artifact-family"
+      )
+    ),
+    false
+  );
+
+  const written = migrateContract({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(written.migrationDisposition, "CONTRACT_MIGRATED");
+  assert.equal(
+    validateContract({
+      contractPath,
+      workspacePath
+    }).contractValidationDisposition,
+    "CONTRACT_VALID"
+  );
+  assert.equal(
+    existsSync(
+      path.join(
+        workspacePath,
+        "governed-message-artifact-family"
+      )
+    ),
+    false
+  );
+  const replay = migrateContract({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(
+    replay.migrationDisposition,
+    "MIGRATION_NOT_REQUIRED"
+  );
+  assert.deepEqual(replay.diff, []);
+  assert.equal(replay.writeDisposition, "CONTRACT_UNCHANGED");
+});
+
+test("commitment reconciliation is deterministic and never projects artifacts", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    contract.artifacts[0].purpose =
+      "Constrains a deliberately revised governed message value.";
+  });
+  const before = readFileSync(contractPath);
+  const preview = reconcileContractCommitments({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    preview.reconciliationDisposition,
+    "DERIVED_COMMITMENT_RECONCILIATION_REQUIRED"
+  );
+  assert.deepEqual(
+    preview.diff.map((change) => change.path),
+    [
+      "/artifacts/5/proof/contentSha256",
+      "/artifacts/5/proof/expectedByteLength"
+    ]
+  );
+  assert.deepEqual(readFileSync(contractPath), before);
+  assert.equal(
+    existsSync(
+      path.join(
+        workspacePath,
+        "governed-message-artifact-family"
+      )
+    ),
+    false
+  );
+
+  const written = reconcileContractCommitments({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(
+    written.writeDisposition,
+    "CONTRACT_COMMITMENTS_WRITTEN"
+  );
+  assert.equal(
+    validateContract({
+      contractPath,
+      workspacePath
+    }).contractValidationDisposition,
+    "CONTRACT_VALID"
+  );
+  const replay = reconcileContractCommitments({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    replay.reconciliationDisposition,
+    "DERIVED_COMMITMENTS_CURRENT"
+  );
+  assert.deepEqual(replay.diff, []);
 });
 
 test("source observation records exact semantic expressions", () => {
@@ -357,10 +563,13 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   assert.equal(first.artifactFamily.observedArtifactCount, 8);
 
   const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
+  const profile = JSON.parse(
+    readFileSync(DEFAULT_CONFORMANCE_PROFILE_PATH, "utf8")
+  );
   assert.deepEqual(first.artifactFamily.authorityClosure, {
     authorityType: "closed-world-authority-closure.v1",
     profileSha256: sha256(
-      canonicalJsonBytes(contract.authorityClosure)
+      canonicalJsonBytes(profile.authorityClosure)
     ),
     disposition: "ARTIFACT_AUTHORITY_CLOSED"
   });
@@ -553,14 +762,15 @@ test("proof is invalidated when a declared evaluation mutates the subject", (t) 
 test("schema identity and digest failures do not evaluate artifact conformance", (t) => {
   const workspacePath = makeWorkspace(t);
   const wrongIdentityPath = copyContract(workspacePath, (contract) => {
-    contract.schema.identity = "https://governed.local/schemas/not-admitted.json";
+    contract.interpretationBase.schema.identity =
+      "https://governed.local/schemas/not-admitted.json";
   });
   const wrongIdentity = validateContract({ contractPath: wrongIdentityPath });
   assert.equal(wrongIdentity.contractValidationDisposition, "SCHEMA_NOT_ADMITTED");
   assert.equal(wrongIdentity.conformanceDisposition, "NOT_EVALUATED");
 
   const wrongDigestPath = copyContract(workspacePath, (contract) => {
-    contract.schema.digest = `sha256:${"0".repeat(64)}`;
+    contract.interpretationBase.schema.digest = `sha256:${"0".repeat(64)}`;
   });
   const wrongDigest = validateContract({ contractPath: wrongDigestPath });
   assert.equal(wrongDigest.contractValidationDisposition, "SCHEMA_DIGEST_MISMATCH");
@@ -595,10 +805,10 @@ test("schema-valid shape and semantic binding are separate contract checks", (t)
   );
 });
 
-test("artifact authority closure is mandatory and cannot be weakened", (t) => {
+test("the conformance profile is mandatory and cannot be weakened", (t) => {
   const workspacePath = makeWorkspace(t);
   const missingProfilePath = copyContract(workspacePath, (contract) => {
-    delete contract.authorityClosure;
+    delete contract.interpretationBase.conformanceProfile;
   });
   assert.equal(
     validateContract({
@@ -607,12 +817,28 @@ test("artifact authority closure is mandatory and cannot be weakened", (t) => {
     "CONTRACT_INVALID"
   );
 
+  const weakenedProfile = JSON.parse(
+    readFileSync(DEFAULT_CONFORMANCE_PROFILE_PATH, "utf8")
+  );
+  weakenedProfile.authorityClosure.resolution.ambientAuthority =
+    "permitted";
+  const weakenedProfileFile = path.join(
+    workspacePath,
+    "weakened-conformance-profile.json"
+  );
+  writeFileSync(
+    weakenedProfileFile,
+    canonicalJsonBytes(weakenedProfile)
+  );
   const weakenedProfilePath = copyContract(workspacePath, (contract) => {
-    contract.authorityClosure.resolution.ambientAuthority = "permitted";
+    contract.interpretationBase.conformanceProfile.digest = sha256(
+      canonicalJsonBytes(weakenedProfile)
+    );
   });
   assert.equal(
     validateContract({
-      contractPath: weakenedProfilePath
+      contractPath: weakenedProfilePath,
+      conformanceProfilePath: weakenedProfileFile
     }).contractValidationDisposition,
     "CONTRACT_INVALID"
   );

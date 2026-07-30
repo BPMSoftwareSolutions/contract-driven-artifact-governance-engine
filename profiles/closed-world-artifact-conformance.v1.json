@@ -1,0 +1,182 @@
+{
+  "artifactPosture": {
+    "contentDigestRequired": true,
+    "mutabilityPosture": "replace-by-projection",
+    "ownership": "contract-owned",
+    "projectionMode": "projected"
+  },
+  "authorityClosure": {
+    "admission": {
+      "requiredDisposition": "ARTIFACT_AUTHORITY_CLOSED"
+    },
+    "authorityType": "closed-world-authority-closure.v1",
+    "coverage": {
+      "artifactPaths": "exact",
+      "artifactScope": "exact",
+      "claimProofRequirements": "exact",
+      "decisions": "exact",
+      "declarations": "exact",
+      "dependencies": "exact",
+      "dependencyImports": "exact",
+      "dependencyInvocations": "exact",
+      "effects": "exact",
+      "failurePolicies": "exact",
+      "iterations": "exact",
+      "operationAuthorities": "exact",
+      "projectionMappings": "exact",
+      "responsibilities": "exact",
+      "resultContracts": "exact",
+      "runtimeAuthorities": "exact",
+      "semanticEdges": "exact"
+    },
+    "resolution": {
+      "ambientAuthority": "forbidden",
+      "ambiguousObservations": "reject",
+      "cardinality": "exactly-one",
+      "missingDeclaredAuthorities": "reject",
+      "undeclaredObservations": "reject",
+      "unresolvedObservations": "reject"
+    }
+  },
+  "claimPrerequisites": {
+    "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+    "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+    "requiredProofDisposition": "PROOF_COMPLETE",
+    "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+    "requiredTrustDisposition": "TRUSTED"
+  },
+  "conformance": {
+    "evaluationOrder": [
+      "validate-contract",
+      "resolve-artifact-plan",
+      "observe-artifact-state",
+      "evaluate-artifact-inventory",
+      "evaluate-projection-identity",
+      "evaluate-authority-closure",
+      "evaluate-artifact-content",
+      "evaluate-artifact-structure",
+      "evaluate-artifact-freshness",
+      "evaluate-artifact-relationships",
+      "evaluate-declared-commands",
+      "verify-proof-subject-stability",
+      "issue-trust-disposition"
+    ],
+    "failClosed": true,
+    "terminalDispositions": {
+      "artifactConformance": [
+        "ARTIFACT_MISSING",
+        "ARTIFACT_UNDECLARED",
+        "ARTIFACT_CONTENT_MISMATCH",
+        "ARTIFACT_STRUCTURE_MISMATCH",
+        "ARTIFACT_STALE",
+        "PROJECTION_IDENTITY_MISMATCH",
+        "ARTIFACT_ESCAPES_CONTRACT",
+        "EVALUATION_INVALIDATED_BY_MUTATION",
+        "CONTRACT_AUTHORITY_CLOSED"
+      ],
+      "contractValidation": [
+        "CONTRACT_VALID",
+        "CONTRACT_INVALID",
+        "SCHEMA_NOT_ADMITTED",
+        "SCHEMA_DIGEST_MISMATCH"
+      ],
+      "trustDispositions": [
+        "TRUSTED",
+        "REJECTED",
+        "NOT_EVALUATED"
+      ],
+      "trustPostures": [
+        "CONFORMS",
+        "DRIFTED",
+        "MISSING",
+        "EXTRA",
+        "STALE",
+        "CONTAMINATED",
+        "NOT_EVALUATED"
+      ]
+    }
+  },
+  "operationAuthorities": {
+    "authoredMutation": {
+      "governedArtifacts": "forbidden",
+      "posture": "sole-authored-change-authority",
+      "target": "contract"
+    },
+    "authorityType": "governed-operation-authorities.v2",
+    "migration": {
+      "artifactProjection": "forbidden",
+      "mode": "candidate-first",
+      "operation": "migrate",
+      "sourceInterpretation": "historical-schema-digest",
+      "targetMutation": "contract-only",
+      "trustIssuance": "forbidden",
+      "writeMode": "explicit-only"
+    },
+    "projection": {
+      "artifactPosture": "replace-by-projection",
+      "operation": "project",
+      "subjectMutation": "declared-projections-only",
+      "writeMode": "explicit-only"
+    },
+    "proof": {
+      "artifactProjection": "forbidden",
+      "declaredEvaluations": "read-only",
+      "mode": "read-only",
+      "mutationDisposition": "EVALUATION_INVALIDATED_BY_MUTATION",
+      "operation": "prove",
+      "receiptTarget": "outside-governed-subject",
+      "receiptWrite": "explicit-only",
+      "requiredSubjectDisposition": "PROOF_SUBJECT_UNCHANGED",
+      "subjectMutation": "forbidden"
+    },
+    "reconciliation": {
+      "artifactProjection": "forbidden",
+      "candidateProjection": "in-memory",
+      "contractMutation": "commitment-fields-only",
+      "mode": "candidate-first",
+      "operation": "reconcile",
+      "trustIssuance": "forbidden",
+      "writeMode": "explicit-only"
+    }
+  },
+  "profileId": "closed-world-artifact-conformance.v1",
+  "profileType": "governed-artifact-conformance-profile.v1",
+  "projectionLedger": {
+    "ledgerType": "governed-artifact-projection-ledger.v1",
+    "requiredEvidence": [
+      "contract-identity",
+      "interpretation-base",
+      "projector-registry-identity",
+      "artifact-scope-authority",
+      "authority-closure-profile",
+      "operation-authorities",
+      "dependency-authorities",
+      "effect-authorities",
+      "runtime-authorities",
+      "source-authorities",
+      "artifact-projection-identities",
+      "artifact-content-commitments"
+    ]
+  },
+  "receipt": {
+    "receiptType": "governed-artifact-conformance-receipt.v1",
+    "requiredEvidence": [
+      "contract-identity",
+      "interpretation-base",
+      "schema-identity",
+      "registry-identities",
+      "artifact-observations",
+      "projection-identity",
+      "artifact-scope-authority",
+      "artifact-scope-observation",
+      "authority-closure-profile",
+      "authority-closure-disposition",
+      "operation-authorities",
+      "proof-subject-stability",
+      "source-authority-observations",
+      "conformance-findings",
+      "claim-policies",
+      "trust-disposition"
+    ]
+  }
+}

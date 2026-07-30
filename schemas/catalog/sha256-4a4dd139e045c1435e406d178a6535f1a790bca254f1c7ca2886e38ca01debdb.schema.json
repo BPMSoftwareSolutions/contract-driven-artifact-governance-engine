@@ -8,14 +8,18 @@
   "required": [
     "$schema",
     "contract",
-    "interpretationBase",
+    "schema",
     "subject",
     "workspace",
+    "projectorRegistry",
+    "verifierRegistry",
     "projectionLedger",
     "dependencies",
     "effects",
     "runtimeAuthorities",
     "artifacts",
+    "authorityClosure",
+    "operationAuthorities",
     "exclusions",
     "conformance",
     "receipt",
@@ -28,14 +32,20 @@
     "contract": {
       "$ref": "#/$defs/contractIdentity"
     },
-    "interpretationBase": {
-      "$ref": "#/$defs/interpretationBase"
+    "schema": {
+      "$ref": "#/$defs/admittedDependency"
     },
     "subject": {
       "$ref": "#/$defs/subject"
     },
     "workspace": {
       "$ref": "#/$defs/workspace"
+    },
+    "projectorRegistry": {
+      "$ref": "#/$defs/admittedDependency"
+    },
+    "verifierRegistry": {
+      "$ref": "#/$defs/admittedDependency"
     },
     "projectionLedger": {
       "$ref": "#/$defs/projectionLedger"
@@ -64,6 +74,12 @@
       "items": {
         "$ref": "#/$defs/artifact"
       }
+    },
+    "authorityClosure": {
+      "$ref": "#/$defs/authorityClosure"
+    },
+    "operationAuthorities": {
+      "$ref": "#/$defs/operationAuthorities"
     },
     "exclusions": {
       "type": "array",
@@ -149,35 +165,97 @@
         }
       }
     },
-    "interpretationBase": {
+    "authorityClosure": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "engine",
-        "schema",
-        "conformanceProfile",
-        "projectorRegistry",
-        "verifierRegistry",
-        "migrationRegistry"
+        "authorityType",
+        "coverage",
+        "resolution",
+        "admission"
       ],
       "properties": {
-        "engine": {
-          "$ref": "#/$defs/admittedDependency"
+        "authorityType": {
+          "const": "closed-world-authority-closure.v1"
         },
-        "schema": {
-          "$ref": "#/$defs/admittedDependency"
+        "coverage": {
+          "const": {
+            "artifactPaths": "exact",
+            "artifactScope": "exact",
+            "claimProofRequirements": "exact",
+            "declarations": "exact",
+            "dependencies": "exact",
+            "dependencyImports": "exact",
+            "dependencyInvocations": "exact",
+            "decisions": "exact",
+            "effects": "exact",
+            "failurePolicies": "exact",
+            "iterations": "exact",
+            "operationAuthorities": "exact",
+            "projectionMappings": "exact",
+            "responsibilities": "exact",
+            "resultContracts": "exact",
+            "runtimeAuthorities": "exact",
+            "semanticEdges": "exact"
+          }
         },
-        "conformanceProfile": {
-          "$ref": "#/$defs/admittedDependency"
+        "resolution": {
+          "const": {
+            "ambiguousObservations": "reject",
+            "ambientAuthority": "forbidden",
+            "cardinality": "exactly-one",
+            "missingDeclaredAuthorities": "reject",
+            "undeclaredObservations": "reject",
+            "unresolvedObservations": "reject"
+          }
         },
-        "projectorRegistry": {
-          "$ref": "#/$defs/admittedDependency"
+        "admission": {
+          "const": {
+            "requiredDisposition": "ARTIFACT_AUTHORITY_CLOSED"
+          }
+        }
+      }
+    },
+    "operationAuthorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "authoredMutation",
+        "projection",
+        "proof"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "governed-operation-authorities.v1"
         },
-        "verifierRegistry": {
-          "$ref": "#/$defs/admittedDependency"
+        "authoredMutation": {
+          "const": {
+            "target": "contract",
+            "posture": "sole-authored-change-authority",
+            "governedArtifacts": "forbidden"
+          }
         },
-        "migrationRegistry": {
-          "$ref": "#/$defs/admittedDependency"
+        "projection": {
+          "const": {
+            "operation": "project",
+            "writeMode": "explicit-only",
+            "subjectMutation": "declared-projections-only",
+            "artifactPosture": "replace-by-projection"
+          }
+        },
+        "proof": {
+          "const": {
+            "operation": "prove",
+            "mode": "read-only",
+            "subjectMutation": "forbidden",
+            "artifactProjection": "forbidden",
+            "declaredEvaluations": "read-only",
+            "receiptWrite": "explicit-only",
+            "receiptTarget": "outside-governed-subject",
+            "requiredSubjectDisposition": "PROOF_SUBJECT_UNCHANGED",
+            "mutationDisposition": "EVALUATION_INVALIDATED_BY_MUTATION"
+          }
         }
       }
     },
@@ -303,6 +381,8 @@
         "purpose",
         "relativePath",
         "mediaType",
+        "ownership",
+        "mutabilityPosture",
         "projection",
         "relationships",
         "proof"
@@ -324,6 +404,12 @@
         "mediaType": {
           "type": "string",
           "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"
+        },
+        "ownership": {
+          "const": "contract-owned"
+        },
+        "mutabilityPosture": {
+          "const": "replace-by-projection"
         },
         "projection": {
           "$ref": "#/$defs/projection"
@@ -1176,11 +1262,15 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "mode",
         "projectorId",
         "authorityId",
         "authority"
       ],
       "properties": {
+        "mode": {
+          "const": "projected"
+        },
         "projectorId": {
           "$ref": "#/$defs/identifier"
         },
@@ -1394,6 +1484,7 @@
       "additionalProperties": false,
       "required": [
         "verifierIds",
+        "contentDigestRequired",
         "contentSha256",
         "expectedByteLength"
       ],
@@ -1405,6 +1496,9 @@
             "$ref": "#/$defs/identifier"
           },
           "uniqueItems": true
+        },
+        "contentDigestRequired": {
+          "const": true
         },
         "contentSha256": {
           "$ref": "#/$defs/sha256"
@@ -1442,14 +1536,91 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "artifactEvaluations"
+        "failClosed",
+        "evaluationOrder",
+        "artifactEvaluations",
+        "terminalDispositions"
       ],
       "properties": {
+        "failClosed": {
+          "const": true
+        },
+        "evaluationOrder": {
+          "const": [
+            "validate-contract",
+            "resolve-artifact-plan",
+            "observe-artifact-state",
+            "evaluate-artifact-inventory",
+            "evaluate-projection-identity",
+            "evaluate-authority-closure",
+            "evaluate-artifact-content",
+            "evaluate-artifact-structure",
+            "evaluate-artifact-freshness",
+            "evaluate-artifact-relationships",
+            "evaluate-declared-commands",
+            "verify-proof-subject-stability",
+            "issue-trust-disposition"
+          ]
+        },
         "artifactEvaluations": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/artifactEvaluation"
           }
+        },
+        "terminalDispositions": {
+          "$ref": "#/$defs/terminalDispositions"
+        }
+      }
+    },
+    "terminalDispositions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contractValidation",
+        "artifactConformance",
+        "trustPostures",
+        "trustDispositions"
+      ],
+      "properties": {
+        "contractValidation": {
+          "const": [
+            "CONTRACT_VALID",
+            "CONTRACT_INVALID",
+            "SCHEMA_NOT_ADMITTED",
+            "SCHEMA_DIGEST_MISMATCH"
+          ]
+        },
+        "artifactConformance": {
+          "const": [
+            "ARTIFACT_MISSING",
+            "ARTIFACT_UNDECLARED",
+            "ARTIFACT_CONTENT_MISMATCH",
+            "ARTIFACT_STRUCTURE_MISMATCH",
+            "ARTIFACT_STALE",
+            "PROJECTION_IDENTITY_MISMATCH",
+            "ARTIFACT_ESCAPES_CONTRACT",
+            "EVALUATION_INVALIDATED_BY_MUTATION",
+            "CONTRACT_AUTHORITY_CLOSED"
+          ]
+        },
+        "trustPostures": {
+          "const": [
+            "CONFORMS",
+            "DRIFTED",
+            "MISSING",
+            "EXTRA",
+            "STALE",
+            "CONTAMINATED",
+            "NOT_EVALUATED"
+          ]
+        },
+        "trustDispositions": {
+          "const": [
+            "TRUSTED",
+            "REJECTED",
+            "NOT_EVALUATED"
+          ]
         }
       }
     },
@@ -1491,7 +1662,12 @@
       "additionalProperties": false,
       "required": [
         "claimId",
-        "claim"
+        "claim",
+        "requiredConformanceDisposition",
+        "requiredAuthorityClosureDisposition",
+        "requiredScopeDisposition",
+        "requiredProofDisposition",
+        "requiredTrustDisposition"
       ],
       "properties": {
         "claimId": {
@@ -1503,6 +1679,21 @@
             "CONTRACT_AUTHORITY_CLOSED",
             "TRUSTED"
           ]
+        },
+        "requiredConformanceDisposition": {
+          "const": "CONTRACT_AUTHORITY_CLOSED"
+        },
+        "requiredAuthorityClosureDisposition": {
+          "const": "ARTIFACT_AUTHORITY_CLOSED"
+        },
+        "requiredScopeDisposition": {
+          "const": "ARTIFACT_SCOPE_CLOSED"
+        },
+        "requiredProofDisposition": {
+          "const": "PROOF_COMPLETE"
+        },
+        "requiredTrustDisposition": {
+          "const": "TRUSTED"
         }
       }
     },
@@ -1510,11 +1701,35 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "relativePath"
+        "receiptType",
+        "relativePath",
+        "requiredEvidence"
       ],
       "properties": {
+        "receiptType": {
+          "const": "governed-artifact-conformance-receipt.v1"
+        },
         "relativePath": {
           "$ref": "#/$defs/relativePath"
+        },
+        "requiredEvidence": {
+          "const": [
+            "contract-identity",
+            "schema-identity",
+            "registry-identities",
+            "artifact-observations",
+            "projection-identity",
+            "artifact-scope-authority",
+            "artifact-scope-observation",
+            "authority-closure-profile",
+            "authority-closure-disposition",
+            "operation-authorities",
+            "proof-subject-stability",
+            "source-authority-observations",
+            "conformance-findings",
+            "claim-policies",
+            "trust-disposition"
+          ]
         }
       }
     },
@@ -1522,11 +1737,31 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "relativePath"
+        "ledgerType",
+        "relativePath",
+        "requiredEvidence"
       ],
       "properties": {
+        "ledgerType": {
+          "const": "governed-artifact-projection-ledger.v1"
+        },
         "relativePath": {
           "$ref": "#/$defs/relativePath"
+        },
+        "requiredEvidence": {
+          "const": [
+            "contract-identity",
+            "projector-registry-identity",
+            "artifact-scope-authority",
+            "authority-closure-profile",
+            "operation-authorities",
+            "dependency-authorities",
+            "effect-authorities",
+            "runtime-authorities",
+            "source-authorities",
+            "artifact-projection-identities",
+            "artifact-content-commitments"
+          ]
         }
       }
     }

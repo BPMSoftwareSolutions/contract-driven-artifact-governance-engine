@@ -7,9 +7,11 @@ import {
   DEFAULT_VERIFIER_REGISTRY_PATH,
   evaluateConformance,
   evaluateReceiptClaim,
+  migrateContract,
   observeArtifactState,
   projectArtifactFamily,
   proveGovernedArtifactFamily,
+  reconcileContractCommitments,
   resolveArtifactPlan,
   validateContract,
   writeCanonicalReceipt
@@ -30,6 +32,8 @@ function usage() {
     "Usage:",
     "  governed-artifacts validate --contract <path> [inputs]",
     "  governed-artifacts plan --contract <path> [inputs]",
+    "  governed-artifacts reconcile --contract <path> [--write] [inputs]",
+    "  governed-artifacts migrate --contract <path> [--write] [inputs]",
     "  governed-artifacts project --contract <path> --workspace <path> (--write|--check) [inputs]",
     "  governed-artifacts observe --contract <path> --workspace <path> [inputs]",
     "  governed-artifacts evaluate --contract <path> --workspace <path> [--write-receipt] [inputs]",
@@ -45,6 +49,9 @@ function usage() {
     "  --schema <path>",
     "  --projector-registry <path>",
     "  --verifier-registry <path>",
+    "  --conformance-profile <path>",
+    "  --migration-registry <path>",
+    "  --schema-catalog <path>",
     "  --observed-at <ISO-8601 timestamp>",
     "",
     "Release inputs:",
@@ -88,6 +95,12 @@ function parseArguments(argv) {
         options.projectorRegistryPath = value;
       } else if (argument === "--verifier-registry") {
         options.verifierRegistryPath = value;
+      } else if (argument === "--conformance-profile") {
+        options.conformanceProfilePath = value;
+      } else if (argument === "--migration-registry") {
+        options.migrationRegistryPath = value;
+      } else if (argument === "--schema-catalog") {
+        options.schemaCatalogPath = value;
       } else if (argument === "--workspace") {
         options.workspacePath = value;
       } else if (argument === "--observed-at") {
@@ -114,10 +127,12 @@ function execute(operation, options) {
   if (
     options.mode !== undefined &&
     operation !== "project" &&
-    operation !== "prove"
+    operation !== "prove" &&
+    operation !== "reconcile" &&
+    operation !== "migrate"
   ) {
     throw new Error(
-      "--write and --check are projection flags; prove accepts only the read-only --check compatibility alias."
+      "--write and --check are admitted only for project, reconcile, migrate, and the read-only prove compatibility alias."
     );
   }
   if (operation === "release-observe") {
@@ -184,6 +199,12 @@ function execute(operation, options) {
   if (operation === "plan") {
     return resolveArtifactPlan(options);
   }
+  if (operation === "reconcile") {
+    return reconcileContractCommitments(options);
+  }
+  if (operation === "migrate") {
+    return migrateContract(options);
+  }
   if (operation === "project") {
     if (!["write", "check"].includes(options.mode)) {
       throw new Error("Projection requires an explicit --write or --check.");
@@ -231,6 +252,9 @@ try {
       result.conformanceDisposition === "RELEASE_OBSERVATION_FAILED" ||
       result.trustDisposition === "RELEASE_REJECTED" ||
       result.claimDisposition === "RELEASE_CLAIM_EXCEEDS_EVIDENCE" ||
+      (result.reconciliationDisposition ===
+        "DERIVED_COMMITMENT_RECONCILIATION_REQUIRED" &&
+        result.reconciliationMode !== "write") ||
       (result.projectionDisposition !== undefined &&
         result.projectionDisposition !== "ARTIFACT_FAMILY_PROJECTED");
     process.exitCode = rejected ? 1 : 0;

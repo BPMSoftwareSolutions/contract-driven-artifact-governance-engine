@@ -12,15 +12,15 @@ bytes and bind their identities in a canonical projection ledger. Registered
 verifiers observe the target workspace, evaluate the declared artifact family,
 and issue a canonical trust receipt.
 
-The contract is simultaneously:
+The contract supplies consumer-owned authority:
 
 - the reviewed design authority;
 - the complete artifact declaration;
 - the artifact relationship graph;
 - the exact byte authority;
 - the exact authority for every semantic control surface;
-- the conformance policy; and
-- the evidence requirement for a trust disposition.
+- the selected verification authorities; and
+- independent content digests and byte lengths for projected artifacts.
 
 Artifact files are projections. Durable change begins in the admitted contract.
 The contract is the only authored mutation authority in the consumer workspace;
@@ -29,16 +29,24 @@ replace-only projected state.
 
 ## Trusted interpretation base
 
-Four independently pinned inputs control every operation:
+Six independently pinned inputs form the interpretation-base commitment:
 
-1. the admitted contract schema;
-2. the Governed Artifact Contract;
-3. the projector registry; and
-4. the verifier registry.
+1. the engine module;
+2. the admitted contract schema;
+3. the conformance profile;
+4. the projector registry;
+5. the verifier registry; and
+6. the migration registry.
 
 The target workspace is observed state, never authority. Pin the package
-version, schema digest, and registry digests so a change to the interpretation
-base cannot silently redefine an admitted contract.
+version and every interpretation-base digest so a change to the authority that
+reads a contract cannot silently redefine its acceptance standard.
+
+The content-addressed conformance profile owns engine protocol: artifact
+postures, closed-world authority closure, operation boundaries, evaluation
+order, terminal dispositions, claim prerequisites, and receipt and projection
+ledger evidence. Consumer contracts bind the profile identity and digest
+without restating those constants.
 
 ## Contract validation gate
 
@@ -86,11 +94,11 @@ Only `CONTRACT_AUTHORITY_CLOSED` produces `TRUSTED`.
 Authority closure is a closed-world rule. Every applicable control surface is
 present as structured contract data:
 
-The top-level `authorityClosure` profile makes that rule explicit. The admitted
-schema fixes every coverage surface to `exact`, requires each observation to
-resolve to exactly one authority, and rejects ambiguous, missing, undeclared,
-or unresolved authority. Ambient authority is always `forbidden`; these values
-are schema constants rather than contract options. Explicitly empty authority
+The content-addressed conformance profile makes that rule explicit. It fixes
+every coverage surface to `exact`, requires each observation to resolve to
+exactly one authority, and rejects ambiguous, missing, undeclared, or
+unresolved authority. Ambient authority is always `forbidden`; these values
+are engine protocol rather than consumer choices. Explicitly empty authority
 collections remain closed declarations.
 
 | Surface | Required contract authority |
@@ -177,8 +185,7 @@ closed disposition.
 
 ## Operation authorities
 
-The top-level `operationAuthorities` block separates the three mutation
-classes:
+The conformance profile separates five operation classes:
 
 - `authoredMutation` grants sole authored change authority to the contract and
   forbids authored changes to governed artifacts;
@@ -186,6 +193,10 @@ classes:
   and only when write mode is explicit; and
 - `proof` is read-only, forbids artifact projection and subject mutation, and
   permits an explicitly requested receipt only outside the governed subject.
+- `reconciliation` projects candidates only in memory and may change only
+  `contentSha256` and `expectedByteLength` in the contract.
+- `migration` interprets the source through its exact historical schema and
+  may replace only the contract after an exact candidate diff.
 
 Every artifact is `contract-owned`, `replace-by-projection`, and `projected`.
 The contract itself must remain outside governed artifact scope. Projection is
@@ -196,6 +207,36 @@ Conformance captures the interpretation authority and evaluated subject before
 and after evaluation. A change during that interval produces
 `EVALUATION_INVALIDATED_BY_MUTATION`, `PROOF_INCOMPLETE`, and `REJECTED`.
 Stable proof records `PROOF_SUBJECT_UNCHANGED`.
+
+## Commitment reconciliation
+
+Projected content commitments remain independent contract authority. The same
+projector therefore cannot silently redefine both the artifact and its only
+acceptance digest.
+
+`reconcile` projects candidate bytes in memory, calculates SHA-256 and byte
+length, and returns the candidate contract plus an exact field diff. It does
+not write artifacts or issue trust. `reconcile --write` atomically updates only
+the two commitment fields. A replay must return zero diff.
+
+This is `DERIVED_COMMITMENT_RECONCILIATION_REQUIRED`, not a recursive
+fixed-point condition: the contract-derived Markdown projector excludes
+commitment values from its projection input.
+
+## Historical migration
+
+The schema catalog maps each admitted digest to exact durable schema bytes.
+The migration registry admits exact source-digest to target-digest edges and
+binds each edge to a content-addressed migration authority. Every changed field
+must be classified as preserved, transformed, introduced, or removed;
+unclassified changes fail closed.
+
+`migrate` historically validates the source, applies one admitted edge,
+reconciles derived commitments in memory, validates the target, and returns a
+candidate contract plus exact diff. `migrate --write` atomically replaces the
+contract only. It never projects workspace artifacts or issues trust. Replaying
+the operation on the migrated contract returns `MIGRATION_NOT_REQUIRED` with
+zero diff.
 
 ## Release boundary
 
@@ -293,6 +334,28 @@ Inspect the resolved artifact plan:
 ```text
 governed-artifacts plan \
   --contract architecture/artifact-family.contract.json
+```
+
+Reconcile independent projected-content commitments without writing artifacts:
+
+```text
+governed-artifacts reconcile \
+  --contract architecture/artifact-family.contract.json
+
+governed-artifacts reconcile \
+  --contract architecture/artifact-family.contract.json \
+  --write
+```
+
+Historically validate and migrate a contract without projecting artifacts:
+
+```text
+governed-artifacts migrate \
+  --contract architecture/artifact-family.contract.json
+
+governed-artifacts migrate \
+  --contract architecture/artifact-family.contract.json \
+  --write
 ```
 
 Project declared bytes:
@@ -421,9 +484,11 @@ A current release receipt can then admit `RELEASE_READY`. The repository's
 npm dry-run inspection. Archive reproducibility without durable artifact
 conformance is insufficient.
 
-Each operation also accepts explicit `--schema`, `--projector-registry`, and
-`--verifier-registry` paths. Their exact file digests must equal the admitted
-identities in the contract. When an artifact declares `validThroughUtc`, use
+Each operation also accepts explicit `--schema`, `--conformance-profile`,
+`--projector-registry`, `--verifier-registry`, `--migration-registry`, and
+`--schema-catalog` paths. Their exact file digests must equal the admitted
+identities in the contract or migration registry. When an artifact declares
+`validThroughUtc`, use
 `--observed-at <ISO-8601 timestamp>` to make the freshness observation
 reproducible. An observation after that authority produces `ARTIFACT_STALE`.
 
@@ -449,7 +514,7 @@ public receipt. The example contains no artifact bytes outside its contract.
 
 The receipt binds:
 
-- exact contract, schema, and registry digests;
+- exact contract and interpretation-base digests;
 - artifact-scope authority, resolved path set, observation digest, and
   disposition;
 - every artifact observation;

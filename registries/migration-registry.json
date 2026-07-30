@@ -1,0 +1,52 @@
+{
+  "migrations": [
+    {
+      "introducedAuthorities": [
+        "interpretation-base"
+      ],
+      "migrationAuthority": {
+        "digest": "sha256:a2e2a35c0a1180d6a0b2142ea49292f0e70c1f128de05b77824ceff49d9b3b69",
+        "relativePath": "migrations/artifact-contract.1.5-to-1.6.json"
+      },
+      "migrationId": "artifact-contract.1.5-to-1.6",
+      "preservedAuthorities": [
+        "artifact-identities",
+        "artifact-paths",
+        "artifact-projection-authorities",
+        "artifact-relationships",
+        "artifact-verifier-selections",
+        "claim-identities",
+        "command-evaluations",
+        "dependency-authorities",
+        "effect-authorities",
+        "exclusions",
+        "runtime-authorities",
+        "source-authorities",
+        "subject-authority",
+        "workspace-authority"
+      ],
+      "removedAuthorities": [
+        "consumer-restated-artifact-postures",
+        "consumer-restated-authority-closure",
+        "consumer-restated-claim-prerequisites",
+        "consumer-restated-evaluation-protocol",
+        "consumer-restated-operation-authorities",
+        "consumer-restated-receipt-evidence",
+        "consumer-restated-ledger-evidence",
+        "separate-schema-and-registry-bindings"
+      ],
+      "sourceSchemaDigest": "sha256:4a4dd139e045c1435e406d178a6535f1a790bca254f1c7ca2886e38ca01debdb",
+      "targetSchemaDigest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
+      "transformedAuthorities": [
+        "contract-version",
+        "derived-content-commitments"
+      ]
+    }
+  ],
+  "registryId": "governed-artifact-migration-registry.v1",
+  "registryType": "digest-to-digest-migration-registry.v1",
+  "schemaCatalog": {
+    "digest": "sha256:a9302be4b9410a585f915d86f5d3c8a67f564ccaa67be6e2afb517125424ed20",
+    "identity": "governed-artifact-schema-catalog.v1"
+  }
+}

@@ -5,6 +5,8 @@
       "artifactId": "message-schema.v1",
       "artifactKind": "json-schema",
       "mediaType": "application/schema+json",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
       "projection": {
         "authority": {
           "authorityType": "canonical-json-value.v1",
@@ -26,9 +28,11 @@
           }
         },
         "authorityId": "message-schema-authority.v1",
+        "mode": "projected",
         "projectorId": "canonical-json-value-projector.v1"
       },
       "proof": {
+        "contentDigestRequired": true,
         "contentSha256": "sha256:f8c8fda67994548bf132ec4899879fb40690e46ecac65c9343fbdad5503826c6",
         "expectedByteLength": 337,
         "metaSchemaValidationRequired": true,
@@ -45,6 +49,8 @@
       "artifactId": "message-contract.v1",
       "artifactKind": "json-contract",
       "mediaType": "application/json",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
       "projection": {
         "authority": {
           "authorityType": "canonical-json-value.v1",
@@ -53,9 +59,11 @@
           }
         },
         "authorityId": "message-contract-authority.v1",
+        "mode": "projected",
         "projectorId": "canonical-json-value-projector.v1"
       },
       "proof": {
+        "contentDigestRequired": true,
         "contentSha256": "sha256:29236fc829a3feb7c122b32c8da5269c8338a2c6ed90d432f2aeccf31cb5452b",
         "expectedByteLength": 76,
         "verifierIds": [
@@ -75,6 +83,8 @@
       "artifactId": "message-projector.v1",
       "artifactKind": "javascript-module",
       "mediaType": "text/javascript",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
       "projection": {
         "authority": {
           "authorityType": "lossless-source-tokens.v1",
@@ -475,9 +485,11 @@
           ]
         },
         "authorityId": "message-projector-authority.v1",
+        "mode": "projected",
         "projectorId": "lossless-source-token-projector.v1"
       },
       "proof": {
+        "contentDigestRequired": true,
         "contentSha256": "sha256:3c40ec92f987cd612160005081a6c6a61a92fb99ffac293832f84324a5f4790e",
         "expectedByteLength": 280,
         "verifierIds": [
@@ -637,6 +649,8 @@
       "artifactId": "message-command.v1",
       "artifactKind": "javascript-command",
       "mediaType": "text/javascript",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
       "projection": {
         "authority": {
           "authorityType": "lossless-source-tokens.v1",
@@ -1017,9 +1031,11 @@
           ]
         },
         "authorityId": "message-command-authority.v1",
+        "mode": "projected",
         "projectorId": "lossless-source-token-projector.v1"
       },
       "proof": {
+        "contentDigestRequired": true,
         "contentSha256": "sha256:f3cfcfa696be55f4bfbefbb191f267fa678051f6e8ebe2539975365c31117ae1",
         "expectedByteLength": 311,
         "verifierIds": [
@@ -1218,6 +1234,8 @@
       "artifactId": "message-verification.v1",
       "artifactKind": "verification-command",
       "mediaType": "text/javascript",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
       "projection": {
         "authority": {
           "authorityType": "lossless-source-tokens.v1",
@@ -1594,9 +1612,11 @@
           ]
         },
         "authorityId": "message-verification-authority.v1",
+        "mode": "projected",
         "projectorId": "lossless-source-token-projector.v1"
       },
       "proof": {
+        "contentDigestRequired": true,
         "contentSha256": "sha256:7c7276f2dc4548dfe248afccc4ffd405ce85516947feacbf7c7036aa3b4e9c52",
         "expectedByteLength": 420,
         "verifierIds": [
@@ -1789,6 +1809,8 @@
       "artifactId": "artifact-family-readme.v1",
       "artifactKind": "markdown-document",
       "mediaType": "text/markdown",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
       "projection": {
         "authority": {
           "authorityType": "governed-artifact-contract-markdown.v1",
@@ -1843,11 +1865,13 @@
           ]
         },
         "authorityId": "artifact-family-readme-authority.v1",
+        "mode": "projected",
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:9256d1b767d1762201ba48181ab175574b7ce4ffb5d512cb775699d71461593c",
-        "expectedByteLength": 19420,
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:47e91131c61a1b0c84f5519c50bf7185449255df41ea5cbf0b12c2520e7dabe6",
+        "expectedByteLength": 18372,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -1894,15 +1918,19 @@
       "artifactId": "closed-loop-diagram.v1",
       "artifactKind": "mermaid-diagram",
       "mediaType": "text/vnd.mermaid",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
       "projection": {
         "authority": {
           "authorityType": "utf8-text.v1",
           "text": "flowchart LR\n  S[Schema] --> C[Contract]\n  C --> A[Artifacts]\n  A --> E[Conformance]\n  E --> T[Trust]\n  T -. admitted change .-> S\n"
         },
         "authorityId": "closed-loop-diagram-authority.v1",
+        "mode": "projected",
         "projectorId": "utf8-text-projector.v1"
       },
       "proof": {
+        "contentDigestRequired": true,
         "contentSha256": "sha256:4d7c0a4417e128935bc534f981c454b42b5655583657c16fc07564bb22660356",
         "expectedByteLength": 131,
         "verifierIds": [
@@ -1922,6 +1950,8 @@
       "artifactId": "artifact-family-manifest.v1",
       "artifactKind": "package-manifest",
       "mediaType": "application/json",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
       "projection": {
         "authority": {
           "authorityType": "canonical-json-value.v1",
@@ -1937,9 +1967,11 @@
           }
         },
         "authorityId": "artifact-family-manifest-authority.v1",
+        "mode": "projected",
         "projectorId": "canonical-json-value-projector.v1"
       },
       "proof": {
+        "contentDigestRequired": true,
         "contentSha256": "sha256:ca1a131ff9ef01b1dc4721f7b0afe8a31736a361043f05f97c09abb0ca919563",
         "expectedByteLength": 224,
         "verifierIds": [
@@ -1960,18 +1992,66 @@
       "relativePath": "package.json"
     }
   ],
+  "authorityClosure": {
+    "admission": {
+      "requiredDisposition": "ARTIFACT_AUTHORITY_CLOSED"
+    },
+    "authorityType": "closed-world-authority-closure.v1",
+    "coverage": {
+      "artifactPaths": "exact",
+      "artifactScope": "exact",
+      "claimProofRequirements": "exact",
+      "decisions": "exact",
+      "declarations": "exact",
+      "dependencies": "exact",
+      "dependencyImports": "exact",
+      "dependencyInvocations": "exact",
+      "effects": "exact",
+      "failurePolicies": "exact",
+      "iterations": "exact",
+      "operationAuthorities": "exact",
+      "projectionMappings": "exact",
+      "responsibilities": "exact",
+      "resultContracts": "exact",
+      "runtimeAuthorities": "exact",
+      "semanticEdges": "exact"
+    },
+    "resolution": {
+      "ambientAuthority": "forbidden",
+      "ambiguousObservations": "reject",
+      "cardinality": "exactly-one",
+      "missingDeclaredAuthorities": "reject",
+      "undeclaredObservations": "reject",
+      "unresolvedObservations": "reject"
+    }
+  },
   "claims": [
     {
       "claim": "COMPLETE",
-      "claimId": "artifact-family-complete.v1"
+      "claimId": "artifact-family-complete.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
     },
     {
       "claim": "CONTRACT_AUTHORITY_CLOSED",
-      "claimId": "contract-authority-closed.v1"
+      "claimId": "contract-authority-closed.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
     },
     {
       "claim": "TRUSTED",
-      "claimId": "artifact-family-trusted.v1"
+      "claimId": "artifact-family-trusted.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
     }
   ],
   "conformance": {
@@ -1986,12 +2066,61 @@
         "expectedStdoutContains": "ARTIFACT_TEST_CONFORMS",
         "verifierId": "command-exit-verifier.v1"
       }
-    ]
+    ],
+    "evaluationOrder": [
+      "validate-contract",
+      "resolve-artifact-plan",
+      "observe-artifact-state",
+      "evaluate-artifact-inventory",
+      "evaluate-projection-identity",
+      "evaluate-authority-closure",
+      "evaluate-artifact-content",
+      "evaluate-artifact-structure",
+      "evaluate-artifact-freshness",
+      "evaluate-artifact-relationships",
+      "evaluate-declared-commands",
+      "verify-proof-subject-stability",
+      "issue-trust-disposition"
+    ],
+    "failClosed": true,
+    "terminalDispositions": {
+      "artifactConformance": [
+        "ARTIFACT_MISSING",
+        "ARTIFACT_UNDECLARED",
+        "ARTIFACT_CONTENT_MISMATCH",
+        "ARTIFACT_STRUCTURE_MISMATCH",
+        "ARTIFACT_STALE",
+        "PROJECTION_IDENTITY_MISMATCH",
+        "ARTIFACT_ESCAPES_CONTRACT",
+        "EVALUATION_INVALIDATED_BY_MUTATION",
+        "CONTRACT_AUTHORITY_CLOSED"
+      ],
+      "contractValidation": [
+        "CONTRACT_VALID",
+        "CONTRACT_INVALID",
+        "SCHEMA_NOT_ADMITTED",
+        "SCHEMA_DIGEST_MISMATCH"
+      ],
+      "trustDispositions": [
+        "TRUSTED",
+        "REJECTED",
+        "NOT_EVALUATED"
+      ],
+      "trustPostures": [
+        "CONFORMS",
+        "DRIFTED",
+        "MISSING",
+        "EXTRA",
+        "STALE",
+        "CONTAMINATED",
+        "NOT_EVALUATED"
+      ]
+    }
   },
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.6.0",
+    "contractVersion": "1.5.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2084,37 +2213,72 @@
     ".env",
     "secrets.json"
   ],
-  "interpretationBase": {
-    "conformanceProfile": {
-      "digest": "sha256:6c9b5612ce0bac2ed7ed5c2449cd3feb0b9b2f8bccf63cda3e32ab711068c285",
-      "identity": "closed-world-artifact-conformance.v1"
+  "operationAuthorities": {
+    "authoredMutation": {
+      "governedArtifacts": "forbidden",
+      "posture": "sole-authored-change-authority",
+      "target": "contract"
     },
-    "engine": {
-      "digest": "sha256:4c7f51b19cc66720437e64b9cb4c5ca024aeb067e416860c5d2dcc2b4a009faf",
-      "identity": "governed-artifact-engine.0.7.0"
+    "authorityType": "governed-operation-authorities.v1",
+    "projection": {
+      "artifactPosture": "replace-by-projection",
+      "operation": "project",
+      "subjectMutation": "declared-projections-only",
+      "writeMode": "explicit-only"
     },
-    "migrationRegistry": {
-      "digest": "sha256:773ac0cc309d8d849aa557540b3859c1cde4ee288d91ac713980f7a21bef7c7a",
-      "identity": "governed-artifact-migration-registry.v1"
-    },
-    "projectorRegistry": {
-      "digest": "sha256:9e16e2900614a6fab8c08d295cde81f4b7c7453e7202ded1312444a187bd826f",
-      "identity": "governed-artifact-projector-registry.v1"
-    },
-    "schema": {
-      "digest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
-      "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
-    },
-    "verifierRegistry": {
-      "digest": "sha256:d9dcd0b53c54904a44ce15896d047d9360a6d48c5379dc3a2ebf3b8cab691f36",
-      "identity": "governed-artifact-verifier-registry.v1"
+    "proof": {
+      "artifactProjection": "forbidden",
+      "declaredEvaluations": "read-only",
+      "mode": "read-only",
+      "mutationDisposition": "EVALUATION_INVALIDATED_BY_MUTATION",
+      "operation": "prove",
+      "receiptTarget": "outside-governed-subject",
+      "receiptWrite": "explicit-only",
+      "requiredSubjectDisposition": "PROOF_SUBJECT_UNCHANGED",
+      "subjectMutation": "forbidden"
     }
   },
   "projectionLedger": {
-    "relativePath": ".governance/projections/governed-message-artifact-family.ledger.json"
+    "ledgerType": "governed-artifact-projection-ledger.v1",
+    "relativePath": ".governance/projections/governed-message-artifact-family.ledger.json",
+    "requiredEvidence": [
+      "contract-identity",
+      "projector-registry-identity",
+      "artifact-scope-authority",
+      "authority-closure-profile",
+      "operation-authorities",
+      "dependency-authorities",
+      "effect-authorities",
+      "runtime-authorities",
+      "source-authorities",
+      "artifact-projection-identities",
+      "artifact-content-commitments"
+    ]
+  },
+  "projectorRegistry": {
+    "digest": "sha256:9e16e2900614a6fab8c08d295cde81f4b7c7453e7202ded1312444a187bd826f",
+    "identity": "governed-artifact-projector-registry.v1"
   },
   "receipt": {
-    "relativePath": ".governance/receipts/governed-message-artifact-family.receipt.json"
+    "receiptType": "governed-artifact-conformance-receipt.v1",
+    "relativePath": ".governance/receipts/governed-message-artifact-family.receipt.json",
+    "requiredEvidence": [
+      "contract-identity",
+      "schema-identity",
+      "registry-identities",
+      "artifact-observations",
+      "projection-identity",
+      "artifact-scope-authority",
+      "artifact-scope-observation",
+      "authority-closure-profile",
+      "authority-closure-disposition",
+      "operation-authorities",
+      "proof-subject-stability",
+      "source-authority-observations",
+      "conformance-findings",
+      "claim-policies",
+      "trust-disposition"
+    ]
   },
   "runtimeAuthorities": [
     {
@@ -2136,6 +2300,10 @@
       ]
     }
   ],
+  "schema": {
+    "digest": "sha256:4a4dd139e045c1435e406d178a6535f1a790bca254f1c7ca2886e38ca01debdb",
+    "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
+  },
   "subject": {
     "authority": {
       "closedLoop": [
@@ -2149,6 +2317,10 @@
     "purpose": "Prove deterministic governance across a heterogeneous artifact family.",
     "subjectId": "governed-message-artifact-family.v1",
     "subjectType": "artifact-family"
+  },
+  "verifierRegistry": {
+    "digest": "sha256:d9dcd0b53c54904a44ce15896d047d9360a6d48c5379dc3a2ebf3b8cab691f36",
+    "identity": "governed-artifact-verifier-registry.v1"
   },
   "workspace": {
     "artifactRoot": "governed-message-artifact-family",

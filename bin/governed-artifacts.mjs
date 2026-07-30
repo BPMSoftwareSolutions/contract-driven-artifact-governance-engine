@@ -33,7 +33,7 @@ function usage() {
     "  governed-artifacts project --contract <path> --workspace <path> (--write|--check) [inputs]",
     "  governed-artifacts observe --contract <path> --workspace <path> [inputs]",
     "  governed-artifacts evaluate --contract <path> --workspace <path> [--write-receipt] [inputs]",
-    "  governed-artifacts prove --contract <path> --workspace <path> [--check] [--write-receipt] [inputs]",
+    "  governed-artifacts prove --contract <path> --workspace <path> [--write-receipt] [inputs]",
     "  governed-artifacts claim --contract <path> --workspace <path> --receipt <path> --claim <claim> [inputs]",
     "  governed-artifacts release-observe --workspace <path>",
     "  governed-artifacts release-validate [release inputs]",
@@ -64,7 +64,6 @@ function parseArguments(argv) {
     verifierRegistryPath: DEFAULT_VERIFIER_REGISTRY_PATH,
     releaseAuthorityPath: DEFAULT_RELEASE_AUTHORITY_PATH,
     releaseSchemaPath: DEFAULT_RELEASE_SCHEMA_PATH,
-    mode: "write",
     writeReceipt: false
   };
   for (let index = 0; index < args.length; index += 1) {
@@ -112,6 +111,15 @@ function parseArguments(argv) {
 }
 
 function execute(operation, options) {
+  if (
+    options.mode !== undefined &&
+    operation !== "project" &&
+    operation !== "prove"
+  ) {
+    throw new Error(
+      "--write and --check are projection flags; prove accepts only the read-only --check compatibility alias."
+    );
+  }
   if (operation === "release-observe") {
     if (!options.workspacePath) {
       throw new Error("Release observation requires --workspace.");
@@ -177,6 +185,9 @@ function execute(operation, options) {
     return resolveArtifactPlan(options);
   }
   if (operation === "project") {
+    if (!["write", "check"].includes(options.mode)) {
+      throw new Error("Projection requires an explicit --write or --check.");
+    }
     return projectArtifactFamily(options);
   }
   if (operation === "observe") {

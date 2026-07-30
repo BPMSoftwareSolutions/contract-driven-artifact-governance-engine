@@ -114,11 +114,36 @@ test("the contract makes every governed control surface explicit", () => {
     contract.workspace.governedScope.inventoryMode,
     "exclusive-subtree"
   );
+  assert.deepEqual(contract.operationAuthorities.authoredMutation, {
+    governedArtifacts: "forbidden",
+    posture: "sole-authored-change-authority",
+    target: "contract"
+  });
+  assert.deepEqual(contract.operationAuthorities.projection, {
+    artifactPosture: "replace-by-projection",
+    operation: "project",
+    subjectMutation: "declared-projections-only",
+    writeMode: "explicit-only"
+  });
+  assert.deepEqual(contract.operationAuthorities.proof, {
+    artifactProjection: "forbidden",
+    declaredEvaluations: "read-only",
+    mode: "read-only",
+    mutationDisposition: "EVALUATION_INVALIDATED_BY_MUTATION",
+    operation: "prove",
+    receiptTarget: "outside-governed-subject",
+    receiptWrite: "explicit-only",
+    requiredSubjectDisposition: "PROOF_SUBJECT_UNCHANGED",
+    subjectMutation: "forbidden"
+  });
   assert.equal(
     contract.artifacts.every(
       (artifact) =>
         typeof artifact.relativePath === "string" &&
-        artifact.relativePath.length > 0
+        artifact.relativePath.length > 0 &&
+        artifact.ownership === "contract-owned" &&
+        artifact.mutabilityPosture === "replace-by-projection" &&
+        artifact.projection.mode === "projected"
     ),
     true
   );
@@ -292,10 +317,18 @@ test("source observation records exact semantic expressions", () => {
 
 test("the complete closed loop projects, evaluates, and writes deterministic trust evidence", (t) => {
   const workspacePath = makeWorkspace(t);
+  const projection = projectArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(
+    projection.projectionDisposition,
+    "ARTIFACT_FAMILY_PROJECTED"
+  );
   const first = proveGovernedArtifactFamily({
     contractPath: exampleContractPath,
     workspacePath,
-    mode: "write",
     writeReceipt: true
   });
   assert.equal(first.artifactFamily.conformanceDisposition, "CONTRACT_AUTHORITY_CLOSED");
@@ -304,6 +337,20 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
     "ARTIFACT_AUTHORITY_CLOSED"
   );
   assert.equal(first.artifactFamily.proofDisposition, "PROOF_COMPLETE");
+  assert.equal(first.proofOperation.mode, "read-only");
+  assert.equal(
+    first.proofOperation.subjectMutationDisposition,
+    "PROOF_SUBJECT_UNCHANGED"
+  );
+  assert.equal(
+    first.checks.findIndex(
+      (check) => check.checkId === "verify-proof-subject-stability"
+    ) <
+      first.checks.findIndex(
+        (check) => check.checkId === "issue-trust-disposition"
+      ),
+    true
+  );
   assert.equal(first.trustPosture, "CONFORMS");
   assert.equal(first.trustDisposition, "TRUSTED");
   assert.equal(first.artifactFamily.declaredArtifactCount, 8);
@@ -361,6 +408,10 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
     observedReview.toString("utf8"),
     /## Effect Authorities[\s\S]+write-message-output\.v1/
   );
+  assert.match(
+    observedReview.toString("utf8"),
+    /## Operation Authorities[\s\S]+sole-authored-change-authority/
+  );
 
   const receiptPath = path.join(
     workspacePath,
@@ -378,6 +429,125 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   const secondReceipt = readFileSync(receiptPath);
   assert.deepEqual(second, first);
   assert.deepEqual(secondReceipt, firstReceipt);
+});
+
+test("prove preserves drift, rejects implicit repair, and requires explicit reprojection", (t) => {
+  const workspacePath = makeWorkspace(t);
+  projectArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath,
+    mode: "write"
+  });
+  const sourcePath = path.join(
+    workspacePath,
+    "governed-message-artifact-family",
+    "src",
+    "project-message.mjs"
+  );
+  const driftedBytes = Buffer.from(
+    `import "node:os";\n${readFileSync(sourcePath, "utf8")}`,
+    "utf8"
+  );
+  writeFileSync(sourcePath, driftedBytes);
+
+  const commandResult = spawnSync(
+    process.execPath,
+    [
+      path.join(packageRoot, "bin", "governed-artifacts.mjs"),
+      "prove",
+      "--contract",
+      exampleContractPath,
+      "--workspace",
+      workspacePath
+    ],
+    {
+      cwd: packageRoot,
+      encoding: "utf8",
+      shell: false
+    }
+  );
+  assert.equal(commandResult.status, 1);
+  const observed = JSON.parse(commandResult.stdout);
+  assert.equal(
+    observed.artifactFamily.conformanceDisposition,
+    "ARTIFACT_ESCAPES_CONTRACT"
+  );
+  assert.equal(observed.trustDisposition, "REJECTED");
+  assert.equal(
+    observed.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "UNDECLARED_DEPENDENCY_IMPORT" &&
+        finding.specifier === "node:os"
+    ),
+    true
+  );
+  assert.deepEqual(readFileSync(sourcePath), driftedBytes);
+
+  const forbiddenWrite = proveGovernedArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(
+    forbiddenWrite.proofOperation.subjectMutationDisposition,
+    "PROOF_SUBJECT_MUTATION_FORBIDDEN"
+  );
+  assert.equal(forbiddenWrite.trustDisposition, "REJECTED");
+  assert.deepEqual(readFileSync(sourcePath), driftedBytes);
+
+  projectArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath,
+    mode: "write"
+  });
+  const recovered = proveGovernedArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath
+  });
+  assert.equal(
+    recovered.artifactFamily.conformanceDisposition,
+    "CONTRACT_AUTHORITY_CLOSED"
+  );
+  assert.equal(recovered.trustDisposition, "TRUSTED");
+});
+
+test("proof is invalidated when a declared evaluation mutates the subject", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    contract.conformance.artifactEvaluations[0].command = [
+      "node",
+      "-e",
+      "require('node:fs').appendFileSync('src/project-message.mjs', '// concurrent mutation\\n'); process.stdout.write('ARTIFACT_TEST_CONFORMS');"
+    ];
+    recommitReviewDocument(contract);
+  });
+  projectArtifactFamily({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+
+  const result = proveGovernedArtifactFamily({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    result.artifactFamily.conformanceDisposition,
+    "EVALUATION_INVALIDATED_BY_MUTATION"
+  );
+  assert.equal(
+    result.proofOperation.subjectMutationDisposition,
+    "EVALUATION_INVALIDATED_BY_MUTATION"
+  );
+  assert.equal(result.artifactFamily.proofDisposition, "PROOF_INCOMPLETE");
+  assert.equal(result.trustDisposition, "REJECTED");
+  assert.equal(
+    result.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "EVALUATION_INVALIDATED_BY_MUTATION"
+    ),
+    true
+  );
 });
 
 test("schema identity and digest failures do not evaluate artifact conformance", (t) => {

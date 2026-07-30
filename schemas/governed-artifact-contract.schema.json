@@ -19,6 +19,7 @@
     "runtimeAuthorities",
     "artifacts",
     "authorityClosure",
+    "operationAuthorities",
     "exclusions",
     "conformance",
     "receipt",
@@ -76,6 +77,9 @@
     },
     "authorityClosure": {
       "$ref": "#/$defs/authorityClosure"
+    },
+    "operationAuthorities": {
+      "$ref": "#/$defs/operationAuthorities"
     },
     "exclusions": {
       "type": "array",
@@ -187,6 +191,7 @@
             "effects": "exact",
             "failurePolicies": "exact",
             "iterations": "exact",
+            "operationAuthorities": "exact",
             "projectionMappings": "exact",
             "responsibilities": "exact",
             "resultContracts": "exact",
@@ -207,6 +212,49 @@
         "admission": {
           "const": {
             "requiredDisposition": "ARTIFACT_AUTHORITY_CLOSED"
+          }
+        }
+      }
+    },
+    "operationAuthorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "authoredMutation",
+        "projection",
+        "proof"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "governed-operation-authorities.v1"
+        },
+        "authoredMutation": {
+          "const": {
+            "target": "contract",
+            "posture": "sole-authored-change-authority",
+            "governedArtifacts": "forbidden"
+          }
+        },
+        "projection": {
+          "const": {
+            "operation": "project",
+            "writeMode": "explicit-only",
+            "subjectMutation": "declared-projections-only",
+            "artifactPosture": "replace-by-projection"
+          }
+        },
+        "proof": {
+          "const": {
+            "operation": "prove",
+            "mode": "read-only",
+            "subjectMutation": "forbidden",
+            "artifactProjection": "forbidden",
+            "declaredEvaluations": "read-only",
+            "receiptWrite": "explicit-only",
+            "receiptTarget": "outside-governed-subject",
+            "requiredSubjectDisposition": "PROOF_SUBJECT_UNCHANGED",
+            "mutationDisposition": "EVALUATION_INVALIDATED_BY_MUTATION"
           }
         }
       }
@@ -358,17 +406,10 @@
           "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"
         },
         "ownership": {
-          "enum": [
-            "contract-owned",
-            "admitted-external"
-          ]
+          "const": "contract-owned"
         },
         "mutabilityPosture": {
-          "enum": [
-            "replace-by-projection",
-            "immutable",
-            "admitted"
-          ]
+          "const": "replace-by-projection"
         },
         "projection": {
           "$ref": "#/$defs/projection"
@@ -1228,10 +1269,7 @@
       ],
       "properties": {
         "mode": {
-          "enum": [
-            "projected",
-            "admitted"
-          ]
+          "const": "projected"
         },
         "projectorId": {
           "$ref": "#/$defs/identifier"
@@ -1403,6 +1441,7 @@
             "source-authority-closures",
             "authority-closure-profile",
             "artifact-scope-authority",
+            "operation-authorities",
             "artifact-relationships",
             "exclusions",
             "conformance-evaluation",
@@ -1519,6 +1558,7 @@
             "evaluate-artifact-freshness",
             "evaluate-artifact-relationships",
             "evaluate-declared-commands",
+            "verify-proof-subject-stability",
             "issue-trust-disposition"
           ]
         },
@@ -1560,6 +1600,7 @@
             "ARTIFACT_STALE",
             "PROJECTION_IDENTITY_MISMATCH",
             "ARTIFACT_ESCAPES_CONTRACT",
+            "EVALUATION_INVALIDATED_BY_MUTATION",
             "CONTRACT_AUTHORITY_CLOSED"
           ]
         },
@@ -1682,6 +1723,8 @@
             "artifact-scope-observation",
             "authority-closure-profile",
             "authority-closure-disposition",
+            "operation-authorities",
+            "proof-subject-stability",
             "source-authority-observations",
             "conformance-findings",
             "claim-policies",
@@ -1711,6 +1754,7 @@
             "projector-registry-identity",
             "artifact-scope-authority",
             "authority-closure-profile",
+            "operation-authorities",
             "dependency-authorities",
             "effect-authorities",
             "runtime-authorities",

@@ -1832,7 +1832,8 @@
             "Every return or emitted result resolves to one result contract.",
             "Every trust claim resolves to a named proof requirement.",
             "The closed-world authority-closure profile is exact and immutable.",
-            "The artifact inventory resolves through one explicit governed-scope authority."
+            "The artifact inventory resolves through one explicit governed-scope authority.",
+            "The contract is the sole authored change authority, every governed artifact is replace-only projected state, and proof is observational."
           ],
           "reviewerPerspective": {
             "objective": "to inspect the complete admitted artifact authority in one deterministic document",
@@ -1853,6 +1854,7 @@
             "source-authority-closures",
             "authority-closure-profile",
             "artifact-scope-authority",
+            "operation-authorities",
             "artifact-relationships",
             "exclusions",
             "conformance-evaluation",
@@ -1868,8 +1870,8 @@
       },
       "proof": {
         "contentDigestRequired": true,
-        "contentSha256": "sha256:91de2c13720b17e83aa9c910d0480ddf18eed289c4d83f5de68acc7471be1ca1",
-        "expectedByteLength": 17062,
+        "contentSha256": "sha256:47e91131c61a1b0c84f5519c50bf7185449255df41ea5cbf0b12c2520e7dabe6",
+        "expectedByteLength": 18372,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -1885,6 +1887,7 @@
           "## Source Authority Closures",
           "## Authority Closure Profile",
           "## Artifact Scope Authority",
+          "## Operation Authorities",
           "## Artifact Relationships",
           "## Exclusions",
           "## Conformance Evaluation",
@@ -2006,6 +2009,7 @@
       "effects": "exact",
       "failurePolicies": "exact",
       "iterations": "exact",
+      "operationAuthorities": "exact",
       "projectionMappings": "exact",
       "responsibilities": "exact",
       "resultContracts": "exact",
@@ -2075,6 +2079,7 @@
       "evaluate-artifact-freshness",
       "evaluate-artifact-relationships",
       "evaluate-declared-commands",
+      "verify-proof-subject-stability",
       "issue-trust-disposition"
     ],
     "failClosed": true,
@@ -2087,6 +2092,7 @@
         "ARTIFACT_STALE",
         "PROJECTION_IDENTITY_MISMATCH",
         "ARTIFACT_ESCAPES_CONTRACT",
+        "EVALUATION_INVALIDATED_BY_MUTATION",
         "CONTRACT_AUTHORITY_CLOSED"
       ],
       "contractValidation": [
@@ -2114,7 +2120,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.4.0",
+    "contractVersion": "1.5.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2207,6 +2213,31 @@
     ".env",
     "secrets.json"
   ],
+  "operationAuthorities": {
+    "authoredMutation": {
+      "governedArtifacts": "forbidden",
+      "posture": "sole-authored-change-authority",
+      "target": "contract"
+    },
+    "authorityType": "governed-operation-authorities.v1",
+    "projection": {
+      "artifactPosture": "replace-by-projection",
+      "operation": "project",
+      "subjectMutation": "declared-projections-only",
+      "writeMode": "explicit-only"
+    },
+    "proof": {
+      "artifactProjection": "forbidden",
+      "declaredEvaluations": "read-only",
+      "mode": "read-only",
+      "mutationDisposition": "EVALUATION_INVALIDATED_BY_MUTATION",
+      "operation": "prove",
+      "receiptTarget": "outside-governed-subject",
+      "receiptWrite": "explicit-only",
+      "requiredSubjectDisposition": "PROOF_SUBJECT_UNCHANGED",
+      "subjectMutation": "forbidden"
+    }
+  },
   "projectionLedger": {
     "ledgerType": "governed-artifact-projection-ledger.v1",
     "relativePath": ".governance/projections/governed-message-artifact-family.ledger.json",
@@ -2215,6 +2246,7 @@
       "projector-registry-identity",
       "artifact-scope-authority",
       "authority-closure-profile",
+      "operation-authorities",
       "dependency-authorities",
       "effect-authorities",
       "runtime-authorities",
@@ -2240,6 +2272,8 @@
       "artifact-scope-observation",
       "authority-closure-profile",
       "authority-closure-disposition",
+      "operation-authorities",
+      "proof-subject-stability",
       "source-authority-observations",
       "conformance-findings",
       "claim-policies",
@@ -2267,7 +2301,7 @@
     }
   ],
   "schema": {
-    "digest": "sha256:f69eac861fb6743929e635a1fe106b0af105b1b0a0fe757939a9d2533cdc1044",
+    "digest": "sha256:4a4dd139e045c1435e406d178a6535f1a790bca254f1c7ca2886e38ca01debdb",
     "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
   },
   "subject": {

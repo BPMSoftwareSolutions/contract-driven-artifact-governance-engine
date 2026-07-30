@@ -23,6 +23,9 @@ The contract is simultaneously:
 - the evidence requirement for a trust disposition.
 
 Artifact files are projections. Durable change begins in the admitted contract.
+The contract is the only authored mutation authority in the consumer workspace;
+every governed CLI, API, UI, document, schema, and supporting artifact is
+replace-only projected state.
 
 ## Trusted interpretation base
 
@@ -64,6 +67,7 @@ conformance dispositions are:
 - `ARTIFACT_STALE`
 - `PROJECTION_IDENTITY_MISMATCH`
 - `ARTIFACT_ESCAPES_CONTRACT`
+- `EVALUATION_INVALIDATED_BY_MUTATION`
 
 Every result maps to one trust posture:
 
@@ -103,6 +107,7 @@ collections remain closed declarations.
 | Failure handling | failure policy with exact source form and expression where applicable |
 | Return or emitted output | result contract with exact source expression and projection mapping where applicable |
 | Trust claim | claim policy with exact conformance, proof, and trust requirements |
+| Operation | authored-mutation, projection, and proof authorities |
 
 Empty collections are significant. For example, `iterations: []` declares that
 an artifact has no iteration authority; every loop is therefore an escape.
@@ -170,6 +175,28 @@ its digest-bound observation, the outside-authority classification rule, and
 `ARTIFACT_SCOPE_CLOSED` or `ARTIFACT_SCOPE_OPEN`. Trust claims require the
 closed disposition.
 
+## Operation authorities
+
+The top-level `operationAuthorities` block separates the three mutation
+classes:
+
+- `authoredMutation` grants sole authored change authority to the contract and
+  forbids authored changes to governed artifacts;
+- `projection` permits `project --write` to replace only declared projections,
+  and only when write mode is explicit; and
+- `proof` is read-only, forbids artifact projection and subject mutation, and
+  permits an explicitly requested receipt only outside the governed subject.
+
+Every artifact is `contract-owned`, `replace-by-projection`, and `projected`.
+The contract itself must remain outside governed artifact scope. Projection is
+the only operation authorized to replace governed bytes; observation,
+evaluation, proof, and claim operations cannot repair them.
+
+Conformance captures the interpretation authority and evaluated subject before
+and after evaluation. A change during that interval produces
+`EVALUATION_INVALIDATED_BY_MUTATION`, `PROOF_INCOMPLETE`, and `REJECTED`.
+Stable proof records `PROOF_SUBJECT_UNCHANGED`.
+
 ## Release boundary
 
 The repository-level npm archive has a separate admitted authority:
@@ -232,9 +259,10 @@ and reprojected during conformance evaluation.
 
 Every projection operation also writes or checks the contract-declared
 projection ledger. The ledger binds the contract digest, projector-registry
-digest, dependency, effect, runtime, and source authorities, artifact authority
-IDs, projector IDs, projection modes, and content commitments. A missing or
-altered ledger produces `PROJECTION_IDENTITY_MISMATCH`.
+digest, operation, dependency, effect, runtime, and source authorities,
+artifact authority IDs, projector IDs, projection modes, and content
+commitments. A missing or altered ledger produces
+`PROJECTION_IDENTITY_MISMATCH`.
 
 ## Verifiers
 
@@ -293,7 +321,8 @@ governed-artifacts observe \
   --workspace .
 ```
 
-Evaluate and persist the canonical receipt:
+Evaluate the current state without modifying governed artifacts, and optionally
+persist its canonical receipt:
 
 ```text
 governed-artifacts evaluate \
@@ -302,13 +331,28 @@ governed-artifacts evaluate \
   --write-receipt
 ```
 
-Operate the complete closed loop:
+Prove the current state without projecting or repairing it:
 
 ```text
 governed-artifacts prove \
   --contract architecture/artifact-family.contract.json \
   --workspace . \
   --write-receipt
+```
+
+`prove` is observational by default. `prove --write` is rejected with
+`PROOF_SUBJECT_MUTATION_FORBIDDEN`; `--check` remains a read-only compatibility
+alias. Recovery is an explicit two-step operation:
+
+```text
+governed-artifacts project \
+  --contract architecture/artifact-family.contract.json \
+  --workspace . \
+  --write
+
+governed-artifacts prove \
+  --contract architecture/artifact-family.contract.json \
+  --workspace .
 ```
 
 Admit a claim only when a canonical receipt contains its declared evidence:
@@ -323,9 +367,10 @@ governed-artifacts claim \
 
 The result is `CLAIM_ADMITTED` or `CLAIM_EXCEEDS_EVIDENCE`. A trusted claim
 requires `CONTRACT_AUTHORITY_CLOSED`, `ARTIFACT_AUTHORITY_CLOSED`,
-`ARTIFACT_SCOPE_CLOSED`, `PROOF_COMPLETE`, and `TRUSTED` in the same receipt.
-Claim evaluation re-observes the workspace and rejects a supplied receipt that
-differs from the current canonical evidence.
+`ARTIFACT_SCOPE_CLOSED`, `PROOF_COMPLETE`, `PROOF_SUBJECT_UNCHANGED`, read-only
+proof mode, and `TRUSTED` in the same receipt. Claim evaluation re-observes the
+workspace and rejects a supplied receipt that differs from the current
+canonical evidence.
 
 Observe the npm release archive without granting trust:
 
@@ -411,6 +456,7 @@ The receipt binds:
 - every observed source authority surface;
 - missing and undeclared paths;
 - ordered conformance checks;
+- operation-authority identity and before/after proof-subject digests;
 - fail-closed findings;
 - declared claim policies and proof completeness;
 - the terminal conformance disposition; and

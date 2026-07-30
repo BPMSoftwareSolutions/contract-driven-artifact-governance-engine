@@ -8,6 +8,11 @@
       "serialization": "sorted-object-keys-two-space-lf"
     },
     {
+      "projectorId": "governed-artifact-contract-markdown-projector.v1",
+      "authorityType": "governed-artifact-contract-markdown.v1",
+      "serialization": "governed-review-markdown-v1-lf"
+    },
+    {
       "projectorId": "lossless-source-token-projector.v1",
       "authorityType": "lossless-source-tokens.v1",
       "serialization": "ordered-token-text-concatenation"

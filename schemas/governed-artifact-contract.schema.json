@@ -251,6 +251,9 @@
             },
             {
               "$ref": "#/$defs/tokenAuthority"
+            },
+            {
+              "$ref": "#/$defs/contractMarkdownAuthority"
             }
           ]
         }
@@ -325,6 +328,94 @@
               }
             }
           }
+        }
+      }
+    },
+    "contractMarkdownAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "documentTitle",
+        "documentStatusLabel",
+        "futureStatePreview",
+        "reviewerPerspective",
+        "sectionOrder",
+        "reviewChecklist"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "governed-artifact-contract-markdown.v1"
+        },
+        "documentTitle": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\r\\n]+$"
+        },
+        "documentStatusLabel": {
+          "const": "Governed review projection"
+        },
+        "futureStatePreview": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!#)(?!```)[^\\r\\n]+$"
+          }
+        },
+        "reviewerPerspective": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "role",
+            "objective",
+            "outcome"
+          ],
+          "properties": {
+            "role": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[^\\r\\n]+$"
+            },
+            "objective": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[^\\r\\n]+$"
+            },
+            "outcome": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[^\\r\\n]+$"
+            }
+          }
+        },
+        "sectionOrder": {
+          "const": [
+            "future-state-preview",
+            "reviewer-perspective",
+            "governing-loop",
+            "contract-authority",
+            "semantic-subject",
+            "artifact-family",
+            "projection-authorities",
+            "artifact-relationships",
+            "exclusions",
+            "conformance-evaluation",
+            "terminal-dispositions",
+            "receipt-requirements",
+            "review-checklist"
+          ]
+        },
+        "reviewChecklist": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^\\r\\n]+$"
+          },
+          "uniqueItems": true
         }
       }
     },
@@ -403,7 +494,8 @@
       "required": [
         "failClosed",
         "evaluationOrder",
-        "artifactEvaluations"
+        "artifactEvaluations",
+        "terminalDispositions"
       ],
       "properties": {
         "failClosed": {
@@ -429,6 +521,57 @@
           "items": {
             "$ref": "#/$defs/artifactEvaluation"
           }
+        },
+        "terminalDispositions": {
+          "$ref": "#/$defs/terminalDispositions"
+        }
+      }
+    },
+    "terminalDispositions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contractValidation",
+        "artifactConformance",
+        "trustPostures",
+        "trustDispositions"
+      ],
+      "properties": {
+        "contractValidation": {
+          "const": [
+            "CONTRACT_VALID",
+            "CONTRACT_INVALID",
+            "SCHEMA_NOT_ADMITTED",
+            "SCHEMA_DIGEST_MISMATCH"
+          ]
+        },
+        "artifactConformance": {
+          "const": [
+            "ARTIFACT_FAMILY_CONFORMS",
+            "ARTIFACT_MISSING",
+            "ARTIFACT_UNDECLARED",
+            "ARTIFACT_CONTENT_MISMATCH",
+            "ARTIFACT_STRUCTURE_MISMATCH",
+            "ARTIFACT_STALE",
+            "PROJECTION_IDENTITY_MISMATCH"
+          ]
+        },
+        "trustPostures": {
+          "const": [
+            "CONFORMS",
+            "DRIFTED",
+            "MISSING",
+            "EXTRA",
+            "STALE",
+            "NOT_EVALUATED"
+          ]
+        },
+        "trustDispositions": {
+          "const": [
+            "TRUSTED",
+            "REJECTED",
+            "NOT_EVALUATED"
+          ]
         }
       }
     },

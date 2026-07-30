@@ -1332,35 +1332,72 @@
       "ownership": "contract-owned",
       "projection": {
         "authority": {
-          "authorityType": "utf8-text.v1",
-          "text": "# Governed Message Artifact Family\n\n## Purpose\n\nDemonstrate one admitted contract governing a heterogeneous artifact family.\n\n## Architecture\n\nThe schema constrains the contract. The contract declares every artifact. The registered projectors produce exact bytes. The registered verifiers evaluate those bytes and issue a trust disposition.\n\n## Usage\n\nRun `node bin/run-message.mjs` from this artifact root.\n\n## Proof\n\nRun `node verification/verifies-message.mjs`. The enclosing governance engine independently checks inventory, bytes, structure, relationships, and the declared command.\n"
+          "authorityType": "governed-artifact-contract-markdown.v1",
+          "documentStatusLabel": "Governed review projection",
+          "documentTitle": "Governed Message Artifact Family",
+          "futureStatePreview": [
+            "One admitted contract projects the complete artifact family and the architecture review document used to inspect it.",
+            "The review document is derived from structured contract authority, so its artifact inventory, projection bindings, relationships, conformance gates, and trust vocabulary cannot drift independently."
+          ],
+          "reviewChecklist": [
+            "Confirm the contract identity and admitted schema digest.",
+            "Confirm every intended artifact has one declared path and purpose.",
+            "Confirm every projection binds an admitted projector and authority.",
+            "Confirm all artifact relationships resolve inside the declared family.",
+            "Confirm the conformance order stops dependent checks after the first red disposition.",
+            "Confirm the receipt requirements preserve sufficient evidence for the trust claim."
+          ],
+          "reviewerPerspective": {
+            "objective": "to inspect the complete admitted artifact authority in one deterministic document",
+            "outcome": "projection and conformance decisions can be reviewed without manually reconstructing the JSON contract",
+            "role": "an architecture reviewer"
+          },
+          "sectionOrder": [
+            "future-state-preview",
+            "reviewer-perspective",
+            "governing-loop",
+            "contract-authority",
+            "semantic-subject",
+            "artifact-family",
+            "projection-authorities",
+            "artifact-relationships",
+            "exclusions",
+            "conformance-evaluation",
+            "terminal-dispositions",
+            "receipt-requirements",
+            "review-checklist"
+          ]
         },
         "authorityId": "artifact-family-readme-authority.v1",
         "mode": "projected",
-        "projectorId": "utf8-text-projector.v1"
+        "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
         "contentDigestRequired": true,
-        "contentSha256": "sha256:9ee3ddfa0b9ec3f2b67cf64076c1ee4cb7ae345bf8d3fae3cd5bef01572c3f16",
-        "expectedByteLength": 588,
-        "forbiddenText": [
-          "api key",
-          "credential"
-        ],
+        "contentSha256": "sha256:c12b40b8543ad6c46d8ac4ac88ce4d103bd0a1c05092942e09de46b5c9796409",
+        "expectedByteLength": 9759,
         "requiredSections": [
           "# Governed Message Artifact Family",
-          "## Purpose",
-          "## Architecture",
-          "## Usage",
-          "## Proof"
+          "## Future-State Preview",
+          "## Reviewer Perspective",
+          "## Governing Loop",
+          "## Contract Authority",
+          "## Semantic Subject",
+          "## Artifact Family",
+          "## Projection Authorities",
+          "## Artifact Relationships",
+          "## Exclusions",
+          "## Conformance Evaluation",
+          "## Terminal Dispositions",
+          "## Receipt Requirements",
+          "## Review Checklist"
         ],
         "verifierIds": [
           "content-digest-verifier.v1",
-          "markdown-section-verifier.v1",
-          "forbidden-text-verifier.v1"
+          "markdown-section-verifier.v1"
         ]
       },
-      "purpose": "Explains the governed artifact family and its proof.",
+      "purpose": "Projects the complete contract authority into an architecture review document.",
       "relationships": [
         {
           "artifactId": "message-command.v1",
@@ -1477,7 +1514,37 @@
       "evaluate-declared-commands",
       "issue-trust-disposition"
     ],
-    "failClosed": true
+    "failClosed": true,
+    "terminalDispositions": {
+      "artifactConformance": [
+        "ARTIFACT_FAMILY_CONFORMS",
+        "ARTIFACT_MISSING",
+        "ARTIFACT_UNDECLARED",
+        "ARTIFACT_CONTENT_MISMATCH",
+        "ARTIFACT_STRUCTURE_MISMATCH",
+        "ARTIFACT_STALE",
+        "PROJECTION_IDENTITY_MISMATCH"
+      ],
+      "contractValidation": [
+        "CONTRACT_VALID",
+        "CONTRACT_INVALID",
+        "SCHEMA_NOT_ADMITTED",
+        "SCHEMA_DIGEST_MISMATCH"
+      ],
+      "trustDispositions": [
+        "TRUSTED",
+        "REJECTED",
+        "NOT_EVALUATED"
+      ],
+      "trustPostures": [
+        "CONFORMS",
+        "DRIFTED",
+        "MISSING",
+        "EXTRA",
+        "STALE",
+        "NOT_EVALUATED"
+      ]
+    }
   },
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
@@ -1500,7 +1567,7 @@
     ]
   },
   "projectorRegistry": {
-    "digest": "sha256:c562c92d10d3fa2f09c967b5f3c616f905a0f76afab336ec637a6693a53df349",
+    "digest": "sha256:9e16e2900614a6fab8c08d295cde81f4b7c7453e7202ded1312444a187bd826f",
     "identity": "governed-artifact-projector-registry.v1"
   },
   "receipt": {
@@ -1517,7 +1584,7 @@
     ]
   },
   "schema": {
-    "digest": "sha256:552adf1f7409cff8233ac507c18cb1e99e0f8c3e51aa1a72cb2d1bda151ca46a",
+    "digest": "sha256:b9c96d4dfb21236d9877d10e3b193e364c8aeac0513bf30dc6af72739eed1640",
     "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
   },
   "subject": {

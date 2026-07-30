@@ -76,16 +76,26 @@ Only `ARTIFACT_FAMILY_CONFORMS` produces `TRUSTED`.
 
 ## Projectors
 
-The admitted projector registry contains three data-driven projectors:
+The admitted projector registry contains four data-driven projectors:
 
 - `canonical-json-value-projector.v1` serializes JSON with sorted object keys,
   two-space indentation, UTF-8, and one final LF;
+- `governed-artifact-contract-markdown-projector.v1` renders the structured
+  contract authority as a deterministic architecture review document;
 - `utf8-text-projector.v1` emits the exact admitted UTF-8 text; and
 - `lossless-source-token-projector.v1` concatenates ordered token text and
   independently rescans the result to prove token identity.
 
 No projector selects content from an artifact kind or subject identity. The
 contract supplies all artifact authority.
+
+The contract-Markdown projector derives contract identity, semantic subject,
+artifact inventory, proof requirements, projection bindings, relationships,
+exclusions, evaluation order, terminal dispositions, and evidence requirements
+from the contract. Its authority contains only presentation fields: document
+title, future-state paragraphs, reviewer perspective, schema-constrained
+section order, and review checklist. The resulting Markdown is content-hashed
+and reprojected during conformance evaluation.
 
 Every projection operation also writes or checks the contract-declared
 projection ledger. The ledger binds the contract digest, projector-registry
@@ -182,7 +192,7 @@ declares eight heterogeneous artifacts:
 - a source module;
 - a command entrypoint;
 - a verification command;
-- a Markdown document;
+- a contract-derived architecture review document;
 - a Mermaid diagram; and
 - a package manifest.
 

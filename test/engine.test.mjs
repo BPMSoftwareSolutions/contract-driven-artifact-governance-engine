@@ -16,6 +16,7 @@ import {
   canonicalJsonBytes,
   evaluateConformance,
   projectArtifactFamily,
+  projectGovernedArtifactContractMarkdown,
   proveGovernedArtifactFamily,
   validateContract
 } from "../lib/governed-artifact-engine.mjs";
@@ -47,6 +48,19 @@ function copyContract(workspacePath, mutate = () => {}) {
   return contractPath;
 }
 
+function recommitReviewDocument(contract) {
+  const review = contract.artifacts.find(
+    (artifact) => artifact.artifactId === "artifact-family-readme.v1"
+  );
+  const bytes = projectGovernedArtifactContractMarkdown(
+    contract,
+    review.projection.authority,
+    review.artifactId
+  );
+  review.proof.contentSha256 = sha256(bytes);
+  review.proof.expectedByteLength = bytes.length;
+}
+
 test("the admitted example contract is valid", () => {
   const contractBytes = readFileSync(exampleContractPath);
   assert.deepEqual(
@@ -72,6 +86,32 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   assert.equal(first.trustDisposition, "TRUSTED");
   assert.equal(first.artifactFamily.declaredArtifactCount, 8);
   assert.equal(first.artifactFamily.observedArtifactCount, 8);
+
+  const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
+  const reviewArtifact = contract.artifacts.find(
+    (artifact) => artifact.artifactId === "artifact-family-readme.v1"
+  );
+  const expectedReview = projectGovernedArtifactContractMarkdown(
+    contract,
+    reviewArtifact.projection.authority,
+    reviewArtifact.artifactId
+  );
+  const observedReview = readFileSync(
+    path.join(
+      workspacePath,
+      "governed-message-artifact-family",
+      "README.md"
+    )
+  );
+  assert.deepEqual(observedReview, expectedReview);
+  assert.match(
+    observedReview.toString("utf8"),
+    /## Projection Authorities[\s\S]+governed-artifact-contract-markdown-projector\.v1/
+  );
+  assert.match(
+    observedReview.toString("utf8"),
+    /## Terminal Dispositions[\s\S]+PROJECTION_IDENTITY_MISMATCH/
+  );
 
   const receiptPath = path.join(
     workspacePath,
@@ -204,16 +244,12 @@ test("missing, extra, and drifted artifacts receive distinct trust postures", (t
 test("structure is evaluated independently after byte identity", (t) => {
   const workspacePath = makeWorkspace(t);
   const contractPath = copyContract(workspacePath, (contract) => {
-    const readme = contract.artifacts.find(
-      (artifact) => artifact.artifactId === "artifact-family-readme.v1"
+    const diagram = contract.artifacts.find(
+      (artifact) => artifact.artifactId === "closed-loop-diagram.v1"
     );
-    readme.projection.authority.text = readme.projection.authority.text.replace(
-      "## Proof\n",
-      "Proof\n"
-    );
-    const bytes = Buffer.from(readme.projection.authority.text, "utf8");
-    readme.proof.contentSha256 = sha256(bytes);
-    readme.proof.expectedByteLength = bytes.length;
+    diagram.proof.verifierIds.push("markdown-section-verifier.v1");
+    diagram.proof.requiredSections = ["# Required Governed Heading"];
+    recommitReviewDocument(contract);
   });
   const projection = projectArtifactFamily({
     contractPath,
@@ -258,6 +294,7 @@ test("projection identity and freshness have independent terminal dispositions",
   const staleWorkspace = makeWorkspace(t);
   const staleContractPath = copyContract(staleWorkspace, (contract) => {
     contract.artifacts[1].proof.validThroughUtc = "2026-07-29T00:00:00.000Z";
+    recommitReviewDocument(contract);
   });
   projectArtifactFamily({
     contractPath: staleContractPath,
@@ -274,6 +311,69 @@ test("projection identity and freshness have independent terminal dispositions",
   assert.equal(
     stale.artifactFamily.freshnessObservation.observedAtUtc,
     "2026-07-30T00:00:00.000Z"
+  );
+});
+
+test("structured review authority drives Markdown and cannot drift silently", (t) => {
+  const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
+  const reviewArtifact = contract.artifacts.find(
+    (artifact) => artifact.artifactId === "artifact-family-readme.v1"
+  );
+  const admittedBytes = projectGovernedArtifactContractMarkdown(
+    contract,
+    reviewArtifact.projection.authority,
+    reviewArtifact.artifactId
+  );
+  contract.artifacts[0].purpose =
+    "Constrains a deliberately changed governed message value.";
+  const changedBytes = projectGovernedArtifactContractMarkdown(
+    contract,
+    reviewArtifact.projection.authority,
+    reviewArtifact.artifactId
+  );
+  assert.notDeepEqual(changedBytes, admittedBytes);
+  assert.match(
+    changedBytes.toString("utf8"),
+    /Constrains a deliberately changed governed message value\./
+  );
+
+  const workspacePath = makeWorkspace(t);
+  const changedContractPath = copyContract(workspacePath, (copy) => {
+    const review = copy.artifacts.find(
+      (artifact) => artifact.artifactId === "artifact-family-readme.v1"
+    );
+    review.projection.authority.futureStatePreview[0] =
+      "A changed review declaration must receive a new content commitment.";
+  });
+  const changedValidation = validateContract({
+    contractPath: changedContractPath
+  });
+  assert.equal(
+    changedValidation.contractValidationDisposition,
+    "CONTRACT_INVALID"
+  );
+  assert.equal(
+    changedValidation.findings.some(
+      (finding) => finding.findingId === "declared-content-digest-mismatch"
+    ),
+    true
+  );
+
+  const invalidBindingPath = copyContract(workspacePath, (copy) => {
+    const review = copy.artifacts.find(
+      (artifact) => artifact.artifactId === "artifact-family-readme.v1"
+    );
+    review.mediaType = "text/plain";
+  });
+  const invalidBinding = validateContract({
+    contractPath: invalidBindingPath
+  });
+  assert.equal(invalidBinding.contractValidationDisposition, "CONTRACT_INVALID");
+  assert.equal(
+    invalidBinding.findings.some(
+      (finding) => finding.findingId === "contract-review-markdown-binding"
+    ),
+    true
   );
 });
 

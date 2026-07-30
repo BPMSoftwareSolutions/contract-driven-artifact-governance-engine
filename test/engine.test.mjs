@@ -87,6 +87,24 @@ test("the admitted example contract is valid", () => {
 test("the contract makes every governed control surface explicit", () => {
   const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
   assert.equal(
+    contract.authorityClosure.authorityType,
+    "closed-world-authority-closure.v1"
+  );
+  assert.equal(
+    Object.values(contract.authorityClosure.coverage).every(
+      (disposition) => disposition === "exact"
+    ),
+    true
+  );
+  assert.deepEqual(contract.authorityClosure.resolution, {
+    ambiguousObservations: "reject",
+    ambientAuthority: "forbidden",
+    cardinality: "exactly-one",
+    missingDeclaredAuthorities: "reject",
+    undeclaredObservations: "reject",
+    unresolvedObservations: "reject"
+  });
+  assert.equal(
     contract.artifacts.every(
       (artifact) =>
         typeof artifact.relativePath === "string" &&
@@ -281,6 +299,13 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   assert.equal(first.artifactFamily.observedArtifactCount, 8);
 
   const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
+  assert.deepEqual(first.artifactFamily.authorityClosure, {
+    authorityType: "closed-world-authority-closure.v1",
+    profileSha256: sha256(
+      canonicalJsonBytes(contract.authorityClosure)
+    ),
+    disposition: "ARTIFACT_AUTHORITY_CLOSED"
+  });
   const reviewArtifact = contract.artifacts.find(
     (artifact) => artifact.artifactId === "artifact-family-readme.v1"
   );
@@ -378,6 +403,29 @@ test("schema-valid shape and semantic binding are separate contract checks", (t)
       (finding) => finding.findingId === "relationship-target-missing"
     ),
     true
+  );
+});
+
+test("artifact authority closure is mandatory and cannot be weakened", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const missingProfilePath = copyContract(workspacePath, (contract) => {
+    delete contract.authorityClosure;
+  });
+  assert.equal(
+    validateContract({
+      contractPath: missingProfilePath
+    }).contractValidationDisposition,
+    "CONTRACT_INVALID"
+  );
+
+  const weakenedProfilePath = copyContract(workspacePath, (contract) => {
+    contract.authorityClosure.resolution.ambientAuthority = "permitted";
+  });
+  assert.equal(
+    validateContract({
+      contractPath: weakenedProfilePath
+    }).contractValidationDisposition,
+    "CONTRACT_INVALID"
   );
 });
 
@@ -754,6 +802,15 @@ test("payload drift stays distinct and completion claims cannot exceed receipt e
   });
   const admittedClaim = evaluateTrustClaim(trustedReceipt, "COMPLETE");
   assert.equal(admittedClaim.claimDisposition, "CLAIM_ADMITTED");
+  const receiptWithoutClosure = structuredClone(trustedReceipt);
+  delete receiptWithoutClosure.artifactFamily.authorityClosure;
+  assert.equal(
+    evaluateTrustClaim(
+      receiptWithoutClosure,
+      "COMPLETE"
+    ).claimDisposition,
+    "CLAIM_EXCEEDS_EVIDENCE"
+  );
   assert.equal(
     evaluateReceiptClaim(
       {
@@ -834,11 +891,20 @@ test("payload drift stays distinct and completion claims cannot exceed receipt e
 
 test("the npm archive closes against its external release authority", () => {
   const authorityBytes = readFileSync(DEFAULT_RELEASE_AUTHORITY_PATH);
+  const authority = JSON.parse(authorityBytes.toString("utf8"));
   assert.deepEqual(
     authorityBytes,
-    canonicalJsonBytes(
-      JSON.parse(authorityBytes.toString("utf8"))
-    )
+    canonicalJsonBytes(authority)
+  );
+  assert.equal(
+    authority.authorityClosure.authorityType,
+    "closed-world-release-authority-closure.v1"
+  );
+  assert.equal(
+    Object.values(authority.authorityClosure.coverage).every(
+      (disposition) => disposition === "exact"
+    ),
+    true
   );
   const validation = validateReleaseAuthority({
     workspacePath: packageRoot
@@ -857,6 +923,17 @@ test("the npm archive closes against its external release authority", () => {
   );
   assert.equal(receipt.proofDisposition, "RELEASE_PROOF_COMPLETE");
   assert.equal(receipt.trustDisposition, "RELEASE_TRUSTED");
+  assert.equal(
+    receipt.authorityClosureDisposition,
+    "RELEASE_AUTHORITY_CLOSED"
+  );
+  assert.deepEqual(receipt.authorityClosure, {
+    authorityType: "closed-world-release-authority-closure.v1",
+    profileSha256: sha256(
+      canonicalJsonBytes(authority.authorityClosure)
+    ),
+    disposition: "RELEASE_AUTHORITY_CLOSED"
+  });
   assert.equal(receipt.findings.length, 0);
   assert.deepEqual(
     receipt.observations.delivery.missingPaths,
@@ -884,6 +961,15 @@ test("the npm archive closes against its external release authority", () => {
     evaluateReleaseClaim(receipt, "RELEASE_READY").claimDisposition,
     "RELEASE_CLAIM_ADMITTED"
   );
+  const receiptWithoutClosure = structuredClone(receipt);
+  delete receiptWithoutClosure.authorityClosure;
+  assert.equal(
+    evaluateReleaseClaim(
+      receiptWithoutClosure,
+      "RELEASE_READY"
+    ).claimDisposition,
+    "RELEASE_CLAIM_EXCEEDS_EVIDENCE"
+  );
   assert.equal(
     evaluateReleaseReceiptClaim(
       {
@@ -894,6 +980,37 @@ test("the npm archive closes against its external release authority", () => {
     ).claimDisposition,
     "RELEASE_CLAIM_ADMITTED"
   );
+});
+
+test("release authority closure is mandatory and cannot be weakened", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const mutations = [
+    (authority) => {
+      delete authority.authorityClosure;
+    },
+    (authority) => {
+      authority.authorityClosure.resolution.ambientAuthority =
+        "permitted";
+    }
+  ];
+  for (const [index, mutate] of mutations.entries()) {
+    const authority = JSON.parse(
+      readFileSync(DEFAULT_RELEASE_AUTHORITY_PATH, "utf8")
+    );
+    mutate(authority);
+    const authorityPath = path.join(
+      workspacePath,
+      `invalid-release-authority-${index}.json`
+    );
+    writeFileSync(authorityPath, canonicalJsonBytes(authority));
+    assert.equal(
+      validateReleaseAuthority({
+        workspacePath: packageRoot,
+        releaseAuthorityPath: authorityPath
+      }).authorityValidationDisposition,
+      "RELEASE_AUTHORITY_INVALID"
+    );
+  }
 });
 
 test("release candidate, durable artifact, toolchain, archive, and receipt drift fail closed", (t) => {
@@ -943,6 +1060,10 @@ test("release candidate, durable artifact, toolchain, archive, and receipt drift
   );
   assert.equal(receipt.proofDisposition, "RELEASE_PROOF_INCOMPLETE");
   assert.equal(receipt.trustDisposition, "RELEASE_REJECTED");
+  assert.equal(
+    receipt.authorityClosureDisposition,
+    "RELEASE_AUTHORITY_OPEN"
+  );
   assert.equal(
     receipt.findings.some(
       (finding) => finding.findingId === "RELEASE_ENTRY_DRIFT"

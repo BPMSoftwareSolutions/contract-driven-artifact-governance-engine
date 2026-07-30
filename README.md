@@ -82,6 +82,13 @@ Only `CONTRACT_AUTHORITY_CLOSED` produces `TRUSTED`.
 Authority closure is a closed-world rule. Every applicable control surface is
 present as structured contract data:
 
+The top-level `authorityClosure` profile makes that rule explicit. The admitted
+schema fixes every coverage surface to `exact`, requires each observation to
+resolve to exactly one authority, and rejects ambiguous, missing, undeclared,
+or unresolved authority. Ambient authority is always `forbidden`; these values
+are schema constants rather than contract options. Explicitly empty authority
+collections remain closed declarations.
+
 | Surface | Required contract authority |
 | --- | --- |
 | Artifact path | artifact declaration |
@@ -132,6 +139,7 @@ files make the release boundary red.
 
 The release authority declares:
 
+- an immutable closed-world release-authority closure profile;
 - package name, version, published paths, exports, and command binaries;
 - the exact Node and npm versions used to pack;
 - the dependency-lock digest;
@@ -150,8 +158,9 @@ parses the gzip and tar bytes independently, checks tar-header checksums, and
 compares every observation with the authority. It separately observes the
 durable release directory and compares its complete inventory and file
 digests. Any entry, metadata, toolchain, lockfile, lifecycle, archive, missing
-durable artifact, additional durable artifact, or durable byte difference produces
-`RELEASE_BOUNDARY_DRIFT` and `RELEASE_REJECTED`.
+durable artifact, additional durable artifact, or durable byte difference
+produces `RELEASE_AUTHORITY_OPEN`, `RELEASE_BOUNDARY_DRIFT`, and
+`RELEASE_REJECTED`.
 
 ## Projectors
 
@@ -315,11 +324,12 @@ governed-artifacts release-claim \
   --claim RELEASE_READY
 ```
 
-Successful release evaluation yields `RELEASE_BOUNDARY_CLOSED`,
-`RELEASE_PROOF_COMPLETE`, and `RELEASE_TRUSTED`. A current release receipt can
-then admit `RELEASE_READY`. The repository's `npm run prove` command includes
-this release check after audit, tests, and the npm dry-run inspection. Archive
-reproducibility without durable artifact conformance is insufficient.
+Successful release evaluation yields `RELEASE_AUTHORITY_CLOSED`,
+`RELEASE_BOUNDARY_CLOSED`, `RELEASE_PROOF_COMPLETE`, and `RELEASE_TRUSTED`.
+A current release receipt can then admit `RELEASE_READY`. The repository's
+`npm run prove` command includes this release check after audit, tests, and the
+npm dry-run inspection. Archive reproducibility without durable artifact
+conformance is insufficient.
 
 Each operation also accepts explicit `--schema`, `--projector-registry`, and
 `--verifier-registry` paths. Their exact file digests must equal the admitted

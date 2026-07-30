@@ -1830,7 +1830,8 @@
             "Every branch and iteration resolves to a named authority.",
             "Every thrown failure resolves to one failure policy.",
             "Every return or emitted result resolves to one result contract.",
-            "Every trust claim resolves to a named proof requirement."
+            "Every trust claim resolves to a named proof requirement.",
+            "The closed-world authority-closure profile is exact and immutable."
           ],
           "reviewerPerspective": {
             "objective": "to inspect the complete admitted artifact authority in one deterministic document",
@@ -1849,6 +1850,7 @@
             "effect-authorities",
             "runtime-authorities",
             "source-authority-closures",
+            "authority-closure-profile",
             "artifact-relationships",
             "exclusions",
             "conformance-evaluation",
@@ -1864,8 +1866,8 @@
       },
       "proof": {
         "contentDigestRequired": true,
-        "contentSha256": "sha256:00a178c084c827cc18635bb78714a310287f035171fb78db7ea130462f90a179",
-        "expectedByteLength": 13708,
+        "contentSha256": "sha256:b0e9ce9b876a1a21501c663aa7a0dda64c0133ba0d50f8c5a6ff6bdb470096c8",
+        "expectedByteLength": 14951,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -1879,6 +1881,7 @@
           "## Effect Authorities",
           "## Runtime Authorities",
           "## Source Authority Closures",
+          "## Authority Closure Profile",
           "## Artifact Relationships",
           "## Exclusions",
           "## Conformance Evaluation",
@@ -1983,6 +1986,37 @@
       "relativePath": "package.json"
     }
   ],
+  "authorityClosure": {
+    "admission": {
+      "requiredDisposition": "ARTIFACT_AUTHORITY_CLOSED"
+    },
+    "authorityType": "closed-world-authority-closure.v1",
+    "coverage": {
+      "artifactPaths": "exact",
+      "claimProofRequirements": "exact",
+      "decisions": "exact",
+      "declarations": "exact",
+      "dependencies": "exact",
+      "dependencyImports": "exact",
+      "dependencyInvocations": "exact",
+      "effects": "exact",
+      "failurePolicies": "exact",
+      "iterations": "exact",
+      "projectionMappings": "exact",
+      "responsibilities": "exact",
+      "resultContracts": "exact",
+      "runtimeAuthorities": "exact",
+      "semanticEdges": "exact"
+    },
+    "resolution": {
+      "ambientAuthority": "forbidden",
+      "ambiguousObservations": "reject",
+      "cardinality": "exactly-one",
+      "missingDeclaredAuthorities": "reject",
+      "undeclaredObservations": "reject",
+      "unresolvedObservations": "reject"
+    }
+  },
   "claims": [
     {
       "claim": "COMPLETE",
@@ -2073,7 +2107,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.2.0",
+    "contractVersion": "1.3.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2172,6 +2206,7 @@
     "requiredEvidence": [
       "contract-identity",
       "projector-registry-identity",
+      "authority-closure-profile",
       "dependency-authorities",
       "effect-authorities",
       "runtime-authorities",
@@ -2193,7 +2228,8 @@
       "registry-identities",
       "artifact-observations",
       "projection-identity",
-      "authority-closure",
+      "authority-closure-profile",
+      "authority-closure-disposition",
       "source-authority-observations",
       "conformance-findings",
       "claim-policies",
@@ -2221,7 +2257,7 @@
     }
   ],
   "schema": {
-    "digest": "sha256:3b0cbc893eafe37e4b58e1267e641d04c617c7dca35127e44b6c9bbaa31521bc",
+    "digest": "sha256:1b92425a55f3c8b914fa264531ab6730c97db65837b2f82ddd566087720d823e",
     "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
   },
   "subject": {

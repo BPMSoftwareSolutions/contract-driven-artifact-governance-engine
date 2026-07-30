@@ -12,6 +12,7 @@
     "dependencyLock",
     "packing",
     "archive",
+    "authorityClosure",
     "delivery",
     "receipt",
     "claims"
@@ -37,6 +38,9 @@
     },
     "archive": {
       "$ref": "#/$defs/archiveAuthority"
+    },
+    "authorityClosure": {
+      "$ref": "#/$defs/authorityClosure"
     },
     "delivery": {
       "$ref": "#/$defs/deliveryAuthority"
@@ -115,6 +119,50 @@
         },
         "digest": {
           "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "authorityClosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "coverage",
+        "resolution",
+        "admission"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "closed-world-release-authority-closure.v1"
+        },
+        "coverage": {
+          "const": {
+            "archiveEntries": "exact",
+            "archiveIdentity": "exact",
+            "bundledDependencies": "exact",
+            "dependencyLock": "exact",
+            "durableArtifactContent": "exact",
+            "durableArtifactPaths": "exact",
+            "lifecyclePolicy": "exact",
+            "packageMetadata": "exact",
+            "packOperation": "exact",
+            "toolchain": "exact"
+          }
+        },
+        "resolution": {
+          "const": {
+            "ambiguousObservations": "reject",
+            "ambientAuthority": "forbidden",
+            "cardinality": "exactly-one",
+            "missingDeclaredAuthorities": "reject",
+            "undeclaredObservations": "reject",
+            "unresolvedObservations": "reject"
+          }
+        },
+        "admission": {
+          "const": {
+            "requiredDisposition": "RELEASE_AUTHORITY_CLOSED"
+          }
         }
       }
     },
@@ -435,6 +483,8 @@
             "archive-entry-observations",
             "archive-identity",
             "durable-release-artifact-observations",
+            "authority-closure-profile",
+            "authority-closure-disposition",
             "release-findings",
             "claim-policies",
             "trust-disposition"
@@ -449,6 +499,7 @@
         "claimId",
         "claim",
         "requiredConformanceDisposition",
+        "requiredAuthorityClosureDisposition",
         "requiredProofDisposition",
         "requiredTrustDisposition"
       ],
@@ -461,6 +512,9 @@
         },
         "requiredConformanceDisposition": {
           "const": "RELEASE_BOUNDARY_CLOSED"
+        },
+        "requiredAuthorityClosureDisposition": {
+          "const": "RELEASE_AUTHORITY_CLOSED"
         },
         "requiredProofDisposition": {
           "const": "RELEASE_PROOF_COMPLETE"

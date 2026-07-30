@@ -18,6 +18,7 @@
     "effects",
     "runtimeAuthorities",
     "artifacts",
+    "authorityClosure",
     "exclusions",
     "conformance",
     "receipt",
@@ -72,6 +73,9 @@
       "items": {
         "$ref": "#/$defs/artifact"
       }
+    },
+    "authorityClosure": {
+      "$ref": "#/$defs/authorityClosure"
     },
     "exclusions": {
       "type": "array",
@@ -154,6 +158,55 @@
         },
         "digest": {
           "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "authorityClosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "coverage",
+        "resolution",
+        "admission"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "closed-world-authority-closure.v1"
+        },
+        "coverage": {
+          "const": {
+            "artifactPaths": "exact",
+            "claimProofRequirements": "exact",
+            "declarations": "exact",
+            "dependencies": "exact",
+            "dependencyImports": "exact",
+            "dependencyInvocations": "exact",
+            "decisions": "exact",
+            "effects": "exact",
+            "failurePolicies": "exact",
+            "iterations": "exact",
+            "projectionMappings": "exact",
+            "responsibilities": "exact",
+            "resultContracts": "exact",
+            "runtimeAuthorities": "exact",
+            "semanticEdges": "exact"
+          }
+        },
+        "resolution": {
+          "const": {
+            "ambiguousObservations": "reject",
+            "ambientAuthority": "forbidden",
+            "cardinality": "exactly-one",
+            "missingDeclaredAuthorities": "reject",
+            "undeclaredObservations": "reject",
+            "unresolvedObservations": "reject"
+          }
+        },
+        "admission": {
+          "const": {
+            "requiredDisposition": "ARTIFACT_AUTHORITY_CLOSED"
+          }
         }
       }
     },
@@ -1269,6 +1322,7 @@
             "effect-authorities",
             "runtime-authorities",
             "source-authority-closures",
+            "authority-closure-profile",
             "artifact-relationships",
             "exclusions",
             "conformance-evaluation",
@@ -1540,7 +1594,8 @@
             "registry-identities",
             "artifact-observations",
             "projection-identity",
-            "authority-closure",
+            "authority-closure-profile",
+            "authority-closure-disposition",
             "source-authority-observations",
             "conformance-findings",
             "claim-policies",
@@ -1568,6 +1623,7 @@
           "const": [
             "contract-identity",
             "projector-registry-identity",
+            "authority-closure-profile",
             "dependency-authorities",
             "effect-authorities",
             "runtime-authorities",

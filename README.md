@@ -125,6 +125,51 @@ Runtime availability grants no authority. Installed packages, Node built-ins,
 workspace modules, and global effects are prohibited unless they resolve
 through the contract.
 
+## Artifact scope authority
+
+Workspace resolution and artifact inventory are separate authorities:
+
+- `workspaceRoot` selects the contract-relative base beneath the supplied
+  consumer workspace;
+- `artifactRoot` selects the base for declared artifact paths; and
+- `governedScope` declares the inventory boundary.
+
+`exclusive-subtree` preserves the original posture: every file beneath
+`artifactRoot` belongs to the artifact family. `declared-paths` observes only
+declared artifact paths, exact exclusions, and every descendant of an
+explicitly governed directory.
+
+```json
+{
+  "workspace": {
+    "workspaceRoot": ".",
+    "artifactRoot": ".",
+    "governedScope": {
+      "scopeType": "declared-artifact-scope.v1",
+      "inventoryMode": "declared-paths",
+      "governedDirectories": [
+        "src/generated"
+      ],
+      "outsideScopePosture": "outside-authority",
+      "requiredDisposition": "ARTIFACT_SCOPE_CLOSED"
+    }
+  }
+}
+```
+
+Declared-path scope has no implicit ignore list and no glob interpretation.
+Repository state such as `.git`, `node_modules`, lockfiles, and unrelated
+source is outside authority only because it does not resolve through the
+declared path set. An undeclared descendant of `src/generated` remains governed
+inventory and produces `ARTIFACT_UNDECLARED`. An exact exclusion is observed
+even when it is outside a governed directory.
+
+The artifact plan records the selected mode, scope-authority digest, and
+resolved governed path set. The canonical receipt records the same authority,
+its digest-bound observation, the outside-authority classification rule, and
+`ARTIFACT_SCOPE_CLOSED` or `ARTIFACT_SCOPE_OPEN`. Trust claims require the
+closed disposition.
+
 ## Release boundary
 
 The repository-level npm archive has a separate admitted authority:
@@ -278,9 +323,9 @@ governed-artifacts claim \
 
 The result is `CLAIM_ADMITTED` or `CLAIM_EXCEEDS_EVIDENCE`. A trusted claim
 requires `CONTRACT_AUTHORITY_CLOSED`, `ARTIFACT_AUTHORITY_CLOSED`,
-`PROOF_COMPLETE`, and `TRUSTED` in the same receipt. Claim evaluation
-re-observes the workspace and rejects a supplied receipt that differs from the
-current canonical evidence.
+`ARTIFACT_SCOPE_CLOSED`, `PROOF_COMPLETE`, and `TRUSTED` in the same receipt.
+Claim evaluation re-observes the workspace and rejects a supplied receipt that
+differs from the current canonical evidence.
 
 Observe the npm release archive without granting trust:
 
@@ -360,6 +405,8 @@ public receipt. The example contains no artifact bytes outside its contract.
 The receipt binds:
 
 - exact contract, schema, and registry digests;
+- artifact-scope authority, resolved path set, observation digest, and
+  disposition;
 - every artifact observation;
 - every observed source authority surface;
 - missing and undeclared paths;

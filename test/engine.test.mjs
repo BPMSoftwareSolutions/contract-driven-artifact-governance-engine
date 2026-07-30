@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   mkdtempSync,
+  mkdirSync,
   readFileSync,
   readdirSync,
   rmSync,
@@ -22,6 +23,7 @@ import {
   projectArtifactFamily,
   projectGovernedArtifactContractMarkdown,
   proveGovernedArtifactFamily,
+  resolveArtifactPlan,
   validateContract
 } from "../lib/governed-artifact-engine.mjs";
 import {
@@ -104,6 +106,14 @@ test("the contract makes every governed control surface explicit", () => {
     undeclaredObservations: "reject",
     unresolvedObservations: "reject"
   });
+  assert.equal(
+    contract.workspace.governedScope.scopeType,
+    "exclusive-artifact-subtree.v1"
+  );
+  assert.equal(
+    contract.workspace.governedScope.inventoryMode,
+    "exclusive-subtree"
+  );
   assert.equal(
     contract.artifacts.every(
       (artifact) =>
@@ -196,6 +206,7 @@ test("the contract makes every governed control surface explicit", () => {
       (claim) =>
         claim.requiredConformanceDisposition.length > 0 &&
         claim.requiredAuthorityClosureDisposition.length > 0 &&
+        claim.requiredScopeDisposition.length > 0 &&
         claim.requiredProofDisposition.length > 0 &&
         claim.requiredTrustDisposition.length > 0
     ),
@@ -306,6 +317,14 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
     ),
     disposition: "ARTIFACT_AUTHORITY_CLOSED"
   });
+  assert.equal(
+    first.artifactFamily.artifactScope.disposition,
+    "ARTIFACT_SCOPE_CLOSED"
+  );
+  assert.equal(
+    first.artifactFamily.artifactScope.inventoryMode,
+    "exclusive-subtree"
+  );
   const reviewArtifact = contract.artifacts.find(
     (artifact) => artifact.artifactId === "artifact-family-readme.v1"
   );
@@ -426,6 +445,173 @@ test("artifact authority closure is mandatory and cannot be weakened", (t) => {
       contractPath: weakenedProfilePath
     }).contractValidationDisposition,
     "CONTRACT_INVALID"
+  );
+});
+
+test("declared artifact scope coexists with ordinary repository state and closes governed directories", (t) => {
+  const workspacePath = makeWorkspace(t);
+  for (const [relativePath, contents] of [
+    [".git/config", "[core]\n"],
+    ["node_modules/example/index.js", "export default true;\n"],
+    ["package-lock.json", "{}\n"],
+    ["src/unrelated.mjs", "export const unrelated = true;\n"]
+  ]) {
+    const absolutePath = path.join(
+      workspacePath,
+      ...relativePath.split("/")
+    );
+    mkdirSync(path.dirname(absolutePath), { recursive: true });
+    writeFileSync(absolutePath, contents);
+  }
+  const contractPath = copyContract(workspacePath, (contract) => {
+    contract.workspace = {
+      artifactRoot: ".",
+      governedScope: {
+        governedDirectories: ["src/generated"],
+        inventoryMode: "declared-paths",
+        outsideScopePosture: "outside-authority",
+        requiredDisposition: "ARTIFACT_SCOPE_CLOSED",
+        scopeType: "declared-artifact-scope.v1"
+      },
+      workspaceRoot: "."
+    };
+    recommitReviewDocument(contract);
+  });
+  const plan = resolveArtifactPlan({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    plan.artifactScope.authority.inventoryMode,
+    "declared-paths"
+  );
+  assert.equal(
+    plan.artifactScope.authority.resolvedGovernedPathSet.some(
+      (entry) =>
+        entry.pathKind === "directory" &&
+        entry.relativePath === "src/generated"
+    ),
+    true
+  );
+
+  projectArtifactFamily({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  const receipt = evaluateConformance({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    receipt.artifactFamily.conformanceDisposition,
+    "CONTRACT_AUTHORITY_CLOSED"
+  );
+  assert.equal(
+    receipt.artifactFamily.artifactScope.disposition,
+    "ARTIFACT_SCOPE_CLOSED"
+  );
+  assert.equal(
+    receipt.artifactFamily.artifactScope.authoritySha256,
+    plan.artifactScope.authoritySha256
+  );
+  for (const outsidePath of [
+    ".git/config",
+    "node_modules/example/index.js",
+    "package-lock.json",
+    "src/unrelated.mjs"
+  ]) {
+    assert.equal(
+      receipt.artifactFamily.artifactScopeObservation
+        .observedGovernedPaths.includes(outsidePath),
+      false,
+      outsidePath
+    );
+  }
+  assert.deepEqual(
+    receipt.artifactFamily.artifactScopeObservation
+      .outsideAuthorityClassification,
+    {
+      posture: "outside-authority",
+      rule: "not-declared-and-not-within-governed-directory"
+    }
+  );
+
+  const forbiddenPath = path.join(workspacePath, ".env");
+  writeFileSync(forbiddenPath, "SECRET=not-admitted\n");
+  const excluded = evaluateConformance({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    excluded.artifactFamily.conformanceDisposition,
+    "ARTIFACT_UNDECLARED"
+  );
+  assert.equal(
+    excluded.artifactFamily.artifactScope.disposition,
+    "ARTIFACT_SCOPE_OPEN"
+  );
+  assert.equal(
+    excluded.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "excluded-artifact-present" &&
+        finding.relativePath === ".env"
+    ),
+    true
+  );
+  unlinkSync(forbiddenPath);
+
+  const undeclaredPath = path.join(
+    workspacePath,
+    "src",
+    "generated",
+    "escape.mjs"
+  );
+  mkdirSync(path.dirname(undeclaredPath), { recursive: true });
+  writeFileSync(undeclaredPath, "export const escape = true;\n");
+  const escaped = evaluateConformance({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    escaped.artifactFamily.conformanceDisposition,
+    "ARTIFACT_UNDECLARED"
+  );
+  assert.equal(
+    escaped.artifactFamily.artifactScope.disposition,
+    "ARTIFACT_SCOPE_OPEN"
+  );
+  assert.equal(
+    escaped.artifactFamily.undeclaredPaths.includes(
+      "src/generated/escape.mjs"
+    ),
+    true
+  );
+});
+
+test("overlapping governed directories are rejected as ambiguous scope authority", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    contract.workspace.governedScope = {
+      governedDirectories: ["src", "src/generated"],
+      inventoryMode: "declared-paths",
+      outsideScopePosture: "outside-authority",
+      requiredDisposition: "ARTIFACT_SCOPE_CLOSED",
+      scopeType: "declared-artifact-scope.v1"
+    };
+    recommitReviewDocument(contract);
+  });
+  const validation = validateContract({ contractPath });
+  assert.equal(
+    validation.contractValidationDisposition,
+    "CONTRACT_INVALID"
+  );
+  assert.equal(
+    validation.findings.some(
+      (finding) =>
+        finding.findingId === "overlapping-governed-directories"
+    ),
+    true
   );
 });
 
@@ -807,6 +993,15 @@ test("payload drift stays distinct and completion claims cannot exceed receipt e
   assert.equal(
     evaluateTrustClaim(
       receiptWithoutClosure,
+      "COMPLETE"
+    ).claimDisposition,
+    "CLAIM_EXCEEDS_EVIDENCE"
+  );
+  const receiptWithoutScope = structuredClone(trustedReceipt);
+  delete receiptWithoutScope.artifactFamily.artifactScope;
+  assert.equal(
+    evaluateTrustClaim(
+      receiptWithoutScope,
       "COMPLETE"
     ).claimDisposition,
     "CLAIM_EXCEEDS_EVIDENCE"

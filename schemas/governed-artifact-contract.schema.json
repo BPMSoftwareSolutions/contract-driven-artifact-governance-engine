@@ -177,6 +177,7 @@
         "coverage": {
           "const": {
             "artifactPaths": "exact",
+            "artifactScope": "exact",
             "claimProofRequirements": "exact",
             "declarations": "exact",
             "dependencies": "exact",
@@ -237,11 +238,89 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "artifactRoot"
+        "workspaceRoot",
+        "artifactRoot",
+        "governedScope"
       ],
       "properties": {
+        "workspaceRoot": {
+          "$ref": "#/$defs/relativePath"
+        },
         "artifactRoot": {
           "$ref": "#/$defs/relativePath"
+        },
+        "governedScope": {
+          "$ref": "#/$defs/governedScope"
+        }
+      }
+    },
+    "governedScope": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/exclusiveSubtreeScope"
+        },
+        {
+          "$ref": "#/$defs/declaredArtifactScope"
+        }
+      ]
+    },
+    "exclusiveSubtreeScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scopeType",
+        "inventoryMode",
+        "governedDirectories",
+        "outsideScopePosture",
+        "requiredDisposition"
+      ],
+      "properties": {
+        "scopeType": {
+          "const": "exclusive-artifact-subtree.v1"
+        },
+        "inventoryMode": {
+          "const": "exclusive-subtree"
+        },
+        "governedDirectories": {
+          "const": []
+        },
+        "outsideScopePosture": {
+          "const": "outside-authority"
+        },
+        "requiredDisposition": {
+          "const": "ARTIFACT_SCOPE_CLOSED"
+        }
+      }
+    },
+    "declaredArtifactScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scopeType",
+        "inventoryMode",
+        "governedDirectories",
+        "outsideScopePosture",
+        "requiredDisposition"
+      ],
+      "properties": {
+        "scopeType": {
+          "const": "declared-artifact-scope.v1"
+        },
+        "inventoryMode": {
+          "const": "declared-paths"
+        },
+        "governedDirectories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          },
+          "uniqueItems": true
+        },
+        "outsideScopePosture": {
+          "const": "outside-authority"
+        },
+        "requiredDisposition": {
+          "const": "ARTIFACT_SCOPE_CLOSED"
         }
       }
     },
@@ -1323,6 +1402,7 @@
             "runtime-authorities",
             "source-authority-closures",
             "authority-closure-profile",
+            "artifact-scope-authority",
             "artifact-relationships",
             "exclusions",
             "conformance-evaluation",
@@ -1544,6 +1624,7 @@
         "claim",
         "requiredConformanceDisposition",
         "requiredAuthorityClosureDisposition",
+        "requiredScopeDisposition",
         "requiredProofDisposition",
         "requiredTrustDisposition"
       ],
@@ -1563,6 +1644,9 @@
         },
         "requiredAuthorityClosureDisposition": {
           "const": "ARTIFACT_AUTHORITY_CLOSED"
+        },
+        "requiredScopeDisposition": {
+          "const": "ARTIFACT_SCOPE_CLOSED"
         },
         "requiredProofDisposition": {
           "const": "PROOF_COMPLETE"
@@ -1594,6 +1678,8 @@
             "registry-identities",
             "artifact-observations",
             "projection-identity",
+            "artifact-scope-authority",
+            "artifact-scope-observation",
             "authority-closure-profile",
             "authority-closure-disposition",
             "source-authority-observations",
@@ -1623,6 +1709,7 @@
           "const": [
             "contract-identity",
             "projector-registry-identity",
+            "artifact-scope-authority",
             "authority-closure-profile",
             "dependency-authorities",
             "effect-authorities",

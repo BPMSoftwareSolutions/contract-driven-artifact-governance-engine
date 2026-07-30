@@ -1831,7 +1831,8 @@
             "Every thrown failure resolves to one failure policy.",
             "Every return or emitted result resolves to one result contract.",
             "Every trust claim resolves to a named proof requirement.",
-            "The closed-world authority-closure profile is exact and immutable."
+            "The closed-world authority-closure profile is exact and immutable.",
+            "The artifact inventory resolves through one explicit governed-scope authority."
           ],
           "reviewerPerspective": {
             "objective": "to inspect the complete admitted artifact authority in one deterministic document",
@@ -1851,6 +1852,7 @@
             "runtime-authorities",
             "source-authority-closures",
             "authority-closure-profile",
+            "artifact-scope-authority",
             "artifact-relationships",
             "exclusions",
             "conformance-evaluation",
@@ -1866,8 +1868,8 @@
       },
       "proof": {
         "contentDigestRequired": true,
-        "contentSha256": "sha256:b0e9ce9b876a1a21501c663aa7a0dda64c0133ba0d50f8c5a6ff6bdb470096c8",
-        "expectedByteLength": 14951,
+        "contentSha256": "sha256:91de2c13720b17e83aa9c910d0480ddf18eed289c4d83f5de68acc7471be1ca1",
+        "expectedByteLength": 17062,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -1882,6 +1884,7 @@
           "## Runtime Authorities",
           "## Source Authority Closures",
           "## Authority Closure Profile",
+          "## Artifact Scope Authority",
           "## Artifact Relationships",
           "## Exclusions",
           "## Conformance Evaluation",
@@ -1993,6 +1996,7 @@
     "authorityType": "closed-world-authority-closure.v1",
     "coverage": {
       "artifactPaths": "exact",
+      "artifactScope": "exact",
       "claimProofRequirements": "exact",
       "decisions": "exact",
       "declarations": "exact",
@@ -2024,6 +2028,7 @@
       "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
       "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
       "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
       "requiredTrustDisposition": "TRUSTED"
     },
     {
@@ -2032,6 +2037,7 @@
       "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
       "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
       "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
       "requiredTrustDisposition": "TRUSTED"
     },
     {
@@ -2040,6 +2046,7 @@
       "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
       "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
       "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
       "requiredTrustDisposition": "TRUSTED"
     }
   ],
@@ -2107,7 +2114,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.3.0",
+    "contractVersion": "1.4.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2206,6 +2213,7 @@
     "requiredEvidence": [
       "contract-identity",
       "projector-registry-identity",
+      "artifact-scope-authority",
       "authority-closure-profile",
       "dependency-authorities",
       "effect-authorities",
@@ -2228,6 +2236,8 @@
       "registry-identities",
       "artifact-observations",
       "projection-identity",
+      "artifact-scope-authority",
+      "artifact-scope-observation",
       "authority-closure-profile",
       "authority-closure-disposition",
       "source-authority-observations",
@@ -2257,7 +2267,7 @@
     }
   ],
   "schema": {
-    "digest": "sha256:1b92425a55f3c8b914fa264531ab6730c97db65837b2f82ddd566087720d823e",
+    "digest": "sha256:f69eac861fb6743929e635a1fe106b0af105b1b0a0fe757939a9d2533cdc1044",
     "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
   },
   "subject": {
@@ -2279,6 +2289,14 @@
     "identity": "governed-artifact-verifier-registry.v1"
   },
   "workspace": {
-    "artifactRoot": "governed-message-artifact-family"
+    "artifactRoot": "governed-message-artifact-family",
+    "governedScope": {
+      "governedDirectories": [],
+      "inventoryMode": "exclusive-subtree",
+      "outsideScopePosture": "outside-authority",
+      "requiredDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "scopeType": "exclusive-artifact-subtree.v1"
+    },
+    "workspaceRoot": "."
   }
 }

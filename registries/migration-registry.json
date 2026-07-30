@@ -47,7 +47,7 @@
         "single-source-mutation-authority"
       ],
       "migrationAuthority": {
-        "digest": "sha256:7a4ea84f3fa60fc4c0f7e006709c0f2917443e153e5d5f839fd12ee2a2bb25f8",
+        "digest": "sha256:166b05b08acfd3bbd7979189f3fdec9b9a007faaa6b82c5127089d09d525be9f",
         "relativePath": "migrations/artifact-contract.1.6-to-1.7.json"
       },
       "migrationId": "artifact-contract.1.6-to-1.7",
@@ -99,12 +99,68 @@
         "derived-content-commitments",
         "interpretation-base"
       ]
+    },
+    {
+      "introducedAuthorities": [
+        "deterministic-ontology-authority",
+        "role-based-semantic-body-purity"
+      ],
+      "migrationAuthority": {
+        "digest": "sha256:01692b2c45442aa7e7e5cd9ef047cc1a56769894f06e85ec5d1d8e4296436ffa",
+        "relativePath": "migrations/artifact-contract.1.8-to-1.9.json"
+      },
+      "migrationId": "artifact-contract.1.8-to-1.9",
+      "preservedAuthorities": [
+        "artifact-identities",
+        "artifact-paths",
+        "artifact-projection-authorities",
+        "artifact-relationships",
+        "artifact-verifier-selections",
+        "claim-identities",
+        "command-evaluations",
+        "dependency-authorities",
+        "effect-authorities",
+        "exclusions",
+        "runtime-authorities",
+        "single-source-mutation-authority",
+        "source-authorities",
+        "subject-authority",
+        "workspace-authority"
+      ],
+      "removedAuthorities": [],
+      "sourceInterpretationBase": {
+        "conformanceProfile": {
+          "digest": "sha256:7f4e8bd250fe3a7d51096f904923b6a340b578cfc1318989fbde8aa746805c52",
+          "identity": "closed-world-artifact-conformance.v3"
+        },
+        "engine": {
+          "digest": "sha256:f72f0f4583328ebfe429ae60b446d87b4a86c8c285f91e7b51a674986f68c41a",
+          "identity": "governed-artifact-engine.0.9.0"
+        }
+      },
+      "sourceSchemaDigest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
+      "targetInterpretationBase": {
+        "conformanceProfile": {
+          "digest": "sha256:577106b91879dcbf1fb829ec87adaf969cccdc6e2e3f54d67f224b5718fa3f56",
+          "identity": "closed-world-artifact-conformance.v4"
+        },
+        "engine": {
+          "digest": "sha256:106c780a56f65ed5448a7100d01fced1bea3d572657fcc88d7b2c0b78a9afef2",
+          "identity": "governed-artifact-engine.0.10.0"
+        }
+      },
+      "targetSchemaDigest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
+      "transformedAuthorities": [
+        "contract-version",
+        "derived-content-commitments",
+        "interpretation-base"
+      ]
     }
   ],
   "registryId": "governed-artifact-migration-registry.v1",
   "registryType": "digest-to-digest-migration-registry.v1",
   "schemaCatalog": {
-    "digest": "sha256:9f08bc1a82eac5b0f8337113239fb9f4b4544b68256f8380b64c5934338e950f",
+    "digest": "sha256:6b0aaa897b44672806c01ff5e34bb161bbc243b97da796f0dc4f80e8623b79cb",
     "identity": "governed-artifact-schema-catalog.v1"
   }
 }

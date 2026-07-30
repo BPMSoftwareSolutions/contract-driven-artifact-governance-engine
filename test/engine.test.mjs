@@ -31,8 +31,10 @@ import {
   proveGovernedArtifactFamily,
   reconcileContractCommitments,
   resolveArtifactPlan,
+  sourceTokens,
   validateContract
 } from "../lib/governed-artifact-engine.mjs";
+import { makeProviderNormalizationOntologyBundle } from "./fixtures/provider-normalization-ontology.mjs";
 import {
   DEFAULT_RELEASE_AUTHORITY_PATH,
   evaluateReleaseBoundary,
@@ -58,6 +60,12 @@ const previousInterpretationContractPath = path.join(
   "test",
   "fixtures",
   "governed-message-artifact-family.1.6.contract.json"
+);
+const previousOntologyContractPath = path.join(
+  packageRoot,
+  "test",
+  "fixtures",
+  "governed-message-artifact-family.1.8.contract.json"
 );
 
 function sha256(bytes) {
@@ -205,19 +213,23 @@ test("the contract makes every governed control surface explicit", () => {
     }
   );
   assert.deepEqual(profile.operationAuthorities.bodyPurity, {
+    admittedAuthorityTypes: [
+      "semantic-projection-authority.v1",
+      "semantic-execution-bundle.v1"
+    ],
     allowedExecutableForms: [
       "single-semantic-invocation",
       "direct-return",
       "declared-port-binding"
     ],
-    applicability: "artifacts-declaring-projection-mappings",
-    authorityOperation: "executeSemanticProjection",
+    applicability: "artifacts-bound-to-semantic-authority-executor-port",
     consumerRelaxation: "forbidden",
     exactCardinality: {
       exportedResponsibilities: 1,
       resultFlows: 1,
       semanticInvocations: 1
     },
+    executionPortEffect: "execute-semantic-authority",
     forbiddenExecutableMechanics: [
       "branch",
       "iteration",
@@ -231,7 +243,7 @@ test("the contract makes every governed control surface explicit", () => {
       "retry",
       "state-mutation"
     ],
-    profileType: "semantic-execution-body.v1",
+    profileType: "semantic-execution-body.v2",
     semanticAuthorityLocation: "contract"
   });
   assert.deepEqual(
@@ -358,7 +370,7 @@ test("historical schemas and digest-to-digest migration authority are durable", 
     registry.schemaCatalog.digest,
     sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
   );
-  assert.equal(registry.migrations.length, 2);
+  assert.equal(registry.migrations.length, 3);
   const edge = registry.migrations[0];
   for (const digest of [
     edge.sourceSchemaDigest,
@@ -505,6 +517,56 @@ test("interpretation-only migration is admitted without schema churn", (t) => {
     replay.migrationDisposition,
     "MIGRATION_NOT_REQUIRED"
   );
+  assert.deepEqual(replay.diff, []);
+});
+
+test("ontology interpretation migration is admitted without schema churn", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = path.join(
+    workspacePath,
+    "governed-artifact.contract.json"
+  );
+  writeFileSync(
+    contractPath,
+    readFileSync(previousOntologyContractPath)
+  );
+  const preview = migrateContract({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    preview.migrationDisposition,
+    "CONTRACT_MIGRATION_REQUIRED"
+  );
+  assert.equal(preview.sourceSchemaDigest, preview.targetSchemaDigest);
+  assert.equal(
+    preview.migrationId,
+    "artifact-contract.1.8-to-1.9"
+  );
+  assert.equal(
+    preview.diff.some(
+      (change) =>
+        change.path ===
+        "/interpretationBase/conformanceProfile/identity"
+    ),
+    true
+  );
+
+  const written = migrateContract({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(written.migrationDisposition, "CONTRACT_MIGRATED");
+  assert.equal(
+    written.candidateContract.contract.contractVersion,
+    "1.9.0"
+  );
+  const replay = migrateContract({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(replay.migrationDisposition, "MIGRATION_NOT_REQUIRED");
   assert.deepEqual(replay.diff, []);
 });
 
@@ -815,6 +877,225 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   const secondReceipt = readFileSync(receiptPath);
   assert.deepEqual(second, first);
   assert.deepEqual(secondReceipt, firstReceipt);
+});
+
+test("a contract-projected ontology bundle closes meaning, execution, and a mechanically empty body", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    const bundleArtifact = contract.artifacts.find(
+      (artifact) =>
+        artifact.artifactId === "message-projector-authority.v1"
+    );
+    bundleArtifact.artifactKind = "deterministic-ontology-bundle";
+    bundleArtifact.purpose =
+      "Projects the complete deterministic provider-response ontology and its bound execution subject.";
+    bundleArtifact.projection.authority.value =
+      makeProviderNormalizationOntologyBundle();
+    bundleArtifact.relationships = [];
+
+    const projectedSchema = contract.artifacts.find(
+      (artifact) => artifact.artifactId === "message-schema.v1"
+    );
+    projectedSchema.purpose =
+      "Projects the OpenAI response schema directly from the bound ontology.";
+    projectedSchema.projection = {
+      authorityId: "openai-response-ontology-schema-authority.v1",
+      projectorId: "deterministic-ontology-schema-projector.v1",
+      authority: {
+        authorityType: "canonical-json-value.v1",
+        value: {
+          authorityType: "deterministic-ontology-projection.v1",
+          bundleArtifactId: "message-projector-authority.v1",
+          projectionKind: "bound-schema",
+          subjectId: "openai-response.schema.v1"
+        }
+      }
+    };
+    projectedSchema.relationships = [
+      {
+        artifactId: "message-projector-authority.v1",
+        relationshipType: "derived-from-ontology"
+      }
+    ];
+
+    const ontologyDocument = contract.artifacts.find(
+      (artifact) => artifact.artifactId === "closed-loop-diagram.v1"
+    );
+    ontologyDocument.artifactKind = "markdown-document";
+    ontologyDocument.mediaType = "text/markdown";
+    ontologyDocument.purpose =
+      "Projects ontology meaning, execution bindings, and proof requirements.";
+    ontologyDocument.relativePath =
+      "architecture/provider-response-ontology.md";
+    ontologyDocument.projection = {
+      authorityId: "provider-ontology-documentation-authority.v1",
+      projectorId: "deterministic-ontology-documentation-projector.v1",
+      authority: {
+        authorityType: "canonical-json-value.v1",
+        value: {
+          authorityType: "deterministic-ontology-projection.v1",
+          bundleArtifactId: "message-projector-authority.v1",
+          projectionKind: "ontology-documentation",
+          subjectId: "provider-response-normalization"
+        }
+      }
+    };
+    ontologyDocument.proof.verifierIds = [
+      "content-digest-verifier.v1"
+    ];
+    ontologyDocument.relationships = [
+      {
+        artifactId: "message-projector-authority.v1",
+        relationshipType: "derived-from-ontology"
+      }
+    ];
+
+    const body = contract.artifacts.find(
+      (artifact) => artifact.artifactId === "message-projector.v1"
+    );
+    const bodyText = [
+      'import { executeSemanticAuthority as runDeterministicOntology } from "contract-driven-artifact-governance-engine";',
+      'import normalizationOntology from "../contracts/project-message.authority.json" with { type: "json" };',
+      "",
+      "export function projectMessage(value) {",
+      "  return runDeterministicOntology(normalizationOntology, value);",
+      "}",
+      ""
+    ].join("\n");
+    body.projection.authority.tokens = sourceTokens(bodyText);
+    body.relationships = body.relationships.filter(
+      (relationship) => relationship.artifactId !== "message-schema.v1"
+    );
+    body.sourceAuthority.decisions = [];
+    body.sourceAuthority.iterations = [];
+    body.sourceAuthority.failurePolicies = [];
+    body.sourceAuthority.projectionMappings = [];
+    body.sourceAuthority.semanticEdges = [
+      {
+        argumentExpressions: ["normalizationOntology", "value"],
+        authorities: [
+          {
+            authorityType: "dependency-authority",
+            dependencyId: "message-projector-authority-data.v1"
+          },
+          {
+            authorityType: "dependency-authority",
+            dependencyId: "semantic-projection-runtime.v1"
+          },
+          {
+            authorityType: "runtime-authority",
+            runtimeAuthorityId: "semantic-projection-runtime.v1"
+          }
+        ],
+        edgeId: "execute-project-message-semantics.v1",
+        edgeKind: "invocation",
+        occurrences: 1,
+        operation: "runDeterministicOntology",
+        purpose:
+          "Forwards the declared input through the bound deterministic ontology.",
+        responsibilityId: "project-message.v1"
+      }
+    ];
+    body.sourceAuthority.resultContracts = [
+      {
+        mediaType: "application/json",
+        purpose: "Returns exactly one discriminated ontology result.",
+        resultContractId: "normalized-provider-response.v1",
+        resultKind: "semantic-ontology-result",
+        source: {
+          expression:
+            "runDeterministicOntology(normalizationOntology,value)",
+          occurrences: 1,
+          responsibilityId: "project-message.v1",
+          returnKind: "explicit-return",
+          sourceType: "return"
+        }
+      }
+    ];
+    for (const artifact of contract.artifacts) {
+      for (const result of artifact.sourceAuthority?.resultContracts ?? []) {
+        if (
+          result.projectionMapping?.artifactId === "message-projector.v1"
+        ) {
+          delete result.projectionMapping;
+        }
+      }
+    }
+
+    contract.dependencies = contract.dependencies.filter(
+      (dependency) =>
+        dependency.dependencyId !== "message-projector-schema-data.v1"
+    );
+    const dataDependency = contract.dependencies.find(
+      (dependency) =>
+        dependency.dependencyId === "message-projector-authority-data.v1"
+    );
+    dataDependency.allowedImports = ["default"];
+    const runtimeDependency = contract.dependencies.find(
+      (dependency) =>
+        dependency.dependencyId === "semantic-projection-runtime.v1"
+    );
+    runtimeDependency.allowedImports = ["executeSemanticAuthority"];
+    runtimeDependency.allowedInvocations = ["executeSemanticAuthority"];
+    const runtime = contract.runtimeAuthorities.find(
+      (entry) =>
+        entry.runtimeAuthorityId === "semantic-projection-runtime.v1"
+    );
+    runtime.invocation = "runDeterministicOntology";
+    runtime.purpose =
+      "Executes the contract-projected deterministic ontology bundle.";
+    contract.conformance.artifactEvaluations = [];
+  });
+
+  const reconciliation = reconcileContractCommitments({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(
+    reconciliation.reconciliationDisposition,
+    "DERIVED_COMMITMENTS_RECONCILED",
+    JSON.stringify(reconciliation.findings ?? reconciliation)
+  );
+  projectArtifactFamily({ contractPath, workspacePath, mode: "write" });
+  const receipt = evaluateConformance({ contractPath, workspacePath });
+  assert.equal(receipt.trustPosture, "CONFORMS");
+  assert.equal(receipt.artifactFamily.findings.length, 0);
+  assert.equal(
+    receipt.checks.find(
+      (check) => check.checkId === "evaluate-ontology-authority"
+    ).disposition,
+    "ONTOLOGY_AUTHORITY_CLOSED"
+  );
+  assert.equal(
+    receipt.checks.find(
+      (check) => check.checkId === "evaluate-semantic-execution-bodies"
+    ).disposition,
+    "SEMANTIC_EXECUTION_BODY_CLOSED"
+  );
+  const projectedBodyPath = path.join(
+    workspacePath,
+    "governed-message-artifact-family",
+    "src",
+    "project-message.mjs"
+  );
+  writeFileSync(
+    projectedBodyPath,
+    readFileSync(projectedBodyPath, "utf8").replace(
+      "  return runDeterministicOntology",
+      "  if (!value) return null;\n  return runDeterministicOntology"
+    )
+  );
+  const rejected = evaluateConformance({ contractPath, workspacePath });
+  assert.equal(rejected.trustPosture, "CONTAMINATED");
+  assert.equal(
+    rejected.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId ===
+        "DECLARED_SEMANTICS_DO_NOT_AUTHORIZE_BODY_BRANCHING"
+    ),
+    true
+  );
 });
 
 test("prove preserves drift, rejects implicit repair, and requires explicit reprojection", (t) => {

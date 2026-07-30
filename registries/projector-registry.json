@@ -8,6 +8,16 @@
       "serialization": "sorted-object-keys-two-space-lf"
     },
     {
+      "projectorId": "deterministic-ontology-documentation-projector.v1",
+      "authorityType": "canonical-json-value.v1",
+      "serialization": "closed-ontology-reference-markdown-v1-lf"
+    },
+    {
+      "projectorId": "deterministic-ontology-schema-projector.v1",
+      "authorityType": "canonical-json-value.v1",
+      "serialization": "bound-ontology-schema-canonical-json-v1"
+    },
+    {
       "projectorId": "governed-artifact-contract-markdown-projector.v1",
       "authorityType": "governed-artifact-contract-markdown.v1",
       "serialization": "governed-review-markdown-v1-lf"

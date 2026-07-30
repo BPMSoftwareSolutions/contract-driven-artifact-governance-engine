@@ -1,0 +1,1068 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonical.local/schemas/semantic-execution-bundle.schema.json",
+  "title": "Closed deterministic ontology execution bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bundleType",
+    "bundleId",
+    "authority",
+    "schemas",
+    "catalogs",
+    "runtimeProfile"
+  ],
+  "properties": {
+    "bundleType": {
+      "const": "semantic-execution-bundle.v1"
+    },
+    "bundleId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "authority": {
+      "$ref": "#/$defs/ontologyAuthority"
+    },
+    "schemas": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "$ref": "#/$defs/boundSchema"
+      }
+    },
+    "catalogs": {
+      "const": []
+    },
+    "runtimeProfile": {
+      "$ref": "#/$defs/runtimeProfile"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]*$"
+    },
+    "disposition": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "jsonType": {
+      "enum": [
+        "string",
+        "number",
+        "boolean",
+        "null",
+        "object",
+        "array"
+      ]
+    },
+    "typedValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "value"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/jsonType"
+        },
+        "value": true
+      }
+    },
+    "safePathSegment": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "not": {
+            "enum": [
+              "__proto__",
+              "constructor",
+              "prototype"
+            ]
+          }
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ]
+    },
+    "path": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "$ref": "#/$defs/safePathSegment"
+      }
+    },
+    "boundSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaId",
+        "digest",
+        "value"
+      ],
+      "properties": {
+        "schemaId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "value": {
+          "type": "object"
+        }
+      }
+    },
+    "runtimeProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "digest",
+        "limits",
+        "forbiddenCapabilities"
+      ],
+      "properties": {
+        "identity": {
+          "const": "finite-semantic-runtime.v1"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "maxGraphNodes",
+            "maxGraphEdges",
+            "maxVariants",
+            "maxTranslationCases",
+            "maxPathDepth",
+            "maxOutputDepth",
+            "maxSchemas",
+            "maxTerminalResults",
+            "maxSerializedByteLength"
+          ],
+          "properties": {
+            "maxGraphNodes": {
+              "const": 64
+            },
+            "maxGraphEdges": {
+              "const": 128
+            },
+            "maxVariants": {
+              "const": 16
+            },
+            "maxTranslationCases": {
+              "const": 128
+            },
+            "maxPathDepth": {
+              "const": 16
+            },
+            "maxOutputDepth": {
+              "const": 16
+            },
+            "maxSchemas": {
+              "const": 32
+            },
+            "maxTerminalResults": {
+              "const": 1
+            },
+            "maxSerializedByteLength": {
+              "const": 1048576
+            }
+          }
+        },
+        "forbiddenCapabilities": {
+          "const": [
+            "cycles",
+            "recursion",
+            "dynamic-invocation",
+            "arbitrary-expressions",
+            "user-code",
+            "runtime-module-loading",
+            "unbounded-array-traversal",
+            "regex-authority",
+            "implicit-coercion",
+            "ambient-state",
+            "clock-access",
+            "randomness",
+            "network-access"
+          ]
+        }
+      }
+    },
+    "concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conceptId",
+        "conceptType",
+        "isA",
+        "abstract"
+      ],
+      "properties": {
+        "conceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "conceptType": {
+          "$ref": "#/$defs/identifier"
+        },
+        "isA": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "abstract": {
+          "type": "boolean"
+        },
+        "schemaId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relationId",
+        "relationType",
+        "subjectConceptId",
+        "objectConceptId",
+        "cardinality"
+      ],
+      "properties": {
+        "relationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "relationType": {
+          "$ref": "#/$defs/identifier"
+        },
+        "subjectConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "objectConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "cardinality": {
+          "enum": [
+            "exactly-one",
+            "zero-or-one",
+            "one-or-more",
+            "zero-or-more"
+          ]
+        }
+      }
+    },
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "propertyId",
+        "propertyKind",
+        "subjectConceptId",
+        "valueConceptId",
+        "cardinality",
+        "resolutions"
+      ],
+      "properties": {
+        "propertyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "propertyKind": {
+          "enum": [
+            "observed",
+            "projected"
+          ]
+        },
+        "subjectConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "valueConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "cardinality": {
+          "enum": [
+            "exactly-one",
+            "zero-or-one"
+          ]
+        },
+        "resolutions": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "subjectVariantConceptId",
+              "path"
+            ],
+            "properties": {
+              "subjectVariantConceptId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "path": {
+                "$ref": "#/$defs/path"
+              }
+            }
+          }
+        }
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "factId",
+        "conceptId",
+        "value"
+      ],
+      "properties": {
+        "factId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "conceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "value": {
+          "$ref": "#/$defs/typedValue"
+        }
+      }
+    },
+    "variantClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classificationId",
+        "classificationType",
+        "subjectConceptId",
+        "resultConceptId",
+        "variants",
+        "noMatchDisposition",
+        "multipleMatchDisposition"
+      ],
+      "properties": {
+        "classificationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "classificationType": {
+          "const": "concept-variant"
+        },
+        "subjectConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "variants": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "noMatchDisposition": {
+          "$ref": "#/$defs/disposition"
+        },
+        "multipleMatchDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "propertyStateClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classificationId",
+        "classificationType",
+        "propertyId",
+        "resultConceptId",
+        "expectedValueType",
+        "emptyStringState",
+        "states"
+      ],
+      "properties": {
+        "classificationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "classificationType": {
+          "const": "property-state"
+        },
+        "propertyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "expectedValueType": {
+          "$ref": "#/$defs/jsonType"
+        },
+        "emptyStringState": {
+          "enum": [
+            "empty-string",
+            "present"
+          ]
+        },
+        "states": {
+          "const": [
+            "missing",
+            "null",
+            "empty-string",
+            "invalid-type",
+            "present"
+          ]
+        }
+      }
+    },
+    "valueClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classificationId",
+        "classificationType",
+        "subjectConceptId",
+        "resultConceptId",
+        "cases",
+        "unmatchedDisposition"
+      ],
+      "properties": {
+        "classificationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "classificationType": {
+          "const": "finite-value"
+        },
+        "subjectConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "stateId"
+            ],
+            "properties": {
+              "value": {
+                "$ref": "#/$defs/typedValue"
+              },
+              "stateId": {
+                "$ref": "#/$defs/identifier"
+              }
+            }
+          }
+        },
+        "unmatchedDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "classification": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/variantClassification"
+        },
+        {
+          "$ref": "#/$defs/propertyStateClassification"
+        },
+        {
+          "$ref": "#/$defs/valueClassification"
+        }
+      ]
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "constraintId",
+        "constraintType",
+        "subjectAuthorityIds",
+        "requiredDisposition"
+      ],
+      "properties": {
+        "constraintId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "constraintType": {
+          "enum": [
+            "exactly-one-variant",
+            "required-property",
+            "translation-total",
+            "obligation-total",
+            "result-discrimination",
+            "graph-closure"
+          ]
+        },
+        "subjectAuthorityIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "requiredDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "translation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "translationId",
+        "sourceConceptId",
+        "targetConceptId",
+        "cases",
+        "unmappedDisposition"
+      ],
+      "properties": {
+        "translationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "targetConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "target"
+            ],
+            "properties": {
+              "source": {
+                "$ref": "#/$defs/typedValue"
+              },
+              "target": {
+                "$ref": "#/$defs/typedValue"
+              }
+            }
+          }
+        },
+        "unmappedDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "obligation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "obligationId",
+        "subjectConceptId",
+        "classificationId",
+        "resultConceptId",
+        "satisfiedStateIds",
+        "failureDisposition"
+      ],
+      "properties": {
+        "obligationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "subjectConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "classificationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "satisfiedStateIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "failureDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "transformation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transformationId",
+        "relationId",
+        "sourceAuthorityId",
+        "targetPropertyId",
+        "outputPath",
+        "valueConceptId",
+        "resultIds",
+        "unavailableDisposition",
+        "invalidTypeDisposition"
+      ],
+      "properties": {
+        "transformationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "relationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceAuthorityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "targetPropertyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "outputPath": {
+          "$ref": "#/$defs/path"
+        },
+        "valueConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "unavailableDisposition": {
+          "$ref": "#/$defs/disposition"
+        },
+        "invalidTypeDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "resultUnion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resultUnionId",
+        "resultTypeConceptId",
+        "members",
+        "selectionRules",
+        "noMatchDisposition",
+        "multipleMatchDisposition",
+        "invalidResultDisposition",
+        "serializerId"
+      ],
+      "properties": {
+        "resultUnionId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultTypeConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resultId",
+              "conceptId",
+              "discriminator"
+            ],
+            "properties": {
+              "resultId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "conceptId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "discriminator": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "propertyId",
+                  "outputPath",
+                  "value"
+                ],
+                "properties": {
+                  "propertyId": {
+                    "$ref": "#/$defs/identifier"
+                  },
+                  "outputPath": {
+                    "$ref": "#/$defs/path"
+                  },
+                  "value": {
+                    "$ref": "#/$defs/typedValue"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "selectionRules": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ruleId",
+              "when",
+              "resultId"
+            ],
+            "properties": {
+              "ruleId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "when": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "inputPort",
+                    "obligationId",
+                    "status"
+                  ],
+                  "properties": {
+                    "inputPort": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z][A-Za-z0-9.-]*$"
+                    },
+                    "obligationId": {
+                      "$ref": "#/$defs/identifier"
+                    },
+                    "status": {
+                      "enum": [
+                        "satisfied",
+                        "violated"
+                      ]
+                    }
+                  }
+                }
+              },
+              "resultId": {
+                "$ref": "#/$defs/identifier"
+              }
+            }
+          }
+        },
+        "noMatchDisposition": {
+          "$ref": "#/$defs/disposition"
+        },
+        "multipleMatchDisposition": {
+          "$ref": "#/$defs/disposition"
+        },
+        "invalidResultDisposition": {
+          "$ref": "#/$defs/disposition"
+        },
+        "serializerId": {
+          "enum": [
+            "identity.v1",
+            "canonical-json-two-space-lf.v1"
+          ]
+        }
+      }
+    },
+    "executionBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bindingId",
+        "semanticAuthorityId",
+        "executorPrimitive"
+      ],
+      "properties": {
+        "bindingId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "semanticAuthorityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "executorPrimitive": {
+          "enum": [
+            "input.v1",
+            "validate-variant.v1",
+            "read-path.v1",
+            "constant.v1",
+            "test-presence.v1",
+            "classify-value.v1",
+            "translate-value.v1",
+            "evaluate-obligation.v1",
+            "project-value.v1",
+            "select-result.v1",
+            "emit-result.v1",
+            "serialize-result.v1"
+          ]
+        }
+      }
+    },
+    "proofRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId",
+        "proofType",
+        "subjectAuthorityId",
+        "requiredDisposition"
+      ],
+      "properties": {
+        "requirementId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "proofType": {
+          "enum": [
+            "reference-closure",
+            "type-closure",
+            "cardinality-closure",
+            "classification-totality",
+            "translation-totality",
+            "obligation-binding",
+            "result-discrimination",
+            "execution-binding",
+            "graph-closure"
+          ]
+        },
+        "subjectAuthorityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "requiredDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "edgeEndpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId",
+        "port"
+      ],
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "port": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9.-]*$"
+        }
+      }
+    },
+    "graphNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodeId",
+        "bindingId"
+      ],
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "bindingId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "graphEdge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edgeId",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "edgeId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "from": {
+          "$ref": "#/$defs/edgeEndpoint"
+        },
+        "to": {
+          "$ref": "#/$defs/edgeEndpoint"
+        }
+      }
+    },
+    "executionGraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entryNodeId",
+        "terminalNodeIds",
+        "nodes",
+        "edges"
+      ],
+      "properties": {
+        "entryNodeId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "terminalNodeIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/graphNode"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/graphEdge"
+          }
+        }
+      }
+    },
+    "ontologyAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "ontologyId",
+        "concepts",
+        "relations",
+        "properties",
+        "facts",
+        "classifications",
+        "constraints",
+        "translations",
+        "obligations",
+        "transformations",
+        "results",
+        "executionBindings",
+        "executionGraph",
+        "proofRequirements"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "deterministic-ontology-authority.v1"
+        },
+        "ontologyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "concepts": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/concept"
+          }
+        },
+        "relations": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/relation"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/property"
+          }
+        },
+        "facts": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/fact"
+          }
+        },
+        "classifications": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/classification"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/constraint"
+          }
+        },
+        "translations": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/translation"
+          }
+        },
+        "obligations": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/obligation"
+          }
+        },
+        "transformations": {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/transformation"
+          }
+        },
+        "results": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/resultUnion"
+          }
+        },
+        "executionBindings": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/executionBinding"
+          }
+        },
+        "executionGraph": {
+          "$ref": "#/$defs/executionGraph"
+        },
+        "proofRequirements": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/proofRequirement"
+          }
+        }
+      }
+    }
+  }
+}

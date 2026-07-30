@@ -37,15 +37,15 @@
       "pathPattern": "/interpretationBase/projectorRegistry/digest"
     }
   ],
-  "migrationId": "artifact-contract.1.6-to-1.7",
+  "migrationId": "artifact-contract.1.8-to-1.9",
   "migrationType": "governed-artifact-contract-migration.v1",
-  "sourceContractVersion": "1.6.0",
-  "targetContractVersion": "1.7.0",
+  "sourceContractVersion": "1.8.0",
+  "targetContractVersion": "1.9.0",
   "transformations": [
     {
       "operation": "set-value",
       "path": "/contract/contractVersion",
-      "value": "1.7.0"
+      "value": "1.9.0"
     },
     {
       "operation": "introduce-interpretation-base"

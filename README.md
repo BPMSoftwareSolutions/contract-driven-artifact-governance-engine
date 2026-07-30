@@ -253,10 +253,14 @@ path and refuses trust, but does not infer destructive authority from omission.
 
 Semantic declaration authorizes meaning; it does not authorize equivalent
 mechanics in a projected code body. DTO fields, validation outcomes, failure
-outcomes, and serialization posture are materialized as a governed
-`semantic-execution-authority` data artifact. The projected function binds that
-data and the declared input schema to the trusted `executeSemanticProjection`
-runtime:
+outcomes, and serialization posture are materialized as governed semantic
+authority data. The executor is selected by a contract-declared
+`execute-semantic-authority` port, so conformance is bound to the authority
+role rather than a particular function spelling. An imported executor may be
+aliased without changing the law.
+
+The compatibility projection authority binds one declared schema and one
+`semantic-projection-authority.v1` document:
 
 ```javascript
 export function projectMessage(value) {
@@ -265,7 +269,9 @@ export function projectMessage(value) {
 ```
 
 The body-purity law is fixed by the conformance profile and cannot be relaxed
-by adding source declarations. For a semantic execution body, conformance
+by adding source declarations. It applies equally to compatibility projection
+authorities and deterministic ontology bundles. For a semantic execution body,
+conformance
 requires:
 
 ```text
@@ -286,6 +292,60 @@ A locally coded branch produces
 produces `EXECUTION_MECHANIC_OUTSIDE_TRUSTED_BOUNDARY`. The semantic authority
 remains rich and contract-owned, while the projected body remains an executable
 wire rather than a second authoring surface.
+
+## Deterministic ontology authority
+
+`deterministic-ontology-authority.v1` is the complete authored semantic
+authority for a governed execution. It declares a finite, typed ontology:
+
+- concepts and explicit `isA` inheritance;
+- typed relations, observed and projected properties, and exact cardinality;
+- typed facts and finite classifications;
+- closed constraints and total finite translations;
+- obligations with explicit satisfied states and failure dispositions;
+- transformations from named semantic sources to named result properties;
+- discriminated result unions with exhaustive, mutually exclusive selection;
+- exact bindings from each executable semantic authority to a finite runtime
+  primitive;
+- one acyclic, reachable, terminating execution graph; and
+- exact proof requirements for reference, type, cardinality, classification,
+  translation, obligation, result, execution-binding, and graph closure.
+
+The ontology owns meaning. The execution graph owns only ordering and data
+flow. Every graph edge must preserve the exact declared semantic connection:
+an obligation can consume only its declared classification, a transformation
+can consume only its declared source authority, and result emission can consume
+only the selection and transformation fragments declared for that result
+union. Matching port shapes are not sufficient.
+
+The finite semantic runtime admits only named primitives for input, variant
+validation, bounded path reads, constants, presence or finite-value
+classification, finite translation, obligation evaluation, value projection,
+result selection, result emission, and serialization. Runtime limits are
+digest-bound. Cycles, recursion, arbitrary expressions, user code, dynamic
+invocation, unbounded traversal, implicit coercion, ambient state, clocks,
+randomness, network access, and first-match ambiguity are outside authority.
+
+An ontology bundle binds every concrete concept to exact JSON Schema bytes and
+binds the runtime profile identity, limits, forbidden capabilities, and digest.
+Validation rejects unresolved or duplicate authorities, inheritance or
+execution cycles, partial classifications or result rules, ambiguous output
+paths, incorrect primitive bindings, semantically miswired edges, orphan
+nodes, and non-terminating paths. Only complete closure yields
+`ONTOLOGY_AUTHORITY_CLOSED`; execution refuses an open ontology.
+
+The projected body for an ontology remains a single invocation:
+
+```javascript
+export function normalize(value) {
+  return runDeterministicOntology(normalizationOntology, value);
+}
+```
+
+Schemas and reference documentation can be projected directly from the same
+ontology bundle. DTO construction, branching, validation, failure selection,
+translation, and serialization therefore remain contract data interpreted by
+the bounded runtime rather than authored mechanics in that body.
 
 ## Commitment reconciliation
 
@@ -356,12 +416,16 @@ produces `RELEASE_AUTHORITY_OPEN`, `RELEASE_BOUNDARY_DRIFT`, and
 
 ## Projectors
 
-The admitted projector registry contains four data-driven projectors:
+The admitted projector registry contains six data-driven projectors:
 
 - `canonical-json-value-projector.v1` serializes JSON with sorted object keys,
   two-space indentation, UTF-8, and one final LF;
 - `governed-artifact-contract-markdown-projector.v1` renders the structured
   contract authority as a deterministic architecture review document;
+- `deterministic-ontology-schema-projector.v1` projects an exact schema bound
+  to a concrete ontology concept;
+- `deterministic-ontology-documentation-projector.v1` renders the closed
+  ontology as deterministic reference documentation;
 - `utf8-text-projector.v1` emits the exact admitted UTF-8 text; and
 - `lossless-source-token-projector.v1` concatenates ordered token text and
   independently rescans the result to prove token identity.

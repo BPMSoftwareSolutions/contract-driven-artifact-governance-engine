@@ -35,7 +35,24 @@ function geminiResponse(content = "hello", finishReason = "STOP") {
   };
 }
 
-test("the provider ontology is closed and executes both admitted variants", () => {
+function llamaCppResponse(
+  content = "hello",
+  {
+    stoppedEos = true,
+    stoppedLimit = false,
+    stoppedWord = false
+  } = {}
+) {
+  return {
+    model: "llama-example",
+    content,
+    stopped_eos: stoppedEos,
+    stopped_limit: stoppedLimit,
+    stopped_word: stoppedWord
+  };
+}
+
+test("the provider ontology is closed and executes every admitted variant", () => {
   const bundle = makeProviderNormalizationOntologyBundle();
   assert.deepEqual(validateSemanticExecutionBundle(bundle), []);
   assert.deepEqual(inspectDeterministicOntology(bundle), {
@@ -58,6 +75,16 @@ test("the provider ontology is closed and executes both admitted variants", () =
       provider: "gemini",
       content: "world",
       finishReason: "max-output-reached"
+    }
+  );
+  assert.deepEqual(
+    executeSemanticAuthority(bundle, llamaCppResponse("native")),
+    {
+      resultType: "normalized-response",
+      status: "success",
+      provider: "llama.cpp",
+      content: "native",
+      finishReason: "completed"
     }
   );
 });
@@ -83,7 +110,7 @@ test("missing, null, empty, and wrong-type content have explicit outcomes", () =
   }
 });
 
-test("variant and translation failures emit their exact dispositions", () => {
+test("variant and classification failures emit their exact dispositions", () => {
   const bundle = makeProviderNormalizationOntologyBundle();
   assert.throws(
     () => executeSemanticAuthority(bundle, {}),
@@ -106,7 +133,67 @@ test("variant and translation failures emit their exact dispositions", () => {
     () => executeSemanticAuthority(bundle, openAiResponse("hello", "other")),
     (error) =>
       error instanceof SemanticExecutionDispositionError &&
-      error.disposition === "UNKNOWN_FINISH_REASON"
+      error.disposition === "UNKNOWN_COMPLETION_STATE"
+  );
+});
+
+test("multi-observation classification preserves native llama.cpp state", () => {
+  const bundle = makeProviderNormalizationOntologyBundle();
+  assert.equal(
+    executeSemanticAuthority(
+      bundle,
+      llamaCppResponse("limited", {
+        stoppedEos: false,
+        stoppedLimit: true
+      })
+    ).finishReason,
+    "max-output-reached"
+  );
+  assert.equal(
+    executeSemanticAuthority(
+      bundle,
+      llamaCppResponse("word", {
+        stoppedEos: false,
+        stoppedWord: true
+      })
+    ).finishReason,
+    "user-stop"
+  );
+  assert.throws(
+    () =>
+      executeSemanticAuthority(
+        bundle,
+        llamaCppResponse("ambiguous", {
+          stoppedEos: true,
+          stoppedLimit: true
+        })
+      ),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.disposition === "AMBIGUOUS_COMPLETION_STATE" &&
+      error.details.matchedCaseIds.length === 2
+  );
+  assert.throws(
+    () =>
+      executeSemanticAuthority(
+        bundle,
+        llamaCppResponse("unknown", {
+          stoppedEos: false
+        })
+      ),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.disposition === "UNKNOWN_COMPLETION_STATE"
+  );
+  assert.throws(
+    () =>
+      executeSemanticAuthority(bundle, {
+        ...openAiResponse(),
+        stopped_eos: true
+      }),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.disposition === "AMBIGUOUS_COMPLETION_STATE"
   );
 });
 
@@ -168,6 +255,50 @@ test("ontology cycles, graph cycles, orphan nodes, and ambiguous outputs fail cl
           providerEdge.from.nodeId
         ];
       }
+    },
+    {
+      findingId: "ONTOLOGY_CLASSIFICATION_CASE_INVALID",
+      mutate(bundle) {
+        const classification = bundle.authority.classifications.find(
+          (entry) => entry.classificationType === "multi-observation"
+        );
+        const duplicate = structuredClone(classification.cases[0]);
+        duplicate.caseId = "duplicate-completion-case";
+        classification.cases.push(duplicate);
+      }
+    },
+    {
+      findingId: "ONTOLOGY_EXECUTION_SEMANTIC_BINDING_MISMATCH",
+      mutate(bundle) {
+        const edge = bundle.authority.executionGraph.edges.find(
+          (entry) =>
+            entry.edgeId ===
+            "stopped-eos-to-completion-classification"
+        );
+        edge.from.nodeId = "stopped-limit";
+      }
+    },
+    {
+      findingId: "ONTOLOGY_CLASSIFICATION_CASE_INVALID",
+      mutate(bundle) {
+        const classification = bundle.authority.classifications.find(
+          (entry) => entry.classificationType === "multi-observation"
+        );
+        classification.cases[0].emit = {
+          type: "boolean",
+          value: true
+        };
+      }
+    },
+    {
+      findingId: "ONTOLOGY_CLASSIFICATION_DISPOSITIONS_NOT_DISTINCT",
+      mutate(bundle) {
+        const classification = bundle.authority.classifications.find(
+          (entry) => entry.classificationType === "multi-observation"
+        );
+        classification.multipleMatchDisposition =
+          classification.noMatchDisposition;
+      }
     }
   ];
   for (const entry of cases) {
@@ -180,4 +311,21 @@ test("ontology cycles, graph cycles, orphan nodes, and ambiguous outputs fail cl
       entry.findingId
     );
   }
+});
+
+test("the runtime primitive vocabulary is an exact digest-bound authority", () => {
+  const bundle = makeProviderNormalizationOntologyBundle();
+  bundle.runtimeProfile.admittedPrimitives =
+    bundle.runtimeProfile.admittedPrimitives.filter(
+      (primitive) => primitive !== "classify-observations.v1"
+    );
+  const findings = validateSemanticExecutionBundle(bundle);
+  assert.equal(
+    findings.some(
+      (finding) =>
+        finding.findingId === "SEMANTIC_BUNDLE_SCHEMA_INVALID" ||
+        finding.findingId === "SEMANTIC_RUNTIME_PROFILE_MISMATCH"
+    ),
+    true
+  );
 });

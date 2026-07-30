@@ -370,7 +370,7 @@ test("historical schemas and digest-to-digest migration authority are durable", 
     registry.schemaCatalog.digest,
     sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
   );
-  assert.equal(registry.migrations.length, 3);
+  assert.equal(registry.migrations.length, 4);
   const edge = registry.migrations[0];
   for (const digest of [
     edge.sourceSchemaDigest,
@@ -561,6 +561,50 @@ test("ontology interpretation migration is admitted without schema churn", (t) =
   assert.equal(
     written.candidateContract.contract.contractVersion,
     "1.9.0"
+  );
+  const replay = migrateContract({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(replay.migrationDisposition, "MIGRATION_NOT_REQUIRED");
+  assert.deepEqual(replay.diff, []);
+});
+
+test("multi-observation primitive migration is admitted without schema churn", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    contract.contract.contractVersion = "1.9.0";
+    contract.interpretationBase.engine = {
+      digest:
+        "sha256:106c780a56f65ed5448a7100d01fced1bea3d572657fcc88d7b2c0b78a9afef2",
+      identity: "governed-artifact-engine.0.10.0"
+    };
+    contract.interpretationBase.migrationRegistry.digest =
+      "sha256:45521912c2c6849ae6f0e7b66e14d49a711706e03650780ef1fc43b29487c95c";
+  });
+  const preview = migrateContract({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    preview.migrationDisposition,
+    "CONTRACT_MIGRATION_REQUIRED"
+  );
+  assert.equal(preview.sourceSchemaDigest, preview.targetSchemaDigest);
+  assert.equal(
+    preview.migrationId,
+    "artifact-contract.1.9-to-1.10"
+  );
+
+  const written = migrateContract({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(written.migrationDisposition, "CONTRACT_MIGRATED");
+  assert.equal(
+    written.candidateContract.contract.contractVersion,
+    "1.10.0"
   );
   const replay = migrateContract({
     contractPath,

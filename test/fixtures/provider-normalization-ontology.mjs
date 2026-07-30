@@ -44,6 +44,16 @@ function edge(edgeId, fromNodeId, fromPort, toNodeId, toPort) {
   };
 }
 
+function observedValue(inputPort, type, value) {
+  return {
+    inputPort,
+    observation: {
+      state: "value",
+      value: { type, value }
+    }
+  };
+}
+
 export function makeProviderNormalizationOntologyBundle() {
   const schemas = [
     boundSchema("openai-response.schema.v1", {
@@ -94,16 +104,41 @@ export function makeProviderNormalizationOntologyBundle() {
         }
       }
     }),
+    boundSchema("llamacpp-response.schema.v1", {
+      type: "object",
+      additionalProperties: false,
+      required: [
+        "model",
+        "content",
+        "stopped_eos",
+        "stopped_limit",
+        "stopped_word"
+      ],
+      properties: {
+        model: { type: "string" },
+        content: {},
+        stopped_eos: { type: "boolean" },
+        stopped_limit: { type: "boolean" },
+        stopped_word: { type: "boolean" }
+      }
+    }),
     boundSchema("provider-variant-id.schema.v1", {
       type: "string",
-      enum: ["openai-response", "gemini-response"]
+      enum: [
+        "openai-response",
+        "gemini-response",
+        "llamacpp-response"
+      ]
     }),
     boundSchema("raw-finish-reason.schema.v1", {
       type: "string"
     }),
     boundSchema("canonical-finish-reason.schema.v1", {
       type: "string",
-      enum: ["completed", "max-output-reached"]
+      enum: ["completed", "max-output-reached", "user-stop"]
+    }),
+    boundSchema("stop-flag.schema.v1", {
+      type: "boolean"
     }),
     boundSchema("response-content.schema.v1", {
       type: "string"
@@ -128,7 +163,7 @@ export function makeProviderNormalizationOntologyBundle() {
     }),
     boundSchema("provider-name.schema.v1", {
       type: "string",
-      enum: ["openai", "gemini"]
+      enum: ["openai", "gemini", "llama.cpp"]
     }),
     boundSchema("normalized-result-type.schema.v1", {
       type: "string",
@@ -151,10 +186,10 @@ export function makeProviderNormalizationOntologyBundle() {
       properties: {
         resultType: { const: "normalized-response" },
         status: { const: "success" },
-        provider: { enum: ["openai", "gemini"] },
+        provider: { enum: ["openai", "gemini", "llama.cpp"] },
         content: { type: "string", minLength: 1 },
         finishReason: {
-          enum: ["completed", "max-output-reached"]
+          enum: ["completed", "max-output-reached", "user-stop"]
         }
       }
     }),
@@ -165,7 +200,7 @@ export function makeProviderNormalizationOntologyBundle() {
       properties: {
         resultType: { const: "normalized-response" },
         status: { const: "failure" },
-        provider: { enum: ["openai", "gemini"] },
+        provider: { enum: ["openai", "gemini", "llama.cpp"] },
         failure: {
           type: "object",
           additionalProperties: false,
@@ -193,6 +228,12 @@ export function makeProviderNormalizationOntologyBundle() {
       ["provider-response"]
     ),
     concept(
+      "llamacpp-response",
+      "response-variant",
+      "llamacpp-response.schema.v1",
+      ["provider-response"]
+    ),
+    concept(
       "provider-variant-id",
       "classification",
       "provider-variant-id.schema.v1"
@@ -207,6 +248,7 @@ export function makeProviderNormalizationOntologyBundle() {
       "canonical-value",
       "canonical-finish-reason.schema.v1"
     ),
+    concept("stop-flag", "observed-state", "stop-flag.schema.v1"),
     concept(
       "response-content",
       "domain-value",
@@ -260,6 +302,10 @@ export function makeProviderNormalizationOntologyBundle() {
         {
           subjectVariantConceptId: "gemini-response",
           path: ["candidates", 0, "content", "parts", 0, "text"]
+        },
+        {
+          subjectVariantConceptId: "llamacpp-response",
+          path: ["content"]
         }
       ]
     },
@@ -268,7 +314,7 @@ export function makeProviderNormalizationOntologyBundle() {
       propertyKind: "observed",
       subjectConceptId: "provider-response",
       valueConceptId: "raw-finish-reason",
-      cardinality: "exactly-one",
+      cardinality: "zero-or-one",
       resolutions: [
         {
           subjectVariantConceptId: "openai-response",
@@ -277,9 +323,38 @@ export function makeProviderNormalizationOntologyBundle() {
         {
           subjectVariantConceptId: "gemini-response",
           path: ["candidates", 0, "finishReason"]
+        },
+        {
+          subjectVariantConceptId: "llamacpp-response",
+          path: ["stop_reason"]
         }
       ]
     },
+    ...[
+      ["stopped-eos-property", "stopped_eos"],
+      ["stopped-limit-property", "stopped_limit"],
+      ["stopped-word-property", "stopped_word"]
+    ].map(([propertyId, pathSegment]) => ({
+      propertyId,
+      propertyKind: "observed",
+      subjectConceptId: "provider-response",
+      valueConceptId: "stop-flag",
+      cardinality: "zero-or-one",
+      resolutions: [
+        {
+          subjectVariantConceptId: "openai-response",
+          path: [pathSegment]
+        },
+        {
+          subjectVariantConceptId: "gemini-response",
+          path: [pathSegment]
+        },
+        {
+          subjectVariantConceptId: "llamacpp-response",
+          path: [pathSegment]
+        }
+      ]
+    })),
     ...[
       ["canonical-result-type", "normalized-result-type"],
       ["canonical-status", "result-status"],
@@ -334,7 +409,7 @@ export function makeProviderNormalizationOntologyBundle() {
     {
       transformationId: "project-finish-reason",
       relationId: "finish-reason-projects-as-finish-reason",
-      sourceAuthorityId: "translate-finish-reason",
+      sourceAuthorityId: "classify-completion-state",
       targetPropertyId: "canonical-finish-reason-property",
       outputPath: ["finishReason"],
       valueConceptId: "canonical-finish-reason",
@@ -373,6 +448,21 @@ export function makeProviderNormalizationOntologyBundle() {
       "read-path.v1"
     ),
     binding(
+      "bind-read-stopped-eos",
+      "stopped-eos-property",
+      "read-path.v1"
+    ),
+    binding(
+      "bind-read-stopped-limit",
+      "stopped-limit-property",
+      "read-path.v1"
+    ),
+    binding(
+      "bind-read-stopped-word",
+      "stopped-word-property",
+      "read-path.v1"
+    ),
+    binding(
       "bind-result-type-fact",
       "normalized-result-type-fact",
       "constant.v1"
@@ -393,9 +483,9 @@ export function makeProviderNormalizationOntologyBundle() {
       "translate-value.v1"
     ),
     binding(
-      "bind-finish-translation",
-      "translate-finish-reason",
-      "translate-value.v1"
+      "bind-completion-classification",
+      "classify-completion-state",
+      "classify-observations.v1"
     ),
     binding(
       "bind-content-obligation",
@@ -431,11 +521,14 @@ export function makeProviderNormalizationOntologyBundle() {
     node("variant", "bind-provider-variant"),
     node("content", "bind-read-content"),
     node("finish", "bind-read-finish"),
+    node("stopped-eos", "bind-read-stopped-eos"),
+    node("stopped-limit", "bind-read-stopped-limit"),
+    node("stopped-word", "bind-read-stopped-word"),
     node("result-type-fact", "bind-result-type-fact"),
     node("failure-code-fact", "bind-failure-code-fact"),
     node("content-state", "bind-content-state"),
     node("provider-translation", "bind-provider-translation"),
-    node("finish-translation", "bind-finish-translation"),
+    node("completion-classification", "bind-completion-classification"),
     node("content-obligation", "bind-content-obligation"),
     ...transformations.map((entry) =>
       node(entry.transformationId, `bind-${entry.transformationId}`)
@@ -451,6 +544,24 @@ export function makeProviderNormalizationOntologyBundle() {
     edge("variant-to-content", "variant", "conceptId", "content", "conceptId"),
     edge("input-to-finish", "input", "value", "finish", "source"),
     edge("variant-to-finish", "variant", "conceptId", "finish", "conceptId"),
+    ...["stopped-eos", "stopped-limit", "stopped-word"].flatMap(
+      (nodeId) => [
+        edge(
+          `input-to-${nodeId}`,
+          "input",
+          "value",
+          nodeId,
+          "source"
+        ),
+        edge(
+          `variant-to-${nodeId}`,
+          "variant",
+          "conceptId",
+          nodeId,
+          "conceptId"
+        )
+      ]
+    ),
     edge(
       "input-to-result-type-fact",
       "input",
@@ -480,11 +591,32 @@ export function makeProviderNormalizationOntologyBundle() {
       "observation"
     ),
     edge(
-      "finish-to-translation",
+      "finish-to-completion-classification",
       "finish",
       "observation",
-      "finish-translation",
-      "observation"
+      "completion-classification",
+      "finish-reason"
+    ),
+    edge(
+      "stopped-eos-to-completion-classification",
+      "stopped-eos",
+      "observation",
+      "completion-classification",
+      "stopped-eos"
+    ),
+    edge(
+      "stopped-limit-to-completion-classification",
+      "stopped-limit",
+      "observation",
+      "completion-classification",
+      "stopped-limit"
+    ),
+    edge(
+      "stopped-word-to-completion-classification",
+      "stopped-word",
+      "observation",
+      "completion-classification",
+      "stopped-word"
     ),
     edge(
       "state-to-obligation",
@@ -516,8 +648,8 @@ export function makeProviderNormalizationOntologyBundle() {
     ),
     edge(
       "finish-to-project",
-      "finish-translation",
-      "value",
+      "completion-classification",
+      "state",
       "project-finish-reason",
       "value"
     ),
@@ -637,7 +769,11 @@ export function makeProviderNormalizationOntologyBundle() {
           classificationType: "concept-variant",
           subjectConceptId: "provider-response",
           resultConceptId: "provider-variant-id",
-          variants: ["openai-response", "gemini-response"],
+          variants: [
+            "openai-response",
+            "gemini-response",
+            "llamacpp-response"
+          ],
           noMatchDisposition: "UNSUPPORTED_RESPONSE_VARIANT",
           multipleMatchDisposition: "AMBIGUOUS_RESPONSE_VARIANT"
         },
@@ -655,6 +791,71 @@ export function makeProviderNormalizationOntologyBundle() {
             "invalid-type",
             "present"
           ]
+        },
+        {
+          classificationId: "classify-completion-state",
+          classificationType: "multi-observation",
+          subjectConceptId: "provider-response",
+          resultConceptId: "canonical-finish-reason",
+          observations: [
+            {
+              inputPort: "finish-reason",
+              propertyId: "raw-finish-reason-property"
+            },
+            {
+              inputPort: "stopped-eos",
+              propertyId: "stopped-eos-property"
+            },
+            {
+              inputPort: "stopped-limit",
+              propertyId: "stopped-limit-property"
+            },
+            {
+              inputPort: "stopped-word",
+              propertyId: "stopped-word-property"
+            }
+          ],
+          cases: [
+            {
+              caseId: "openai-stop-completed",
+              when: [observedValue("finish-reason", "string", "stop")],
+              emit: { type: "string", value: "completed" }
+            },
+            {
+              caseId: "openai-length-limited",
+              when: [observedValue("finish-reason", "string", "length")],
+              emit: { type: "string", value: "max-output-reached" }
+            },
+            {
+              caseId: "gemini-stop-completed",
+              when: [observedValue("finish-reason", "string", "STOP")],
+              emit: { type: "string", value: "completed" }
+            },
+            {
+              caseId: "gemini-max-tokens-limited",
+              when: [
+                observedValue("finish-reason", "string", "MAX_TOKENS")
+              ],
+              emit: { type: "string", value: "max-output-reached" }
+            },
+            {
+              caseId: "llamacpp-eos-completed",
+              when: [observedValue("stopped-eos", "boolean", true)],
+              emit: { type: "string", value: "completed" }
+            },
+            {
+              caseId: "llamacpp-limit-reached",
+              when: [observedValue("stopped-limit", "boolean", true)],
+              emit: { type: "string", value: "max-output-reached" }
+            },
+            {
+              caseId: "llamacpp-stop-word",
+              when: [observedValue("stopped-word", "boolean", true)],
+              emit: { type: "string", value: "user-stop" }
+            }
+          ],
+          noMatchDisposition: "UNKNOWN_COMPLETION_STATE",
+          multipleMatchDisposition: "AMBIGUOUS_COMPLETION_STATE"
         }
       ],
       constraints: [
@@ -668,6 +869,12 @@ export function makeProviderNormalizationOntologyBundle() {
           constraintId: "content-obligation-total",
           constraintType: "obligation-total",
           subjectAuthorityIds: ["usable-content-obligation"],
+          requiredDisposition: "ONTOLOGY_AUTHORITY_CLOSED"
+        },
+        {
+          constraintId: "completion-classification-total",
+          constraintType: "classification-total",
+          subjectAuthorityIds: ["classify-completion-state"],
           requiredDisposition: "ONTOLOGY_AUTHORITY_CLOSED"
         },
         {
@@ -690,33 +897,13 @@ export function makeProviderNormalizationOntologyBundle() {
             {
               source: { type: "string", value: "gemini-response" },
               target: { type: "string", value: "gemini" }
+            },
+            {
+              source: { type: "string", value: "llamacpp-response" },
+              target: { type: "string", value: "llama.cpp" }
             }
           ],
           unmappedDisposition: "UNKNOWN_PROVIDER_IDENTITY"
-        },
-        {
-          translationId: "translate-finish-reason",
-          sourceConceptId: "raw-finish-reason",
-          targetConceptId: "canonical-finish-reason",
-          cases: [
-            {
-              source: { type: "string", value: "stop" },
-              target: { type: "string", value: "completed" }
-            },
-            {
-              source: { type: "string", value: "length" },
-              target: { type: "string", value: "max-output-reached" }
-            },
-            {
-              source: { type: "string", value: "STOP" },
-              target: { type: "string", value: "completed" }
-            },
-            {
-              source: { type: "string", value: "MAX_TOKENS" },
-              target: { type: "string", value: "max-output-reached" }
-            }
-          ],
-          unmappedDisposition: "UNKNOWN_FINISH_REASON"
         }
       ],
       obligations: [

@@ -128,7 +128,8 @@
         "identity",
         "digest",
         "limits",
-        "forbiddenCapabilities"
+        "forbiddenCapabilities",
+        "admittedPrimitives"
       ],
       "properties": {
         "identity": {
@@ -144,6 +145,8 @@
             "maxGraphNodes",
             "maxGraphEdges",
             "maxVariants",
+            "maxClassificationInputs",
+            "maxClassificationCases",
             "maxTranslationCases",
             "maxPathDepth",
             "maxOutputDepth",
@@ -160,6 +163,12 @@
             },
             "maxVariants": {
               "const": 16
+            },
+            "maxClassificationInputs": {
+              "const": 16
+            },
+            "maxClassificationCases": {
+              "const": 128
             },
             "maxTranslationCases": {
               "const": 128
@@ -196,6 +205,23 @@
             "clock-access",
             "randomness",
             "network-access"
+          ]
+        },
+        "admittedPrimitives": {
+          "const": [
+            "input.v1",
+            "validate-variant.v1",
+            "read-path.v1",
+            "constant.v1",
+            "test-presence.v1",
+            "classify-value.v1",
+            "classify-observations.v1",
+            "translate-value.v1",
+            "evaluate-obligation.v1",
+            "project-value.v1",
+            "select-result.v1",
+            "emit-result.v1",
+            "serialize-result.v1"
           ]
         }
       }
@@ -476,6 +502,140 @@
         }
       }
     },
+    "observationStateMatch": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "missing",
+                "null",
+                "invalid-type"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value"
+          ],
+          "properties": {
+            "state": {
+              "const": "value"
+            },
+            "value": {
+              "$ref": "#/$defs/typedValue"
+            }
+          }
+        }
+      ]
+    },
+    "multiObservationClassification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classificationId",
+        "classificationType",
+        "subjectConceptId",
+        "resultConceptId",
+        "observations",
+        "cases",
+        "noMatchDisposition",
+        "multipleMatchDisposition"
+      ],
+      "properties": {
+        "classificationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "classificationType": {
+          "const": "multi-observation"
+        },
+        "subjectConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "observations": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "inputPort",
+              "propertyId"
+            ],
+            "properties": {
+              "inputPort": {
+                "$ref": "#/$defs/identifier"
+              },
+              "propertyId": {
+                "$ref": "#/$defs/identifier"
+              }
+            }
+          }
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "caseId",
+              "when",
+              "emit"
+            ],
+            "properties": {
+              "caseId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "when": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 16,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "inputPort",
+                    "observation"
+                  ],
+                  "properties": {
+                    "inputPort": {
+                      "$ref": "#/$defs/identifier"
+                    },
+                    "observation": {
+                      "$ref": "#/$defs/observationStateMatch"
+                    }
+                  }
+                }
+              },
+              "emit": {
+                "$ref": "#/$defs/typedValue"
+              }
+            }
+          }
+        },
+        "noMatchDisposition": {
+          "$ref": "#/$defs/disposition"
+        },
+        "multipleMatchDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
     "classification": {
       "oneOf": [
         {
@@ -486,6 +646,9 @@
         },
         {
           "$ref": "#/$defs/valueClassification"
+        },
+        {
+          "$ref": "#/$defs/multiObservationClassification"
         }
       ]
     },
@@ -505,6 +668,7 @@
         "constraintType": {
           "enum": [
             "exactly-one-variant",
+            "classification-total",
             "required-property",
             "translation-total",
             "obligation-total",
@@ -808,6 +972,7 @@
             "constant.v1",
             "test-presence.v1",
             "classify-value.v1",
+            "classify-observations.v1",
             "translate-value.v1",
             "evaluate-obligation.v1",
             "project-value.v1",

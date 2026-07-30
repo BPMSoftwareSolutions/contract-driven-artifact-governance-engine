@@ -16,7 +16,8 @@
         "1.6.0",
         "1.7.0",
         "1.8.0",
-        "1.9.0"
+        "1.9.0",
+        "1.10.0"
       ],
       "digest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
       "relativePath": "governed-artifact-contract.schema.json",

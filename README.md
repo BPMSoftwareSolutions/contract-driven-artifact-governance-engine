@@ -320,11 +320,21 @@ union. Matching port shapes are not sufficient.
 
 The finite semantic runtime admits only named primitives for input, variant
 validation, bounded path reads, constants, presence or finite-value
-classification, finite translation, obligation evaluation, value projection,
-result selection, result emission, and serialization. Runtime limits are
+classification, multi-observation classification, finite translation,
+obligation evaluation, value projection, result selection, result emission,
+and serialization. The exact primitive vocabulary and runtime limits are
 digest-bound. Cycles, recursion, arbitrary expressions, user code, dynamic
 invocation, unbounded traversal, implicit coercion, ambient state, clocks,
 randomness, network access, and first-match ambiguity are outside authority.
+
+`classify-observations.v1` derives one typed concept from two or more named
+property observations without flattening the source wire shape. Each case is a
+finite conjunction of exact observation states or typed values. Cases may
+overlap, but their order has no authority: zero matches emit the declared
+no-match disposition and multiple matches emit the distinct declared
+multi-match disposition. For example, native `stopped_eos`, `stopped_limit`,
+and `stopped_word` booleans can classify a completion reason directly; no
+synthetic `stop_reason` field or generated dispatcher is needed.
 
 An ontology bundle binds every concrete concept to exact JSON Schema bytes and
 binds the runtime profile identity, limits, forbidden capabilities, and digest.

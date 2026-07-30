@@ -1898,8 +1898,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:31a5be8c9c73f6cfeecf17d75f748dcf031b34a4c84be27ce0b57198fc8a35ec",
-        "expectedByteLength": 23211,
+        "contentSha256": "sha256:d4b6bc7b78af58bab93b8d73ca4efcbc6560a738defd8b5e0fac7f88a16552f4",
+        "expectedByteLength": 23213,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -1979,7 +1979,7 @@
           "authorityType": "canonical-json-value.v1",
           "value": {
             "dependencies": {
-              "contract-driven-artifact-governance-engine": "0.10.0"
+              "contract-driven-artifact-governance-engine": "0.11.0"
             },
             "name": "governed-message-artifact-family",
             "private": true,
@@ -1995,7 +1995,7 @@
         "projectorId": "canonical-json-value-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:9b95aebdf11f03099282dc8fcdc1576499067b6f3f26162b57153c4cc11646aa",
+        "contentSha256": "sha256:c731ebc968edacacba744243f6341ba9950a1e258034a5b7e525551a3cd12740",
         "expectedByteLength": 308,
         "verifierIds": [
           "content-digest-verifier.v1"
@@ -2046,7 +2046,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.9.0",
+    "contractVersion": "1.10.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2195,11 +2195,11 @@
       "identity": "closed-world-artifact-conformance.v4"
     },
     "engine": {
-      "digest": "sha256:106c780a56f65ed5448a7100d01fced1bea3d572657fcc88d7b2c0b78a9afef2",
-      "identity": "governed-artifact-engine.0.10.0"
+      "digest": "sha256:56db8debeed565a79567d7da0ee73fe859cb0c938fd1dd011ef4b5854bb7b2a0",
+      "identity": "governed-artifact-engine.0.11.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:45521912c2c6849ae6f0e7b66e14d49a711706e03650780ef1fc43b29487c95c",
+      "digest": "sha256:ca3c897d1be412a33df348f6adf3f53cf5bfd86adb64fe3a6e6b72e52bc492e1",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {

@@ -1,0 +1,38 @@
+{
+  "registryType": "governed-artifact-verifier-registry.v1",
+  "registryId": "governed-artifact-verifier-registry.v1",
+  "verifiers": [
+    {
+      "verifierId": "artifact-inventory-verifier.v1",
+      "evidence": "declared-and-observed-relative-paths"
+    },
+    {
+      "verifierId": "command-exit-verifier.v1",
+      "evidence": "exit-code-and-standard-output"
+    },
+    {
+      "verifierId": "content-digest-verifier.v1",
+      "evidence": "sha256-and-byte-length"
+    },
+    {
+      "verifierId": "forbidden-text-verifier.v1",
+      "evidence": "case-insensitive-text-absence"
+    },
+    {
+      "verifierId": "json-meta-schema-verifier.v1",
+      "evidence": "draft-2020-12-meta-schema-validation"
+    },
+    {
+      "verifierId": "markdown-section-verifier.v1",
+      "evidence": "ordered-required-section-headings"
+    },
+    {
+      "verifierId": "relationship-verifier.v1",
+      "evidence": "declared-artifact-reference-resolution"
+    },
+    {
+      "verifierId": "source-token-structure-verifier.v1",
+      "evidence": "lossless-source-token-replay"
+    }
+  ]
+}

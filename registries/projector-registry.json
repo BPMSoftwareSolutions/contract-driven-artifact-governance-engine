@@ -1,0 +1,21 @@
+{
+  "registryType": "governed-artifact-projector-registry.v1",
+  "registryId": "governed-artifact-projector-registry.v1",
+  "projectors": [
+    {
+      "projectorId": "canonical-json-value-projector.v1",
+      "authorityType": "canonical-json-value.v1",
+      "serialization": "sorted-object-keys-two-space-lf"
+    },
+    {
+      "projectorId": "lossless-source-token-projector.v1",
+      "authorityType": "lossless-source-tokens.v1",
+      "serialization": "ordered-token-text-concatenation"
+    },
+    {
+      "projectorId": "utf8-text-projector.v1",
+      "authorityType": "utf8-text.v1",
+      "serialization": "exact-utf8-text"
+    }
+  ]
+}

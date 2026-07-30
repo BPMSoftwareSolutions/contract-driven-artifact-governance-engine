@@ -1,0 +1,27 @@
+{
+  "releaseType": "contract-driven-artifact-governance-engine-release.v1",
+  "package": {
+    "name": "contract-driven-artifact-governance-engine",
+    "version": "0.1.0",
+    "filename": "contract-driven-artifact-governance-engine-0.1.0.tgz",
+    "byteLength": 17899,
+    "sha1": "fcede6e38e5653b1f0ffd298e0e850786bcefe61",
+    "sha256": "1c0154f67b56c3c8daa2a95ac1378db922eb8573b1b54a74813a1bd7833508ff",
+    "sha512": "8utoy2ga+OWarXoTvCETIwlB8V0knyM714mv34zr964NXn7fnPrx6g2m2ZJOFKkKarkpmsdI2T5NMpf8xPGpGQ=="
+  },
+  "admittedInputs": {
+    "contractSha256": "79fcfe4b043ff31dffbf43db6db791e768a19d5f7d0787537413fe6cb4ab22ff",
+    "schemaSha256": "552adf1f7409cff8233ac507c18cb1e99e0f8c3e51aa1a72cb2d1bda151ca46a",
+    "projectorRegistrySha256": "c562c92d10d3fa2f09c967b5f3c616f905a0f76afab336ec637a6693a53df349",
+    "verifierRegistrySha256": "ff628d4e4d581109887e04c99849f9d4e87b4dbcc4f8354505fcb012dd812b46"
+  },
+  "packagedEvaluatorSha256": "cc6c878dfbdebaf2c46766cdd77a551d7c4901822a8034a0ef5e084d549b5ab1",
+  "cleanInstallProof": {
+    "relativeRoot": "../../runs/contract-driven-artifact-governance-engine-install-proof-2026-07-30-current",
+    "contractValidationDisposition": "CONTRACT_VALID",
+    "artifactConformanceDisposition": "ARTIFACT_FAMILY_CONFORMS",
+    "trustPosture": "CONFORMS",
+    "trustDisposition": "TRUSTED",
+    "packagedEvaluatorChecks": 8
+  }
+}

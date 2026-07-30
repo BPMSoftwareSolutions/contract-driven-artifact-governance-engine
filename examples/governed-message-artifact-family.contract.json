@@ -1,0 +1,1544 @@
+{
+  "$schema": "https://canonical.local/schemas/governed-artifact-contract.schema.json",
+  "artifacts": [
+    {
+      "artifactId": "message-schema.v1",
+      "artifactKind": "json-schema",
+      "mediaType": "application/schema+json",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
+      "projection": {
+        "authority": {
+          "authorityType": "canonical-json-value.v1",
+          "value": {
+            "$id": "https://governed.local/schemas/message.schema.json",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "additionalProperties": false,
+            "properties": {
+              "message": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "Governed Message",
+            "type": "object"
+          }
+        },
+        "authorityId": "message-schema-authority.v1",
+        "mode": "projected",
+        "projectorId": "canonical-json-value-projector.v1"
+      },
+      "proof": {
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:f8c8fda67994548bf132ec4899879fb40690e46ecac65c9343fbdad5503826c6",
+        "expectedByteLength": 337,
+        "metaSchemaValidationRequired": true,
+        "verifierIds": [
+          "content-digest-verifier.v1",
+          "json-meta-schema-verifier.v1"
+        ]
+      },
+      "purpose": "Constrains the governed message value.",
+      "relationships": [],
+      "relativePath": "contracts/message.schema.json"
+    },
+    {
+      "artifactId": "message-contract.v1",
+      "artifactKind": "json-contract",
+      "mediaType": "application/json",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
+      "projection": {
+        "authority": {
+          "authorityType": "canonical-json-value.v1",
+          "value": {
+            "message": "Schema to contract to artifacts to conformance to trust."
+          }
+        },
+        "authorityId": "message-contract-authority.v1",
+        "mode": "projected",
+        "projectorId": "canonical-json-value-projector.v1"
+      },
+      "proof": {
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:29236fc829a3feb7c122b32c8da5269c8338a2c6ed90d432f2aeccf31cb5452b",
+        "expectedByteLength": 76,
+        "verifierIds": [
+          "content-digest-verifier.v1"
+        ]
+      },
+      "purpose": "Declares the message consumed by the artifact family.",
+      "relationships": [
+        {
+          "artifactId": "message-schema.v1",
+          "relationshipType": "conforms-to"
+        }
+      ],
+      "relativePath": "contracts/message.json"
+    },
+    {
+      "artifactId": "message-projector.v1",
+      "artifactKind": "javascript-module",
+      "mediaType": "text/javascript",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
+      "projection": {
+        "authority": {
+          "authorityType": "lossless-source-tokens.v1",
+          "language": "javascript",
+          "tokens": [
+            {
+              "kind": "ExportKeyword",
+              "text": "export"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FunctionKeyword",
+              "text": "function"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "projectMessage"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": "  "
+            },
+            {
+              "kind": "IfKeyword",
+              "text": "if"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "ExclamationToken",
+              "text": "!"
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "BarBarToken",
+              "text": "||"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeOfKeyword",
+              "text": "typeof"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "ExclamationEqualsEqualsToken",
+              "text": "!=="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"object\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "BarBarToken",
+              "text": "||"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeOfKeyword",
+              "text": "typeof"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "message"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "ExclamationEqualsEqualsToken",
+              "text": "!=="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"string\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "BarBarToken",
+              "text": "||"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "message"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "length"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "EqualsEqualsEqualsToken",
+              "text": "==="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NumericLiteral",
+              "text": "0"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": "    "
+            },
+            {
+              "kind": "ThrowKeyword",
+              "text": "throw"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NewKeyword",
+              "text": "new"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "Error"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"Message contract is invalid.\""
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": "  "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": "  "
+            },
+            {
+              "kind": "ReturnKeyword",
+              "text": "return"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TemplateHead",
+              "text": "`${"
+            },
+            {
+              "kind": "Identifier",
+              "text": "JSON"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "stringify"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "message"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "message"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NullKeyword",
+              "text": "null"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NumericLiteral",
+              "text": "2"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "Unknown",
+              "text": "\\"
+            },
+            {
+              "kind": "Identifier",
+              "text": "n"
+            },
+            {
+              "kind": "NoSubstitutionTemplateLiteral",
+              "text": "`;\n}\n"
+            }
+          ]
+        },
+        "authorityId": "message-projector-authority.v1",
+        "mode": "projected",
+        "projectorId": "lossless-source-token-projector.v1"
+      },
+      "proof": {
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:3c40ec92f987cd612160005081a6c6a61a92fb99ffac293832f84324a5f4790e",
+        "expectedByteLength": 280,
+        "verifierIds": [
+          "content-digest-verifier.v1",
+          "source-token-structure-verifier.v1"
+        ]
+      },
+      "purpose": "Projects canonical message bytes from a validated value.",
+      "relationships": [
+        {
+          "artifactId": "message-contract.v1",
+          "relationshipType": "projects"
+        }
+      ],
+      "relativePath": "src/project-message.mjs"
+    },
+    {
+      "artifactId": "message-command.v1",
+      "artifactKind": "javascript-command",
+      "mediaType": "text/javascript",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
+      "projection": {
+        "authority": {
+          "authorityType": "lossless-source-tokens.v1",
+          "language": "javascript",
+          "tokens": [
+            {
+              "kind": "Unknown",
+              "text": "#!/usr/bin/env node"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "readFileSync"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"node:fs\""
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "projectMessage"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../src/project-message.mjs\""
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ConstKeyword",
+              "text": "const"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "input"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "EqualsToken",
+              "text": "="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "process"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "argv"
+            },
+            {
+              "kind": "OpenBracketToken",
+              "text": "["
+            },
+            {
+              "kind": "NumericLiteral",
+              "text": "2"
+            },
+            {
+              "kind": "CloseBracketToken",
+              "text": "]"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "QuestionQuestionToken",
+              "text": "??"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "NewKeyword",
+              "text": "new"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "URL"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/message.json\""
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "meta"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "url"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ConstKeyword",
+              "text": "const"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "EqualsToken",
+              "text": "="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "JSON"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "parse"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "readFileSync"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "input"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"utf8\""
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "Identifier",
+              "text": "process"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "stdout"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "write"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "projectMessage"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            }
+          ]
+        },
+        "authorityId": "message-command-authority.v1",
+        "mode": "projected",
+        "projectorId": "lossless-source-token-projector.v1"
+      },
+      "proof": {
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:f3cfcfa696be55f4bfbefbb191f267fa678051f6e8ebe2539975365c31117ae1",
+        "expectedByteLength": 311,
+        "verifierIds": [
+          "content-digest-verifier.v1",
+          "source-token-structure-verifier.v1"
+        ]
+      },
+      "purpose": "Reads the declared message and writes its canonical bytes.",
+      "relationships": [
+        {
+          "artifactId": "message-contract.v1",
+          "relationshipType": "reads"
+        },
+        {
+          "artifactId": "message-projector.v1",
+          "relationshipType": "invokes"
+        }
+      ],
+      "relativePath": "bin/run-message.mjs"
+    },
+    {
+      "artifactId": "message-verification.v1",
+      "artifactKind": "verification-command",
+      "mediaType": "text/javascript",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
+      "projection": {
+        "authority": {
+          "authorityType": "lossless-source-tokens.v1",
+          "language": "javascript",
+          "tokens": [
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "AssertKeyword",
+              "text": "assert"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"node:assert/strict\""
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "readFileSync"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"node:fs\""
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "projectMessage"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../src/project-message.mjs\""
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ConstKeyword",
+              "text": "const"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "EqualsToken",
+              "text": "="
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "JSON"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "parse"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "readFileSync"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "NewKeyword",
+              "text": "new"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "URL"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/message.json\""
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "meta"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "url"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"utf8\""
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "AssertKeyword",
+              "text": "assert"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "equal"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "projectMessage"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "value"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"{\\n  \\\"message\\\": \\\"Schema to contract to artifacts to conformance to trust.\\\"\\n}\\n\""
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "Identifier",
+              "text": "process"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "stdout"
+            },
+            {
+              "kind": "DotToken",
+              "text": "."
+            },
+            {
+              "kind": "Identifier",
+              "text": "write"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"ARTIFACT_TEST_CONFORMS\\n\""
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            }
+          ]
+        },
+        "authorityId": "message-verification-authority.v1",
+        "mode": "projected",
+        "projectorId": "lossless-source-token-projector.v1"
+      },
+      "proof": {
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:7c7276f2dc4548dfe248afccc4ffd405ce85516947feacbf7c7036aa3b4e9c52",
+        "expectedByteLength": 420,
+        "verifierIds": [
+          "content-digest-verifier.v1",
+          "source-token-structure-verifier.v1"
+        ]
+      },
+      "purpose": "Evaluates the declared message projection.",
+      "relationships": [
+        {
+          "artifactId": "message-contract.v1",
+          "relationshipType": "verifies"
+        },
+        {
+          "artifactId": "message-projector.v1",
+          "relationshipType": "verifies"
+        }
+      ],
+      "relativePath": "verification/verifies-message.mjs"
+    },
+    {
+      "artifactId": "artifact-family-readme.v1",
+      "artifactKind": "markdown-document",
+      "mediaType": "text/markdown",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
+      "projection": {
+        "authority": {
+          "authorityType": "utf8-text.v1",
+          "text": "# Governed Message Artifact Family\n\n## Purpose\n\nDemonstrate one admitted contract governing a heterogeneous artifact family.\n\n## Architecture\n\nThe schema constrains the contract. The contract declares every artifact. The registered projectors produce exact bytes. The registered verifiers evaluate those bytes and issue a trust disposition.\n\n## Usage\n\nRun `node bin/run-message.mjs` from this artifact root.\n\n## Proof\n\nRun `node verification/verifies-message.mjs`. The enclosing governance engine independently checks inventory, bytes, structure, relationships, and the declared command.\n"
+        },
+        "authorityId": "artifact-family-readme-authority.v1",
+        "mode": "projected",
+        "projectorId": "utf8-text-projector.v1"
+      },
+      "proof": {
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:9ee3ddfa0b9ec3f2b67cf64076c1ee4cb7ae345bf8d3fae3cd5bef01572c3f16",
+        "expectedByteLength": 588,
+        "forbiddenText": [
+          "api key",
+          "credential"
+        ],
+        "requiredSections": [
+          "# Governed Message Artifact Family",
+          "## Purpose",
+          "## Architecture",
+          "## Usage",
+          "## Proof"
+        ],
+        "verifierIds": [
+          "content-digest-verifier.v1",
+          "markdown-section-verifier.v1",
+          "forbidden-text-verifier.v1"
+        ]
+      },
+      "purpose": "Explains the governed artifact family and its proof.",
+      "relationships": [
+        {
+          "artifactId": "message-command.v1",
+          "relationshipType": "documents"
+        },
+        {
+          "artifactId": "message-verification.v1",
+          "relationshipType": "documents"
+        }
+      ],
+      "relativePath": "README.md"
+    },
+    {
+      "artifactId": "closed-loop-diagram.v1",
+      "artifactKind": "mermaid-diagram",
+      "mediaType": "text/vnd.mermaid",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
+      "projection": {
+        "authority": {
+          "authorityType": "utf8-text.v1",
+          "text": "flowchart LR\n  S[Schema] --> C[Contract]\n  C --> A[Artifacts]\n  A --> E[Conformance]\n  E --> T[Trust]\n  T -. admitted change .-> S\n"
+        },
+        "authorityId": "closed-loop-diagram-authority.v1",
+        "mode": "projected",
+        "projectorId": "utf8-text-projector.v1"
+      },
+      "proof": {
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:4d7c0a4417e128935bc534f981c454b42b5655583657c16fc07564bb22660356",
+        "expectedByteLength": 131,
+        "verifierIds": [
+          "content-digest-verifier.v1"
+        ]
+      },
+      "purpose": "Shows the governed closed loop.",
+      "relationships": [
+        {
+          "artifactId": "artifact-family-readme.v1",
+          "relationshipType": "documents"
+        }
+      ],
+      "relativePath": "architecture/closed-loop.mmd"
+    },
+    {
+      "artifactId": "artifact-family-manifest.v1",
+      "artifactKind": "package-manifest",
+      "mediaType": "application/json",
+      "mutabilityPosture": "replace-by-projection",
+      "ownership": "contract-owned",
+      "projection": {
+        "authority": {
+          "authorityType": "canonical-json-value.v1",
+          "value": {
+            "name": "governed-message-artifact-family",
+            "private": true,
+            "scripts": {
+              "start": "node bin/run-message.mjs",
+              "test": "node verification/verifies-message.mjs"
+            },
+            "type": "module",
+            "version": "1.0.0"
+          }
+        },
+        "authorityId": "artifact-family-manifest-authority.v1",
+        "mode": "projected",
+        "projectorId": "canonical-json-value-projector.v1"
+      },
+      "proof": {
+        "contentDigestRequired": true,
+        "contentSha256": "sha256:ca1a131ff9ef01b1dc4721f7b0afe8a31736a361043f05f97c09abb0ca919563",
+        "expectedByteLength": 224,
+        "verifierIds": [
+          "content-digest-verifier.v1"
+        ]
+      },
+      "purpose": "Declares the executable artifact-family entrypoints.",
+      "relationships": [
+        {
+          "artifactId": "message-command.v1",
+          "relationshipType": "invokes"
+        },
+        {
+          "artifactId": "message-verification.v1",
+          "relationshipType": "invokes"
+        }
+      ],
+      "relativePath": "package.json"
+    }
+  ],
+  "conformance": {
+    "artifactEvaluations": [
+      {
+        "command": [
+          "node",
+          "verification/verifies-message.mjs"
+        ],
+        "evaluationId": "message-projection-evaluation.v1",
+        "expectedExitCode": 0,
+        "expectedStdoutContains": "ARTIFACT_TEST_CONFORMS",
+        "verifierId": "command-exit-verifier.v1"
+      }
+    ],
+    "evaluationOrder": [
+      "validate-contract",
+      "resolve-artifact-plan",
+      "observe-artifact-state",
+      "evaluate-artifact-inventory",
+      "evaluate-projection-identity",
+      "evaluate-artifact-content",
+      "evaluate-artifact-structure",
+      "evaluate-artifact-freshness",
+      "evaluate-artifact-relationships",
+      "evaluate-declared-commands",
+      "issue-trust-disposition"
+    ],
+    "failClosed": true
+  },
+  "contract": {
+    "contractId": "governed-message-artifact-family.v1",
+    "contractType": "governed-artifact-contract.v1",
+    "contractVersion": "1.0.0",
+    "status": "admitted"
+  },
+  "exclusions": [
+    ".env",
+    "secrets.json"
+  ],
+  "projectionLedger": {
+    "ledgerType": "governed-artifact-projection-ledger.v1",
+    "relativePath": ".governance/projections/governed-message-artifact-family.ledger.json",
+    "requiredEvidence": [
+      "contract-identity",
+      "projector-registry-identity",
+      "artifact-projection-identities",
+      "artifact-content-commitments"
+    ]
+  },
+  "projectorRegistry": {
+    "digest": "sha256:c562c92d10d3fa2f09c967b5f3c616f905a0f76afab336ec637a6693a53df349",
+    "identity": "governed-artifact-projector-registry.v1"
+  },
+  "receipt": {
+    "receiptType": "governed-artifact-conformance-receipt.v1",
+    "relativePath": ".governance/receipts/governed-message-artifact-family.receipt.json",
+    "requiredEvidence": [
+      "contract-identity",
+      "schema-identity",
+      "registry-identities",
+      "artifact-observations",
+      "projection-identity",
+      "conformance-findings",
+      "trust-disposition"
+    ]
+  },
+  "schema": {
+    "digest": "sha256:552adf1f7409cff8233ac507c18cb1e99e0f8c3e51aa1a72cb2d1bda151ca46a",
+    "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
+  },
+  "subject": {
+    "authority": {
+      "closedLoop": [
+        "schema",
+        "contract",
+        "artifacts",
+        "conformance",
+        "trust"
+      ]
+    },
+    "purpose": "Prove deterministic governance across a heterogeneous artifact family.",
+    "subjectId": "governed-message-artifact-family.v1",
+    "subjectType": "artifact-family"
+  },
+  "verifierRegistry": {
+    "digest": "sha256:ff628d4e4d581109887e04c99849f9d4e87b4dbcc4f8354505fcb012dd812b46",
+    "identity": "governed-artifact-verifier-registry.v1"
+  },
+  "workspace": {
+    "artifactRoot": "governed-message-artifact-family"
+  }
+}

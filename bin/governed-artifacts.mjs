@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
+import { readFileSync } from "node:fs";
 import {
   DEFAULT_PROJECTOR_REGISTRY_PATH,
   DEFAULT_SCHEMA_PATH,
   DEFAULT_VERIFIER_REGISTRY_PATH,
   evaluateConformance,
+  evaluateReceiptClaim,
   observeArtifactState,
   projectArtifactFamily,
   proveGovernedArtifactFamily,
@@ -22,6 +24,7 @@ function usage() {
     "  governed-artifacts observe --contract <path> --workspace <path> [inputs]",
     "  governed-artifacts evaluate --contract <path> --workspace <path> [--write-receipt] [inputs]",
     "  governed-artifacts prove --contract <path> --workspace <path> [--check] [--write-receipt] [inputs]",
+    "  governed-artifacts claim --contract <path> --workspace <path> --receipt <path> --claim <claim> [inputs]",
     "",
     "Inputs:",
     "  --schema <path>",
@@ -69,6 +72,10 @@ function parseArguments(argv) {
         options.workspacePath = value;
       } else if (argument === "--observed-at") {
         options.observedAt = value;
+      } else if (argument === "--receipt") {
+        options.receiptPath = value;
+      } else if (argument === "--claim") {
+        options.claim = value;
       } else {
         throw new Error(`Unknown argument: ${argument}`);
       }
@@ -78,6 +85,23 @@ function parseArguments(argv) {
 }
 
 function execute(operation, options) {
+  if (operation === "claim") {
+    if (
+      !options.contractPath ||
+      !options.workspacePath ||
+      !options.receiptPath ||
+      !options.claim
+    ) {
+      throw new Error(
+        "Claim evaluation requires --contract, --workspace, --receipt, and --claim."
+      );
+    }
+    return evaluateReceiptClaim(
+      options,
+      JSON.parse(readFileSync(options.receiptPath, "utf8")),
+      options.claim
+    );
+  }
   if (operation === "validate") {
     return validateContract(options);
   }
@@ -116,6 +140,7 @@ try {
       result.contractValidationDisposition === "SCHEMA_NOT_ADMITTED" ||
       result.contractValidationDisposition === "SCHEMA_DIGEST_MISMATCH" ||
       result.trustDisposition === "REJECTED" ||
+      result.claimDisposition === "CLAIM_EXCEEDS_EVIDENCE" ||
       (result.projectionDisposition !== undefined &&
         result.projectionDisposition !== "ARTIFACT_FAMILY_PROJECTED");
     process.exitCode = rejected ? 1 : 0;

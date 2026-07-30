@@ -14,10 +14,13 @@
     "projectorRegistry",
     "verifierRegistry",
     "projectionLedger",
+    "dependencies",
+    "effects",
     "artifacts",
     "exclusions",
     "conformance",
-    "receipt"
+    "receipt",
+    "claims"
   ],
   "properties": {
     "$schema": {
@@ -44,6 +47,18 @@
     "projectionLedger": {
       "$ref": "#/$defs/projectionLedger"
     },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dependency"
+      }
+    },
+    "effects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/effect"
+      }
+    },
     "artifacts": {
       "type": "array",
       "minItems": 1,
@@ -63,6 +78,13 @@
     },
     "receipt": {
       "$ref": "#/$defs/receipt"
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/claimPolicy"
+      }
     }
   },
   "$defs": {
@@ -214,8 +236,217 @@
             "$ref": "#/$defs/relationship"
           }
         },
+        "sourceAuthority": {
+          "$ref": "#/$defs/sourceAuthority"
+        },
         "proof": {
           "$ref": "#/$defs/proof"
+        }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dependencyId",
+        "specifier",
+        "allowedImports",
+        "allowedInvocations",
+        "usedByArtifacts",
+        "authority"
+      ],
+      "properties": {
+        "dependencyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "specifier": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\r\\n]+$"
+        },
+        "allowedImports": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?:\\*|default|[A-Za-z_$][A-Za-z0-9_$]*)$"
+          },
+          "uniqueItems": true
+        },
+        "allowedInvocations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(?:\\*|default|[A-Za-z_$][A-Za-z0-9_$]*)(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$"
+          },
+          "uniqueItems": true
+        },
+        "usedByArtifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "uniqueItems": true
+        },
+        "authority": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/portAuthority"
+            },
+            {
+              "$ref": "#/$defs/artifactAuthority"
+            }
+          ]
+        }
+      }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effectId",
+        "operation",
+        "usedByArtifacts",
+        "authority"
+      ],
+      "properties": {
+        "effectId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "operation": {
+          "type": "string",
+          "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$"
+        },
+        "usedByArtifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "uniqueItems": true
+        },
+        "authority": {
+          "$ref": "#/$defs/portAuthority"
+        }
+      }
+    },
+    "portAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "portId",
+        "effect"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "port-authority.v1"
+        },
+        "portId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "effect": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "artifactAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "artifactId",
+        "semanticEdge"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "artifact-authority.v1"
+        },
+        "artifactId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "semanticEdge": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "sourceAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "declarations",
+        "invocations",
+        "syntaxKinds",
+        "forbiddenSyntaxKinds"
+      ],
+      "properties": {
+        "declarations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*$"
+          },
+          "uniqueItems": true
+        },
+        "invocations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(?:new )?[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$"
+          },
+          "uniqueItems": true
+        },
+        "syntaxKinds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/syntaxKindCount"
+          }
+        },
+        "forbiddenSyntaxKinds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/syntaxKind"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "syntaxKind": {
+      "enum": [
+        "CatchClause",
+        "ConditionalExpression",
+        "DebuggerStatement",
+        "DoStatement",
+        "DynamicImportExpression",
+        "ForStatement",
+        "IfStatement",
+        "LogicalAndExpression",
+        "LogicalOrExpression",
+        "NullishCoalescingExpression",
+        "ObjectLiteralExpression",
+        "ReturnStatement",
+        "SwitchStatement",
+        "ThrowStatement",
+        "TryStatement",
+        "WhileStatement",
+        "WithStatement"
+      ]
+    },
+    "syntaxKindCount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "syntaxKind",
+        "occurrences"
+      ],
+      "properties": {
+        "syntaxKind": {
+          "$ref": "#/$defs/syntaxKind"
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
         }
       }
     },
@@ -399,11 +630,15 @@
             "semantic-subject",
             "artifact-family",
             "projection-authorities",
+            "dependency-authorities",
+            "effect-authorities",
+            "source-authority-closures",
             "artifact-relationships",
             "exclusions",
             "conformance-evaluation",
             "terminal-dispositions",
             "receipt-requirements",
+            "claim-policies",
             "review-checklist"
           ]
         },
@@ -508,6 +743,7 @@
             "observe-artifact-state",
             "evaluate-artifact-inventory",
             "evaluate-projection-identity",
+            "evaluate-authority-closure",
             "evaluate-artifact-content",
             "evaluate-artifact-structure",
             "evaluate-artifact-freshness",
@@ -547,13 +783,14 @@
         },
         "artifactConformance": {
           "const": [
-            "ARTIFACT_FAMILY_CONFORMS",
             "ARTIFACT_MISSING",
             "ARTIFACT_UNDECLARED",
             "ARTIFACT_CONTENT_MISMATCH",
             "ARTIFACT_STRUCTURE_MISMATCH",
             "ARTIFACT_STALE",
-            "PROJECTION_IDENTITY_MISMATCH"
+            "PROJECTION_IDENTITY_MISMATCH",
+            "ARTIFACT_ESCAPES_CONTRACT",
+            "CONTRACT_AUTHORITY_CLOSED"
           ]
         },
         "trustPostures": {
@@ -563,6 +800,7 @@
             "MISSING",
             "EXTRA",
             "STALE",
+            "CONTAMINATED",
             "NOT_EVALUATED"
           ]
         },
@@ -608,6 +846,38 @@
         }
       }
     },
+    "claimPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimId",
+        "claim",
+        "requiredConformanceDisposition",
+        "requiredProofDisposition",
+        "requiredTrustDisposition"
+      ],
+      "properties": {
+        "claimId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "claim": {
+          "enum": [
+            "COMPLETE",
+            "CONTRACT_AUTHORITY_CLOSED",
+            "TRUSTED"
+          ]
+        },
+        "requiredConformanceDisposition": {
+          "const": "CONTRACT_AUTHORITY_CLOSED"
+        },
+        "requiredProofDisposition": {
+          "const": "PROOF_COMPLETE"
+        },
+        "requiredTrustDisposition": {
+          "const": "TRUSTED"
+        }
+      }
+    },
     "receipt": {
       "type": "object",
       "additionalProperties": false,
@@ -630,7 +900,9 @@
             "registry-identities",
             "artifact-observations",
             "projection-identity",
+            "authority-closure",
             "conformance-findings",
+            "claim-policies",
             "trust-disposition"
           ]
         }
@@ -655,6 +927,8 @@
           "const": [
             "contract-identity",
             "projector-registry-identity",
+            "dependency-authorities",
+            "effect-authorities",
             "artifact-projection-identities",
             "artifact-content-commitments"
           ]

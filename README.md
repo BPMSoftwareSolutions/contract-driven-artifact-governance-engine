@@ -18,6 +18,7 @@ The contract is simultaneously:
 - the complete artifact declaration;
 - the artifact relationship graph;
 - the exact byte authority;
+- the exact dependency, import, declaration, invocation, and control-flow authority;
 - the conformance policy; and
 - the evidence requirement for a trust disposition.
 
@@ -55,13 +56,14 @@ After a contract is valid, the engine resolves the artifact plan, observes the
 workspace, and evaluates the declared checks in fail-closed order. Its terminal
 conformance dispositions are:
 
-- `ARTIFACT_FAMILY_CONFORMS`
+- `CONTRACT_AUTHORITY_CLOSED`
 - `ARTIFACT_MISSING`
 - `ARTIFACT_UNDECLARED`
 - `ARTIFACT_CONTENT_MISMATCH`
 - `ARTIFACT_STRUCTURE_MISMATCH`
 - `ARTIFACT_STALE`
 - `PROJECTION_IDENTITY_MISMATCH`
+- `ARTIFACT_ESCAPES_CONTRACT`
 
 Every result maps to one trust posture:
 
@@ -70,9 +72,29 @@ Every result maps to one trust posture:
 - `MISSING`
 - `EXTRA`
 - `STALE`
+- `CONTAMINATED`
 - `NOT_EVALUATED`
 
-Only `ARTIFACT_FAMILY_CONFORMS` produces `TRUSTED`.
+Only `CONTRACT_AUTHORITY_CLOSED` produces `TRUSTED`.
+
+## Authority closure gate
+
+Source artifacts declare their exact top-level declarations, invocations,
+meaningful syntax kinds, and forbidden syntax. The contract also declares every
+importable dependency, its exact import bindings, the artifacts permitted to
+use it, its exact admitted invocations, and the port or artifact edge that
+grants authority. Ambient operations such as process input and output require
+separate effect authorities bound to exact ports.
+
+The evaluator observes source structure before byte comparison. Undeclared
+imports, ambient effects, declarations, decision paths, loops, and projection
+logic therefore produce deterministic escape findings and
+`ARTIFACT_ESCAPES_CONTRACT`. A literal-only byte change remains a distinct
+`PAYLOAD_MISMATCH`.
+
+Runtime availability grants no authority. Installed packages, Node built-ins,
+workspace modules, and global effects are prohibited unless they resolve
+through the contract.
 
 ## Projectors
 
@@ -99,8 +121,8 @@ and reprojected during conformance evaluation.
 
 Every projection operation also writes or checks the contract-declared
 projection ledger. The ledger binds the contract digest, projector-registry
-digest, artifact authority IDs, projector IDs, projection modes, and content
-commitments. A missing or altered ledger produces
+digest, dependency and effect authorities, artifact authority IDs, projector
+IDs, projection modes, and content commitments. A missing or altered ledger produces
 `PROJECTION_IDENTITY_MISMATCH`.
 
 ## Verifiers
@@ -108,6 +130,7 @@ commitments. A missing or altered ledger produces
 The admitted verifier registry covers:
 
 - declared versus observed artifact inventory;
+- dependency, import, declaration, invocation, and syntax authority closure;
 - SHA-256 and byte length;
 - lossless source-token structure;
 - Draft 2020-12 JSON Schema validity;
@@ -176,6 +199,22 @@ governed-artifacts prove \
   --write-receipt
 ```
 
+Admit a claim only when a canonical receipt contains its declared evidence:
+
+```text
+governed-artifacts claim \
+  --contract architecture/artifact-family.contract.json \
+  --workspace . \
+  --receipt .governance/receipts/artifact-family.receipt.json \
+  --claim COMPLETE
+```
+
+The result is `CLAIM_ADMITTED` or `CLAIM_EXCEEDS_EVIDENCE`. A trusted claim
+requires `CONTRACT_AUTHORITY_CLOSED`, `ARTIFACT_AUTHORITY_CLOSED`,
+`PROOF_COMPLETE`, and `TRUSTED` in the same receipt. Claim evaluation
+re-observes the workspace and rejects a supplied receipt that differs from the
+current canonical evidence.
+
 Each operation also accepts explicit `--schema`, `--projector-registry`, and
 `--verifier-registry` paths. Their exact file digests must equal the admitted
 identities in the contract. When an artifact declares `validThroughUtc`, use
@@ -206,9 +245,11 @@ The receipt binds:
 
 - exact contract, schema, and registry digests;
 - every artifact observation;
+- every observed source authority surface;
 - missing and undeclared paths;
 - ordered conformance checks;
 - fail-closed findings;
+- declared claim policies and proof completeness;
 - the terminal conformance disposition; and
 - the terminal trust disposition.
 

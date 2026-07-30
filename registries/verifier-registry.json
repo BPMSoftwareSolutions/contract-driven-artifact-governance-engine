@@ -7,6 +7,10 @@
       "evidence": "declared-and-observed-relative-paths"
     },
     {
+      "verifierId": "authority-closure-verifier.v1",
+      "evidence": "dependency-import-declaration-invocation-and-syntax-authority"
+    },
+    {
       "verifierId": "command-exit-verifier.v1",
       "evidence": "exit-code-and-standard-output"
     },

@@ -493,6 +493,7 @@
         "contentSha256": "sha256:3c40ec92f987cd612160005081a6c6a61a92fb99ffac293832f84324a5f4790e",
         "expectedByteLength": 280,
         "verifierIds": [
+          "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
           "source-token-structure-verifier.v1"
         ]
@@ -504,7 +505,48 @@
           "relationshipType": "projects"
         }
       ],
-      "relativePath": "src/project-message.mjs"
+      "relativePath": "src/project-message.mjs",
+      "sourceAuthority": {
+        "declarations": [
+          "projectMessage"
+        ],
+        "forbiddenSyntaxKinds": [
+          "DebuggerStatement",
+          "DoStatement",
+          "DynamicImportExpression",
+          "ForStatement",
+          "SwitchStatement",
+          "TryStatement",
+          "WhileStatement",
+          "WithStatement"
+        ],
+        "invocations": [
+          "JSON.stringify",
+          "new Error"
+        ],
+        "syntaxKinds": [
+          {
+            "occurrences": 1,
+            "syntaxKind": "IfStatement"
+          },
+          {
+            "occurrences": 3,
+            "syntaxKind": "LogicalOrExpression"
+          },
+          {
+            "occurrences": 1,
+            "syntaxKind": "ObjectLiteralExpression"
+          },
+          {
+            "occurrences": 1,
+            "syntaxKind": "ReturnStatement"
+          },
+          {
+            "occurrences": 1,
+            "syntaxKind": "ThrowStatement"
+          }
+        ]
+      }
     },
     {
       "artifactId": "message-command.v1",
@@ -900,6 +942,7 @@
         "contentSha256": "sha256:f3cfcfa696be55f4bfbefbb191f267fa678051f6e8ebe2539975365c31117ae1",
         "expectedByteLength": 311,
         "verifierIds": [
+          "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
           "source-token-structure-verifier.v1"
         ]
@@ -915,7 +958,36 @@
           "relationshipType": "invokes"
         }
       ],
-      "relativePath": "bin/run-message.mjs"
+      "relativePath": "bin/run-message.mjs",
+      "sourceAuthority": {
+        "declarations": [
+          "input",
+          "value"
+        ],
+        "forbiddenSyntaxKinds": [
+          "DebuggerStatement",
+          "DoStatement",
+          "DynamicImportExpression",
+          "ForStatement",
+          "SwitchStatement",
+          "TryStatement",
+          "WhileStatement",
+          "WithStatement"
+        ],
+        "invocations": [
+          "JSON.parse",
+          "new URL",
+          "process.stdout.write",
+          "projectMessage",
+          "readFileSync"
+        ],
+        "syntaxKinds": [
+          {
+            "occurrences": 1,
+            "syntaxKind": "NullishCoalescingExpression"
+          }
+        ]
+      }
     },
     {
       "artifactId": "message-verification.v1",
@@ -1307,6 +1379,7 @@
         "contentSha256": "sha256:7c7276f2dc4548dfe248afccc4ffd405ce85516947feacbf7c7036aa3b4e9c52",
         "expectedByteLength": 420,
         "verifierIds": [
+          "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
           "source-token-structure-verifier.v1"
         ]
@@ -1320,9 +1393,37 @@
         {
           "artifactId": "message-projector.v1",
           "relationshipType": "verifies"
+        },
+        {
+          "artifactId": "message-projector.v1",
+          "relationshipType": "invokes"
         }
       ],
-      "relativePath": "verification/verifies-message.mjs"
+      "relativePath": "verification/verifies-message.mjs",
+      "sourceAuthority": {
+        "declarations": [
+          "value"
+        ],
+        "forbiddenSyntaxKinds": [
+          "DebuggerStatement",
+          "DoStatement",
+          "DynamicImportExpression",
+          "ForStatement",
+          "SwitchStatement",
+          "TryStatement",
+          "WhileStatement",
+          "WithStatement"
+        ],
+        "invocations": [
+          "JSON.parse",
+          "assert.equal",
+          "new URL",
+          "process.stdout.write",
+          "projectMessage",
+          "readFileSync"
+        ],
+        "syntaxKinds": []
+      }
     },
     {
       "artifactId": "artifact-family-readme.v1",
@@ -1360,11 +1461,15 @@
             "semantic-subject",
             "artifact-family",
             "projection-authorities",
+            "dependency-authorities",
+            "effect-authorities",
+            "source-authority-closures",
             "artifact-relationships",
             "exclusions",
             "conformance-evaluation",
             "terminal-dispositions",
             "receipt-requirements",
+            "claim-policies",
             "review-checklist"
           ]
         },
@@ -1374,8 +1479,8 @@
       },
       "proof": {
         "contentDigestRequired": true,
-        "contentSha256": "sha256:c12b40b8543ad6c46d8ac4ac88ce4d103bd0a1c05092942e09de46b5c9796409",
-        "expectedByteLength": 9759,
+        "contentSha256": "sha256:d28442fb021d89f5bdc0ee168ee881f0af058c6bc65f6b647a1c756803e9823e",
+        "expectedByteLength": 12878,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -1385,11 +1490,15 @@
           "## Semantic Subject",
           "## Artifact Family",
           "## Projection Authorities",
+          "## Dependency Authorities",
+          "## Effect Authorities",
+          "## Source Authority Closures",
           "## Artifact Relationships",
           "## Exclusions",
           "## Conformance Evaluation",
           "## Terminal Dispositions",
           "## Receipt Requirements",
+          "## Claim Policies",
           "## Review Checklist"
         ],
         "verifierIds": [
@@ -1488,6 +1597,29 @@
       "relativePath": "package.json"
     }
   ],
+  "claims": [
+    {
+      "claim": "COMPLETE",
+      "claimId": "artifact-family-complete.v1",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredTrustDisposition": "TRUSTED"
+    },
+    {
+      "claim": "CONTRACT_AUTHORITY_CLOSED",
+      "claimId": "contract-authority-closed.v1",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredTrustDisposition": "TRUSTED"
+    },
+    {
+      "claim": "TRUSTED",
+      "claimId": "artifact-family-trusted.v1",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredTrustDisposition": "TRUSTED"
+    }
+  ],
   "conformance": {
     "artifactEvaluations": [
       {
@@ -1507,6 +1639,7 @@
       "observe-artifact-state",
       "evaluate-artifact-inventory",
       "evaluate-projection-identity",
+      "evaluate-authority-closure",
       "evaluate-artifact-content",
       "evaluate-artifact-structure",
       "evaluate-artifact-freshness",
@@ -1517,13 +1650,14 @@
     "failClosed": true,
     "terminalDispositions": {
       "artifactConformance": [
-        "ARTIFACT_FAMILY_CONFORMS",
         "ARTIFACT_MISSING",
         "ARTIFACT_UNDECLARED",
         "ARTIFACT_CONTENT_MISMATCH",
         "ARTIFACT_STRUCTURE_MISMATCH",
         "ARTIFACT_STALE",
-        "PROJECTION_IDENTITY_MISMATCH"
+        "PROJECTION_IDENTITY_MISMATCH",
+        "ARTIFACT_ESCAPES_CONTRACT",
+        "CONTRACT_AUTHORITY_CLOSED"
       ],
       "contractValidation": [
         "CONTRACT_VALID",
@@ -1542,6 +1676,7 @@
         "MISSING",
         "EXTRA",
         "STALE",
+        "CONTAMINATED",
         "NOT_EVALUATED"
       ]
     }
@@ -1549,9 +1684,94 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.0.0",
+    "contractVersion": "1.1.0",
     "status": "admitted"
   },
+  "dependencies": [
+    {
+      "allowedImports": [
+        "projectMessage"
+      ],
+      "allowedInvocations": [
+        "projectMessage"
+      ],
+      "authority": {
+        "artifactId": "message-projector.v1",
+        "authorityType": "artifact-authority.v1",
+        "semanticEdge": "invokes"
+      },
+      "dependencyId": "message-projector-module.v1",
+      "specifier": "../src/project-message.mjs",
+      "usedByArtifacts": [
+        "message-command.v1",
+        "message-verification.v1"
+      ]
+    },
+    {
+      "allowedImports": [
+        "default"
+      ],
+      "allowedInvocations": [
+        "default.equal"
+      ],
+      "authority": {
+        "authorityType": "port-authority.v1",
+        "effect": "evaluate-proof",
+        "portId": "assert-message-projection.v1"
+      },
+      "dependencyId": "node-assert-strict.v1",
+      "specifier": "node:assert/strict",
+      "usedByArtifacts": [
+        "message-verification.v1"
+      ]
+    },
+    {
+      "allowedImports": [
+        "readFileSync"
+      ],
+      "allowedInvocations": [
+        "readFileSync"
+      ],
+      "authority": {
+        "authorityType": "port-authority.v1",
+        "effect": "read-file-system",
+        "portId": "read-message-contract.v1"
+      },
+      "dependencyId": "node-fs-read.v1",
+      "specifier": "node:fs",
+      "usedByArtifacts": [
+        "message-command.v1",
+        "message-verification.v1"
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "authority": {
+        "authorityType": "port-authority.v1",
+        "effect": "read-process-arguments",
+        "portId": "read-message-input.v1"
+      },
+      "effectId": "read-message-input.v1",
+      "operation": "process.argv",
+      "usedByArtifacts": [
+        "message-command.v1"
+      ]
+    },
+    {
+      "authority": {
+        "authorityType": "port-authority.v1",
+        "effect": "write-process-output",
+        "portId": "write-message-output.v1"
+      },
+      "effectId": "write-message-output.v1",
+      "operation": "process.stdout.write",
+      "usedByArtifacts": [
+        "message-command.v1",
+        "message-verification.v1"
+      ]
+    }
+  ],
   "exclusions": [
     ".env",
     "secrets.json"
@@ -1562,6 +1782,8 @@
     "requiredEvidence": [
       "contract-identity",
       "projector-registry-identity",
+      "dependency-authorities",
+      "effect-authorities",
       "artifact-projection-identities",
       "artifact-content-commitments"
     ]
@@ -1579,12 +1801,14 @@
       "registry-identities",
       "artifact-observations",
       "projection-identity",
+      "authority-closure",
       "conformance-findings",
+      "claim-policies",
       "trust-disposition"
     ]
   },
   "schema": {
-    "digest": "sha256:b9c96d4dfb21236d9877d10e3b193e364c8aeac0513bf30dc6af72739eed1640",
+    "digest": "sha256:247f86fbbea6febda2d71d40665065122b6aef7d572eac43883d476da939542b",
     "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
   },
   "subject": {
@@ -1602,7 +1826,7 @@
     "subjectType": "artifact-family"
   },
   "verifierRegistry": {
-    "digest": "sha256:ff628d4e4d581109887e04c99849f9d4e87b4dbcc4f8354505fcb012dd812b46",
+    "digest": "sha256:d9dcd0b53c54904a44ce15896d047d9360a6d48c5379dc3a2ebf3b8cab691f36",
     "identity": "governed-artifact-verifier-registry.v1"
   },
   "workspace": {

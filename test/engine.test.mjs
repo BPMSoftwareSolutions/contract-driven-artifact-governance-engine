@@ -15,6 +15,8 @@ import test from "node:test";
 import {
   canonicalJsonBytes,
   evaluateConformance,
+  evaluateReceiptClaim,
+  evaluateTrustClaim,
   projectArtifactFamily,
   projectGovernedArtifactContractMarkdown,
   proveGovernedArtifactFamily,
@@ -81,7 +83,12 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
     mode: "write",
     writeReceipt: true
   });
-  assert.equal(first.artifactFamily.conformanceDisposition, "ARTIFACT_FAMILY_CONFORMS");
+  assert.equal(first.artifactFamily.conformanceDisposition, "CONTRACT_AUTHORITY_CLOSED");
+  assert.equal(
+    first.artifactFamily.authorityClosureDisposition,
+    "ARTIFACT_AUTHORITY_CLOSED"
+  );
+  assert.equal(first.artifactFamily.proofDisposition, "PROOF_COMPLETE");
   assert.equal(first.trustPosture, "CONFORMS");
   assert.equal(first.trustDisposition, "TRUSTED");
   assert.equal(first.artifactFamily.declaredArtifactCount, 8);
@@ -111,6 +118,18 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   assert.match(
     observedReview.toString("utf8"),
     /## Terminal Dispositions[\s\S]+PROJECTION_IDENTITY_MISMATCH/
+  );
+  assert.match(
+    observedReview.toString("utf8"),
+    /## Dependency Authorities[\s\S]+node-fs-read\.v1/
+  );
+  assert.match(
+    observedReview.toString("utf8"),
+    /## Claim Policies[\s\S]+CONTRACT_AUTHORITY_CLOSED/
+  );
+  assert.match(
+    observedReview.toString("utf8"),
+    /## Effect Authorities[\s\S]+write-message-output\.v1/
   );
 
   const receiptPath = path.join(
@@ -374,6 +393,202 @@ test("structured review authority drives Markdown and cannot drift silently", (t
       (finding) => finding.findingId === "contract-review-markdown-binding"
     ),
     true
+  );
+});
+
+test("authority closure emits deterministic findings for source escape routes", (t) => {
+  const cases = [
+    {
+      expectedFindingId: "UNDECLARED_DEPENDENCY_IMPORT",
+      mutate: (text) =>
+        `import { execSync } from "node:child_process";\n${text}`
+    },
+    {
+      expectedFindingId: "EFFECT_BYPASSES_DECLARED_PORT",
+      mutate: (text) => `${text}\nprocess.exit(0);\n`
+    },
+    {
+      expectedFindingId: "UNDECLARED_DECLARATION",
+      mutate: (text) => `${text}\nfunction convenienceHelper() {}\n`
+    },
+    {
+      expectedFindingId: "UNDECLARED_DECISION_PATH",
+      mutate: (text) => `${text}\nconst fallbackValue = value ?? {};\n`
+    },
+    {
+      expectedFindingId: "UNDECLARED_ITERATION_OR_CONTINUATION",
+      mutate: (text) => `${text}\nfor (;;) {}\n`
+    },
+    {
+      expectedFindingId: "UNDECLARED_PROJECTION_LOGIC",
+      mutate: (text) =>
+        `${text}\nconst escapedDto = { message: "undeclared" };\n`
+    }
+  ];
+
+  for (const entry of cases) {
+    const workspacePath = makeWorkspace(t);
+    projectArtifactFamily({
+      contractPath: exampleContractPath,
+      workspacePath,
+      mode: "write"
+    });
+    const sourcePath = path.join(
+      workspacePath,
+      "governed-message-artifact-family",
+      "src",
+      "project-message.mjs"
+    );
+    writeFileSync(
+      sourcePath,
+      entry.mutate(readFileSync(sourcePath, "utf8"))
+    );
+    const result = evaluateConformance({
+      contractPath: exampleContractPath,
+      workspacePath
+    });
+    assert.equal(
+      result.artifactFamily.conformanceDisposition,
+      "ARTIFACT_ESCAPES_CONTRACT",
+      entry.expectedFindingId
+    );
+    assert.equal(result.trustPosture, "CONTAMINATED");
+    assert.equal(
+      result.artifactFamily.findings.some(
+        (finding) => finding.findingId === entry.expectedFindingId
+      ),
+      true,
+      entry.expectedFindingId
+    );
+  }
+
+  const dependencyWorkspace = makeWorkspace(t);
+  projectArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath: dependencyWorkspace,
+    mode: "write"
+  });
+  const verificationPath = path.join(
+    dependencyWorkspace,
+    "governed-message-artifact-family",
+    "verification",
+    "verifies-message.mjs"
+  );
+  writeFileSync(
+    verificationPath,
+    readFileSync(verificationPath, "utf8").replace(
+      "assert.equal",
+      "assert.deepEqual"
+    )
+  );
+  const dependencyEscape = evaluateConformance({
+    contractPath: exampleContractPath,
+    workspacePath: dependencyWorkspace
+  });
+  assert.equal(
+    dependencyEscape.artifactFamily.conformanceDisposition,
+    "ARTIFACT_ESCAPES_CONTRACT"
+  );
+  assert.equal(
+    dependencyEscape.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "UNDECLARED_DEPENDENCY_OPERATION"
+    ),
+    true
+  );
+});
+
+test("payload drift stays distinct and completion claims cannot exceed receipt evidence", (t) => {
+  const trustedWorkspace = makeWorkspace(t);
+  projectArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath: trustedWorkspace,
+    mode: "write"
+  });
+  const trustedReceipt = evaluateConformance({
+    contractPath: exampleContractPath,
+    workspacePath: trustedWorkspace
+  });
+  const admittedClaim = evaluateTrustClaim(trustedReceipt, "COMPLETE");
+  assert.equal(admittedClaim.claimDisposition, "CLAIM_ADMITTED");
+  assert.equal(
+    evaluateReceiptClaim(
+      {
+        contractPath: exampleContractPath,
+        workspacePath: trustedWorkspace
+      },
+      trustedReceipt,
+      "COMPLETE"
+    ).claimDisposition,
+    "CLAIM_ADMITTED"
+  );
+  const fabricatedReceipt = structuredClone(trustedReceipt);
+  fabricatedReceipt.artifactFamily.proofDisposition = "PROOF_INCOMPLETE";
+  assert.equal(
+    evaluateReceiptClaim(
+      {
+        contractPath: exampleContractPath,
+        workspacePath: trustedWorkspace
+      },
+      fabricatedReceipt,
+      "COMPLETE"
+    ).claimDisposition,
+    "CLAIM_EXCEEDS_EVIDENCE"
+  );
+
+  const driftedWorkspace = makeWorkspace(t);
+  projectArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath: driftedWorkspace,
+    mode: "write"
+  });
+  const sourcePath = path.join(
+    driftedWorkspace,
+    "governed-message-artifact-family",
+    "src",
+    "project-message.mjs"
+  );
+  writeFileSync(
+    sourcePath,
+    readFileSync(sourcePath, "utf8").replace(
+      "Message contract is invalid.",
+      "Message contract is not admitted."
+    )
+  );
+  const driftedReceipt = evaluateConformance({
+    contractPath: exampleContractPath,
+    workspacePath: driftedWorkspace
+  });
+  assert.equal(
+    driftedReceipt.artifactFamily.conformanceDisposition,
+    "ARTIFACT_CONTENT_MISMATCH"
+  );
+  assert.equal(
+    driftedReceipt.artifactFamily.findings[0].findingId,
+    "PAYLOAD_MISMATCH"
+  );
+  assert.equal(
+    driftedReceipt.artifactFamily.authorityClosureDisposition,
+    "ARTIFACT_AUTHORITY_CLOSED"
+  );
+  assert.equal(
+    driftedReceipt.artifactFamily.proofDisposition,
+    "PROOF_INCOMPLETE"
+  );
+  const rejectedClaim = evaluateTrustClaim(driftedReceipt, "COMPLETE");
+  assert.equal(
+    rejectedClaim.claimDisposition,
+    "CLAIM_EXCEEDS_EVIDENCE"
+  );
+  assert.equal(
+    rejectedClaim.findings.some(
+      (finding) => finding.findingId === "CLAIM_EXCEEDS_EVIDENCE"
+    ),
+    true
+  );
+  assert.equal(
+    evaluateTrustClaim(trustedReceipt, "UNDECLARED_CLAIM").claimDisposition,
+    "CLAIM_EXCEEDS_EVIDENCE"
   );
 });
 

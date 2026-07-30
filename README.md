@@ -18,7 +18,7 @@ The contract is simultaneously:
 - the complete artifact declaration;
 - the artifact relationship graph;
 - the exact byte authority;
-- the exact dependency, import, declaration, invocation, and control-flow authority;
+- the exact authority for every semantic control surface;
 - the conformance policy; and
 - the evidence requirement for a trust disposition.
 
@@ -79,18 +79,40 @@ Only `CONTRACT_AUTHORITY_CLOSED` produces `TRUSTED`.
 
 ## Authority closure gate
 
-Source artifacts declare their exact top-level declarations, invocations,
-meaningful syntax kinds, and forbidden syntax. The contract also declares every
-importable dependency, its exact import bindings, the artifacts permitted to
-use it, its exact admitted invocations, and the port or artifact edge that
-grants authority. Ambient operations such as process input and output require
-separate effect authorities bound to exact ports.
+Authority closure is a closed-world rule. Every applicable control surface is
+present as structured contract data:
+
+| Surface | Required contract authority |
+| --- | --- |
+| Artifact path | artifact declaration |
+| Import | dependency specifier and exact import bindings |
+| Package use | dependency authority and exact admitted invocations |
+| Function | named responsibility, declaration, kind, and purpose |
+| Invocation or governed reference | semantic edge, argument expressions, occurrence count, and authority references |
+| External operation | effect authority bound to an exact port |
+| DTO field | projection mapping from output field to source expression |
+| Branch | decision authority with exact condition expression |
+| Loop | iteration authority with exact control expression, continuation policy, and termination policy |
+| Failure handling | failure policy with exact source form and expression where applicable |
+| Return or emitted output | result contract with exact source expression and projection mapping where applicable |
+| Trust claim | claim policy with exact conformance, proof, and trust requirements |
+
+Empty collections are significant. For example, `iterations: []` declares that
+an artifact has no iteration authority; every loop is therefore an escape.
+Likewise, the forbidden-syntax set closes source forms that have no admitted
+authority.
+
+The contract also declares every importable dependency, the artifacts permitted
+to use it, and the port or artifact responsibility that grants authority.
+Ambient operations such as process input and output require separate effect
+authorities bound to exact ports. Runtime operations such as `JSON.parse` and
+`new URL` require named runtime authorities.
 
 The evaluator observes source structure before byte comparison. Undeclared
-imports, ambient effects, declarations, decision paths, loops, and projection
-logic therefore produce deterministic escape findings and
-`ARTIFACT_ESCAPES_CONTRACT`. A literal-only byte change remains a distinct
-`PAYLOAD_MISMATCH`.
+paths, imports, package operations, functions, semantic edges, effects,
+decisions, iterations, failure policies, DTO mappings, and results therefore
+produce deterministic escape findings and `ARTIFACT_ESCAPES_CONTRACT`. A
+comment-only byte change remains a distinct `PAYLOAD_MISMATCH`.
 
 Runtime availability grants no authority. Installed packages, Node built-ins,
 workspace modules, and global effects are prohibited unless they resolve
@@ -121,16 +143,17 @@ and reprojected during conformance evaluation.
 
 Every projection operation also writes or checks the contract-declared
 projection ledger. The ledger binds the contract digest, projector-registry
-digest, dependency and effect authorities, artifact authority IDs, projector
-IDs, projection modes, and content commitments. A missing or altered ledger produces
-`PROJECTION_IDENTITY_MISMATCH`.
+digest, dependency, effect, runtime, and source authorities, artifact authority
+IDs, projector IDs, projection modes, and content commitments. A missing or
+altered ledger produces `PROJECTION_IDENTITY_MISMATCH`.
 
 ## Verifiers
 
 The admitted verifier registry covers:
 
 - declared versus observed artifact inventory;
-- dependency, import, declaration, invocation, and syntax authority closure;
+- dependency, import, responsibility, semantic-edge, effect, decision,
+  iteration, failure, projection-mapping, result, and syntax authority closure;
 - SHA-256 and byte length;
 - lossless source-token structure;
 - Draft 2020-12 JSON Schema validity;

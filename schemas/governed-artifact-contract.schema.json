@@ -16,6 +16,7 @@
     "projectionLedger",
     "dependencies",
     "effects",
+    "runtimeAuthorities",
     "artifacts",
     "exclusions",
     "conformance",
@@ -59,6 +60,12 @@
         "$ref": "#/$defs/effect"
       }
     },
+    "runtimeAuthorities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/runtimeAuthority"
+      }
+    },
     "artifacts": {
       "type": "array",
       "minItems": 1,
@@ -93,6 +100,10 @@
       "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
       "minLength": 3,
       "maxLength": 160
+    },
+    "invocation": {
+      "type": "string",
+      "pattern": "^(?:new )?[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$"
     },
     "sha256": {
       "type": "string",
@@ -331,6 +342,36 @@
         }
       }
     },
+    "runtimeAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtimeAuthorityId",
+        "invocation",
+        "usedByArtifacts",
+        "purpose"
+      ],
+      "properties": {
+        "runtimeAuthorityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "invocation": {
+          "$ref": "#/$defs/invocation"
+        },
+        "usedByArtifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "uniqueItems": true
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "portAuthority": {
       "type": "object",
       "additionalProperties": false,
@@ -357,6 +398,7 @@
       "required": [
         "authorityType",
         "artifactId",
+        "responsibilityId",
         "semanticEdge"
       ],
       "properties": {
@@ -364,6 +406,9 @@
           "const": "artifact-authority.v1"
         },
         "artifactId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "responsibilityId": {
           "$ref": "#/$defs/identifier"
         },
         "semanticEdge": {
@@ -376,8 +421,13 @@
       "additionalProperties": false,
       "required": [
         "declarations",
-        "invocations",
-        "syntaxKinds",
+        "responsibilities",
+        "semanticEdges",
+        "decisions",
+        "iterations",
+        "failurePolicies",
+        "projectionMappings",
+        "resultContracts",
         "forbiddenSyntaxKinds"
       ],
       "properties": {
@@ -389,18 +439,46 @@
           },
           "uniqueItems": true
         },
-        "invocations": {
+        "responsibilities": {
           "type": "array",
           "items": {
-            "type": "string",
-            "pattern": "^(?:new )?[A-Za-z_$][A-Za-z0-9_$]*(?:\\.[A-Za-z_$][A-Za-z0-9_$]*)*$"
-          },
-          "uniqueItems": true
+            "$ref": "#/$defs/responsibility"
+          }
         },
-        "syntaxKinds": {
+        "semanticEdges": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/syntaxKindCount"
+            "$ref": "#/$defs/semanticEdge"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/decisionAuthority"
+          }
+        },
+        "iterations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/iterationAuthority"
+          }
+        },
+        "failurePolicies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/failurePolicy"
+          }
+        },
+        "projectionMappings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectionMapping"
+          }
+        },
+        "resultContracts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resultContract"
           }
         },
         "forbiddenSyntaxKinds": {
@@ -409,6 +487,580 @@
             "$ref": "#/$defs/syntaxKind"
           },
           "uniqueItems": true
+        }
+      }
+    },
+    "responsibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "responsibilityId",
+        "responsibilityType",
+        "declaration",
+        "purpose"
+      ],
+      "properties": {
+        "responsibilityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "responsibilityType": {
+          "enum": [
+            "function",
+            "module"
+          ]
+        },
+        "declaration": {
+          "type": "string",
+          "pattern": "^(?:<module>|[A-Za-z_$][A-Za-z0-9_$]*)$"
+        },
+        "functionKind": {
+          "enum": [
+            "arrow-function",
+            "function-declaration",
+            "function-expression",
+            "method-declaration"
+          ]
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "responsibilityType": {
+                "const": "function"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "functionKind": {}
+            },
+            "required": [
+              "functionKind"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "functionKind"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "semanticEdge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edgeId",
+        "responsibilityId",
+        "edgeKind",
+        "operation",
+        "argumentExpressions",
+        "occurrences",
+        "authorities",
+        "purpose"
+      ],
+      "properties": {
+        "edgeId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "responsibilityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "edgeKind": {
+          "enum": [
+            "invocation",
+            "reference"
+          ]
+        },
+        "operation": {
+          "$ref": "#/$defs/invocation"
+        },
+        "argumentExpressions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authorities": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/authorityReference"
+          }
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "authorityReference": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/dependencyAuthorityReference"
+        },
+        {
+          "$ref": "#/$defs/effectAuthorityReference"
+        },
+        {
+          "$ref": "#/$defs/runtimeAuthorityReference"
+        },
+        {
+          "$ref": "#/$defs/responsibilityAuthorityReference"
+        },
+        {
+          "$ref": "#/$defs/projectionAuthorityReference"
+        },
+        {
+          "$ref": "#/$defs/failureAuthorityReference"
+        },
+        {
+          "$ref": "#/$defs/resultAuthorityReference"
+        }
+      ]
+    },
+    "dependencyAuthorityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "dependencyId"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "dependency-authority"
+        },
+        "dependencyId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "effectAuthorityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "effectId"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "effect-authority"
+        },
+        "effectId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "runtimeAuthorityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "runtimeAuthorityId"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "runtime-authority"
+        },
+        "runtimeAuthorityId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "responsibilityAuthorityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "responsibilityId"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "responsibility-authority"
+        },
+        "responsibilityId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "projectionAuthorityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "projectionMappingId"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "projection-authority"
+        },
+        "projectionMappingId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "failureAuthorityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "failurePolicyId"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "failure-authority"
+        },
+        "failurePolicyId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "resultAuthorityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "resultContractId"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "result-authority"
+        },
+        "resultContractId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "decisionAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decisionId",
+        "responsibilityId",
+        "syntaxKind",
+        "conditionExpression",
+        "occurrences",
+        "policy"
+      ],
+      "properties": {
+        "decisionId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "responsibilityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "syntaxKind": {
+          "enum": [
+            "ConditionalExpression",
+            "IfStatement",
+            "LogicalAndExpression",
+            "LogicalOrExpression",
+            "NullishCoalescingExpression",
+            "SwitchStatement"
+          ]
+        },
+        "conditionExpression": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "policy": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "iterationAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "iterationId",
+        "responsibilityId",
+        "syntaxKind",
+        "controlExpression",
+        "occurrences",
+        "continuationPolicy",
+        "terminationPolicy"
+      ],
+      "properties": {
+        "iterationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "responsibilityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "syntaxKind": {
+          "enum": [
+            "DoStatement",
+            "ForStatement",
+            "WhileStatement"
+          ]
+        },
+        "controlExpression": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "continuationPolicy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "terminationPolicy": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "failurePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "failurePolicyId",
+        "responsibilityId",
+        "syntaxKind",
+        "occurrences",
+        "policy"
+      ],
+      "properties": {
+        "failurePolicyId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "responsibilityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "syntaxKind": {
+          "enum": [
+            "CatchClause",
+            "ThrowStatement",
+            "TryStatement"
+          ]
+        },
+        "expression": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "policy": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "syntaxKind"
+            ],
+            "properties": {
+              "syntaxKind": {
+                "const": "ThrowStatement"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "expression"
+            ],
+            "properties": {
+              "expression": {}
+            }
+          }
+        }
+      ]
+    },
+    "projectionMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectionMappingId",
+        "responsibilityId",
+        "occurrences",
+        "fields",
+        "purpose"
+      ],
+      "properties": {
+        "projectionMappingId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "responsibilityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectionField"
+          }
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "projectionField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outputField",
+        "sourceExpression"
+      ],
+      "properties": {
+        "outputField": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceExpression": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "resultContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resultContractId",
+        "resultKind",
+        "mediaType",
+        "source",
+        "purpose"
+      ],
+      "properties": {
+        "resultContractId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultKind": {
+          "$ref": "#/$defs/identifier"
+        },
+        "mediaType": {
+          "type": "string",
+          "pattern": "^[a-z0-9.+-]+/[a-z0-9.+-]+$"
+        },
+        "source": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/returnResultSource"
+            },
+            {
+              "$ref": "#/$defs/effectResultSource"
+            }
+          ]
+        },
+        "projectionMapping": {
+          "$ref": "#/$defs/projectionMappingReference"
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "returnResultSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceType",
+        "responsibilityId",
+        "returnKind",
+        "expression",
+        "occurrences"
+      ],
+      "properties": {
+        "sourceType": {
+          "const": "return"
+        },
+        "responsibilityId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "returnKind": {
+          "enum": [
+            "explicit-return",
+            "implicit-return"
+          ]
+        },
+        "expression": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "effectResultSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceType",
+        "effectId",
+        "semanticEdgeId",
+        "argumentIndex",
+        "valueExpression",
+        "occurrences"
+      ],
+      "properties": {
+        "sourceType": {
+          "const": "effect"
+        },
+        "effectId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "semanticEdgeId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "argumentIndex": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "valueExpression": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "projectionMappingReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactId",
+        "projectionMappingId"
+      ],
+      "properties": {
+        "artifactId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "projectionMappingId": {
+          "$ref": "#/$defs/identifier"
         }
       }
     },
@@ -432,23 +1084,6 @@
         "WhileStatement",
         "WithStatement"
       ]
-    },
-    "syntaxKindCount": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "syntaxKind",
-        "occurrences"
-      ],
-      "properties": {
-        "syntaxKind": {
-          "$ref": "#/$defs/syntaxKind"
-        },
-        "occurrences": {
-          "type": "integer",
-          "minimum": 1
-        }
-      }
     },
     "projection": {
       "type": "object",
@@ -632,6 +1267,7 @@
             "projection-authorities",
             "dependency-authorities",
             "effect-authorities",
+            "runtime-authorities",
             "source-authority-closures",
             "artifact-relationships",
             "exclusions",
@@ -853,6 +1489,7 @@
         "claimId",
         "claim",
         "requiredConformanceDisposition",
+        "requiredAuthorityClosureDisposition",
         "requiredProofDisposition",
         "requiredTrustDisposition"
       ],
@@ -869,6 +1506,9 @@
         },
         "requiredConformanceDisposition": {
           "const": "CONTRACT_AUTHORITY_CLOSED"
+        },
+        "requiredAuthorityClosureDisposition": {
+          "const": "ARTIFACT_AUTHORITY_CLOSED"
         },
         "requiredProofDisposition": {
           "const": "PROOF_COMPLETE"
@@ -901,6 +1541,7 @@
             "artifact-observations",
             "projection-identity",
             "authority-closure",
+            "source-authority-observations",
             "conformance-findings",
             "claim-policies",
             "trust-disposition"
@@ -929,6 +1570,8 @@
             "projector-registry-identity",
             "dependency-authorities",
             "effect-authorities",
+            "runtime-authorities",
+            "source-authorities",
             "artifact-projection-identities",
             "artifact-content-commitments"
           ]

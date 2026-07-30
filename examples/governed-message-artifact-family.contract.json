@@ -507,43 +507,140 @@
       ],
       "relativePath": "src/project-message.mjs",
       "sourceAuthority": {
+        "decisions": [
+          {
+            "conditionExpression": "!value||typeofvalue!==\"object\"||typeofvalue.message!==\"string\"||value.message.length===0",
+            "decisionId": "invalid-message-guard.v1",
+            "occurrences": 1,
+            "policy": "Reject the value when any admitted message precondition is false.",
+            "responsibilityId": "project-message.v1",
+            "syntaxKind": "IfStatement"
+          },
+          {
+            "conditionExpression": "!value||typeofvalue!==\"object\"||typeofvalue.message!==\"string\"||value.message.length===0",
+            "decisionId": "message-precondition-chain.v1",
+            "occurrences": 3,
+            "policy": "Combine exactly four declared invalid-message predicates.",
+            "responsibilityId": "project-message.v1",
+            "syntaxKind": "LogicalOrExpression"
+          }
+        ],
         "declarations": [
           "projectMessage"
         ],
+        "failurePolicies": [
+          {
+            "expression": "new Error(\"Message contract is invalid.\")",
+            "failurePolicyId": "invalid-message-failure.v1",
+            "occurrences": 1,
+            "policy": "Stop projection immediately with the declared error.",
+            "responsibilityId": "project-message.v1",
+            "syntaxKind": "ThrowStatement"
+          }
+        ],
         "forbiddenSyntaxKinds": [
+          "CatchClause",
+          "ConditionalExpression",
           "DebuggerStatement",
           "DoStatement",
           "DynamicImportExpression",
           "ForStatement",
+          "LogicalAndExpression",
+          "NullishCoalescingExpression",
           "SwitchStatement",
           "TryStatement",
           "WhileStatement",
           "WithStatement"
         ],
-        "invocations": [
-          "JSON.stringify",
-          "new Error"
+        "iterations": [],
+        "projectionMappings": [
+          {
+            "fields": [
+              {
+                "outputField": "message",
+                "sourceExpression": "value.message"
+              }
+            ],
+            "occurrences": 1,
+            "projectionMappingId": "message-output-dto.v1",
+            "purpose": "Maps the admitted input message to the output message field.",
+            "responsibilityId": "project-message.v1"
+          }
         ],
-        "syntaxKinds": [
+        "responsibilities": [
           {
-            "occurrences": 1,
-            "syntaxKind": "IfStatement"
+            "declaration": "<module>",
+            "purpose": "Declares the admitted message projection surface.",
+            "responsibilityId": "message-projector-module.v1",
+            "responsibilityType": "module"
           },
           {
-            "occurrences": 3,
-            "syntaxKind": "LogicalOrExpression"
+            "declaration": "projectMessage",
+            "functionKind": "function-declaration",
+            "purpose": "Validates and projects one admitted message value.",
+            "responsibilityId": "project-message.v1",
+            "responsibilityType": "function"
+          }
+        ],
+        "resultContracts": [
+          {
+            "mediaType": "application/json",
+            "projectionMapping": {
+              "artifactId": "message-projector.v1",
+              "projectionMappingId": "message-output-dto.v1"
+            },
+            "purpose": "Returns deterministic two-space JSON followed by one LF.",
+            "resultContractId": "projected-message-json.v1",
+            "resultKind": "projected-json-text",
+            "source": {
+              "expression": "`${JSON.stringify({message:value.message},null,2)}\\n`",
+              "occurrences": 1,
+              "responsibilityId": "project-message.v1",
+              "returnKind": "explicit-return",
+              "sourceType": "return"
+            }
+          }
+        ],
+        "semanticEdges": [
+          {
+            "argumentExpressions": [
+              "\"Message contract is invalid.\""
+            ],
+            "authorities": [
+              {
+                "authorityType": "failure-authority",
+                "failurePolicyId": "invalid-message-failure.v1"
+              }
+            ],
+            "edgeId": "construct-invalid-message-error.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "new Error",
+            "purpose": "Constructs the declared validation failure.",
+            "responsibilityId": "project-message.v1"
           },
           {
+            "argumentExpressions": [
+              "{message:value.message}",
+              "null",
+              "2"
+            ],
+            "authorities": [
+              {
+                "authorityType": "projection-authority",
+                "projectionMappingId": "message-output-dto.v1"
+              },
+              {
+                "authorityType": "result-authority",
+                "resultContractId": "projected-message-json.v1"
+              }
+            ],
+            "edgeId": "serialize-message-dto.v1",
+            "edgeKind": "invocation",
             "occurrences": 1,
-            "syntaxKind": "ObjectLiteralExpression"
-          },
-          {
-            "occurrences": 1,
-            "syntaxKind": "ReturnStatement"
-          },
-          {
-            "occurrences": 1,
-            "syntaxKind": "ThrowStatement"
+            "operation": "JSON.stringify",
+            "purpose": "Serializes the declared message projection mapping.",
+            "responsibilityId": "project-message.v1"
           }
         ]
       }
@@ -960,31 +1057,175 @@
       ],
       "relativePath": "bin/run-message.mjs",
       "sourceAuthority": {
+        "decisions": [
+          {
+            "conditionExpression": "process.argv[2]??newURL(\"../contracts/message.json\",import.meta.url)",
+            "decisionId": "default-message-input.v1",
+            "occurrences": 1,
+            "policy": "Use only the declared contract path when no input argument exists.",
+            "responsibilityId": "run-message-command.v1",
+            "syntaxKind": "NullishCoalescingExpression"
+          }
+        ],
         "declarations": [
           "input",
           "value"
         ],
+        "failurePolicies": [],
         "forbiddenSyntaxKinds": [
+          "CatchClause",
+          "ConditionalExpression",
           "DebuggerStatement",
           "DoStatement",
           "DynamicImportExpression",
           "ForStatement",
+          "IfStatement",
+          "LogicalAndExpression",
+          "LogicalOrExpression",
+          "ObjectLiteralExpression",
+          "ReturnStatement",
           "SwitchStatement",
+          "ThrowStatement",
           "TryStatement",
           "WhileStatement",
           "WithStatement"
         ],
-        "invocations": [
-          "JSON.parse",
-          "new URL",
-          "process.stdout.write",
-          "projectMessage",
-          "readFileSync"
-        ],
-        "syntaxKinds": [
+        "iterations": [],
+        "projectionMappings": [],
+        "responsibilities": [
           {
+            "declaration": "<module>",
+            "purpose": "Reads, projects, and emits one admitted message.",
+            "responsibilityId": "run-message-command.v1",
+            "responsibilityType": "module"
+          }
+        ],
+        "resultContracts": [
+          {
+            "mediaType": "application/json",
+            "projectionMapping": {
+              "artifactId": "message-projector.v1",
+              "projectionMappingId": "message-output-dto.v1"
+            },
+            "purpose": "Emits exactly the admitted projected message.",
+            "resultContractId": "message-command-output.v1",
+            "resultKind": "projected-json-text",
+            "source": {
+              "argumentIndex": 0,
+              "effectId": "write-message-output.v1",
+              "occurrences": 1,
+              "semanticEdgeId": "write-message-output-edge.v1",
+              "sourceType": "effect",
+              "valueExpression": "projectMessage(value)"
+            }
+          }
+        ],
+        "semanticEdges": [
+          {
+            "argumentExpressions": [
+              "readFileSync(input,\"utf8\")"
+            ],
+            "authorities": [
+              {
+                "authorityType": "runtime-authority",
+                "runtimeAuthorityId": "parse-json-runtime.v1"
+              }
+            ],
+            "edgeId": "parse-command-message-json.v1",
+            "edgeKind": "invocation",
             "occurrences": 1,
-            "syntaxKind": "NullishCoalescingExpression"
+            "operation": "JSON.parse",
+            "purpose": "Parses the admitted message-contract bytes.",
+            "responsibilityId": "run-message-command.v1"
+          },
+          {
+            "argumentExpressions": [
+              "value"
+            ],
+            "authorities": [
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "message-projector-module.v1"
+              }
+            ],
+            "edgeId": "project-command-message.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "projectMessage",
+            "purpose": "Invokes the admitted message projection responsibility.",
+            "responsibilityId": "run-message-command.v1"
+          },
+          {
+            "argumentExpressions": [
+              "input",
+              "\"utf8\""
+            ],
+            "authorities": [
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "node-fs-read.v1"
+              }
+            ],
+            "edgeId": "read-command-message.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "readFileSync",
+            "purpose": "Reads the message through the declared file-system port.",
+            "responsibilityId": "run-message-command.v1"
+          },
+          {
+            "argumentExpressions": [],
+            "authorities": [
+              {
+                "authorityType": "effect-authority",
+                "effectId": "read-message-input.v1"
+              }
+            ],
+            "edgeId": "read-message-input-reference.v1",
+            "edgeKind": "reference",
+            "occurrences": 1,
+            "operation": "process.argv",
+            "purpose": "Reads the optional declared message input argument.",
+            "responsibilityId": "run-message-command.v1"
+          },
+          {
+            "argumentExpressions": [
+              "\"../contracts/message.json\"",
+              "import.meta.url"
+            ],
+            "authorities": [
+              {
+                "authorityType": "runtime-authority",
+                "runtimeAuthorityId": "url-construction-runtime.v1"
+              }
+            ],
+            "edgeId": "resolve-command-message-url.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "new URL",
+            "purpose": "Resolves the default declared message-contract URL.",
+            "responsibilityId": "run-message-command.v1"
+          },
+          {
+            "argumentExpressions": [
+              "projectMessage(value)"
+            ],
+            "authorities": [
+              {
+                "authorityType": "effect-authority",
+                "effectId": "write-message-output.v1"
+              },
+              {
+                "authorityType": "result-authority",
+                "resultContractId": "message-command-output.v1"
+              }
+            ],
+            "edgeId": "write-message-output-edge.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "process.stdout.write",
+            "purpose": "Writes the declared projected-message result.",
+            "responsibilityId": "run-message-command.v1"
           }
         ]
       }
@@ -1401,28 +1642,167 @@
       ],
       "relativePath": "verification/verifies-message.mjs",
       "sourceAuthority": {
+        "decisions": [],
         "declarations": [
           "value"
         ],
+        "failurePolicies": [],
         "forbiddenSyntaxKinds": [
+          "CatchClause",
+          "ConditionalExpression",
           "DebuggerStatement",
           "DoStatement",
           "DynamicImportExpression",
           "ForStatement",
+          "IfStatement",
+          "LogicalAndExpression",
+          "LogicalOrExpression",
+          "NullishCoalescingExpression",
+          "ObjectLiteralExpression",
+          "ReturnStatement",
           "SwitchStatement",
+          "ThrowStatement",
           "TryStatement",
           "WhileStatement",
           "WithStatement"
         ],
-        "invocations": [
-          "JSON.parse",
-          "assert.equal",
-          "new URL",
-          "process.stdout.write",
-          "projectMessage",
-          "readFileSync"
+        "iterations": [],
+        "projectionMappings": [],
+        "responsibilities": [
+          {
+            "declaration": "<module>",
+            "purpose": "Evaluates the declared message projection proof.",
+            "responsibilityId": "verify-message-projection.v1",
+            "responsibilityType": "module"
+          }
         ],
-        "syntaxKinds": []
+        "resultContracts": [
+          {
+            "mediaType": "text/plain",
+            "purpose": "Emits the exact admitted conformance signal.",
+            "resultContractId": "message-verification-signal.v1",
+            "resultKind": "proof-signal",
+            "source": {
+              "argumentIndex": 0,
+              "effectId": "write-message-output.v1",
+              "occurrences": 1,
+              "semanticEdgeId": "write-verification-proof-edge.v1",
+              "sourceType": "effect",
+              "valueExpression": "\"ARTIFACT_TEST_CONFORMS\\n\""
+            }
+          }
+        ],
+        "semanticEdges": [
+          {
+            "argumentExpressions": [
+              "projectMessage(value)",
+              "\"{\\n  \\\"message\\\": \\\"Schema to contract to artifacts to conformance to trust.\\\"\\n}\\n\""
+            ],
+            "authorities": [
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "node-assert-strict.v1"
+              }
+            ],
+            "edgeId": "assert-message-projection-edge.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "assert.equal",
+            "purpose": "Asserts exact projected-message bytes.",
+            "responsibilityId": "verify-message-projection.v1"
+          },
+          {
+            "argumentExpressions": [
+              "readFileSync(newURL(\"../contracts/message.json\",import.meta.url),\"utf8\")"
+            ],
+            "authorities": [
+              {
+                "authorityType": "runtime-authority",
+                "runtimeAuthorityId": "parse-json-runtime.v1"
+              }
+            ],
+            "edgeId": "parse-verification-message-json.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "JSON.parse",
+            "purpose": "Parses the admitted verification input.",
+            "responsibilityId": "verify-message-projection.v1"
+          },
+          {
+            "argumentExpressions": [
+              "value"
+            ],
+            "authorities": [
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "message-projector-module.v1"
+              }
+            ],
+            "edgeId": "project-verification-message.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "projectMessage",
+            "purpose": "Invokes the admitted message projection responsibility.",
+            "responsibilityId": "verify-message-projection.v1"
+          },
+          {
+            "argumentExpressions": [
+              "newURL(\"../contracts/message.json\",import.meta.url)",
+              "\"utf8\""
+            ],
+            "authorities": [
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "node-fs-read.v1"
+              }
+            ],
+            "edgeId": "read-verification-message.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "readFileSync",
+            "purpose": "Reads verification input through the declared port.",
+            "responsibilityId": "verify-message-projection.v1"
+          },
+          {
+            "argumentExpressions": [
+              "\"../contracts/message.json\"",
+              "import.meta.url"
+            ],
+            "authorities": [
+              {
+                "authorityType": "runtime-authority",
+                "runtimeAuthorityId": "url-construction-runtime.v1"
+              }
+            ],
+            "edgeId": "resolve-verification-message-url.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "new URL",
+            "purpose": "Resolves the declared verification input URL.",
+            "responsibilityId": "verify-message-projection.v1"
+          },
+          {
+            "argumentExpressions": [
+              "\"ARTIFACT_TEST_CONFORMS\\n\""
+            ],
+            "authorities": [
+              {
+                "authorityType": "effect-authority",
+                "effectId": "write-message-output.v1"
+              },
+              {
+                "authorityType": "result-authority",
+                "resultContractId": "message-verification-signal.v1"
+              }
+            ],
+            "edgeId": "write-verification-proof-edge.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "process.stdout.write",
+            "purpose": "Writes the declared proof signal.",
+            "responsibilityId": "verify-message-projection.v1"
+          }
+        ]
       }
     },
     {
@@ -1441,12 +1821,16 @@
             "The review document is derived from structured contract authority, so its artifact inventory, projection bindings, relationships, conformance gates, and trust vocabulary cannot drift independently."
           ],
           "reviewChecklist": [
-            "Confirm the contract identity and admitted schema digest.",
-            "Confirm every intended artifact has one declared path and purpose.",
-            "Confirm every projection binds an admitted projector and authority.",
-            "Confirm all artifact relationships resolve inside the declared family.",
-            "Confirm the conformance order stops dependent checks after the first red disposition.",
-            "Confirm the receipt requirements preserve sufficient evidence for the trust claim."
+            "Every artifact path is enumerated and exact.",
+            "Every import and package use resolves to one dependency authority.",
+            "Every function resolves to one declared responsibility.",
+            "Every invocation and governed reference resolves to one semantic edge.",
+            "Every external operation resolves to one effect port.",
+            "Every DTO field resolves to one projection mapping.",
+            "Every branch and iteration resolves to a named authority.",
+            "Every thrown failure resolves to one failure policy.",
+            "Every return or emitted result resolves to one result contract.",
+            "Every trust claim resolves to a named proof requirement."
           ],
           "reviewerPerspective": {
             "objective": "to inspect the complete admitted artifact authority in one deterministic document",
@@ -1463,6 +1847,7 @@
             "projection-authorities",
             "dependency-authorities",
             "effect-authorities",
+            "runtime-authorities",
             "source-authority-closures",
             "artifact-relationships",
             "exclusions",
@@ -1479,8 +1864,8 @@
       },
       "proof": {
         "contentDigestRequired": true,
-        "contentSha256": "sha256:d28442fb021d89f5bdc0ee168ee881f0af058c6bc65f6b647a1c756803e9823e",
-        "expectedByteLength": 12878,
+        "contentSha256": "sha256:00a178c084c827cc18635bb78714a310287f035171fb78db7ea130462f90a179",
+        "expectedByteLength": 13708,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -1492,6 +1877,7 @@
           "## Projection Authorities",
           "## Dependency Authorities",
           "## Effect Authorities",
+          "## Runtime Authorities",
           "## Source Authority Closures",
           "## Artifact Relationships",
           "## Exclusions",
@@ -1601,6 +1987,7 @@
     {
       "claim": "COMPLETE",
       "claimId": "artifact-family-complete.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
       "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
       "requiredProofDisposition": "PROOF_COMPLETE",
       "requiredTrustDisposition": "TRUSTED"
@@ -1608,6 +1995,7 @@
     {
       "claim": "CONTRACT_AUTHORITY_CLOSED",
       "claimId": "contract-authority-closed.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
       "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
       "requiredProofDisposition": "PROOF_COMPLETE",
       "requiredTrustDisposition": "TRUSTED"
@@ -1615,6 +2003,7 @@
     {
       "claim": "TRUSTED",
       "claimId": "artifact-family-trusted.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
       "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
       "requiredProofDisposition": "PROOF_COMPLETE",
       "requiredTrustDisposition": "TRUSTED"
@@ -1684,7 +2073,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.1.0",
+    "contractVersion": "1.2.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -1698,6 +2087,7 @@
       "authority": {
         "artifactId": "message-projector.v1",
         "authorityType": "artifact-authority.v1",
+        "responsibilityId": "project-message.v1",
         "semanticEdge": "invokes"
       },
       "dependencyId": "message-projector-module.v1",
@@ -1784,6 +2174,8 @@
       "projector-registry-identity",
       "dependency-authorities",
       "effect-authorities",
+      "runtime-authorities",
+      "source-authorities",
       "artifact-projection-identities",
       "artifact-content-commitments"
     ]
@@ -1802,13 +2194,34 @@
       "artifact-observations",
       "projection-identity",
       "authority-closure",
+      "source-authority-observations",
       "conformance-findings",
       "claim-policies",
       "trust-disposition"
     ]
   },
+  "runtimeAuthorities": [
+    {
+      "invocation": "JSON.parse",
+      "purpose": "Parses admitted UTF-8 JSON input.",
+      "runtimeAuthorityId": "parse-json-runtime.v1",
+      "usedByArtifacts": [
+        "message-command.v1",
+        "message-verification.v1"
+      ]
+    },
+    {
+      "invocation": "new URL",
+      "purpose": "Resolves the declared message-contract location.",
+      "runtimeAuthorityId": "url-construction-runtime.v1",
+      "usedByArtifacts": [
+        "message-command.v1",
+        "message-verification.v1"
+      ]
+    }
+  ],
   "schema": {
-    "digest": "sha256:247f86fbbea6febda2d71d40665065122b6aef7d572eac43883d476da939542b",
+    "digest": "sha256:3b0cbc893eafe37e4b58e1267e641d04c617c7dca35127e44b6c9bbaa31521bc",
     "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
   },
   "subject": {

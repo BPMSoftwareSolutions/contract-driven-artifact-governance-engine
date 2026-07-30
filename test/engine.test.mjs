@@ -17,6 +17,7 @@ import {
   evaluateConformance,
   evaluateReceiptClaim,
   evaluateTrustClaim,
+  inspectSourceAuthority,
   projectArtifactFamily,
   projectGovernedArtifactContractMarkdown,
   proveGovernedArtifactFamily,
@@ -73,6 +74,183 @@ test("the admitted example contract is valid", () => {
   assert.equal(result.contractValidationDisposition, "CONTRACT_VALID");
   assert.equal(result.conformanceDisposition, "NOT_EVALUATED");
   assert.equal(result.trustPosture, "NOT_EVALUATED");
+});
+
+test("the contract makes every governed control surface explicit", () => {
+  const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
+  assert.equal(
+    contract.artifacts.every(
+      (artifact) =>
+        typeof artifact.relativePath === "string" &&
+        artifact.relativePath.length > 0
+    ),
+    true
+  );
+  assert.equal(
+    contract.dependencies.every(
+      (dependency) =>
+        dependency.specifier.length > 0 &&
+        dependency.allowedImports.length > 0 &&
+        dependency.allowedInvocations.length > 0 &&
+        dependency.authority.authorityType.length > 0
+    ),
+    true
+  );
+  assert.equal(contract.runtimeAuthorities.length > 0, true);
+  assert.equal(contract.effects.length > 0, true);
+
+  const sourceArtifacts = contract.artifacts.filter(
+    (artifact) => artifact.sourceAuthority
+  );
+  assert.equal(sourceArtifacts.length, 3);
+  for (const artifact of sourceArtifacts) {
+    assert.equal(
+      artifact.sourceAuthority.responsibilities.some(
+        (responsibility) =>
+          responsibility.responsibilityType === "module"
+      ),
+      true
+    );
+    for (const collection of [
+      "semanticEdges",
+      "decisions",
+      "iterations",
+      "failurePolicies",
+      "projectionMappings",
+      "resultContracts",
+      "forbiddenSyntaxKinds"
+    ]) {
+      assert.equal(
+        Array.isArray(artifact.sourceAuthority[collection]),
+        true,
+        `${artifact.artifactId}:${collection}`
+      );
+    }
+    assert.equal(
+      artifact.sourceAuthority.semanticEdges.every(
+        (edge) =>
+          edge.responsibilityId.length > 0 &&
+          Array.isArray(edge.argumentExpressions) &&
+          edge.authorities.length > 0
+      ),
+      true
+    );
+    assert.equal(
+      artifact.sourceAuthority.decisions.every(
+        (decision) => decision.conditionExpression.length > 0
+      ),
+      true
+    );
+    assert.equal(
+      artifact.sourceAuthority.iterations.every(
+        (iteration) =>
+          iteration.controlExpression.length > 0 &&
+          iteration.continuationPolicy.length > 0 &&
+          iteration.terminationPolicy.length > 0
+      ),
+      true
+    );
+  }
+
+  const projector = sourceArtifacts.find(
+    (artifact) => artifact.artifactId === "message-projector.v1"
+  );
+  assert.equal(projector.sourceAuthority.failurePolicies.length, 1);
+  assert.deepEqual(
+    projector.sourceAuthority.projectionMappings[0].fields,
+    [{ outputField: "message", sourceExpression: "value.message" }]
+  );
+  assert.equal(
+    projector.sourceAuthority.resultContracts[0].source.expression.length >
+      0,
+    true
+  );
+  assert.equal(
+    contract.claims.every(
+      (claim) =>
+        claim.requiredConformanceDisposition.length > 0 &&
+        claim.requiredAuthorityClosureDisposition.length > 0 &&
+        claim.requiredProofDisposition.length > 0 &&
+        claim.requiredTrustDisposition.length > 0
+    ),
+    true
+  );
+});
+
+test("source observation records exact semantic expressions", () => {
+  const observation = inspectSourceAuthority(
+    "export function collect(values) { for (let index = 0; index < values.length; index += 1) { if (values[index]) output.push({ message: values[index] }); } return output; }"
+  );
+  assert.deepEqual(observation.functions, [
+    {
+      declaration: "collect",
+      functionKind: "function-declaration"
+    }
+  ]);
+  assert.deepEqual(observation.semanticOperations, [
+    {
+      responsibilityDeclaration: "collect",
+      edgeKind: "invocation",
+      operation: "output.push",
+      argumentExpressions: ["{message:values[index]}"],
+      occurrences: 1
+    }
+  ]);
+  assert.deepEqual(observation.decisions, [
+    {
+      responsibilityDeclaration: "collect",
+      syntaxKind: "IfStatement",
+      conditionExpression: "values[index]",
+      occurrences: 1
+    }
+  ]);
+  assert.deepEqual(observation.iterations, [
+    {
+      responsibilityDeclaration: "collect",
+      syntaxKind: "ForStatement",
+      controlExpression: "letindex=0;index<values.length;index+=1",
+      occurrences: 1
+    }
+  ]);
+  assert.deepEqual(observation.projections, [
+    {
+      responsibilityDeclaration: "collect",
+      fields: [
+        {
+          outputField: "message",
+          sourceExpression: "values[index]"
+        }
+      ],
+      occurrences: 1
+    }
+  ]);
+  assert.deepEqual(observation.returns, [
+    {
+      responsibilityDeclaration: "collect",
+      returnKind: "explicit-return",
+      expression: "output",
+      occurrences: 1
+    }
+  ]);
+  assert.deepEqual(
+    inspectSourceAuthority(
+      "const arrow = (value) => value; const expression = function (value) { return value; }; const catalog = { select(value) { return value; } };"
+    ).functions,
+    [
+      {
+        declaration: "arrow",
+        functionKind: "arrow-function"
+      },
+      {
+        declaration: "expression",
+        functionKind: "function-expression"
+      },
+      {
+        declaration: "select",
+        functionKind: "method-declaration"
+      }
+    ]
+  );
 });
 
 test("the complete closed loop projects, evaluates, and writes deterministic trust evidence", (t) => {
@@ -408,7 +586,7 @@ test("authority closure emits deterministic findings for source escape routes", 
       mutate: (text) => `${text}\nprocess.exit(0);\n`
     },
     {
-      expectedFindingId: "UNDECLARED_DECLARATION",
+      expectedFindingId: "UNDECLARED_RESPONSIBILITY",
       mutate: (text) => `${text}\nfunction convenienceHelper() {}\n`
     },
     {
@@ -422,7 +600,30 @@ test("authority closure emits deterministic findings for source escape routes", 
     {
       expectedFindingId: "UNDECLARED_PROJECTION_LOGIC",
       mutate: (text) =>
-        `${text}\nconst escapedDto = { message: "undeclared" };\n`
+        text.replace(
+          "{ message: value.message }",
+          "{ text: value.message }"
+        )
+    },
+    {
+      expectedFindingId: "UNDECLARED_SEMANTIC_EDGE",
+      mutate: (text) =>
+        text.replace(
+          "{ message: value.message }, null, 2",
+          "{ message: value.message }, null, 4"
+        )
+    },
+    {
+      expectedFindingId: "UNDECLARED_FAILURE_POLICY",
+      mutate: (text) =>
+        text.replace(
+          "Message contract is invalid.",
+          "Message contract is rejected."
+        )
+    },
+    {
+      expectedFindingId: "DECLARED_RESULT_CONTRACT_MISSING",
+      mutate: (text) => text.replace("  return `", "  void `")
     }
   ];
 
@@ -496,6 +697,40 @@ test("authority closure emits deterministic findings for source escape routes", 
     ),
     true
   );
+
+  const outputWorkspace = makeWorkspace(t);
+  projectArtifactFamily({
+    contractPath: exampleContractPath,
+    workspacePath: outputWorkspace,
+    mode: "write"
+  });
+  const outputPath = path.join(
+    outputWorkspace,
+    "governed-message-artifact-family",
+    "verification",
+    "verifies-message.mjs"
+  );
+  writeFileSync(
+    outputPath,
+    readFileSync(outputPath, "utf8").replace(
+      "ARTIFACT_TEST_CONFORMS",
+      "ARTIFACT_TEST_REJECTS"
+    )
+  );
+  const outputEscape = evaluateConformance({
+    contractPath: exampleContractPath,
+    workspacePath: outputWorkspace
+  });
+  assert.equal(
+    outputEscape.artifactFamily.conformanceDisposition,
+    "ARTIFACT_ESCAPES_CONTRACT"
+  );
+  assert.equal(
+    outputEscape.artifactFamily.findings.some(
+      (finding) => finding.findingId === "UNDECLARED_RESULT_CONTRACT"
+    ),
+    true
+  );
 });
 
 test("payload drift stays distinct and completion claims cannot exceed receipt evidence", (t) => {
@@ -550,10 +785,7 @@ test("payload drift stays distinct and completion claims cannot exceed receipt e
   );
   writeFileSync(
     sourcePath,
-    readFileSync(sourcePath, "utf8").replace(
-      "Message contract is invalid.",
-      "Message contract is not admitted."
-    )
+    `${readFileSync(sourcePath, "utf8")}// Unadmitted payload note.\n`
   );
   const driftedReceipt = evaluateConformance({
     contractPath: exampleContractPath,

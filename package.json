@@ -1,6 +1,6 @@
 {
   "name": "contract-driven-artifact-governance-engine",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Schema-governed projection, observation, conformance evaluation, and trust disposition for declared artifact families.",
   "type": "module",
   "exports": {
@@ -22,7 +22,7 @@
     "governed-artifacts": "./bin/governed-artifacts.mjs"
   },
   "scripts": {
-    "test": "node --test test/engine.test.mjs test/semantic-ontology.test.mjs",
+    "test": "node --test test/engine.test.mjs test/semantic-ontology.test.mjs test/dungeon-ontology.test.mjs",
     "pack:check": "npm pack --dry-run",
     "release:materialize": "node bin/governed-artifacts.mjs release-materialize --workspace .",
     "release:check": "node bin/governed-artifacts.mjs release-check --workspace .",

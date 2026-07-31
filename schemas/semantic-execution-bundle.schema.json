@@ -153,7 +153,8 @@
             "maxSchemas",
             "maxTerminalResults",
             "maxSerializedByteLength",
-            "maxOperandDomainSize"
+            "maxOperandDomainSize",
+            "maxIterationSteps"
           ],
           "properties": {
             "maxGraphNodes": {
@@ -191,6 +192,9 @@
             },
             "maxOperandDomainSize": {
               "const": 64
+            },
+            "maxIterationSteps": {
+              "const": 512
             }
           }
         },
@@ -229,6 +233,8 @@
             "subtract-bounded.v1",
             "compare-bounded.v1",
             "seeded-range-draw.v1",
+            "read-indexed-path.v1",
+            "iterate-bounded-worklist.v1",
             "serialize-result.v1"
           ]
         }
@@ -728,6 +734,153 @@
         }
       }
     },
+    "indexedRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "readId",
+        "sourceConceptId",
+        "basePath",
+        "indexConceptId",
+        "resultConceptId",
+        "outOfBoundsDisposition"
+      ],
+      "properties": {
+        "readId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "sourceConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "basePath": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/safePathSegment"
+          }
+        },
+        "indexConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "outOfBoundsDisposition": {
+          "$ref": "#/$defs/disposition"
+        }
+      }
+    },
+    "boundedIteration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "iterationId",
+        "itemConceptId",
+        "resultConceptId",
+        "maxSteps",
+        "unresolvedDisposition",
+        "continueCondition",
+        "advance"
+      ],
+      "properties": {
+        "iterationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "itemConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "maxSteps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unresolvedDisposition": {
+          "$ref": "#/$defs/disposition"
+        },
+        "continueCondition": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operandPath", "compareToFactId", "continueWhenStates"],
+          "properties": {
+            "operandPath": {
+              "type": "array",
+              "maxItems": 16,
+              "items": { "$ref": "#/$defs/safePathSegment" }
+            },
+            "compareToFactId": {
+              "$ref": "#/$defs/identifier"
+            },
+            "continueWhenStates": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 3,
+              "uniqueItems": true,
+              "items": {
+                "enum": ["less-than", "equal-to", "greater-than"]
+              }
+            }
+          }
+        },
+        "advance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["steps"],
+          "properties": {
+            "steps": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 4,
+              "items": { "$ref": "#/$defs/advanceStep" }
+            }
+          }
+        }
+      }
+    },
+    "advanceStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetPath", "operation", "operand"],
+      "properties": {
+        "targetPath": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/safePathSegment" }
+        },
+        "operation": {
+          "enum": ["add", "subtract"]
+        },
+        "operand": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "factId"],
+              "properties": {
+                "kind": { "const": "fact" },
+                "factId": { "$ref": "#/$defs/identifier" }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "path"],
+              "properties": {
+                "kind": { "const": "item-field" },
+                "path": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 16,
+                  "items": { "$ref": "#/$defs/safePathSegment" }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "constraint": {
       "type": "object",
       "additionalProperties": false,
@@ -1058,6 +1211,8 @@
             "subtract-bounded.v1",
             "compare-bounded.v1",
             "seeded-range-draw.v1",
+            "read-indexed-path.v1",
+            "iterate-bounded-worklist.v1",
             "serialize-result.v1"
           ]
         }
@@ -1088,7 +1243,8 @@
             "execution-binding",
             "graph-closure",
             "arithmetic-range-closure",
-            "randomness-determinism-closure"
+            "randomness-determinism-closure",
+            "iteration-termination-closure"
           ]
         },
         "subjectAuthorityId": {
@@ -1209,6 +1365,8 @@
         "results",
         "arithmeticOperations",
         "randomDraws",
+        "indexedReads",
+        "iterations",
         "executionBindings",
         "executionGraph",
         "proofRequirements"
@@ -1304,6 +1462,20 @@
           "maxItems": 32,
           "items": {
             "$ref": "#/$defs/seededRangeDraw"
+          }
+        },
+        "indexedReads": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/indexedRead"
+          }
+        },
+        "iterations": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/boundedIteration"
           }
         },
         "executionBindings": {

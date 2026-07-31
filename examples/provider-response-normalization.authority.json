@@ -830,7 +830,9 @@
       }
     ],
     "arithmeticOperations": [],
-    "randomDraws": []
+    "randomDraws": [],
+    "indexedReads": [],
+    "iterations": []
   },
   "context": {
     "schemas": [

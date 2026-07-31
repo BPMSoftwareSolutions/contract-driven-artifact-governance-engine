@@ -466,7 +466,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:da498bc4cd65d51e2e423c12648faa131467dd6e4b3ef2aa686308c7477c748b",
+        "contentSha256": "sha256:537dde93d8aa8e2b089647af644dca5840a554eca378412933bfc97ed626b837",
         "expectedByteLength": 1202,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1073,7 +1073,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:74efd914bdf647f72c1a9673d5ad2309229a13077e6ab9cbc704f8ef984d989d",
+        "contentSha256": "sha256:ff93756a0a9ff0f788e4023f6dd5f70f0371bcdfa14cc657673afa5af8b036a6",
         "expectedByteLength": 1025,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1651,7 +1651,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:e30faf44578bf40998d1d75ad16fe4c039a3e98bc4ba404bea97387ac2fa544a",
+        "contentSha256": "sha256:a5cdd762cd2beb7e3a9dc5732645df2034ba1ff99365d75b030638084c3b80ba",
         "expectedByteLength": 1141,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1901,7 +1901,7 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:9c4f807ee7f5c29c892234d0469872955555ae5018f0771b1725bab5be763b26",
+        "contentSha256": "sha256:9d1ec490d6ef640393aabe14f3c645a397415877f3e786edcf0512808c4c8443",
         "expectedByteLength": 24512,
         "requiredSections": [
           "# Governed Message Artifact Family",
@@ -2423,8 +2423,8 @@
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:128a7b3043a73fd3da5aedb8b571e6c3c2eab8c8996db86db4999ada2ce4d4b9",
-      "identity": "governed-artifact-engine.0.18.0"
+      "digest": "sha256:8ff88453b8969e7e577704430e83716042a218692452cd1aa71c1447e2e61e0f",
+      "identity": "governed-artifact-engine.0.19.0"
     },
     "migrationRegistry": {
       "digest": "sha256:a58c3ae89b1f706e2d2878aa7d0c34f448c5d071db757d98a5036575b470eadd",

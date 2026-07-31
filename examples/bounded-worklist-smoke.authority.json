@@ -1,0 +1,147 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "worklist-smoke.bundle.v1",
+  "ontologyId": "worklist-smoke",
+  "inputConceptId": "counter-state",
+  "semanticLayer": {
+    "concepts": [
+      { "conceptId": "counter-state", "conceptType": "domain-entity", "isA": [], "abstract": false, "schemaId": "counter-state.schema.v1" },
+      { "conceptId": "counter-state-variant-id", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "counter-state-variant-id.schema.v1" },
+      { "conceptId": "counter-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "counter-value.schema.v1" },
+      { "conceptId": "presence-state", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "presence-state.schema.v1" },
+      { "conceptId": "obligation-status", "conceptType": "signal", "isA": [], "abstract": false, "schemaId": "obligation-status.schema.v1" },
+      { "conceptId": "counter-result-list", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "counter-result-list.schema.v1" },
+      { "conceptId": "result-type-concept", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "result-type.schema.v1" },
+      { "conceptId": "counter-sequence-result", "conceptType": "result-union", "isA": [], "abstract": false, "schemaId": "counter-sequence-result.schema.v1" }
+    ],
+    "relations": [
+      { "relationId": "sequence-produces-value", "relationType": "computes", "subjectConceptId": "counter-result-list", "objectConceptId": "counter-result-list", "cardinality": "exactly-one" }
+    ],
+    "properties": [
+      { "propertyId": "count-field", "propertyKind": "observed", "subjectConceptId": "counter-state", "valueConceptId": "counter-value", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "counter-state", "path": ["count"] }] },
+      { "propertyId": "result-type", "propertyKind": "projected", "subjectConceptId": "counter-sequence-result", "valueConceptId": "result-type-concept", "cardinality": "exactly-one", "resolutions": [] },
+      { "propertyId": "result-sequence", "propertyKind": "projected", "subjectConceptId": "counter-sequence-result", "valueConceptId": "counter-result-list", "cardinality": "exactly-one", "resolutions": [] }
+    ],
+    "facts": [
+      { "factId": "stop-threshold", "conceptId": "counter-value", "value": { "type": "number", "value": 10 } },
+      { "factId": "step-increment", "conceptId": "counter-value", "value": { "type": "number", "value": 1 } }
+    ]
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "counter-state-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "counter-state",
+        "resultConceptId": "counter-state-variant-id",
+        "variants": ["counter-state"],
+        "noMatchDisposition": "COUNTER_STATE_VARIANT_UNRESOLVED",
+        "multipleMatchDisposition": "COUNTER_STATE_VARIANT_AMBIGUOUS"
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "propertyId": "count-field",
+        "resultConceptId": "presence-state",
+        "expectedValueType": "number",
+        "emptyStringState": "present",
+        "states": ["missing", "null", "empty-string", "invalid-type", "present"]
+      }
+    ],
+    "constraints": [],
+    "translations": [],
+    "obligations": [
+      {
+        "obligationId": "always-present-obligation",
+        "subjectConceptId": "counter-state",
+        "classificationId": "presence-classification",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": ["present"],
+        "failureDisposition": "COUNTER_MISSING"
+      }
+    ],
+    "transformations": [
+      { "transformationId": "emit-sequence", "relationId": "sequence-produces-value", "sourceAuthorityId": "count-up-to-threshold", "targetPropertyId": "result-sequence", "outputPath": ["sequence"], "valueConceptId": "counter-result-list", "resultIds": ["counter-sequence-ok"], "unavailableDisposition": "SEQUENCE_UNAVAILABLE", "invalidTypeDisposition": "SEQUENCE_INVALID" }
+    ],
+    "results": [
+      {
+        "resultUnionId": "counter-sequence-result-union",
+        "resultTypeConceptId": "counter-sequence-result",
+        "members": [
+          {
+            "resultId": "counter-sequence-ok",
+            "conceptId": "counter-sequence-result",
+            "discriminator": {
+              "propertyId": "result-type",
+              "outputPath": ["resultType"],
+              "value": { "type": "string", "value": "counter-sequence-result" }
+            }
+          }
+        ],
+        "selectionRules": [
+          { "ruleId": "always-ok", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "satisfied" }], "resultId": "counter-sequence-ok" },
+          { "ruleId": "still-ok-when-violated", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "violated" }], "resultId": "counter-sequence-ok" }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "COUNTER_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ],
+    "arithmeticOperations": [],
+    "randomDraws": [],
+    "indexedReads": [],
+    "iterations": [
+      {
+        "iterationId": "count-up-to-threshold",
+        "itemConceptId": "counter-state",
+        "resultConceptId": "counter-result-list",
+        "maxSteps": 15,
+        "unresolvedDisposition": "WORKLIST_ITERATION_LIMIT_EXCEEDED",
+        "continueCondition": {
+          "operandPath": ["count"],
+          "compareToFactId": "stop-threshold",
+          "continueWhenStates": ["less-than"]
+        },
+        "advance": {
+          "steps": [
+            {
+              "targetPath": ["count"],
+              "operation": "add",
+              "operand": { "kind": "fact", "factId": "step-increment" }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "context": {
+    "schemas": [
+      { "schemaId": "counter-state.schema.v1", "value": { "type": "object", "additionalProperties": false, "required": ["count"], "properties": { "count": { "type": "integer", "minimum": 0, "maximum": 31 } } } },
+      { "schemaId": "counter-state-variant-id.schema.v1", "value": { "const": "counter-state" } },
+      { "schemaId": "counter-value.schema.v1", "value": { "type": "integer", "minimum": 0, "maximum": 31 } },
+      { "schemaId": "presence-state.schema.v1", "value": { "enum": ["missing", "null", "empty-string", "invalid-type", "present"] } },
+      { "schemaId": "obligation-status.schema.v1", "value": { "enum": ["satisfied", "violated"] } },
+      { "schemaId": "counter-result-list.schema.v1", "value": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "object", "additionalProperties": false, "required": ["count"], "properties": { "count": { "type": "integer", "minimum": 0, "maximum": 31 } } } } },
+      { "schemaId": "result-type.schema.v1", "value": { "const": "counter-sequence-result" } },
+      {
+        "schemaId": "counter-sequence-result.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["resultType", "sequence"],
+          "properties": {
+            "resultType": { "const": "counter-sequence-result" },
+            "sequence": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "object", "additionalProperties": false, "required": ["count"], "properties": { "count": { "type": "integer", "minimum": 0, "maximum": 31 } } } }
+          }
+        }
+      }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v2",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

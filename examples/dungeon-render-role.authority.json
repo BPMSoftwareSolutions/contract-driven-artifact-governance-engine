@@ -1,0 +1,130 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "dungeon-render-role.bundle.v1",
+  "ontologyId": "dungeon-render-role",
+  "inputConceptId": "cell-render-request",
+  "semanticLayer": {
+    "concepts": [
+      { "conceptId": "cell-render-request", "conceptType": "domain-entity", "isA": [], "abstract": false, "schemaId": "cell-render-request.schema.v1" },
+      { "conceptId": "cell-render-request-variant-id", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "cell-render-request-variant-id.schema.v1" },
+      { "conceptId": "cell-value-flag", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "flag.schema.v1" },
+      { "conceptId": "god-mode-flag", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "flag.schema.v1" },
+      { "conceptId": "revealed-flag", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "flag.schema.v1" },
+      { "conceptId": "presence-state", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "presence-state.schema.v1" },
+      { "conceptId": "obligation-status", "conceptType": "signal", "isA": [], "abstract": false, "schemaId": "obligation-status.schema.v1" },
+      { "conceptId": "render-role", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "render-role.schema.v1" },
+      { "conceptId": "result-kind-concept", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "result-kind.schema.v1" },
+      { "conceptId": "render-role-result", "conceptType": "result-union", "isA": [], "abstract": false, "schemaId": "render-role-result.schema.v1" }
+    ],
+    "relations": [
+      { "relationId": "role-produces-value", "relationType": "computes", "subjectConceptId": "render-role", "objectConceptId": "render-role", "cardinality": "exactly-one" }
+    ],
+    "properties": [
+      { "propertyId": "cell-value-field", "propertyKind": "observed", "subjectConceptId": "cell-render-request", "valueConceptId": "cell-value-flag", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "cell-render-request", "path": ["cellValue"] }] },
+      { "propertyId": "god-mode-field", "propertyKind": "observed", "subjectConceptId": "cell-render-request", "valueConceptId": "god-mode-flag", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "cell-render-request", "path": ["godMode"] }] },
+      { "propertyId": "revealed-field", "propertyKind": "observed", "subjectConceptId": "cell-render-request", "valueConceptId": "revealed-flag", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "cell-render-request", "path": ["revealed"] }] },
+      { "propertyId": "result-kind", "propertyKind": "projected", "subjectConceptId": "render-role-result", "valueConceptId": "result-kind-concept", "cardinality": "exactly-one", "resolutions": [] },
+      { "propertyId": "result-role", "propertyKind": "projected", "subjectConceptId": "render-role-result", "valueConceptId": "render-role", "cardinality": "exactly-one", "resolutions": [] }
+    ],
+    "facts": []
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "cell-render-request-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "cell-render-request",
+        "resultConceptId": "cell-render-request-variant-id",
+        "variants": ["cell-render-request"],
+        "noMatchDisposition": "CELL_RENDER_REQUEST_VARIANT_UNRESOLVED",
+        "multipleMatchDisposition": "CELL_RENDER_REQUEST_VARIANT_AMBIGUOUS"
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "propertyId": "cell-value-field",
+        "resultConceptId": "presence-state",
+        "expectedValueType": "number",
+        "emptyStringState": "present",
+        "states": ["missing", "null", "empty-string", "invalid-type", "present"]
+      },
+      {
+        "classificationId": "render-role-classification",
+        "classificationType": "multi-observation",
+        "subjectConceptId": "cell-render-request",
+        "resultConceptId": "render-role",
+        "observations": [
+          { "inputPort": "god-mode", "propertyId": "god-mode-field" },
+          { "inputPort": "revealed", "propertyId": "revealed-field" },
+          { "inputPort": "cell-value", "propertyId": "cell-value-field" }
+        ],
+        "cases": [
+          { "caseId": "hidden-not-revealed-floor", "when": [{ "inputPort": "god-mode", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }, { "inputPort": "revealed", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }, { "inputPort": "cell-value", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }], "emit": { "type": "string", "value": "hidden" } },
+          { "caseId": "hidden-not-revealed-wall", "when": [{ "inputPort": "god-mode", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }, { "inputPort": "revealed", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }, { "inputPort": "cell-value", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }], "emit": { "type": "string", "value": "hidden" } },
+          { "caseId": "revealed-floor", "when": [{ "inputPort": "god-mode", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }, { "inputPort": "revealed", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }, { "inputPort": "cell-value", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }], "emit": { "type": "string", "value": "visible-floor" } },
+          { "caseId": "revealed-wall", "when": [{ "inputPort": "god-mode", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }, { "inputPort": "revealed", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }, { "inputPort": "cell-value", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }], "emit": { "type": "string", "value": "visible-wall" } },
+          { "caseId": "god-mode-unrevealed-floor", "when": [{ "inputPort": "god-mode", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }, { "inputPort": "revealed", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }, { "inputPort": "cell-value", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }], "emit": { "type": "string", "value": "visible-floor" } },
+          { "caseId": "god-mode-unrevealed-wall", "when": [{ "inputPort": "god-mode", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }, { "inputPort": "revealed", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }, { "inputPort": "cell-value", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }], "emit": { "type": "string", "value": "visible-wall" } },
+          { "caseId": "god-mode-revealed-floor", "when": [{ "inputPort": "god-mode", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }, { "inputPort": "revealed", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }, { "inputPort": "cell-value", "observation": { "state": "value", "value": { "type": "number", "value": 0 } } }], "emit": { "type": "string", "value": "visible-floor" } },
+          { "caseId": "god-mode-revealed-wall", "when": [{ "inputPort": "god-mode", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }, { "inputPort": "revealed", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }, { "inputPort": "cell-value", "observation": { "state": "value", "value": { "type": "number", "value": 1 } } }], "emit": { "type": "string", "value": "visible-wall" } }
+        ],
+        "noMatchDisposition": "RENDER_ROLE_NOT_RESOLVED",
+        "multipleMatchDisposition": "RENDER_ROLE_AMBIGUOUS"
+      }
+    ],
+    "constraints": [],
+    "translations": [],
+    "obligations": [
+      {
+        "obligationId": "always-present-obligation",
+        "subjectConceptId": "cell-render-request",
+        "classificationId": "presence-classification",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": ["present"],
+        "failureDisposition": "CELL_VALUE_MISSING"
+      }
+    ],
+    "transformations": [
+      { "transformationId": "emit-role", "relationId": "role-produces-value", "sourceAuthorityId": "render-role-classification", "targetPropertyId": "result-role", "outputPath": ["role"], "valueConceptId": "render-role", "resultIds": ["render-role-ok"], "unavailableDisposition": "ROLE_UNAVAILABLE", "invalidTypeDisposition": "ROLE_INVALID" }
+    ],
+    "results": [
+      {
+        "resultUnionId": "render-role-result-union",
+        "resultTypeConceptId": "render-role-result",
+        "members": [
+          { "resultId": "render-role-ok", "conceptId": "render-role-result", "discriminator": { "propertyId": "result-kind", "outputPath": ["kind"], "value": { "type": "string", "value": "render-role-result" } } }
+        ],
+        "selectionRules": [
+          { "ruleId": "always-ok", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "satisfied" }], "resultId": "render-role-ok" },
+          { "ruleId": "still-ok-when-violated", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "violated" }], "resultId": "render-role-ok" }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "RENDER_ROLE_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ],
+    "arithmeticOperations": [],
+    "randomDraws": [],
+    "indexedReads": [],
+    "iterations": []
+  },
+  "context": {
+    "schemas": [
+      { "schemaId": "cell-render-request.schema.v1", "value": { "type": "object", "additionalProperties": false, "required": ["cellValue", "godMode", "revealed"], "properties": { "cellValue": { "enum": [0, 1] }, "godMode": { "enum": [0, 1] }, "revealed": { "enum": [0, 1] } } } },
+      { "schemaId": "cell-render-request-variant-id.schema.v1", "value": { "const": "cell-render-request" } },
+      { "schemaId": "flag.schema.v1", "value": { "enum": [0, 1] } },
+      { "schemaId": "presence-state.schema.v1", "value": { "enum": ["missing", "null", "empty-string", "invalid-type", "present"] } },
+      { "schemaId": "obligation-status.schema.v1", "value": { "enum": ["satisfied", "violated"] } },
+      { "schemaId": "render-role.schema.v1", "value": { "enum": ["hidden", "visible-floor", "visible-wall"] } },
+      { "schemaId": "result-kind.schema.v1", "value": { "const": "render-role-result" } },
+      { "schemaId": "render-role-result.schema.v1", "value": { "type": "object", "additionalProperties": false, "required": ["kind", "role"], "properties": { "kind": { "const": "render-role-result" }, "role": { "enum": ["hidden", "visible-floor", "visible-wall"] } } } }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v2",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

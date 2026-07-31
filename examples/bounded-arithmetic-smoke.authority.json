@@ -115,7 +115,9 @@
     ],
     "randomDraws": [
       { "drawId": "draw-offset", "algorithm": "xorshift32", "seedConceptId": "seed-concept", "callIndexConceptId": "call-index-concept", "minConceptId": "draw-min-concept", "maxConceptId": "draw-max-concept", "resultConceptId": "draw-result-concept" }
-    ]
+    ],
+    "indexedReads": [],
+    "iterations": []
   },
   "context": {
     "schemas": [

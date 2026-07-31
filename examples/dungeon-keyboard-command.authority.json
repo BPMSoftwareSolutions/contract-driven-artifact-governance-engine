@@ -1,0 +1,124 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "dungeon-keyboard-command.bundle.v1",
+  "ontologyId": "dungeon-keyboard-command",
+  "inputConceptId": "keyboard-request",
+  "semanticLayer": {
+    "concepts": [
+      { "conceptId": "keyboard-request", "conceptType": "domain-entity", "isA": [], "abstract": false, "schemaId": "keyboard-request.schema.v1" },
+      { "conceptId": "keyboard-request-variant-id", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "keyboard-request-variant-id.schema.v1" },
+      { "conceptId": "key-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "key-value.schema.v1" },
+      { "conceptId": "presence-state", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "presence-state.schema.v1" },
+      { "conceptId": "obligation-status", "conceptType": "signal", "isA": [], "abstract": false, "schemaId": "obligation-status.schema.v1" },
+      { "conceptId": "command-value", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "command-value.schema.v1" },
+      { "conceptId": "result-kind-concept", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "result-kind.schema.v1" },
+      { "conceptId": "keyboard-command-result", "conceptType": "result-union", "isA": [], "abstract": false, "schemaId": "keyboard-command-result.schema.v1" }
+    ],
+    "relations": [
+      { "relationId": "command-produces-value", "relationType": "computes", "subjectConceptId": "command-value", "objectConceptId": "command-value", "cardinality": "exactly-one" }
+    ],
+    "properties": [
+      { "propertyId": "key-field", "propertyKind": "observed", "subjectConceptId": "keyboard-request", "valueConceptId": "key-value", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "keyboard-request", "path": ["key"] }] },
+      { "propertyId": "result-kind", "propertyKind": "projected", "subjectConceptId": "keyboard-command-result", "valueConceptId": "result-kind-concept", "cardinality": "exactly-one", "resolutions": [] },
+      { "propertyId": "result-command", "propertyKind": "projected", "subjectConceptId": "keyboard-command-result", "valueConceptId": "command-value", "cardinality": "exactly-one", "resolutions": [] }
+    ],
+    "facts": []
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "keyboard-request-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "keyboard-request",
+        "resultConceptId": "keyboard-request-variant-id",
+        "variants": ["keyboard-request"],
+        "noMatchDisposition": "KEYBOARD_REQUEST_VARIANT_UNRESOLVED",
+        "multipleMatchDisposition": "KEYBOARD_REQUEST_VARIANT_AMBIGUOUS"
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "propertyId": "key-field",
+        "resultConceptId": "presence-state",
+        "expectedValueType": "string",
+        "emptyStringState": "empty-string",
+        "states": ["missing", "null", "empty-string", "invalid-type", "present"]
+      },
+      {
+        "classificationId": "key-command-classification",
+        "classificationType": "finite-value",
+        "subjectConceptId": "key-value",
+        "resultConceptId": "command-value",
+        "cases": [
+          { "value": { "type": "string", "value": "ArrowUp" }, "stateId": "move-north" },
+          { "value": { "type": "string", "value": "w" }, "stateId": "move-north" },
+          { "value": { "type": "string", "value": "W" }, "stateId": "move-north" },
+          { "value": { "type": "string", "value": "ArrowDown" }, "stateId": "move-south" },
+          { "value": { "type": "string", "value": "s" }, "stateId": "move-south" },
+          { "value": { "type": "string", "value": "S" }, "stateId": "move-south" },
+          { "value": { "type": "string", "value": "ArrowLeft" }, "stateId": "move-west" },
+          { "value": { "type": "string", "value": "a" }, "stateId": "move-west" },
+          { "value": { "type": "string", "value": "A" }, "stateId": "move-west" },
+          { "value": { "type": "string", "value": "ArrowRight" }, "stateId": "move-east" },
+          { "value": { "type": "string", "value": "d" }, "stateId": "move-east" },
+          { "value": { "type": "string", "value": "D" }, "stateId": "move-east" }
+        ],
+        "unmatchedDisposition": "INPUT_NOT_ADMITTED"
+      }
+    ],
+    "constraints": [],
+    "translations": [],
+    "obligations": [
+      {
+        "obligationId": "always-present-obligation",
+        "subjectConceptId": "keyboard-request",
+        "classificationId": "presence-classification",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": ["present"],
+        "failureDisposition": "KEY_MISSING"
+      }
+    ],
+    "transformations": [
+      { "transformationId": "emit-command", "relationId": "command-produces-value", "sourceAuthorityId": "key-command-classification", "targetPropertyId": "result-command", "outputPath": ["command"], "valueConceptId": "command-value", "resultIds": ["keyboard-command-ok"], "unavailableDisposition": "COMMAND_UNAVAILABLE", "invalidTypeDisposition": "COMMAND_INVALID" }
+    ],
+    "results": [
+      {
+        "resultUnionId": "keyboard-command-result-union",
+        "resultTypeConceptId": "keyboard-command-result",
+        "members": [
+          { "resultId": "keyboard-command-ok", "conceptId": "keyboard-command-result", "discriminator": { "propertyId": "result-kind", "outputPath": ["kind"], "value": { "type": "string", "value": "keyboard-command-result" } } }
+        ],
+        "selectionRules": [
+          { "ruleId": "always-ok", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "satisfied" }], "resultId": "keyboard-command-ok" },
+          { "ruleId": "still-ok-when-violated", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "violated" }], "resultId": "keyboard-command-ok" }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "KEYBOARD_COMMAND_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ],
+    "arithmeticOperations": [],
+    "randomDraws": [],
+    "indexedReads": [],
+    "iterations": []
+  },
+  "context": {
+    "schemas": [
+      { "schemaId": "keyboard-request.schema.v1", "value": { "type": "object", "additionalProperties": false, "required": ["key"], "properties": { "key": { "type": "string", "minLength": 1, "maxLength": 16 } } } },
+      { "schemaId": "keyboard-request-variant-id.schema.v1", "value": { "const": "keyboard-request" } },
+      { "schemaId": "key-value.schema.v1", "value": { "type": "string", "minLength": 1, "maxLength": 16 } },
+      { "schemaId": "presence-state.schema.v1", "value": { "enum": ["missing", "null", "empty-string", "invalid-type", "present"] } },
+      { "schemaId": "obligation-status.schema.v1", "value": { "enum": ["satisfied", "violated"] } },
+      { "schemaId": "command-value.schema.v1", "value": { "enum": ["move-north", "move-south", "move-east", "move-west"] } },
+      { "schemaId": "result-kind.schema.v1", "value": { "const": "keyboard-command-result" } },
+      { "schemaId": "keyboard-command-result.schema.v1", "value": { "type": "object", "additionalProperties": false, "required": ["kind", "command"], "properties": { "kind": { "const": "keyboard-command-result" }, "command": { "enum": ["move-north", "move-south", "move-east", "move-west"] } } } }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v2",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

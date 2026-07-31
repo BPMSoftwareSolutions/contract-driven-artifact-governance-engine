@@ -1,0 +1,131 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "indexed-read-smoke.bundle.v1",
+  "ontologyId": "indexed-read-smoke",
+  "inputConceptId": "lookup-request",
+  "semanticLayer": {
+    "concepts": [
+      { "conceptId": "lookup-request", "conceptType": "domain-entity", "isA": [], "abstract": false, "schemaId": "lookup-request.schema.v1" },
+      { "conceptId": "lookup-request-variant-id", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "lookup-request-variant-id.schema.v1" },
+      { "conceptId": "index-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "index-value.schema.v1" },
+      { "conceptId": "looked-up-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "looked-up-value.schema.v1" },
+      { "conceptId": "presence-state", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "presence-state.schema.v1" },
+      { "conceptId": "obligation-status", "conceptType": "signal", "isA": [], "abstract": false, "schemaId": "obligation-status.schema.v1" },
+      { "conceptId": "result-type-concept", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "result-type.schema.v1" },
+      { "conceptId": "indexed-read-result", "conceptType": "result-union", "isA": [], "abstract": false, "schemaId": "indexed-read-result.schema.v1" }
+    ],
+    "relations": [
+      { "relationId": "read-produces-value", "relationType": "computes", "subjectConceptId": "looked-up-value", "objectConceptId": "looked-up-value", "cardinality": "exactly-one" }
+    ],
+    "properties": [
+      { "propertyId": "index-field", "propertyKind": "observed", "subjectConceptId": "lookup-request", "valueConceptId": "index-value", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "lookup-request", "path": ["index"] }] },
+      { "propertyId": "result-type", "propertyKind": "projected", "subjectConceptId": "indexed-read-result", "valueConceptId": "result-type-concept", "cardinality": "exactly-one", "resolutions": [] },
+      { "propertyId": "result-value", "propertyKind": "projected", "subjectConceptId": "indexed-read-result", "valueConceptId": "looked-up-value", "cardinality": "exactly-one", "resolutions": [] }
+    ],
+    "facts": []
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "lookup-request-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "lookup-request",
+        "resultConceptId": "lookup-request-variant-id",
+        "variants": ["lookup-request"],
+        "noMatchDisposition": "LOOKUP_REQUEST_VARIANT_UNRESOLVED",
+        "multipleMatchDisposition": "LOOKUP_REQUEST_VARIANT_AMBIGUOUS"
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "propertyId": "index-field",
+        "resultConceptId": "presence-state",
+        "expectedValueType": "number",
+        "emptyStringState": "present",
+        "states": ["missing", "null", "empty-string", "invalid-type", "present"]
+      }
+    ],
+    "constraints": [],
+    "translations": [],
+    "obligations": [
+      {
+        "obligationId": "always-present-obligation",
+        "subjectConceptId": "lookup-request",
+        "classificationId": "presence-classification",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": ["present"],
+        "failureDisposition": "INDEX_MISSING"
+      }
+    ],
+    "transformations": [
+      { "transformationId": "emit-value", "relationId": "read-produces-value", "sourceAuthorityId": "read-item-at-index", "targetPropertyId": "result-value", "outputPath": ["value"], "valueConceptId": "looked-up-value", "resultIds": ["indexed-read-ok"], "unavailableDisposition": "VALUE_UNAVAILABLE", "invalidTypeDisposition": "VALUE_INVALID" }
+    ],
+    "results": [
+      {
+        "resultUnionId": "indexed-read-result-union",
+        "resultTypeConceptId": "indexed-read-result",
+        "members": [
+          {
+            "resultId": "indexed-read-ok",
+            "conceptId": "indexed-read-result",
+            "discriminator": {
+              "propertyId": "result-type",
+              "outputPath": ["resultType"],
+              "value": { "type": "string", "value": "indexed-read-result" }
+            }
+          }
+        ],
+        "selectionRules": [
+          { "ruleId": "always-ok", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "satisfied" }], "resultId": "indexed-read-ok" },
+          { "ruleId": "still-ok-when-violated", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "violated" }], "resultId": "indexed-read-ok" }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "INDEXED_READ_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ],
+    "arithmeticOperations": [],
+    "randomDraws": [],
+    "indexedReads": [
+      {
+        "readId": "read-item-at-index",
+        "sourceConceptId": "lookup-request",
+        "basePath": ["items"],
+        "indexConceptId": "index-value",
+        "resultConceptId": "looked-up-value",
+        "outOfBoundsDisposition": "INDEX_OUT_OF_BOUNDS"
+      }
+    ],
+    "iterations": []
+  },
+  "context": {
+    "schemas": [
+      { "schemaId": "lookup-request.schema.v1", "value": { "type": "object", "additionalProperties": false, "required": ["items", "index"], "properties": { "items": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "integer", "minimum": 0, "maximum": 999 } }, "index": { "type": "integer", "minimum": 0, "maximum": 31 } } } },
+      { "schemaId": "lookup-request-variant-id.schema.v1", "value": { "const": "lookup-request" } },
+      { "schemaId": "index-value.schema.v1", "value": { "type": "integer", "minimum": 0, "maximum": 31 } },
+      { "schemaId": "looked-up-value.schema.v1", "value": { "type": "integer", "minimum": 0, "maximum": 999 } },
+      { "schemaId": "presence-state.schema.v1", "value": { "enum": ["missing", "null", "empty-string", "invalid-type", "present"] } },
+      { "schemaId": "obligation-status.schema.v1", "value": { "enum": ["satisfied", "violated"] } },
+      { "schemaId": "result-type.schema.v1", "value": { "const": "indexed-read-result" } },
+      {
+        "schemaId": "indexed-read-result.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["resultType", "value"],
+          "properties": {
+            "resultType": { "const": "indexed-read-result" },
+            "value": { "type": "integer", "minimum": 0, "maximum": 999 }
+          }
+        }
+      }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v2",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

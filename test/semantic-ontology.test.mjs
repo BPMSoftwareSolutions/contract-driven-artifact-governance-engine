@@ -16,6 +16,14 @@ import {
   makeBoundedArithmeticOntologyBundle,
   makeBoundedArithmeticSemanticAuthority
 } from "./fixtures/bounded-arithmetic-ontology.mjs";
+import {
+  makeBoundedWorklistOntologyBundle,
+  makeBoundedWorklistSemanticAuthority
+} from "./fixtures/bounded-worklist-ontology.mjs";
+import {
+  makeIndexedReadOntologyBundle,
+  makeIndexedReadSemanticAuthority
+} from "./fixtures/indexed-read-ontology.mjs";
 
 function openAiResponse(content = "hello", finishReason = "stop") {
   return {
@@ -421,7 +429,8 @@ test("declared meaning projects one bound execution bundle and nothing else", ()
       "execution-binding",
       "graph-closure",
       "arithmetic-range-closure",
-      "randomness-determinism-closure"
+      "randomness-determinism-closure",
+      "iteration-termination-closure"
     ]
   );
   assert.deepEqual(
@@ -522,7 +531,8 @@ test("bounded arithmetic and seeded range draw close and execute deterministical
       "execution-binding",
       "graph-closure",
       "arithmetic-range-closure",
-      "randomness-determinism-closure"
+      "randomness-determinism-closure",
+      "iteration-termination-closure"
     ]
   );
 
@@ -598,5 +608,79 @@ test("unprovable arithmetic and invalid range-draw bounds fail closed", () => {
     (error) =>
       error instanceof SemanticExecutionDispositionError &&
       error.disposition === "RANGE_DRAW_INVALID_BOUNDS"
+  );
+});
+
+test("bounded worklist iteration closes and accumulates deterministically", () => {
+  const bundle = makeBoundedWorklistOntologyBundle();
+  assert.deepEqual(inspectDeterministicOntology(bundle), {
+    ontologyId: "worklist-smoke",
+    ontologyDisposition: "ONTOLOGY_AUTHORITY_CLOSED",
+    findings: []
+  });
+
+  const result = executeSemanticAuthority(bundle, { count: 0 });
+  assert.deepEqual(
+    result.sequence.map((item) => item.count),
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  );
+
+  const fromFive = executeSemanticAuthority(bundle, { count: 5 });
+  assert.deepEqual(
+    fromFive.sequence.map((item) => item.count),
+    [5, 6, 7, 8, 9, 10]
+  );
+});
+
+test("iteration ceilings and over-limit maxSteps fail closed", () => {
+  const tooLowCeilingDeclaration = makeBoundedWorklistSemanticAuthority();
+  tooLowCeilingDeclaration.ontology.iterations[0].maxSteps = 5;
+  assert.deepEqual(
+    validateBoundSemanticExecutionAuthority(tooLowCeilingDeclaration),
+    []
+  );
+  const tooLowCeilingBundle = projectBoundSemanticExecutionBundle(
+    tooLowCeilingDeclaration
+  );
+  assert.throws(
+    () => executeSemanticAuthority(tooLowCeilingBundle, { count: 0 }),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.disposition === "WORKLIST_ITERATION_LIMIT_EXCEEDED"
+  );
+
+  const unboundedDeclaration = makeBoundedWorklistSemanticAuthority();
+  unboundedDeclaration.ontology.iterations[0].maxSteps = 9999;
+  assert.equal(
+    validateBoundSemanticExecutionAuthority(unboundedDeclaration).some(
+      (finding) => finding.findingId === "ONTOLOGY_ITERATION_UNBOUNDED"
+    ),
+    true
+  );
+});
+
+test("dynamic indexed reads resolve in-bounds and fail closed out of bounds", () => {
+  const bundle = makeIndexedReadOntologyBundle();
+  assert.deepEqual(inspectDeterministicOntology(bundle), {
+    ontologyId: "indexed-read-smoke",
+    ontologyDisposition: "ONTOLOGY_AUTHORITY_CLOSED",
+    findings: []
+  });
+
+  assert.deepEqual(
+    executeSemanticAuthority(bundle, { items: [10, 20, 30, 40, 50], index: 2 }),
+    { resultType: "indexed-read-result", value: 30 }
+  );
+  assert.deepEqual(
+    executeSemanticAuthority(bundle, { items: [7, 8, 9], index: 0 }),
+    { resultType: "indexed-read-result", value: 7 }
+  );
+
+  assert.throws(
+    () =>
+      executeSemanticAuthority(bundle, { items: [1, 2, 3], index: 5 }),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.disposition === "INDEX_OUT_OF_BOUNDS"
   );
 });

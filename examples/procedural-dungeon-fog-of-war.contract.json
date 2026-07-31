@@ -90,7 +90,7 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:0e3d67687a2429db379e7c54987e0635c9f811fe76db3860524a7eeb6554db39",
+        "contentSha256": "sha256:190e119d399da042b2e46e6ae4bc3716b44a4aafa4bc99ccc22eae33a704dc80",
         "expectedByteLength": 15202,
         "requiredSections": [
           "# Procedural Dungeon Generator with Dynamic Fog of War",
@@ -270,8 +270,8 @@
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:128a7b3043a73fd3da5aedb8b571e6c3c2eab8c8996db86db4999ada2ce4d4b9",
-      "identity": "governed-artifact-engine.0.18.0"
+      "digest": "sha256:8ff88453b8969e7e577704430e83716042a218692452cd1aa71c1447e2e61e0f",
+      "identity": "governed-artifact-engine.0.19.0"
     },
     "migrationRegistry": {
       "digest": "sha256:a58c3ae89b1f706e2d2878aa7d0c34f448c5d071db757d98a5036575b470eadd",

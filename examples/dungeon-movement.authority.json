@@ -1,0 +1,162 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "dungeon-movement.bundle.v1",
+  "ontologyId": "dungeon-movement",
+  "inputConceptId": "movement-request",
+  "semanticLayer": {
+    "concepts": [
+      { "conceptId": "movement-request", "conceptType": "domain-entity", "isA": [], "abstract": false, "schemaId": "movement-request.schema.v1" },
+      { "conceptId": "movement-request-variant-id", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "movement-request-variant-id.schema.v1" },
+      { "conceptId": "grid-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "grid-value.schema.v1" },
+      { "conceptId": "border-position-x", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "border-position.schema.v1" },
+      { "conceptId": "border-position-y", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "border-position.schema.v1" },
+      { "conceptId": "delta-x", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "delta-value.schema.v1" },
+      { "conceptId": "delta-y", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "delta-value.schema.v1" },
+      { "conceptId": "zero-constant", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "zero-constant.schema.v1" },
+      { "conceptId": "target-position-x", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "position-on-axis.schema.v1" },
+      { "conceptId": "target-position-y", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "position-on-axis.schema.v1" },
+      { "conceptId": "axis-position-x", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "position-on-axis.schema.v1" },
+      { "conceptId": "axis-position-y", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "position-on-axis.schema.v1" },
+      { "conceptId": "grid-row-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "grid-row-value.schema.v1" },
+      { "conceptId": "cell-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "cell-value.schema.v1" },
+      { "conceptId": "cell-disposition", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "cell-disposition.schema.v1" },
+      { "conceptId": "movement-obligation-status", "conceptType": "signal", "isA": [], "abstract": false, "schemaId": "movement-obligation-status.schema.v1" },
+      { "conceptId": "movement-status-concept", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "movement-status.schema.v1" },
+      { "conceptId": "movement-result", "conceptType": "result-union", "isA": [], "abstract": false, "schemaId": "movement-result.schema.v1" }
+    ],
+    "relations": [
+      { "relationId": "axis-x-produces-value", "relationType": "computes", "subjectConceptId": "axis-position-x", "objectConceptId": "axis-position-x", "cardinality": "exactly-one" },
+      { "relationId": "axis-y-produces-value", "relationType": "computes", "subjectConceptId": "axis-position-y", "objectConceptId": "axis-position-y", "cardinality": "exactly-one" }
+    ],
+    "properties": [
+      { "propertyId": "grid-field", "propertyKind": "observed", "subjectConceptId": "movement-request", "valueConceptId": "grid-value", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "movement-request", "path": ["grid"] }] },
+      { "propertyId": "player-x-field", "propertyKind": "observed", "subjectConceptId": "movement-request", "valueConceptId": "border-position-x", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "movement-request", "path": ["playerX"] }] },
+      { "propertyId": "player-y-field", "propertyKind": "observed", "subjectConceptId": "movement-request", "valueConceptId": "border-position-y", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "movement-request", "path": ["playerY"] }] },
+      { "propertyId": "dx-field", "propertyKind": "observed", "subjectConceptId": "movement-request", "valueConceptId": "delta-x", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "movement-request", "path": ["dx"] }] },
+      { "propertyId": "dy-field", "propertyKind": "observed", "subjectConceptId": "movement-request", "valueConceptId": "delta-y", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "movement-request", "path": ["dy"] }] },
+      { "propertyId": "result-status", "propertyKind": "projected", "subjectConceptId": "movement-result", "valueConceptId": "movement-status-concept", "cardinality": "exactly-one", "resolutions": [] },
+      { "propertyId": "result-x", "propertyKind": "projected", "subjectConceptId": "movement-result", "valueConceptId": "axis-position-x", "cardinality": "exactly-one", "resolutions": [] },
+      { "propertyId": "result-y", "propertyKind": "projected", "subjectConceptId": "movement-result", "valueConceptId": "axis-position-y", "cardinality": "exactly-one", "resolutions": [] }
+    ],
+    "facts": [
+      { "factId": "zero-offset", "conceptId": "zero-constant", "value": { "type": "number", "value": 0 } }
+    ]
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "movement-request-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "movement-request",
+        "resultConceptId": "movement-request-variant-id",
+        "variants": ["movement-request"],
+        "noMatchDisposition": "MOVEMENT_REQUEST_VARIANT_UNRESOLVED",
+        "multipleMatchDisposition": "MOVEMENT_REQUEST_VARIANT_AMBIGUOUS"
+      },
+      {
+        "classificationId": "cell-classification",
+        "classificationType": "finite-value",
+        "subjectConceptId": "cell-value",
+        "resultConceptId": "cell-disposition",
+        "cases": [
+          { "value": { "type": "number", "value": 0 }, "stateId": "floor" },
+          { "value": { "type": "number", "value": 1 }, "stateId": "wall" }
+        ],
+        "unmatchedDisposition": "CELL_VALUE_UNRESOLVED"
+      }
+    ],
+    "constraints": [],
+    "translations": [],
+    "obligations": [
+      {
+        "obligationId": "target-is-floor-obligation",
+        "subjectConceptId": "cell-value",
+        "classificationId": "cell-classification",
+        "resultConceptId": "movement-obligation-status",
+        "satisfiedStateIds": ["floor"],
+        "failureDisposition": "MOVEMENT_BLOCKED_BY_WALL"
+      }
+    ],
+    "transformations": [
+      { "transformationId": "emit-authorized-x", "relationId": "axis-x-produces-value", "sourceAuthorityId": "widen-target-x", "targetPropertyId": "result-x", "outputPath": ["x"], "valueConceptId": "axis-position-x", "resultIds": ["movement-authorized"], "unavailableDisposition": "TARGET_X_UNAVAILABLE", "invalidTypeDisposition": "TARGET_X_INVALID" },
+      { "transformationId": "emit-authorized-y", "relationId": "axis-y-produces-value", "sourceAuthorityId": "widen-target-y", "targetPropertyId": "result-y", "outputPath": ["y"], "valueConceptId": "axis-position-y", "resultIds": ["movement-authorized"], "unavailableDisposition": "TARGET_Y_UNAVAILABLE", "invalidTypeDisposition": "TARGET_Y_INVALID" },
+      { "transformationId": "emit-blocked-x", "relationId": "axis-x-produces-value", "sourceAuthorityId": "widen-player-x", "targetPropertyId": "result-x", "outputPath": ["x"], "valueConceptId": "axis-position-x", "resultIds": ["movement-blocked"], "unavailableDisposition": "PLAYER_X_UNAVAILABLE", "invalidTypeDisposition": "PLAYER_X_INVALID" },
+      { "transformationId": "emit-blocked-y", "relationId": "axis-y-produces-value", "sourceAuthorityId": "widen-player-y", "targetPropertyId": "result-y", "outputPath": ["y"], "valueConceptId": "axis-position-y", "resultIds": ["movement-blocked"], "unavailableDisposition": "PLAYER_Y_UNAVAILABLE", "invalidTypeDisposition": "PLAYER_Y_INVALID" }
+    ],
+    "results": [
+      {
+        "resultUnionId": "movement-result-union",
+        "resultTypeConceptId": "movement-result",
+        "members": [
+          {
+            "resultId": "movement-authorized",
+            "conceptId": "movement-result",
+            "discriminator": { "propertyId": "result-status", "outputPath": ["status"], "value": { "type": "string", "value": "MOVEMENT_AUTHORIZED" } }
+          },
+          {
+            "resultId": "movement-blocked",
+            "conceptId": "movement-result",
+            "discriminator": { "propertyId": "result-status", "outputPath": ["status"], "value": { "type": "string", "value": "MOVEMENT_BLOCKED_BY_WALL" } }
+          }
+        ],
+        "selectionRules": [
+          { "ruleId": "floor-authorizes", "when": [{ "inputPort": "floorObligation", "obligationId": "target-is-floor-obligation", "status": "satisfied" }], "resultId": "movement-authorized" },
+          { "ruleId": "wall-blocks", "when": [{ "inputPort": "floorObligation", "obligationId": "target-is-floor-obligation", "status": "violated" }], "resultId": "movement-blocked" }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "MOVEMENT_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ],
+    "arithmeticOperations": [
+      { "operationId": "compute-target-x", "operation": "add", "operandAConceptId": "border-position-x", "operandBConceptId": "delta-x", "resultConceptId": "target-position-x" },
+      { "operationId": "compute-target-y", "operation": "add", "operandAConceptId": "border-position-y", "operandBConceptId": "delta-y", "resultConceptId": "target-position-y" },
+      { "operationId": "widen-target-x", "operation": "add", "operandAConceptId": "target-position-x", "operandBConceptId": "zero-constant", "resultConceptId": "axis-position-x" },
+      { "operationId": "widen-target-y", "operation": "add", "operandAConceptId": "target-position-y", "operandBConceptId": "zero-constant", "resultConceptId": "axis-position-y" },
+      { "operationId": "widen-player-x", "operation": "add", "operandAConceptId": "border-position-x", "operandBConceptId": "zero-constant", "resultConceptId": "axis-position-x" },
+      { "operationId": "widen-player-y", "operation": "add", "operandAConceptId": "border-position-y", "operandBConceptId": "zero-constant", "resultConceptId": "axis-position-y" }
+    ],
+    "randomDraws": [],
+    "indexedReads": [
+      { "readId": "read-target-row", "sourceConceptId": "grid-value", "basePath": [], "indexConceptId": "target-position-y", "resultConceptId": "grid-row-value", "outOfBoundsDisposition": "TARGET_Y_OUT_OF_BOUNDS" },
+      { "readId": "read-target-cell", "sourceConceptId": "grid-row-value", "basePath": [], "indexConceptId": "target-position-x", "resultConceptId": "cell-value", "outOfBoundsDisposition": "TARGET_X_OUT_OF_BOUNDS" }
+    ],
+    "iterations": []
+  },
+  "context": {
+    "schemas": [
+      { "schemaId": "movement-request.schema.v1", "value": { "type": "object", "additionalProperties": false, "required": ["grid", "playerX", "playerY", "dx", "dy"], "properties": { "grid": { "type": "array", "minItems": 60, "maxItems": 60, "items": { "type": "array", "minItems": 60, "maxItems": 60, "items": { "enum": [0, 1] } } }, "playerX": { "type": "integer", "minimum": 1, "maximum": 58 }, "playerY": { "type": "integer", "minimum": 1, "maximum": 58 }, "dx": { "type": "integer", "minimum": -1, "maximum": 1 }, "dy": { "type": "integer", "minimum": -1, "maximum": 1 } } } },
+      { "schemaId": "movement-request-variant-id.schema.v1", "value": { "const": "movement-request" } },
+      { "schemaId": "grid-value.schema.v1", "value": { "type": "array", "minItems": 60, "maxItems": 60, "items": { "type": "array", "minItems": 60, "maxItems": 60, "items": { "enum": [0, 1] } } } },
+      { "schemaId": "border-position.schema.v1", "value": { "type": "integer", "minimum": 1, "maximum": 58 } },
+      { "schemaId": "delta-value.schema.v1", "value": { "type": "integer", "minimum": -1, "maximum": 1 } },
+      { "schemaId": "zero-constant.schema.v1", "value": { "type": "integer", "minimum": 0, "maximum": 0 } },
+      { "schemaId": "position-on-axis.schema.v1", "value": { "type": "integer", "minimum": 0, "maximum": 59 } },
+      { "schemaId": "grid-row-value.schema.v1", "value": { "type": "array", "minItems": 60, "maxItems": 60, "items": { "enum": [0, 1] } } },
+      { "schemaId": "cell-value.schema.v1", "value": { "enum": [0, 1] } },
+      { "schemaId": "cell-disposition.schema.v1", "value": { "enum": ["floor", "wall"] } },
+      { "schemaId": "movement-obligation-status.schema.v1", "value": { "enum": ["satisfied", "violated"] } },
+      { "schemaId": "movement-status.schema.v1", "value": { "enum": ["MOVEMENT_AUTHORIZED", "MOVEMENT_BLOCKED_BY_WALL"] } },
+      {
+        "schemaId": "movement-result.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "x", "y"],
+          "properties": {
+            "status": { "enum": ["MOVEMENT_AUTHORIZED", "MOVEMENT_BLOCKED_BY_WALL"] },
+            "x": { "type": "integer", "minimum": 0, "maximum": 59 },
+            "y": { "type": "integer", "minimum": 0, "maximum": 59 }
+          }
+        }
+      }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v2",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

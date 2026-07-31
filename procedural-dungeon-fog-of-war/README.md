@@ -33,7 +33,7 @@ flowchart LR
 | Contract ID | `procedural-dungeon-fog-of-war.v1` |
 | Contract version | `1.13.0` |
 | Contract status | `admitted` |
-| Engine | `governed-artifact-engine.0.18.0` / `sha256:128a7b3043a73fd3da5aedb8b571e6c3c2eab8c8996db86db4999ada2ce4d4b9` |
+| Engine | `governed-artifact-engine.0.19.0` / `sha256:8ff88453b8969e7e577704430e83716042a218692452cd1aa71c1447e2e61e0f` |
 | Schema identity | `https://canonical.local/schemas/governed-artifact-contract.schema.json` |
 | Schema digest | `sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b` |
 | Conformance profile | `closed-world-artifact-conformance.v8` / `sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2` |

@@ -2495,3 +2495,37 @@ test("transcription cannot legitimize an executable artifact", (t) => {
     true
   );
 });
+
+test("source scanning terminates on text that is not admitted source", () => {
+  // A bare "#" makes the scanner emit a zero-width token and return it
+  // indefinitely. Every admitted token consumes at least one character, so a
+  // token end that does not advance proves the text is not scannable.
+  for (const [text, offset] of [
+    ["# Heading\n\nJust words here.\n", 0],
+    ["#", 0],
+    ["const admitted = 1;\n# not source\n", 20]
+  ]) {
+    for (const scan of [sourceTokens, inspectSourceAuthority]) {
+      assert.throws(
+        () => scan(text),
+        (error) =>
+          error instanceof Error &&
+          error.message ===
+            `Source is not scannable as javascript at offset ${offset}.`,
+        `${scan.name}: ${JSON.stringify(text)}`
+      );
+    }
+  }
+
+  assert.equal(sourceTokens("const unknown = @@@;\n").length > 0, true);
+  assert.equal(
+    inspectSourceAuthority(
+      "export function admitted(value) {\n  return `x${value}y`;\n}\n"
+    ).functions.length,
+    1
+  );
+  assert.throws(
+    () => sourceTokens("const admitted = 1;\n", "markdown"),
+    /Source language is not admitted: markdown/
+  );
+});

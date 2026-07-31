@@ -1898,7 +1898,7 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:75c2badacb7d19b831049915ff7a084161507ff94652fdda0fddfd08857583f5",
+        "contentSha256": "sha256:76f895174d94cd6fa5b680b7a36cfc2f13934df410ab43695bc8a94240d9b347",
         "expectedByteLength": 23483,
         "requiredSections": [
           "# Governed Message Artifact Family",
@@ -2195,11 +2195,11 @@
       "identity": "closed-world-artifact-conformance.v6"
     },
     "engine": {
-      "digest": "sha256:0a98068c8e2b47052bdf82dbbfa73683cd3271fe4b3d62a50aa83918981867ad",
-      "identity": "governed-artifact-engine.0.14.0"
+      "digest": "sha256:b7cc2127e85781350c82afdedbc386326e0dc8bce69cc60372c07546062a5d75",
+      "identity": "governed-artifact-engine.0.14.1"
     },
     "migrationRegistry": {
-      "digest": "sha256:9ac851bdc71a5c81065ecf28f91b9731196d00168fbcbeb113090eddcdc3b036",
+      "digest": "sha256:eee5d40abdc421d7e67138b8c84eaff15aa7cf69de71c4dada3e49017f54bdf5",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {

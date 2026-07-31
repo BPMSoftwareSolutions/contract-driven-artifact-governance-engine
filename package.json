@@ -1,6 +1,6 @@
 {
   "name": "contract-driven-artifact-governance-engine",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Schema-governed projection, observation, conformance evaluation, and trust disposition for declared artifact families.",
   "type": "module",
   "exports": {

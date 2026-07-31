@@ -14,6 +14,14 @@
     },
     {
       "disposition": "transformed",
+      "pathPattern": "/interpretationBase/conformanceProfile/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/conformanceProfile/identity"
+    },
+    {
+      "disposition": "transformed",
       "pathPattern": "/interpretationBase/engine/digest"
     },
     {
@@ -22,11 +30,11 @@
     },
     {
       "disposition": "transformed",
-      "pathPattern": "/interpretationBase/projectorRegistry/digest"
+      "pathPattern": "/interpretationBase/migrationRegistry/digest"
     },
     {
       "disposition": "transformed",
-      "pathPattern": "/interpretationBase/migrationRegistry/digest"
+      "pathPattern": "/interpretationBase/projectorRegistry/digest"
     }
   ],
   "migrationId": "artifact-contract.1.10-to-1.11",

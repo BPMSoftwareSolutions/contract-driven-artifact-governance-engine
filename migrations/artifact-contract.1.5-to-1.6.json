@@ -69,6 +69,14 @@
       "pathPattern": "/interpretationBase"
     },
     {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/conformanceProfile/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/conformanceProfile/identity"
+    },
+    {
       "disposition": "removed",
       "pathPattern": "/operationAuthorities"
     },

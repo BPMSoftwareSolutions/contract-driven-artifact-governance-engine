@@ -1,12 +1,12 @@
 {
   "archive": {
-    "entryCount": 34,
-    "fileName": "contract-driven-artifact-governance-engine-0.12.0.tgz",
-    "integrity": "sha512-KpvacvJaJ97fpIOtrE9FUvOIuWBNGmjrrqmzeePF2tV8AmcKjkQ/zpZ70+oumvDmpykFz4o3P2U3wJQYQh9uFQ==",
-    "sha256": "sha256:6a4c2ebf10b3d6c452d2538455893c9380138989eb17ff7be76e7c2751343859",
-    "shasum": "eec9144f9d1b30afa21ae69d976420a711c1f051",
-    "size": 144283,
-    "unpackedSize": 988799
+    "entryCount": 37,
+    "fileName": "contract-driven-artifact-governance-engine-0.13.0.tgz",
+    "integrity": "sha512-NVo8EG1xQO0hJS9Paq7aS299tMqnfBjCm9aNkJacwCUH9KOrjw00zIP73QQDTqthcE+AgIJUb8KfsFZZOTosLw==",
+    "sha256": "sha256:e0a4170e049d59df8a667f6bf76e1c11874ac9b5e87ce6b3559e0b974792c99b",
+    "shasum": "eaa9b8757bc1e9dec4c660bff7b14191ef81f5d5",
+    "size": 151196,
+    "unpackedSize": 1049243
   },
   "authorityClosure": {
     "admission": {
@@ -71,9 +71,16 @@
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.12.0.tgz",
         "releaseVersion": "0.12.0",
-        "role": "current",
+        "role": "historical",
         "sha256": "sha256:6a4c2ebf10b3d6c452d2538455893c9380138989eb17ff7be76e7c2751343859",
         "size": 144283
+      },
+      {
+        "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.13.0.tgz",
+        "releaseVersion": "0.13.0",
+        "role": "current",
+        "sha256": "sha256:e0a4170e049d59df8a667f6bf76e1c11874ac9b5e87ce6b3559e0b974792c99b",
+        "size": 151196
       },
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.2.0.tgz",
@@ -132,13 +139,13 @@
         "size": 102043
       }
     ],
-    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.12.0.tgz",
+    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.13.0.tgz",
     "exclusiveInventory": true,
     "materializationPolicy": "write-current-after-candidate-conformance"
   },
   "dependencyLock": {
     "relativePath": "package-lock.json",
-    "sha256": "sha256:54b53b2bfe793552abb115efe1cc2456b077f27b099ca2548083c311685848a0"
+    "sha256": "sha256:e42cb91824be0d2665cda816a76245ab22f7f244be2215615c71662e8429d743"
   },
   "package": {
     "binaries": [
@@ -170,7 +177,7 @@
       "test",
       "README.md"
     ],
-    "version": "0.12.0"
+    "version": "0.13.0"
   },
   "packing": {
     "bundledDependencies": [],
@@ -190,8 +197,8 @@
       {
         "mode": 420,
         "relativePath": "examples/governed-message-artifact-family.contract.json",
-        "sha256": "sha256:a7b3066e05dedee3841a5b743e17d0d2c463822eb97059d854bcc234d62fe82a",
-        "size": 67505
+        "sha256": "sha256:e0d8cc140e6405710affd1339a72d4117bb950b1505faecce168a9330a70e04d",
+        "size": 67531
       },
       {
         "mode": 420,
@@ -202,8 +209,8 @@
       {
         "mode": 420,
         "relativePath": "lib/governed-artifact-engine.mjs",
-        "sha256": "sha256:e5ff7826df704a8cc88b466785c05327073515edfdf237b63568f26c492e9cb4",
-        "size": 208847
+        "sha256": "sha256:dd171b5f9a23f17a94c1e3969ef5e338cb3b2095dd6b8e0ce70b195bba115c8a",
+        "size": 218154
       },
       {
         "mode": 420,
@@ -226,14 +233,20 @@
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.10-to-1.11.json",
-        "sha256": "sha256:82ab1c75037f795e351f9247e1ece9079512dec4555238324d504d0f4c9cd398",
-        "size": 1186
+        "sha256": "sha256:93714e4cef247ff1ee0316f1fb09dde01a4e82edf59517dad9c25825fbf906b7",
+        "size": 1424
+      },
+      {
+        "mode": 420,
+        "relativePath": "migrations/artifact-contract.1.11-to-1.12.json",
+        "sha256": "sha256:455e7bb3ec2eca8ab2f713d08447177337555fddce1fb57a90a14ad7a134d4a5",
+        "size": 1616
       },
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.5-to-1.6.json",
-        "sha256": "sha256:a2e2a35c0a1180d6a0b2142ea49292f0e70c1f128de05b77824ceff49d9b3b69",
-        "size": 4343
+        "sha256": "sha256:adb4c892a7fdaa4432f6ff6c46d405cc3803681644f35252007ff78f975281d0",
+        "size": 4581
       },
       {
         "mode": 420,
@@ -250,13 +263,13 @@
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.9-to-1.10.json",
-        "sha256": "sha256:dcd436a951e91c42f9985fbc3040d910c3ae474a21589812d218b3ab59876813",
-        "size": 1067
+        "sha256": "sha256:8a0e774eea06747949e42b8d09569903581500853c2ee55d30b88a3437b429d6",
+        "size": 1305
       },
       {
         "mode": 420,
         "relativePath": "package.json",
-        "sha256": "sha256:2e7ed3dc169f80e011a948af0d15fb79cc0d649d2073ffdb0b69a4c8fa6ed2dd",
+        "sha256": "sha256:66ee79b6117b6976e398be873f82bf2e3b9da923c20faa03cadabbf3819ef23d",
         "size": 1166
       },
       {
@@ -285,6 +298,12 @@
       },
       {
         "mode": 420,
+        "relativePath": "profiles/closed-world-artifact-conformance.v5.json",
+        "sha256": "sha256:8cd7adc27624fd8ac8a627d5b8bba3d9acc832b011d167ec4bf7e6cd737b330c",
+        "size": 8922
+      },
+      {
+        "mode": 420,
         "relativePath": "README.md",
         "sha256": "sha256:17aa6622d4fdd7f313b15dd69e606a0c1697a85a2388874289dfbea7f1f5f3e6",
         "size": 30062
@@ -292,8 +311,8 @@
       {
         "mode": 420,
         "relativePath": "registries/migration-registry.json",
-        "sha256": "sha256:75f4ed2fb2af9a0392e5f2a4396b89fcf3e6655932cae39f9424b35c3b9228e6",
-        "size": 10784
+        "sha256": "sha256:833bdd880a755450dc10bf2cafaf9584433b8064c869583c4b73b3c64f817021",
+        "size": 13049
       },
       {
         "mode": 420,
@@ -321,9 +340,15 @@
       },
       {
         "mode": 420,
-        "relativePath": "schemas/governed-artifact-contract.schema.json",
+        "relativePath": "schemas/catalog/sha256-d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4.schema.json",
         "sha256": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
         "size": 35648
+      },
+      {
+        "mode": 420,
+        "relativePath": "schemas/governed-artifact-contract.schema.json",
+        "sha256": "sha256:f6623e179f8ec44b57b0ded2b845afecd28944ca2f87cce642a2eeaebe41ab10",
+        "size": 36678
       },
       {
         "mode": 420,
@@ -334,8 +359,8 @@
       {
         "mode": 420,
         "relativePath": "schemas/schema-catalog.json",
-        "sha256": "sha256:6a62f0ac1f19d0afcdfb444b2f65adc7b00f90c62f4cc590949d34c437624bfe",
-        "size": 953
+        "sha256": "sha256:04b3afe4a60656cd06222898c843ffb99ac4c4f48b37b95bb04ad70299524a28",
+        "size": 1349
       },
       {
         "mode": 420,
@@ -346,8 +371,8 @@
       {
         "mode": 420,
         "relativePath": "test/engine.test.mjs",
-        "sha256": "sha256:0cc5fc286ef3a28d56ac44d417e6b561c2bd1a1da350045ff2baaad5fc66139c",
-        "size": 69152
+        "sha256": "sha256:39d4d976209f1e8481760977f5d752d12534448703311ee669af8e2f91be747c",
+        "size": 69672
       },
       {
         "mode": 420,

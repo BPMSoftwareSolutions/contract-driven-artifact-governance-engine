@@ -31,17 +31,30 @@
     {
       "disposition": "transformed",
       "pathPattern": "/interpretationBase/migrationRegistry/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/schema/digest"
+    },
+    {
+      "disposition": "introduced",
+      "pathPattern": "/workspace/pathExceptions"
     }
   ],
-  "migrationId": "artifact-contract.1.9-to-1.10",
+  "migrationId": "artifact-contract.1.11-to-1.12",
   "migrationType": "governed-artifact-contract-migration.v1",
-  "sourceContractVersion": "1.9.0",
-  "targetContractVersion": "1.10.0",
+  "sourceContractVersion": "1.11.0",
+  "targetContractVersion": "1.12.0",
   "transformations": [
     {
       "operation": "set-value",
       "path": "/contract/contractVersion",
-      "value": "1.10.0"
+      "value": "1.12.0"
+    },
+    {
+      "operation": "set-value",
+      "path": "/workspace/pathExceptions",
+      "value": []
     },
     {
       "operation": "introduce-interpretation-base"

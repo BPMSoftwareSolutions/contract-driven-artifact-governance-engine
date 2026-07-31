@@ -1898,8 +1898,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:1189f884b676162406c6254bf5c82fc48ab655ac4397621b399ccfaa36ba0fd4",
-        "expectedByteLength": 23213,
+        "contentSha256": "sha256:4f9ca45c19549dcf271988e05c4a00786de2ccfccafed047aa5443009b379d85",
+        "expectedByteLength": 23352,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -2046,7 +2046,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.11.0",
+    "contractVersion": "1.12.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2191,15 +2191,15 @@
   ],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:577106b91879dcbf1fb829ec87adaf969cccdc6e2e3f54d67f224b5718fa3f56",
-      "identity": "closed-world-artifact-conformance.v4"
+      "digest": "sha256:8cd7adc27624fd8ac8a627d5b8bba3d9acc832b011d167ec4bf7e6cd737b330c",
+      "identity": "closed-world-artifact-conformance.v5"
     },
     "engine": {
-      "digest": "sha256:e5ff7826df704a8cc88b466785c05327073515edfdf237b63568f26c492e9cb4",
-      "identity": "governed-artifact-engine.0.12.0"
+      "digest": "sha256:dd171b5f9a23f17a94c1e3969ef5e338cb3b2095dd6b8e0ce70b195bba115c8a",
+      "identity": "governed-artifact-engine.0.13.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:75f4ed2fb2af9a0392e5f2a4396b89fcf3e6655932cae39f9424b35c3b9228e6",
+      "digest": "sha256:833bdd880a755450dc10bf2cafaf9584433b8064c869583c4b73b3c64f817021",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
@@ -2207,7 +2207,7 @@
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {
-      "digest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
+      "digest": "sha256:f6623e179f8ec44b57b0ded2b845afecd28944ca2f87cce642a2eeaebe41ab10",
       "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
     },
     "verifierRegistry": {
@@ -2272,6 +2272,7 @@
       "requiredDisposition": "ARTIFACT_SCOPE_CLOSED",
       "scopeType": "exclusive-artifact-subtree.v1"
     },
+    "pathExceptions": [],
     "workspaceRoot": "."
   }
 }

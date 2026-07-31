@@ -5,7 +5,7 @@
         "interpretation-base"
       ],
       "migrationAuthority": {
-        "digest": "sha256:a2e2a35c0a1180d6a0b2142ea49292f0e70c1f128de05b77824ceff49d9b3b69",
+        "digest": "sha256:adb4c892a7fdaa4432f6ff6c46d405cc3803681644f35252007ff78f975281d0",
         "relativePath": "migrations/artifact-contract.1.5-to-1.6.json"
       },
       "migrationId": "artifact-contract.1.5-to-1.6",
@@ -162,7 +162,7 @@
         "digest-bound-runtime-primitive-vocabulary"
       ],
       "migrationAuthority": {
-        "digest": "sha256:dcd436a951e91c42f9985fbc3040d910c3ae474a21589812d218b3ab59876813",
+        "digest": "sha256:8a0e774eea06747949e42b8d09569903581500853c2ee55d30b88a3437b429d6",
         "relativePath": "migrations/artifact-contract.1.9-to-1.10.json"
       },
       "migrationId": "artifact-contract.1.9-to-1.10",
@@ -220,7 +220,7 @@
         "derived-semantic-execution-projection"
       ],
       "migrationAuthority": {
-        "digest": "sha256:82ab1c75037f795e351f9247e1ece9079512dec4555238324d504d0f4c9cd398",
+        "digest": "sha256:93714e4cef247ff1ee0316f1fb09dde01a4e82edf59517dad9c25825fbf906b7",
         "relativePath": "migrations/artifact-contract.1.10-to-1.11.json"
       },
       "migrationId": "artifact-contract.1.10-to-1.11",
@@ -271,12 +271,71 @@
         "derived-content-commitments",
         "interpretation-base"
       ]
+    },
+    {
+      "introducedAuthorities": [
+        "complete-workspace-authority",
+        "workspace-path-exception-forms"
+      ],
+      "migrationAuthority": {
+        "digest": "sha256:455e7bb3ec2eca8ab2f713d08447177337555fddce1fb57a90a14ad7a134d4a5",
+        "relativePath": "migrations/artifact-contract.1.11-to-1.12.json"
+      },
+      "migrationId": "artifact-contract.1.11-to-1.12",
+      "preservedAuthorities": [
+        "artifact-identities",
+        "artifact-paths",
+        "artifact-projection-authorities",
+        "artifact-relationships",
+        "artifact-verifier-selections",
+        "claim-identities",
+        "command-evaluations",
+        "dependency-authorities",
+        "deterministic-ontology-authority",
+        "effect-authorities",
+        "exclusions",
+        "role-based-semantic-body-purity",
+        "runtime-authorities",
+        "single-source-mutation-authority",
+        "source-authorities",
+        "subject-authority",
+        "workspace-authority"
+      ],
+      "removedAuthorities": [],
+      "sourceInterpretationBase": {
+        "conformanceProfile": {
+          "digest": "sha256:577106b91879dcbf1fb829ec87adaf969cccdc6e2e3f54d67f224b5718fa3f56",
+          "identity": "closed-world-artifact-conformance.v4"
+        },
+        "engine": {
+          "digest": "sha256:e5ff7826df704a8cc88b466785c05327073515edfdf237b63568f26c492e9cb4",
+          "identity": "governed-artifact-engine.0.12.0"
+        }
+      },
+      "sourceSchemaDigest": "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
+      "targetInterpretationBase": {
+        "conformanceProfile": {
+          "digest": "sha256:8cd7adc27624fd8ac8a627d5b8bba3d9acc832b011d167ec4bf7e6cd737b330c",
+          "identity": "closed-world-artifact-conformance.v5"
+        },
+        "engine": {
+          "digest": "sha256:dd171b5f9a23f17a94c1e3969ef5e338cb3b2095dd6b8e0ce70b195bba115c8a",
+          "identity": "governed-artifact-engine.0.13.0"
+        }
+      },
+      "targetSchemaDigest": "sha256:f6623e179f8ec44b57b0ded2b845afecd28944ca2f87cce642a2eeaebe41ab10",
+      "transformedAuthorities": [
+        "contract-version",
+        "derived-content-commitments",
+        "interpretation-base",
+        "workspace-authority"
+      ]
     }
   ],
   "registryId": "governed-artifact-migration-registry.v1",
   "registryType": "digest-to-digest-migration-registry.v1",
   "schemaCatalog": {
-    "digest": "sha256:6a62f0ac1f19d0afcdfb444b2f65adc7b00f90c62f4cc590949d34c437624bfe",
+    "digest": "sha256:04b3afe4a60656cd06222898c843ffb99ac4c4f48b37b95bb04ad70299524a28",
     "identity": "governed-artifact-schema-catalog.v1"
   }
 }

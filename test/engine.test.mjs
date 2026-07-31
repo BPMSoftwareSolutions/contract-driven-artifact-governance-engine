@@ -52,6 +52,20 @@ const exampleContractPath = path.join(
   "examples",
   "governed-message-artifact-family.contract.json"
 );
+function boundSchemaPath(contractPath) {
+  const contract = JSON.parse(readFileSync(contractPath, "utf8"));
+  const catalog = JSON.parse(
+    readFileSync(DEFAULT_SCHEMA_CATALOG_PATH, "utf8")
+  );
+  const entry = catalog.schemas.find(
+    (schema) => schema.digest === contract.interpretationBase.schema.digest
+  );
+  return path.join(
+    path.dirname(DEFAULT_SCHEMA_CATALOG_PATH),
+    ...entry.relativePath.split("/")
+  );
+}
+
 const historicalContractPath = path.join(
   packageRoot,
   "test",
@@ -373,7 +387,7 @@ test("historical schemas and digest-to-digest migration authority are durable", 
     registry.schemaCatalog.digest,
     sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
   );
-  assert.equal(registry.migrations.length, 5);
+  assert.equal(registry.migrations.length, 6);
   const edge = registry.migrations[0];
   for (const digest of [
     edge.sourceSchemaDigest,
@@ -445,9 +459,17 @@ test("migration is candidate-first, contract-only, and idempotent", (t) => {
   assert.equal(
     validateContract({
       contractPath,
-      workspacePath
+      workspacePath,
+      schemaPath: boundSchemaPath(contractPath)
     }).contractValidationDisposition,
     "CONTRACT_VALID"
+  );
+  assert.equal(
+    validateContract({
+      contractPath,
+      workspacePath
+    }).contractValidationDisposition,
+    "SCHEMA_DIGEST_MISMATCH"
   );
   assert.equal(
     existsSync(
@@ -577,6 +599,17 @@ test("multi-observation primitive migration is admitted without schema churn", (
   const workspacePath = makeWorkspace(t);
   const contractPath = copyContract(workspacePath, (contract) => {
     contract.contract.contractVersion = "1.9.0";
+    contract.interpretationBase.schema = {
+      digest:
+        "sha256:d95db56bc6838127bcb72da6532cd1c3b2552bfca864dc276ba134ed3f96c8a4",
+      identity:
+        "https://canonical.local/schemas/governed-artifact-contract.schema.json"
+    };
+    contract.interpretationBase.conformanceProfile = {
+      digest:
+        "sha256:577106b91879dcbf1fb829ec87adaf969cccdc6e2e3f54d67f224b5718fa3f56",
+      identity: "closed-world-artifact-conformance.v4"
+    };
     contract.interpretationBase.engine = {
       digest:
         "sha256:106c780a56f65ed5448a7100d01fced1bea3d572657fcc88d7b2c0b78a9afef2",
@@ -584,6 +617,7 @@ test("multi-observation primitive migration is admitted without schema churn", (
     };
     contract.interpretationBase.migrationRegistry.digest =
       "sha256:45521912c2c6849ae6f0e7b66e14d49a711706e03650780ef1fc43b29487c95c";
+    delete contract.workspace.pathExceptions;
   });
   const preview = migrateContract({
     contractPath,
@@ -1370,7 +1404,7 @@ test("the conformance profile is mandatory and cannot be weakened", (t) => {
   );
 });
 
-test("declared artifact scope coexists with ordinary repository state and closes governed directories", (t) => {
+test("the workspace is exhaustively classified and the consumer cannot narrow it", (t) => {
   const workspacePath = makeWorkspace(t);
   for (const [relativePath, contents] of [
     [".git/config", "[core]\n"],
@@ -1385,170 +1419,118 @@ test("declared artifact scope coexists with ordinary repository state and closes
     mkdirSync(path.dirname(absolutePath), { recursive: true });
     writeFileSync(absolutePath, contents);
   }
-  const contractPath = copyContract(workspacePath, (contract) => {
+  const narrowScope = (contract) => {
     contract.workspace = {
       artifactRoot: ".",
       governedScope: {
-        governedDirectories: ["src/generated"],
+        governedDirectories: [],
         inventoryMode: "declared-paths",
         outsideScopePosture: "outside-authority",
         requiredDisposition: "ARTIFACT_SCOPE_CLOSED",
         scopeType: "declared-artifact-scope.v1"
       },
+      pathExceptions: [],
       workspaceRoot: "."
     };
     recommitReviewDocument(contract);
-  });
-  const plan = resolveArtifactPlan({
-    contractPath,
-    workspacePath
-  });
-  assert.equal(
-    plan.artifactScope.authority.inventoryMode,
-    "declared-paths"
-  );
-  assert.equal(
-    plan.artifactScope.authority.resolvedGovernedPathSet.some(
-      (entry) =>
-        entry.pathKind === "directory" &&
-        entry.relativePath === "src/generated"
-    ),
-    true
-  );
+  };
+  const contractPath = copyContract(workspacePath, narrowScope);
+  projectArtifactFamily({ contractPath, workspacePath, mode: "write" });
 
-  projectArtifactFamily({
-    contractPath,
-    workspacePath,
-    mode: "write"
-  });
-  const receipt = evaluateConformance({
-    contractPath,
-    workspacePath
-  });
+  const narrowed = evaluateConformance({ contractPath, workspacePath });
   assert.equal(
-    receipt.artifactFamily.conformanceDisposition,
-    "CONTRACT_AUTHORITY_CLOSED"
+    narrowed.artifactFamily.conformanceDisposition,
+    "WORKSPACE_AUTHORITY_OPEN"
   );
+  assert.equal(narrowed.trustDisposition, "REJECTED");
   assert.equal(
-    receipt.artifactFamily.artifactScope.disposition,
-    "ARTIFACT_SCOPE_CLOSED"
+    narrowed.artifactFamily.workspaceAuthority.inventoryPosture,
+    "exhaustive"
   );
-  assert.equal(
-    receipt.artifactFamily.artifactScope.authoritySha256,
-    plan.artifactScope.authoritySha256
-  );
-  for (const outsidePath of [
+  for (const relativePath of [
     ".git/config",
     "node_modules/example/index.js",
     "package-lock.json",
     "src/unrelated.mjs"
   ]) {
     assert.equal(
-      receipt.artifactFamily.artifactScopeObservation
-        .observedGovernedPaths.includes(outsidePath),
-      false,
-      outsidePath
+      narrowed.artifactFamily.findings.some(
+        (finding) =>
+          finding.findingId === "UNAUTHORIZED_WORKSPACE_ARTIFACT" &&
+          finding.relativePath === relativePath
+      ),
+      true,
+      relativePath
     );
   }
-  assert.deepEqual(
-    receipt.artifactFamily.artifactScopeObservation
-      .outsideAuthorityClassification,
-    {
-      posture: "outside-authority",
-      rule: "not-declared-and-not-within-governed-directory"
-    }
-  );
 
-  const forbiddenPath = path.join(workspacePath, ".env");
-  writeFileSync(forbiddenPath, "SECRET=not-admitted\n");
-  const excluded = evaluateConformance({
-    contractPath,
+  const inventedPath = copyContract(workspacePath, (contract) => {
+    narrowScope(contract);
+    contract.workspace.pathExceptions = [
+      { exceptionId: "build-scripts.v1", path: "src" }
+    ];
+  });
+  const invented = evaluateConformance({
+    contractPath: inventedPath,
     workspacePath
   });
   assert.equal(
-    excluded.artifactFamily.conformanceDisposition,
-    "ARTIFACT_UNDECLARED"
-  );
-  assert.equal(
-    excluded.artifactFamily.artifactScope.disposition,
-    "ARTIFACT_SCOPE_OPEN"
-  );
-  assert.equal(
-    excluded.artifactFamily.findings.some(
+    invented.artifactFamily.findings.some(
       (finding) =>
-        finding.findingId === "excluded-artifact-present" &&
-        finding.relativePath === ".env"
-    ),
-    true
-  );
-  projectArtifactFamily({
-    contractPath,
-    workspacePath,
-    mode: "write"
-  });
-  assert.equal(
-    readFileSync(forbiddenPath, "utf8"),
-    "SECRET=not-admitted\n"
-  );
-  unlinkSync(forbiddenPath);
-
-  const undeclaredPath = path.join(
-    workspacePath,
-    "src",
-    "generated",
-    "escape.mjs"
-  );
-  mkdirSync(path.dirname(undeclaredPath), { recursive: true });
-  writeFileSync(undeclaredPath, "export const escape = true;\n");
-  const escaped = evaluateConformance({
-    contractPath,
-    workspacePath
-  });
-  assert.equal(
-    escaped.artifactFamily.conformanceDisposition,
-    "ARTIFACT_UNDECLARED"
-  );
-  assert.equal(
-    escaped.artifactFamily.artifactScope.disposition,
-    "ARTIFACT_SCOPE_OPEN"
-  );
-  assert.equal(
-    escaped.artifactFamily.undeclaredPaths.includes(
-      "src/generated/escape.mjs"
+        finding.findingId === "WORKSPACE_PATH_EXCEPTION_NOT_ADMITTED" &&
+        finding.exceptionId === "build-scripts.v1"
     ),
     true
   );
 
-  const declaredPath = path.join(
-    workspacePath,
-    "contracts",
-    "message.json"
-  );
-  writeFileSync(declaredPath, "{}\n");
-  const surplusBytes = readFileSync(undeclaredPath);
-  const restored = projectArtifactFamily({
-    contractPath,
-    workspacePath,
-    mode: "write"
+  const admittedPath = copyContract(workspacePath, (contract) => {
+    narrowScope(contract);
+    contract.workspace.pathExceptions = [
+      { exceptionId: "git-repository-metadata.v1", path: ".git" },
+      {
+        exceptionId: "npm-installed-dependencies.v1",
+        path: "node_modules",
+        evidence: {
+          "package-lock-digest": sha256(
+            readFileSync(path.join(workspacePath, "package-lock.json"))
+          ),
+          "package-manager-identity": "npm@10.8.2"
+        }
+      }
+    ];
   });
-  assert.equal(
-    restored.projectionDisposition,
-    "ARTIFACT_FAMILY_PROJECTED"
-  );
-  assert.equal(
-    sha256(readFileSync(declaredPath)),
-    JSON.parse(readFileSync(contractPath, "utf8")).artifacts.find(
-      (artifact) => artifact.artifactId === "message-contract.v1"
-    ).proof.contentSha256
-  );
-  assert.deepEqual(readFileSync(undeclaredPath), surplusBytes);
-  const stillOpen = evaluateConformance({
-    contractPath,
+  const admitted = evaluateConformance({
+    contractPath: admittedPath,
     workspacePath
   });
   assert.equal(
-    stillOpen.artifactFamily.conformanceDisposition,
-    "ARTIFACT_UNDECLARED"
+    admitted.artifactFamily.findings.some(
+      (finding) => finding.relativePath === ".git/config"
+    ),
+    false
+  );
+  assert.equal(
+    admitted.artifactFamily.findings.some(
+      (finding) => finding.relativePath === "node_modules/example/index.js"
+    ),
+    false
+  );
+  for (const relativePath of ["package-lock.json", "src/unrelated.mjs"]) {
+    assert.equal(
+      admitted.artifactFamily.findings.some(
+        (finding) =>
+          finding.findingId === "UNAUTHORIZED_WORKSPACE_ARTIFACT" &&
+          finding.relativePath === relativePath
+      ),
+      true,
+      relativePath
+    );
+  }
+  assert.equal(
+    admitted.artifactFamily.workspaceAuthority.pathExceptions.map(
+      (exception) => exception.pathRole
+    ).sort().join(","),
+    "external-dependency-materialization,repository-metadata"
   );
 });
 
@@ -1614,8 +1596,20 @@ test("missing, extra, and drifted artifacts receive distinct trust postures", (t
     contractPath: exampleContractPath,
     workspacePath: extraWorkspace
   });
-  assert.equal(extra.artifactFamily.conformanceDisposition, "ARTIFACT_UNDECLARED");
-  assert.equal(extra.trustPosture, "EXTRA");
+  assert.equal(
+    extra.artifactFamily.conformanceDisposition,
+    "WORKSPACE_AUTHORITY_OPEN"
+  );
+  assert.equal(extra.trustPosture, "CONTAMINATED");
+  assert.equal(
+    extra.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "UNAUTHORIZED_WORKSPACE_ARTIFACT" &&
+        finding.relativePath ===
+          "governed-message-artifact-family/extra.txt"
+    ),
+    true
+  );
 
   const driftWorkspace = makeWorkspace(t);
   projectArtifactFamily({

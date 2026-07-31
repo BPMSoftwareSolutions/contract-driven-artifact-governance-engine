@@ -33,6 +33,11 @@
       "serialization": "ordered-token-text-concatenation"
     },
     {
+      "projectorId": "provenance-sealed-source-projector.v1",
+      "authorityType": "lossless-source-tokens.v1",
+      "serialization": "provenance-header-then-ordered-token-text"
+    },
+    {
       "projectorId": "utf8-text-projector.v1",
       "authorityType": "utf8-text.v1",
       "serialization": "exact-utf8-text"

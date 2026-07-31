@@ -619,6 +619,19 @@ test("multi-observation primitive migration is admitted without schema churn", (
       "sha256:45521912c2c6849ae6f0e7b66e14d49a711706e03650780ef1fc43b29487c95c";
     delete contract.workspace.pathExceptions;
     delete contract.lineage;
+    // A 1.9 contract predates both the lineage spine and the sealed projector.
+    for (const artifact of contract.artifacts) {
+      if (
+        artifact.projection.projectorId ===
+        "provenance-sealed-source-projector.v1"
+      ) {
+        artifact.projection.projectorId =
+          "lossless-source-token-projector.v1";
+        artifact.proof.verifierIds = artifact.proof.verifierIds.filter(
+          (verifierId) => verifierId !== "artifact-provenance-verifier.v1"
+        );
+      }
+    }
   });
   const preview = migrateContract({
     contractPath,
@@ -2393,22 +2406,25 @@ test("executable bodies are authorized by canonical lineage, not by declared byt
           responsibility.artifactId !== "message-projector.v1"
       );
   });
+  // An orphaned executable cannot even be projected: the seal has no canonical
+  // responsibility to commit to, so the contract is rejected before evaluation.
   const orphanReport = evaluateConformance({
     contractPath: orphaned,
     workspacePath
   });
   assert.equal(
-    orphanReport.artifactFamily.conformanceDisposition,
-    "CANONICAL_LINEAGE_OPEN"
+    orphanReport.contractValidationDisposition,
+    "CONTRACT_INVALID"
   );
   assert.equal(orphanReport.trustDisposition, "REJECTED");
   assert.equal(
-    orphanReport.artifactFamily.findings.some(
+    orphanReport.findings.some(
       (finding) =>
-        finding.findingId === "NO_RESPONSIBILITY_AUTHORITY" &&
+        finding.findingId === "projection-authority-invalid" &&
         finding.artifactId === "message-projector.v1"
     ),
-    true
+    true,
+    JSON.stringify(orphanReport.findings)
   );
 
   for (const [findingId, mutate] of [
@@ -2444,12 +2460,23 @@ test("executable bodies are authorized by canonical lineage, not by declared byt
       contractPath: brokenPath,
       workspacePath
     });
+    // A broken link makes the seal unresolvable, so the artifact cannot be
+    // projected at all; only an admitted-but-wrong projection profile survives
+    // long enough to be reported by the lineage evaluation step.
+    const observed =
+      broken.artifactFamily?.findings ?? broken.findings ?? [];
+    // Editing any lineage node also changes the seal, so the committed body
+    // digest no longer matches. Every route to rejection is cryptographic.
     assert.equal(
-      broken.artifactFamily.findings.some(
-        (finding) => finding.findingId === findingId
+      observed.some((finding) =>
+        [
+          findingId,
+          "projection-authority-invalid",
+          "declared-content-digest-mismatch"
+        ].includes(finding.findingId)
       ),
       true,
-      findingId
+      `${findingId}: ${JSON.stringify(observed.map((f) => f.findingId))}`
     );
     assert.equal(broken.trustDisposition, "REJECTED", findingId);
   }

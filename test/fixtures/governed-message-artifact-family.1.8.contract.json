@@ -2203,7 +2203,7 @@
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
-      "digest": "sha256:9e16e2900614a6fab8c08d295cde81f4b7c7453e7202ded1312444a187bd826f",
+      "digest": "sha256:db70d2de54b5685666c133db9f4059e32b821c0aba1a626e1c72dfcd2fbe9685",
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {
@@ -2211,7 +2211,7 @@
       "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
     },
     "verifierRegistry": {
-      "digest": "sha256:d9dcd0b53c54904a44ce15896d047d9360a6d48c5379dc3a2ebf3b8cab691f36",
+      "digest": "sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14",
       "identity": "governed-artifact-verifier-registry.v1"
     }
   },

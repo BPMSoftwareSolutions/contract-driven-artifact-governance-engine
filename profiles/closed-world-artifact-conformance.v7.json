@@ -1,0 +1,351 @@
+{
+  "artifactPosture": {
+    "contentDigestRequired": true,
+    "mutabilityPosture": "replace-by-projection",
+    "ownership": "contract-owned",
+    "projectionMode": "projected"
+  },
+  "authorityClosure": {
+    "admission": {
+      "requiredDisposition": "ARTIFACT_AUTHORITY_CLOSED"
+    },
+    "authorityType": "closed-world-authority-closure.v1",
+    "coverage": {
+      "artifactPaths": "exact",
+      "artifactScope": "exact",
+      "claimProofRequirements": "exact",
+      "decisions": "exact",
+      "declarations": "exact",
+      "dependencies": "exact",
+      "dependencyImports": "exact",
+      "dependencyInvocations": "exact",
+      "effects": "exact",
+      "failurePolicies": "exact",
+      "iterations": "exact",
+      "ontologyAuthorities": "exact",
+      "ontologyExecutionBindings": "exact",
+      "operationAuthorities": "exact",
+      "projectionMappings": "exact",
+      "responsibilities": "exact",
+      "resultContracts": "exact",
+      "runtimeAuthorities": "exact",
+      "semanticEdges": "exact"
+    },
+    "resolution": {
+      "ambientAuthority": "forbidden",
+      "ambiguousObservations": "reject",
+      "cardinality": "exactly-one",
+      "missingDeclaredAuthorities": "reject",
+      "undeclaredObservations": "reject",
+      "unresolvedObservations": "reject"
+    }
+  },
+  "claimPrerequisites": {
+    "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+    "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+    "requiredProofDisposition": "PROOF_COMPLETE",
+    "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+    "requiredTrustDisposition": "TRUSTED"
+  },
+  "conformance": {
+    "evaluationOrder": [
+      "validate-contract",
+      "resolve-artifact-plan",
+      "observe-artifact-state",
+      "classify-workspace-paths",
+      "resolve-artifact-lineage",
+      "evaluate-artifact-inventory",
+      "evaluate-projection-identity",
+      "evaluate-authority-closure",
+      "evaluate-ontology-authority",
+      "evaluate-semantic-execution-bodies",
+      "evaluate-artifact-content",
+      "evaluate-artifact-structure",
+      "evaluate-artifact-freshness",
+      "evaluate-artifact-relationships",
+      "evaluate-declared-commands",
+      "verify-proof-subject-stability",
+      "issue-trust-disposition"
+    ],
+    "failClosed": true,
+    "terminalDispositions": {
+      "artifactConformance": [
+        "ARTIFACT_MISSING",
+        "ARTIFACT_UNDECLARED",
+        "ARTIFACT_CONTENT_MISMATCH",
+        "ARTIFACT_STRUCTURE_MISMATCH",
+        "ARTIFACT_STALE",
+        "PROJECTION_IDENTITY_MISMATCH",
+        "ARTIFACT_ESCAPES_CONTRACT",
+        "EVALUATION_INVALIDATED_BY_MUTATION",
+        "ONTOLOGY_AUTHORITY_CLOSED",
+        "SEMANTIC_EXECUTION_BODY_CLOSED",
+        "CONTRACT_AUTHORITY_CLOSED",
+        "WORKSPACE_AUTHORITY_CLOSED",
+        "WORKSPACE_AUTHORITY_OPEN",
+        "CANONICAL_LINEAGE_CLOSED",
+        "CANONICAL_LINEAGE_OPEN",
+        "ARTIFACT_PROVENANCE_SEALED"
+      ],
+      "contractValidation": [
+        "CONTRACT_VALID",
+        "CONTRACT_INVALID",
+        "SCHEMA_NOT_ADMITTED",
+        "SCHEMA_DIGEST_MISMATCH"
+      ],
+      "trustDispositions": [
+        "TRUSTED",
+        "REJECTED",
+        "NOT_EVALUATED"
+      ],
+      "trustPostures": [
+        "CONFORMS",
+        "DRIFTED",
+        "MISSING",
+        "EXTRA",
+        "STALE",
+        "CONTAMINATED",
+        "NOT_EVALUATED"
+      ]
+    }
+  },
+  "lineageAuthority": {
+    "authorityType": "canonical-lineage-authority.v1",
+    "executableBodyPosture": "responsibility-projected-only",
+    "parentCardinality": "exactly-one",
+    "responsibilityProjectionProfiles": [
+      {
+        "projectionProfileId": "javascript-semantic-execution-body.v1",
+        "projectorId": "provenance-sealed-source-projector.v1",
+        "responsibilityType": "semantic-execution"
+      },
+      {
+        "projectionProfileId": "javascript-command-body.v1",
+        "projectorId": "provenance-sealed-source-projector.v1",
+        "responsibilityType": "command-entry"
+      },
+      {
+        "projectionProfileId": "javascript-verification-body.v1",
+        "projectorId": "provenance-sealed-source-projector.v1",
+        "responsibilityType": "proof-evaluation"
+      },
+      {
+        "projectionProfileId": "typescript-type-declaration.v1",
+        "projectorId": "provenance-sealed-source-projector.v1",
+        "responsibilityType": "type-declaration"
+      }
+    ],
+    "spine": [
+      "project",
+      "feature",
+      "scenario",
+      "obligation",
+      "responsibility",
+      "projection",
+      "body"
+    ],
+    "unresolvedLineageDisposition": "REJECT"
+  },
+  "operationAuthorities": {
+    "authoredMutation": {
+      "governedArtifacts": "forbidden",
+      "posture": "sole-authored-change-authority",
+      "target": "contract"
+    },
+    "authorityType": "governed-operation-authorities.v3",
+    "bodyPurity": {
+      "admittedAuthorityTypes": [
+        "semantic-projection-authority.v1",
+        "semantic-execution-bundle.v1"
+      ],
+      "allowedExecutableForms": [
+        "single-semantic-invocation",
+        "direct-return",
+        "declared-port-binding"
+      ],
+      "applicability": "artifacts-bound-to-semantic-authority-executor-port",
+      "consumerRelaxation": "forbidden",
+      "exactCardinality": {
+        "exportedResponsibilities": 1,
+        "resultFlows": 1,
+        "semanticInvocations": 1
+      },
+      "executionPortEffect": "execute-semantic-authority",
+      "forbiddenExecutableMechanics": [
+        "branch",
+        "iteration",
+        "exception-handling",
+        "throw",
+        "object-construction",
+        "serialization",
+        "normalization",
+        "validation",
+        "fallback",
+        "retry",
+        "state-mutation"
+      ],
+      "profileType": "semantic-execution-body.v2",
+      "semanticAuthorityLocation": "contract"
+    },
+    "migration": {
+      "artifactProjection": "forbidden",
+      "mode": "candidate-first",
+      "operation": "migrate",
+      "sourceInterpretation": "historical-schema-digest",
+      "targetMutation": "contract-only",
+      "trustIssuance": "forbidden",
+      "writeMode": "explicit-only"
+    },
+    "mutationAuthority": {
+      "authorityType": "single-source-mutation-authority.v1",
+      "consumerAuthoredAuthority": {
+        "cardinality": "exactly-one",
+        "source": "contract",
+        "target": "contract"
+      },
+      "controlEvidenceMutation": {
+        "createOrReplace": "contract-declared-control-paths-only",
+        "remove": "forbidden"
+      },
+      "derivedContractMutation": {
+        "admittedOperations": [
+          "migrate",
+          "reconcile"
+        ],
+        "target": "contract"
+      },
+      "governedArtifactMutation": {
+        "authoritySource": "validated-contract",
+        "create": "declared-projections-only",
+        "interpretationBase": "digest-bound",
+        "remove": "forbidden",
+        "replace": "declared-projections-only",
+        "undeclaredState": "observe-and-reject"
+      }
+    },
+    "projection": {
+      "artifactPosture": "replace-by-projection",
+      "operation": "project",
+      "subjectMutation": "declared-projections-only",
+      "writeMode": "explicit-only"
+    },
+    "proof": {
+      "artifactProjection": "forbidden",
+      "declaredEvaluations": "read-only",
+      "mode": "read-only",
+      "mutationDisposition": "EVALUATION_INVALIDATED_BY_MUTATION",
+      "operation": "prove",
+      "receiptTarget": "outside-governed-subject",
+      "receiptWrite": "explicit-only",
+      "requiredSubjectDisposition": "PROOF_SUBJECT_UNCHANGED",
+      "subjectMutation": "forbidden"
+    },
+    "reconciliation": {
+      "artifactProjection": "forbidden",
+      "candidateProjection": "in-memory",
+      "contractMutation": "commitment-fields-only",
+      "mode": "candidate-first",
+      "operation": "reconcile",
+      "trustIssuance": "forbidden",
+      "writeMode": "explicit-only"
+    }
+  },
+  "profileId": "closed-world-artifact-conformance.v7",
+  "profileType": "governed-artifact-conformance-profile.v7",
+  "projectionAuthority": {
+    "authorityType": "derived-projection-authority.v1",
+    "executableContentExtensions": [
+      ".cjs",
+      ".js",
+      ".mjs",
+      ".mts",
+      ".ts"
+    ],
+    "executableProjectorId": "provenance-sealed-source-projector.v1",
+    "executableRequiredVerifierIds": [
+      "artifact-provenance-verifier.v1",
+      "authority-closure-verifier.v1",
+      "source-token-structure-verifier.v1"
+    ],
+    "transcriptionPosture": "inert-content-only",
+    "transcriptionProjectorIds": [
+      "utf8-text-projector.v1"
+    ]
+  },
+  "projectionLedger": {
+    "ledgerType": "governed-artifact-projection-ledger.v1",
+    "requiredEvidence": [
+      "contract-identity",
+      "interpretation-base",
+      "projector-registry-identity",
+      "artifact-scope-authority",
+      "authority-closure-profile",
+      "operation-authorities",
+      "dependency-authorities",
+      "effect-authorities",
+      "runtime-authorities",
+      "source-authorities",
+      "ontology-authorities",
+      "artifact-projection-identities",
+      "artifact-content-commitments",
+      "workspace-authority",
+      "canonical-lineage"
+    ]
+  },
+  "receipt": {
+    "receiptType": "governed-artifact-conformance-receipt.v1",
+    "requiredEvidence": [
+      "contract-identity",
+      "interpretation-base",
+      "schema-identity",
+      "registry-identities",
+      "artifact-observations",
+      "projection-identity",
+      "artifact-scope-authority",
+      "artifact-scope-observation",
+      "authority-closure-profile",
+      "authority-closure-disposition",
+      "operation-authorities",
+      "ontology-authorities",
+      "proof-subject-stability",
+      "source-authority-observations",
+      "conformance-findings",
+      "claim-policies",
+      "trust-disposition",
+      "workspace-authority",
+      "canonical-lineage"
+    ]
+  },
+  "workspaceAuthority": {
+    "admittedExceptionForms": [
+      {
+        "exceptionForm": "workspace-path-exception.v1",
+        "exceptionId": "git-repository-metadata.v1",
+        "path": ".git",
+        "pathRole": "repository-metadata",
+        "requiredEvidence": []
+      },
+      {
+        "exceptionForm": "workspace-path-exception.v1",
+        "exceptionId": "npm-installed-dependencies.v1",
+        "path": "node_modules",
+        "pathRole": "external-dependency-materialization",
+        "requiredEvidence": [
+          "package-lock-digest",
+          "package-manager-identity"
+        ]
+      }
+    ],
+    "authorityType": "complete-workspace-authority.v1",
+    "contractMutationPosture": "contract-only",
+    "inventoryPosture": "exhaustive",
+    "pathRoles": [
+      "CANONICAL_AUTHORITY",
+      "PROJECTED_ARTIFACT",
+      "GOVERNANCE_EVIDENCE",
+      "ADMITTED_EXTERNAL"
+    ],
+    "requiredDisposition": "WORKSPACE_AUTHORITY_CLOSED",
+    "unclassifiedPathPosture": "reject"
+  }
+}

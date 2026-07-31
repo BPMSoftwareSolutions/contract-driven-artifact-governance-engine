@@ -2,6 +2,10 @@
   "fieldClassifications": [
     {
       "disposition": "transformed",
+      "pathPattern": "/artifacts/*/projection/projectorId"
+    },
+    {
+      "disposition": "transformed",
       "pathPattern": "/artifacts/*/proof/contentSha256"
     },
     {
@@ -10,11 +14,11 @@
     },
     {
       "disposition": "transformed",
-      "pathPattern": "/contract/contractVersion"
+      "pathPattern": "/artifacts/*/proof/verifierIds"
     },
     {
-      "disposition": "introduced",
-      "pathPattern": "/lineage"
+      "disposition": "transformed",
+      "pathPattern": "/contract/contractVersion"
     },
     {
       "disposition": "transformed",
@@ -39,6 +43,10 @@
     {
       "disposition": "transformed",
       "pathPattern": "/interpretationBase/schema/digest"
+    },
+    {
+      "disposition": "introduced",
+      "pathPattern": "/lineage"
     }
   ],
   "migrationId": "artifact-contract.1.12-to-1.13",
@@ -62,6 +70,14 @@
         "responsibilities": [],
         "scenarios": []
       }
+    },
+    {
+      "fromProjectorId": "lossless-source-token-projector.v1",
+      "operation": "seal-executable-projections",
+      "requiredVerifierIds": [
+        "artifact-provenance-verifier.v1"
+      ],
+      "toProjectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "operation": "introduce-interpretation-base"

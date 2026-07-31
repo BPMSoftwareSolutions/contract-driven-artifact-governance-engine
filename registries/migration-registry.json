@@ -278,7 +278,7 @@
         "workspace-path-exception-forms"
       ],
       "migrationAuthority": {
-        "digest": "sha256:b37125b4857fe34b2aee35fb9575cea1da17709cb2351d382296191097da12d6",
+        "digest": "sha256:455e7bb3ec2eca8ab2f713d08447177337555fddce1fb57a90a14ad7a134d4a5",
         "relativePath": "migrations/artifact-contract.1.11-to-1.12.json"
       },
       "migrationId": "artifact-contract.1.11-to-1.12",
@@ -337,7 +337,7 @@
         "responsibility-projection-profiles"
       ],
       "migrationAuthority": {
-        "digest": "sha256:7aac6c2e91c42cbdf98ac8ee65f751193090c8922dd1af193b622bc3359655ea",
+        "digest": "sha256:381543e1e4ad433ec7f0e5936bcd4b7e4fab1f1080c0d5d95bf3f65366c98485",
         "relativePath": "migrations/artifact-contract.1.12-to-1.13.json"
       },
       "migrationId": "artifact-contract.1.12-to-1.13",
@@ -374,12 +374,12 @@
       "sourceSchemaDigest": "sha256:f6623e179f8ec44b57b0ded2b845afecd28944ca2f87cce642a2eeaebe41ab10",
       "targetInterpretationBase": {
         "conformanceProfile": {
-          "digest": "sha256:a5390256f4b2fda4830d0974feb11b1feb6be06596774365a181e868ca1287f3",
-          "identity": "closed-world-artifact-conformance.v6"
+          "digest": "sha256:8a6452d2f7c6d1b9b9182cdce95bd547f557c549973f51c25003379b54a45713",
+          "identity": "closed-world-artifact-conformance.v7"
         },
         "engine": {
-          "digest": "sha256:b7cc2127e85781350c82afdedbc386326e0dc8bce69cc60372c07546062a5d75",
-          "identity": "governed-artifact-engine.0.14.1"
+          "digest": "sha256:bd5de24a7758fb4e02831e651771ce521e7186c1d4bd73ec26f722735cb4ba41",
+          "identity": "governed-artifact-engine.0.15.0"
         }
       },
       "targetSchemaDigest": "sha256:93e112836bcadd4620733a11e88c0e24819731ab6d80c4b408838c2d85ae4ac7",

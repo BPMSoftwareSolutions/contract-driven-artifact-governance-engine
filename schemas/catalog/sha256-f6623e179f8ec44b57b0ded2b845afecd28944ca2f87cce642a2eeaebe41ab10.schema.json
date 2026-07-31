@@ -7,20 +7,19 @@
   "additionalProperties": false,
   "required": [
     "$schema",
-    "artifacts",
-    "claims",
-    "conformance",
     "contract",
+    "interpretationBase",
+    "subject",
+    "workspace",
+    "projectionLedger",
     "dependencies",
     "effects",
-    "exclusions",
-    "interpretationBase",
-    "lineage",
-    "projectionLedger",
-    "receipt",
     "runtimeAuthorities",
-    "subject",
-    "workspace"
+    "artifacts",
+    "exclusions",
+    "conformance",
+    "receipt",
+    "claims"
   ],
   "properties": {
     "$schema": {
@@ -85,9 +84,6 @@
       "items": {
         "$ref": "#/$defs/claimPolicy"
       }
-    },
-    "lineage": {
-      "$ref": "#/$defs/canonicalLineage"
     }
   },
   "$defs": {
@@ -1568,133 +1564,6 @@
               "repository-head-identity": {
                 "type": "string",
                 "minLength": 1
-              }
-            }
-          }
-        }
-      }
-    },
-    "canonicalLineage": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "authorityType",
-        "projectId",
-        "features",
-        "scenarios",
-        "obligations",
-        "responsibilities"
-      ],
-      "properties": {
-        "authorityType": {
-          "const": "canonical-lineage-authority.v1"
-        },
-        "projectId": {
-          "$ref": "#/$defs/identifier"
-        },
-        "features": {
-          "type": "array",
-          "maxItems": 64,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "featureId",
-              "projectId",
-              "purpose"
-            ],
-            "properties": {
-              "featureId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "projectId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "purpose": {
-                "type": "string",
-                "minLength": 1
-              }
-            }
-          }
-        },
-        "scenarios": {
-          "type": "array",
-          "maxItems": 256,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "scenarioId",
-              "featureId",
-              "purpose"
-            ],
-            "properties": {
-              "scenarioId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "featureId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "purpose": {
-                "type": "string",
-                "minLength": 1
-              }
-            }
-          }
-        },
-        "obligations": {
-          "type": "array",
-          "maxItems": 256,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "obligationId",
-              "scenarioId",
-              "statement"
-            ],
-            "properties": {
-              "obligationId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "scenarioId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "statement": {
-                "type": "string",
-                "minLength": 1
-              }
-            }
-          }
-        },
-        "responsibilities": {
-          "type": "array",
-          "maxItems": 256,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "responsibilityId",
-              "obligationId",
-              "responsibilityType",
-              "projectionProfileId",
-              "artifactId"
-            ],
-            "properties": {
-              "responsibilityId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "obligationId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "responsibilityType": {
-                "$ref": "#/$defs/identifier"
-              },
-              "projectionProfileId": {
-                "$ref": "#/$defs/identifier"
-              },
-              "artifactId": {
-                "$ref": "#/$defs/identifier"
               }
             }
           }

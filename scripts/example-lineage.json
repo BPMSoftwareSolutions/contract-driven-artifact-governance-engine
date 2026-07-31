@@ -1,0 +1,68 @@
+{
+  "authorityType": "canonical-lineage-authority.v1",
+  "projectId": "governed-message-artifact-family",
+  "features": [
+    {
+      "featureId": "project-governed-messages",
+      "projectId": "governed-message-artifact-family",
+      "purpose": "Render a governed message from declared contract meaning."
+    }
+  ],
+  "scenarios": [
+    {
+      "scenarioId": "project-a-declared-message",
+      "featureId": "project-governed-messages",
+      "purpose": "A declared message value is projected into canonical output."
+    },
+    {
+      "scenarioId": "run-the-message-command",
+      "featureId": "project-governed-messages",
+      "purpose": "The projected message is emitted through the declared command port."
+    },
+    {
+      "scenarioId": "verify-the-projected-message",
+      "featureId": "project-governed-messages",
+      "purpose": "The projected message is proved against its declared expectation."
+    }
+  ],
+  "obligations": [
+    {
+      "obligationId": "produce-one-canonical-message",
+      "scenarioId": "project-a-declared-message",
+      "statement": "Exactly one canonical message must be produced from declared semantic authority."
+    },
+    {
+      "obligationId": "emit-the-message-once",
+      "scenarioId": "run-the-message-command",
+      "statement": "The command must emit the projected message exactly once."
+    },
+    {
+      "obligationId": "prove-the-message-conforms",
+      "scenarioId": "verify-the-projected-message",
+      "statement": "Verification must prove the projected message conforms."
+    }
+  ],
+  "responsibilities": [
+    {
+      "responsibilityId": "executes-message-projection",
+      "obligationId": "produce-one-canonical-message",
+      "responsibilityType": "semantic-execution",
+      "projectionProfileId": "javascript-semantic-execution-body.v1",
+      "artifactId": "message-projector.v1"
+    },
+    {
+      "responsibilityId": "entry-point-for-message-command",
+      "obligationId": "emit-the-message-once",
+      "responsibilityType": "command-entry",
+      "projectionProfileId": "javascript-command-body.v1",
+      "artifactId": "message-command.v1"
+    },
+    {
+      "responsibilityId": "evaluates-message-proof",
+      "obligationId": "prove-the-message-conforms",
+      "responsibilityType": "proof-evaluation",
+      "projectionProfileId": "javascript-verification-body.v1",
+      "artifactId": "message-verification.v1"
+    }
+  ]
+}

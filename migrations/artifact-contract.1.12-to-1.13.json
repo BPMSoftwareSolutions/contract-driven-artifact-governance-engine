@@ -1,0 +1,70 @@
+{
+  "fieldClassifications": [
+    {
+      "disposition": "transformed",
+      "pathPattern": "/artifacts/*/proof/contentSha256"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/artifacts/*/proof/expectedByteLength"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/contract/contractVersion"
+    },
+    {
+      "disposition": "introduced",
+      "pathPattern": "/lineage"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/conformanceProfile/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/conformanceProfile/identity"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/engine/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/engine/identity"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/migrationRegistry/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/schema/digest"
+    }
+  ],
+  "migrationId": "artifact-contract.1.12-to-1.13",
+  "migrationType": "governed-artifact-contract-migration.v1",
+  "sourceContractVersion": "1.12.0",
+  "targetContractVersion": "1.13.0",
+  "transformations": [
+    {
+      "operation": "set-value",
+      "path": "/contract/contractVersion",
+      "value": "1.13.0"
+    },
+    {
+      "operation": "set-value",
+      "path": "/lineage",
+      "value": {
+        "authorityType": "canonical-lineage-authority.v1",
+        "features": [],
+        "obligations": [],
+        "projectId": "unassigned-project",
+        "responsibilities": [],
+        "scenarios": []
+      }
+    },
+    {
+      "operation": "introduce-interpretation-base"
+    }
+  ]
+}

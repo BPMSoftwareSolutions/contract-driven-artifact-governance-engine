@@ -1898,8 +1898,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:4f9ca45c19549dcf271988e05c4a00786de2ccfccafed047aa5443009b379d85",
-        "expectedByteLength": 23352,
+        "contentSha256": "sha256:75c2badacb7d19b831049915ff7a084161507ff94652fdda0fddfd08857583f5",
+        "expectedByteLength": 23483,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -2046,7 +2046,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.12.0",
+    "contractVersion": "1.13.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2191,15 +2191,15 @@
   ],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:8cd7adc27624fd8ac8a627d5b8bba3d9acc832b011d167ec4bf7e6cd737b330c",
-      "identity": "closed-world-artifact-conformance.v5"
+      "digest": "sha256:a5390256f4b2fda4830d0974feb11b1feb6be06596774365a181e868ca1287f3",
+      "identity": "closed-world-artifact-conformance.v6"
     },
     "engine": {
-      "digest": "sha256:dd171b5f9a23f17a94c1e3969ef5e338cb3b2095dd6b8e0ce70b195bba115c8a",
-      "identity": "governed-artifact-engine.0.13.0"
+      "digest": "sha256:0a98068c8e2b47052bdf82dbbfa73683cd3271fe4b3d62a50aa83918981867ad",
+      "identity": "governed-artifact-engine.0.14.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:833bdd880a755450dc10bf2cafaf9584433b8064c869583c4b73b3c64f817021",
+      "digest": "sha256:9ac851bdc71a5c81065ecf28f91b9731196d00168fbcbeb113090eddcdc3b036",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
@@ -2207,13 +2207,81 @@
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {
-      "digest": "sha256:f6623e179f8ec44b57b0ded2b845afecd28944ca2f87cce642a2eeaebe41ab10",
+      "digest": "sha256:93e112836bcadd4620733a11e88c0e24819731ab6d80c4b408838c2d85ae4ac7",
       "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
     },
     "verifierRegistry": {
       "digest": "sha256:d9dcd0b53c54904a44ce15896d047d9360a6d48c5379dc3a2ebf3b8cab691f36",
       "identity": "governed-artifact-verifier-registry.v1"
     }
+  },
+  "lineage": {
+    "authorityType": "canonical-lineage-authority.v1",
+    "features": [
+      {
+        "featureId": "project-governed-messages",
+        "projectId": "governed-message-artifact-family",
+        "purpose": "Render a governed message from declared contract meaning."
+      }
+    ],
+    "obligations": [
+      {
+        "obligationId": "produce-one-canonical-message",
+        "scenarioId": "project-a-declared-message",
+        "statement": "Exactly one canonical message must be produced from declared semantic authority."
+      },
+      {
+        "obligationId": "emit-the-message-once",
+        "scenarioId": "run-the-message-command",
+        "statement": "The command must emit the projected message exactly once."
+      },
+      {
+        "obligationId": "prove-the-message-conforms",
+        "scenarioId": "verify-the-projected-message",
+        "statement": "Verification must prove the projected message conforms."
+      }
+    ],
+    "projectId": "governed-message-artifact-family",
+    "responsibilities": [
+      {
+        "artifactId": "message-projector.v1",
+        "obligationId": "produce-one-canonical-message",
+        "projectionProfileId": "javascript-semantic-execution-body.v1",
+        "responsibilityId": "executes-message-projection",
+        "responsibilityType": "semantic-execution"
+      },
+      {
+        "artifactId": "message-command.v1",
+        "obligationId": "emit-the-message-once",
+        "projectionProfileId": "javascript-command-body.v1",
+        "responsibilityId": "entry-point-for-message-command",
+        "responsibilityType": "command-entry"
+      },
+      {
+        "artifactId": "message-verification.v1",
+        "obligationId": "prove-the-message-conforms",
+        "projectionProfileId": "javascript-verification-body.v1",
+        "responsibilityId": "evaluates-message-proof",
+        "responsibilityType": "proof-evaluation"
+      }
+    ],
+    "scenarios": [
+      {
+        "featureId": "project-governed-messages",
+        "purpose": "A declared message value is projected into canonical output.",
+        "scenarioId": "project-a-declared-message"
+      },
+      {
+        "featureId": "project-governed-messages",
+        "purpose": "The projected message is emitted through the declared command port.",
+        "scenarioId": "run-the-message-command"
+      },
+      {
+        "featureId": "project-governed-messages",
+        "purpose": "The projected message is proved against its declared expectation.",
+        "scenarioId": "verify-the-projected-message"
+      }
+    ]
   },
   "projectionLedger": {
     "relativePath": ".governance/projections/governed-message-artifact-family.ledger.json"

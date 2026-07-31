@@ -387,7 +387,7 @@ test("historical schemas and digest-to-digest migration authority are durable", 
     registry.schemaCatalog.digest,
     sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
   );
-  assert.equal(registry.migrations.length, 6);
+  assert.equal(registry.migrations.length, 7);
   const edge = registry.migrations[0];
   for (const digest of [
     edge.sourceSchemaDigest,
@@ -618,6 +618,7 @@ test("multi-observation primitive migration is admitted without schema churn", (
     contract.interpretationBase.migrationRegistry.digest =
       "sha256:45521912c2c6849ae6f0e7b66e14d49a711706e03650780ef1fc43b29487c95c";
     delete contract.workspace.pathExceptions;
+    delete contract.lineage;
   });
   const preview = migrateContract({
     contractPath,
@@ -2335,9 +2336,10 @@ test("the published surface uses only governed-artifact language", () => {
   for (const root of roots) {
     visit(path.join(packageRoot, root));
   }
+  // The canonical lineage spine makes this word first-class engine vocabulary:
+  // project, feature, scenario, obligation, responsibility, projection, body.
   const disallowedWords = [
     ["cap", "ability"].join(""),
-    ["fea", "ture"].join(""),
     ["con", "veyor"].join(""),
     ["implemen", "tation"].join(""),
     ["gene", "rator"].join(""),
@@ -2354,4 +2356,142 @@ test("the published surface uses only governed-artifact language", () => {
       `Disallowed public vocabulary in ${path.relative(packageRoot, filePath)}`
     );
   }
+});
+
+test("executable bodies are authorized by canonical lineage, not by declared bytes", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const baseline = copyContract(workspacePath, () => {});
+  projectArtifactFamily({
+    contractPath: baseline,
+    workspacePath,
+    mode: "write"
+  });
+  const admitted = evaluateConformance({
+    contractPath: baseline,
+    workspacePath
+  });
+  assert.equal(admitted.trustPosture, "CONFORMS");
+  assert.equal(
+    admitted.artifactFamily.canonicalLineageDisposition,
+    "CANONICAL_LINEAGE_CLOSED"
+  );
+  assert.deepEqual(
+    admitted.artifactFamily.canonicalLineage.bodies.map(
+      (body) => body.responsibilityId
+    ),
+    [
+      "entry-point-for-message-command",
+      "executes-message-projection",
+      "evaluates-message-proof"
+    ]
+  );
+
+  const orphaned = copyContract(workspacePath, (contract) => {
+    contract.lineage.responsibilities =
+      contract.lineage.responsibilities.filter(
+        (responsibility) =>
+          responsibility.artifactId !== "message-projector.v1"
+      );
+  });
+  const orphanReport = evaluateConformance({
+    contractPath: orphaned,
+    workspacePath
+  });
+  assert.equal(
+    orphanReport.artifactFamily.conformanceDisposition,
+    "CANONICAL_LINEAGE_OPEN"
+  );
+  assert.equal(orphanReport.trustDisposition, "REJECTED");
+  assert.equal(
+    orphanReport.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "NO_RESPONSIBILITY_AUTHORITY" &&
+        finding.artifactId === "message-projector.v1"
+    ),
+    true
+  );
+
+  for (const [findingId, mutate] of [
+    [
+      "NO_OBLIGATION_AUTHORITY",
+      (contract) => {
+        contract.lineage.responsibilities[0].obligationId =
+          "unowned-obligation";
+      }
+    ],
+    [
+      "NO_SCENARIO_AUTHORITY",
+      (contract) => {
+        contract.lineage.obligations[0].scenarioId = "unowned-scenario";
+      }
+    ],
+    [
+      "NO_CANONICAL_FEATURE_LINEAGE",
+      (contract) => {
+        contract.lineage.scenarios[0].featureId = "unowned-subject";
+      }
+    ],
+    [
+      "PROJECTION_PROFILE_NOT_ADMITTED",
+      (contract) => {
+        contract.lineage.responsibilities[0].responsibilityType =
+          "developer-tooling";
+      }
+    ]
+  ]) {
+    const brokenPath = copyContract(workspacePath, mutate);
+    const broken = evaluateConformance({
+      contractPath: brokenPath,
+      workspacePath
+    });
+    assert.equal(
+      broken.artifactFamily.findings.some(
+        (finding) => finding.findingId === findingId
+      ),
+      true,
+      findingId
+    );
+    assert.equal(broken.trustDisposition, "REJECTED", findingId);
+  }
+});
+
+test("transcription cannot legitimize an executable artifact", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    const body = contract.artifacts.find(
+      (artifact) => artifact.artifactId === "message-projector.v1"
+    );
+    body.artifactKind = "developer-tooling";
+    body.projection = {
+      authorityId: body.projection.authorityId,
+      projectorId: "utf8-text-projector.v1",
+      authority: {
+        authorityType: "utf8-text.v1",
+        text: "export function projectMessage(value) {\n  return value;\n}\n"
+      }
+    };
+    body.proof.verifierIds = ["content-digest-verifier.v1"];
+    contract.lineage.responsibilities =
+      contract.lineage.responsibilities.filter(
+        (responsibility) =>
+          responsibility.artifactId !== "message-projector.v1"
+      );
+  });
+  const report = validateContract({ contractPath, workspacePath });
+  assert.equal(report.contractValidationDisposition, "CONTRACT_INVALID");
+  assert.equal(
+    report.findings.some(
+      (finding) =>
+        finding.findingId === "EXECUTABLE_TRANSCRIPTION_FORBIDDEN" &&
+        finding.relativePath === "src/project-message.mjs"
+    ),
+    true,
+    JSON.stringify(report.findings.map((finding) => finding.findingId))
+  );
+  assert.equal(
+    report.findings.some(
+      (finding) => finding.findingId === "EXECUTABLE_PROJECTION_UNVERIFIED"
+    ),
+    true
+  );
 });

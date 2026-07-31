@@ -30,6 +30,10 @@ import {
 function usage() {
   return [
     "Usage:",
+    "  governed-artifacts gate --contract <path> --workspace <path> [--write-receipt] [inputs]",
+    "      The build gate. Runs the full chain and exits non-zero unless TRUSTED.",
+    "      Every other operation is a partial check and is marked NOT_A_TRUST_GATE.",
+    "",
     "  governed-artifacts validate --contract <path> [inputs]",
     "  governed-artifacts plan --contract <path> [inputs]",
     "  governed-artifacts reconcile --contract <path> [--write] [inputs]",
@@ -221,10 +225,51 @@ function execute(operation, options) {
     }
     return receipt;
   }
-  if (operation === "prove") {
+  if (operation === "prove" || operation === "gate") {
     return proveGovernedArtifactFamily(options);
   }
   throw new Error(`Unknown operation: ${operation}`);
+}
+
+const TRUST_GATE_OPERATIONS = new Set(["gate", "prove", "claim"]);
+
+function gateReport(result) {
+  const family = result.artifactFamily ?? {};
+  const workspace = family.workspaceAuthority;
+  const lines = [
+    "governed-artifacts gate",
+    "",
+    "Enforced law:",
+    `  workspace inventory        ${workspace?.inventoryPosture ?? "NOT_EVALUATED"}`,
+    `  unclassified paths         ${workspace?.unclassifiedPathPosture ?? "NOT_EVALUATED"}`,
+    `  classified paths           ${workspace?.classifiedPathCount ?? 0}`,
+    `  admitted external regions  ${(workspace?.pathExceptions ?? [])
+      .map((exception) => exception.exceptionId)
+      .join(", ") || "none"}`,
+    "",
+    "Dispositions:",
+    `  contract                   ${result.contractValidationDisposition ?? "NOT_EVALUATED"}`,
+    `  workspace authority        ${family.workspaceAuthorityDisposition ?? "NOT_EVALUATED"}`,
+    `  conformance                ${family.conformanceDisposition ?? result.conformanceDisposition ?? "NOT_EVALUATED"}`,
+    `  proof                      ${result.proofDisposition ?? "NOT_EVALUATED"}`,
+    `  trust posture              ${result.trustPosture ?? "NOT_EVALUATED"}`,
+    `  trust                      ${result.trustDisposition ?? "NOT_EVALUATED"}`
+  ];
+  const findings = family.findings ?? result.findings ?? [];
+  if (findings.length > 0) {
+    lines.push("", `Findings (${findings.length}):`);
+    for (const finding of findings.slice(0, 50)) {
+      lines.push(
+        `  ${finding.findingId}${
+          finding.relativePath ? `  ${finding.relativePath}` : ""
+        }${finding.artifactId ? `  [${finding.artifactId}]` : ""}`
+      );
+    }
+    if (findings.length > 50) {
+      lines.push(`  ... ${findings.length - 50} more`);
+    }
+  }
+  return lines.join("\n");
 }
 
 try {
@@ -234,7 +279,53 @@ try {
     process.exitCode = 0;
   } else {
     const result = execute(parsed.operation, parsed.options);
-    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    if (parsed.operation === "gate") {
+      process.stdout.write(`${gateReport(result)}\n`);
+    } else {
+      const isTrustGate = TRUST_GATE_OPERATIONS.has(parsed.operation);
+      const workspaceEvaluated =
+        result.artifactFamily?.conformanceDisposition !== undefined;
+      const trustIssued =
+        result.trustDisposition !== undefined &&
+        result.trustDisposition !== "NOT_EVALUATED";
+      process.stdout.write(
+        `${JSON.stringify(
+          {
+            ...result,
+            trustGate: isTrustGate ? "TRUST_GATE" : "NOT_A_TRUST_GATE",
+            workspaceEvaluation: workspaceEvaluated
+              ? "WORKSPACE_EVALUATED"
+              : "WORKSPACE_NOT_EVALUATED",
+            trustEvaluation: trustIssued
+              ? "TRUST_EVALUATED"
+              : "TRUST_NOT_EVALUATED"
+          },
+          null,
+          2
+        )}\n`
+      );
+      if (!isTrustGate && !parsed.operation.startsWith("release-")) {
+        const mark = (evaluated) => (evaluated ? "✓" : "○");
+        process.stderr.write(
+          [
+            "",
+            `✓ Contract document is valid (${parsed.operation})`,
+            `${mark(workspaceEvaluated)} Workspace ${
+              workspaceEvaluated ? "was evaluated" : "was not evaluated"
+            }`,
+            `${mark(trustIssued)} ${
+              trustIssued
+                ? "Trust disposition issued"
+                : "No trust disposition was issued"
+            }`,
+            "",
+            "This result does not authorize projection, proof, or claims.",
+            "Run `governed-artifacts gate` to evaluate the workspace.",
+            ""
+          ].join("\n")
+        );
+      }
+    }
     const rejected =
       result.contractValidationDisposition === "CONTRACT_INVALID" ||
       result.contractValidationDisposition === "SCHEMA_NOT_ADMITTED" ||

@@ -2406,25 +2406,19 @@ test("executable bodies are authorized by canonical lineage, not by declared byt
           responsibility.artifactId !== "message-projector.v1"
       );
   });
-  // An orphaned executable cannot even be projected: the seal has no canonical
-  // responsibility to commit to, so the contract is rejected before evaluation.
   const orphanReport = evaluateConformance({
     contractPath: orphaned,
     workspacePath
   });
-  assert.equal(
-    orphanReport.contractValidationDisposition,
-    "CONTRACT_INVALID"
-  );
   assert.equal(orphanReport.trustDisposition, "REJECTED");
   assert.equal(
-    orphanReport.findings.some(
+    (orphanReport.findings ?? []).some(
       (finding) =>
-        finding.findingId === "projection-authority-invalid" &&
+        finding.findingId === "NO_RESPONSIBILITY_AUTHORITY" &&
         finding.artifactId === "message-projector.v1"
     ),
     true,
-    JSON.stringify(orphanReport.findings)
+    JSON.stringify((orphanReport.findings ?? []).map((f) => f.findingId))
   );
 
   for (const [findingId, mutate] of [
@@ -2464,17 +2458,9 @@ test("executable bodies are authorized by canonical lineage, not by declared byt
     // projected at all; only an admitted-but-wrong projection profile survives
     // long enough to be reported by the lineage evaluation step.
     const observed =
-      broken.artifactFamily?.findings ?? broken.findings ?? [];
-    // Editing any lineage node also changes the seal, so the committed body
-    // digest no longer matches. Every route to rejection is cryptographic.
+      broken.findings ?? broken.artifactFamily?.findings ?? [];
     assert.equal(
-      observed.some((finding) =>
-        [
-          findingId,
-          "projection-authority-invalid",
-          "declared-content-digest-mismatch"
-        ].includes(finding.findingId)
-      ),
+      observed.some((finding) => finding.findingId === findingId),
       true,
       `${findingId}: ${JSON.stringify(observed.map((f) => f.findingId))}`
     );
@@ -2498,28 +2484,21 @@ test("transcription cannot legitimize an executable artifact", (t) => {
       }
     };
     body.proof.verifierIds = ["content-digest-verifier.v1"];
-    contract.lineage.responsibilities =
-      contract.lineage.responsibilities.filter(
-        (responsibility) =>
-          responsibility.artifactId !== "message-projector.v1"
-      );
   });
+  // The responsibility is left intact, so the chain resolves. Only the
+  // projector is swapped for transcription, which is what must be refused.
   const report = validateContract({ contractPath, workspacePath });
   assert.equal(report.contractValidationDisposition, "CONTRACT_INVALID");
   assert.equal(
     report.findings.some(
       (finding) =>
-        finding.findingId === "EXECUTABLE_TRANSCRIPTION_FORBIDDEN" &&
-        finding.relativePath === "src/project-message.mjs"
+        finding.findingId === "ARTIFACT_CONTENT_NOT_DERIVED" &&
+        finding.artifactId === "message-projector.v1" &&
+        finding.expected === "provenance-sealed-source-projector.v1" &&
+        finding.observed === "utf8-text-projector.v1"
     ),
     true,
     JSON.stringify(report.findings.map((finding) => finding.findingId))
-  );
-  assert.equal(
-    report.findings.some(
-      (finding) => finding.findingId === "EXECUTABLE_PROJECTION_UNVERIFIED"
-    ),
-    true
   );
 });
 

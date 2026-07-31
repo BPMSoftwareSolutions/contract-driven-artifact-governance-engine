@@ -1,12 +1,12 @@
 {
   "archive": {
     "entryCount": 41,
-    "fileName": "contract-driven-artifact-governance-engine-0.15.0.tgz",
-    "integrity": "sha512-cwNOlqoNtAVZDSSLClFkO9itwecN4hXZWNgV+GShgpFhpQV9JX7ApNQ4glDwr48ztjIc5O7N21AjOTMjxMnjMA==",
-    "sha256": "sha256:158f79cefe496a4f9c2a891649cef76606c97efc24b1429e66d8bc8c0559cb0b",
-    "shasum": "568c0391c3a1a9d55add02fb1751ec5fca849557",
-    "size": 163603,
-    "unpackedSize": 1149002
+    "fileName": "contract-driven-artifact-governance-engine-0.16.0.tgz",
+    "integrity": "sha512-VE5G+N1aU0vZYlsx2ySWzv0bnY94K1RTWmgg8beje/6MJV9nAYeqtC9MDfUe59QRTM2YIjZkAD5hRyGqTXsHNg==",
+    "sha256": "sha256:ad7a6b84dd8b5dbc125d5efbc0d41c9e22caeb8015bdfa058b8b26206e0216ac",
+    "shasum": "55fe63d4efb593d6c4b9083161e23383992ba01c",
+    "size": 163809,
+    "unpackedSize": 1149328
   },
   "authorityClosure": {
     "admission": {
@@ -99,9 +99,16 @@
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.15.0.tgz",
         "releaseVersion": "0.15.0",
-        "role": "current",
+        "role": "historical",
         "sha256": "sha256:158f79cefe496a4f9c2a891649cef76606c97efc24b1429e66d8bc8c0559cb0b",
         "size": 163603
+      },
+      {
+        "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.16.0.tgz",
+        "releaseVersion": "0.16.0",
+        "role": "current",
+        "sha256": "sha256:ad7a6b84dd8b5dbc125d5efbc0d41c9e22caeb8015bdfa058b8b26206e0216ac",
+        "size": 163809
       },
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.2.0.tgz",
@@ -160,13 +167,13 @@
         "size": 102043
       }
     ],
-    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.15.0.tgz",
+    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.16.0.tgz",
     "exclusiveInventory": true,
     "materializationPolicy": "write-current-after-candidate-conformance"
   },
   "dependencyLock": {
     "relativePath": "package-lock.json",
-    "sha256": "sha256:9e887d3073dd9516d42efdb68aedd3278aed32482ba81e4ee5f279afff63ec2c"
+    "sha256": "sha256:c36479cfa701c361482434952dfe97816f931795a7e93580dd0e9bff48a919ea"
   },
   "package": {
     "binaries": [
@@ -198,7 +205,7 @@
       "test",
       "README.md"
     ],
-    "version": "0.15.0"
+    "version": "0.16.0"
   },
   "packing": {
     "bundledDependencies": [],
@@ -218,7 +225,7 @@
       {
         "mode": 420,
         "relativePath": "examples/governed-message-artifact-family.contract.json",
-        "sha256": "sha256:e5d3fca2867942f2bcb2fd1722b530e15a9b78551c783f91f18ef715bb53582c",
+        "sha256": "sha256:052308897b046a76ac3b83e32ee13e656824eddd624e9a4b89fff9ce6d7f7189",
         "size": 70232
       },
       {
@@ -230,8 +237,8 @@
       {
         "mode": 420,
         "relativePath": "lib/governed-artifact-engine.mjs",
-        "sha256": "sha256:bd5de24a7758fb4e02831e651771ce521e7186c1d4bd73ec26f722735cb4ba41",
-        "size": 237757
+        "sha256": "sha256:de1a4d86313058b75f80c63f678a6b2f1b6048830d56dcee66fce70b7205047b",
+        "size": 238642
       },
       {
         "mode": 420,
@@ -296,7 +303,7 @@
       {
         "mode": 420,
         "relativePath": "package.json",
-        "sha256": "sha256:8582af3120566d1a270b95fb6c61d5e6607cdede9e899701ad8a4036a31f9a01",
+        "sha256": "sha256:53fd1b36401a106dedfe11378adfa661e140ea6c4dee3a2e8c9a142d41b8262f",
         "size": 1166
       },
       {
@@ -350,7 +357,7 @@
       {
         "mode": 420,
         "relativePath": "registries/migration-registry.json",
-        "sha256": "sha256:f166a6f4d1d448643b5418f773e853b51bb4c54d6f3aa0393d5f00f8f8e605cd",
+        "sha256": "sha256:bbfb9e0a9d5934f54fe52522a44e9968fd81fe667559b185895c18656a2af9a9",
         "size": 15346
       },
       {
@@ -416,8 +423,8 @@
       {
         "mode": 420,
         "relativePath": "test/engine.test.mjs",
-        "sha256": "sha256:dfa5f3e4bd97b2d9faabbeaafb350ef8db78d9c6755f3022692bc5384dc2b52d",
-        "size": 76316
+        "sha256": "sha256:f6a98dc596a15eae7cc0ddcac7af06499fde1695db6604485a2f441d086f762e",
+        "size": 75757
       },
       {
         "mode": 420,

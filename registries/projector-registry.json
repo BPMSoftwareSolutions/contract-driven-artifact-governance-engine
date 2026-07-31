@@ -13,6 +13,11 @@
       "serialization": "sorted-object-keys-two-space-lf"
     },
     {
+      "projectorId": "design-decision-record-projector.v1",
+      "authorityType": "canonical-json-value.v1",
+      "serialization": "design-decision-record-markdown-v1-lf"
+    },
+    {
       "projectorId": "deterministic-ontology-documentation-projector.v1",
       "authorityType": "canonical-json-value.v1",
       "serialization": "closed-ontology-reference-markdown-v1-lf"

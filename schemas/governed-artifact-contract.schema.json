@@ -12,6 +12,7 @@
     "conformance",
     "contract",
     "dependencies",
+    "designAuthority",
     "effects",
     "exclusions",
     "interpretationBase",
@@ -88,6 +89,9 @@
     },
     "lineage": {
       "$ref": "#/$defs/canonicalLineage"
+    },
+    "designAuthority": {
+      "$ref": "#/$defs/conversationDesignAuthority"
     }
   },
   "$defs": {
@@ -1695,6 +1699,121 @@
               },
               "artifactId": {
                 "$ref": "#/$defs/identifier"
+              }
+            }
+          }
+        }
+      }
+    },
+    "conversationDesignAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityType",
+        "conversationDigest",
+        "decisions",
+        "deviations",
+        "tieOut"
+      ],
+      "properties": {
+        "authorityType": {
+          "const": "conversation-design-authority.v1"
+        },
+        "conversationDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "decisions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "decisionId",
+              "source",
+              "statement",
+              "disposition"
+            ],
+            "properties": {
+              "decisionId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "statement": {
+                "type": "string",
+                "minLength": 1
+              },
+              "disposition": {
+                "enum": [
+                  "accepted",
+                  "deferred",
+                  "modified",
+                  "rejected"
+                ]
+              }
+            }
+          }
+        },
+        "deviations": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "decisionId",
+              "proposed",
+              "implemented",
+              "reason",
+              "impact"
+            ],
+            "properties": {
+              "decisionId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "proposed": {
+                "type": "string",
+                "minLength": 1
+              },
+              "implemented": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "impact": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "tieOut": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "decisionId",
+              "artifactIds"
+            ],
+            "properties": {
+              "decisionId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "artifactIds": {
+                "type": "array",
+                "maxItems": 64,
+                "items": {
+                  "$ref": "#/$defs/identifier"
+                }
               }
             }
           }

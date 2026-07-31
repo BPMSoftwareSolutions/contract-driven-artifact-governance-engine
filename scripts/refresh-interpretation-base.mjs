@@ -20,7 +20,7 @@ const sortKeys = (value) =>
       : value;
 
 const enginePath = "lib/governed-artifact-engine.mjs";
-const profilePath = "profiles/closed-world-artifact-conformance.v7.json";
+const profilePath = "profiles/closed-world-artifact-conformance.v8.json";
 const schemaPath = "schemas/governed-artifact-contract.schema.json";
 const registryPath = "registries/migration-registry.json";
 const contractPath = "examples/governed-message-artifact-family.contract.json";

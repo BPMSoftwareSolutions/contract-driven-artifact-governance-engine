@@ -619,6 +619,10 @@ test("multi-observation primitive migration is admitted without schema churn", (
       "sha256:45521912c2c6849ae6f0e7b66e14d49a711706e03650780ef1fc43b29487c95c";
     delete contract.workspace.pathExceptions;
     delete contract.lineage;
+    delete contract.designAuthority;
+    contract.artifacts = contract.artifacts.filter(
+      (artifact) => artifact.artifactId !== "design-decision-record.v1"
+    );
     // A 1.9 contract predates both the lineage spine and the sealed projector.
     for (const artifact of contract.artifacts) {
       if (
@@ -893,8 +897,8 @@ test("the complete closed loop projects, evaluates, and writes deterministic tru
   );
   assert.equal(first.trustPosture, "CONFORMS");
   assert.equal(first.trustDisposition, "TRUSTED");
-  assert.equal(first.artifactFamily.declaredArtifactCount, 9);
-  assert.equal(first.artifactFamily.observedArtifactCount, 9);
+  assert.equal(first.artifactFamily.declaredArtifactCount, 10);
+  assert.equal(first.artifactFamily.observedArtifactCount, 10);
 
   const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
   const profile = JSON.parse(
@@ -2351,10 +2355,11 @@ test("the published surface uses only governed-artifact language", () => {
   }
   // The canonical lineage spine makes this word first-class engine vocabulary:
   // project, feature, scenario, obligation, responsibility, projection, body.
+  // The design-authority spine makes this word first-class engine vocabulary:
+  // conversation, decision record, implementation, conformance.
   const disallowedWords = [
     ["cap", "ability"].join(""),
     ["con", "veyor"].join(""),
-    ["implemen", "tation"].join(""),
     ["gene", "rator"].join(""),
     ["pa", "ss"].join("")
   ];
@@ -2534,4 +2539,76 @@ test("source scanning terminates on text that is not admitted source", () => {
     () => sourceTokens("const admitted = 1;\n", "markdown"),
     /Source language is not admitted: markdown/
   );
+});
+
+test("no architectural interpretation may remain undocumented", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const baseline = copyContract(workspacePath, () => {});
+  projectArtifactFamily({ contractPath: baseline, workspacePath, mode: "write" });
+  const admitted = evaluateConformance({ contractPath: baseline, workspacePath });
+  assert.equal(admitted.trustPosture, "CONFORMS");
+  assert.equal(
+    admitted.artifactFamily.designAuthorityDisposition,
+    "DESIGN_AUTHORITY_CLOSED"
+  );
+  const design = admitted.artifactFamily.designAuthority;
+  assert.match(design.conversationDigest, /^sha256:[a-f0-9]{64}$/);
+  assert.match(design.decisionRecordDigest, /^sha256:[a-f0-9]{64}$/);
+  assert.match(design.tieOutDigest, /^sha256:[a-f0-9]{64}$/);
+  assert.match(design.implementationDigest, /^sha256:[a-f0-9]{64}$/);
+  assert.match(design.designLineageSha256, /^sha256:[a-f0-9]{64}$/);
+  assert.equal(design.dispositionCounts.deferred > 0, true);
+
+  for (const [findingId, mutate] of [
+    [
+      "DESIGN_DEVIATION_UNDOCUMENTED",
+      (contract) => {
+        contract.designAuthority.deviations = [];
+      }
+    ],
+    [
+      "DESIGN_DECISION_NOT_IMPLEMENTED",
+      (contract) => {
+        contract.designAuthority.tieOut =
+          contract.designAuthority.tieOut.filter(
+            (entry) => entry.decisionId !== "seal-executable-lineage"
+          );
+      }
+    ],
+    [
+      "DESIGN_TIE_OUT_UNRESOLVED",
+      (contract) => {
+        contract.designAuthority.tieOut[0].artifactIds = ["not-an-artifact.v1"];
+      }
+    ],
+    [
+      "DESIGN_DEVIATION_UNEXPECTED",
+      (contract) => {
+        contract.designAuthority.decisions.find(
+          (decision) => decision.decisionId === "shebang-placement"
+        ).disposition = "accepted";
+      }
+    ],
+    [
+      "DESIGN_DECISION_DUPLICATE",
+      (contract) => {
+        contract.designAuthority.decisions.push(
+          structuredClone(contract.designAuthority.decisions[0])
+        );
+      }
+    ]
+  ]) {
+    const brokenPath = copyContract(workspacePath, mutate);
+    const broken = evaluateConformance({
+      contractPath: brokenPath,
+      workspacePath
+    });
+    const observed = broken.findings ?? broken.artifactFamily?.findings ?? [];
+    assert.equal(
+      observed.some((finding) => finding.findingId === findingId),
+      true,
+      `${findingId}: ${JSON.stringify(observed.map((f) => f.findingId))}`
+    );
+    assert.equal(broken.trustDisposition, "REJECTED", findingId);
+  }
 });

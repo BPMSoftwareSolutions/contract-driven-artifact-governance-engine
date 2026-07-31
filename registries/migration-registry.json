@@ -374,15 +374,15 @@
       "sourceSchemaDigest": "sha256:f6623e179f8ec44b57b0ded2b845afecd28944ca2f87cce642a2eeaebe41ab10",
       "targetInterpretationBase": {
         "conformanceProfile": {
-          "digest": "sha256:8a6452d2f7c6d1b9b9182cdce95bd547f557c549973f51c25003379b54a45713",
-          "identity": "closed-world-artifact-conformance.v7"
+          "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+          "identity": "closed-world-artifact-conformance.v8"
         },
         "engine": {
-          "digest": "sha256:de1a4d86313058b75f80c63f678a6b2f1b6048830d56dcee66fce70b7205047b",
-          "identity": "governed-artifact-engine.0.16.0"
+          "digest": "sha256:8bbad41c2a4ad35fe81d2cd67d731aca4d0a8c31d1803324faf52c57d8ef14e8",
+          "identity": "governed-artifact-engine.0.17.0"
         }
       },
-      "targetSchemaDigest": "sha256:93e112836bcadd4620733a11e88c0e24819731ab6d80c4b408838c2d85ae4ac7",
+      "targetSchemaDigest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
       "transformedAuthorities": [
         "canonical-lineage",
         "contract-version",

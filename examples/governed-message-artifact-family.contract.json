@@ -466,7 +466,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:e9a1971bf7abce2532e4de2b8c0ced389859969368d5a7b29c87345590ab1d0d",
+        "contentSha256": "sha256:759fa51f43e4aa5c3da01bd78fbcc0dcb89f8e4f4123f39f0afb4f24fd48b904",
         "expectedByteLength": 1202,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1073,7 +1073,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:451d63dfb945b37001b7dff728031cc00fabf4b7968d80c1effdb7355ebb4757",
+        "contentSha256": "sha256:e7100cfbea5f3d67ac909f0fb4d5e9df3f5e151285dab85414339d5aa06e8c59",
         "expectedByteLength": 1025,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1651,7 +1651,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:d97f167c603b4cd46fca23934fc12c65cc949473f2cd05dff38f24f4148c9492",
+        "contentSha256": "sha256:b11aa28e55b6980d3ccdc1966fae2f20ac5c5603ad585ebf41a201165eedb83f",
         "expectedByteLength": 1141,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1901,8 +1901,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:a106cdf0d8275b67d55427f798f0d561dedfa8babe20ef760af561df22415cfc",
-        "expectedByteLength": 23628,
+        "contentSha256": "sha256:ed949130b287706aa8cde33a329ded67c4126598b61d9a141d18fc900d26396b",
+        "expectedByteLength": 24512,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -2016,6 +2016,37 @@
         }
       ],
       "relativePath": "package.json"
+    },
+    {
+      "artifactId": "design-decision-record.v1",
+      "artifactKind": "markdown-document",
+      "mediaType": "text/markdown",
+      "projection": {
+        "authority": {
+          "authorityType": "canonical-json-value.v1",
+          "value": {
+            "recordType": "design-decision-record.v1",
+            "title": "Cryptographic lineage from canonical intent through executable projection"
+          }
+        },
+        "authorityId": "design-decision-record-authority.v1",
+        "projectorId": "design-decision-record-projector.v1"
+      },
+      "proof": {
+        "contentSha256": "sha256:08a47d309df7366c5029923d3da8a1e4e0ee15f2eb1fe8ca330e837a1a4d5f9e",
+        "expectedByteLength": 4093,
+        "verifierIds": [
+          "content-digest-verifier.v1"
+        ]
+      },
+      "purpose": "Projects the governed design decision record derived from the authorizing conversation.",
+      "relationships": [
+        {
+          "artifactId": "closed-loop-diagram.v1",
+          "relationshipType": "documents"
+        }
+      ],
+      "relativePath": "architecture/decisions/cryptographic-lineage.md"
     }
   ],
   "claims": [
@@ -2161,6 +2192,200 @@
       ]
     }
   ],
+  "designAuthority": {
+    "authorityType": "conversation-design-authority.v1",
+    "conversationDigest": "sha256:ace83903d95c7921f8ccaef2165aafcb7619374751db4fc9995642fb4f9728b6",
+    "decisions": [
+      {
+        "decisionId": "seal-executable-lineage",
+        "disposition": "accepted",
+        "source": "Strong invariant",
+        "statement": "Every executable artifact carries a cryptographic commitment to project, feature, scenario, obligation, responsibility, semantic authority, projection authority, projector implementation, and executable bytes."
+      },
+      {
+        "decisionId": "body-is-proof-surface",
+        "disposition": "accepted",
+        "source": "The executable becomes the proof surface",
+        "statement": "The projected body carries the commitment inline rather than in a separate lineage document."
+      },
+      {
+        "decisionId": "canonical-lineage-subject",
+        "disposition": "accepted",
+        "source": "Canonical lineage hash",
+        "statement": "The lineage commitment is computed from a canonicalized subject with a per-node digest, not from loose strings."
+      },
+      {
+        "decisionId": "three-part-provenance-bind",
+        "disposition": "accepted",
+        "source": "Canonical lineage hash",
+        "statement": "artifact-provenance-sha256 = hash(lineage-sha256 + body-sha256 + projector-implementation-sha256)."
+      },
+      {
+        "decisionId": "cryptographic-not-encryption",
+        "disposition": "accepted",
+        "source": "One important terminology correction",
+        "statement": "The mechanism is cryptographic commitment and tamper evidence, never encryption."
+      },
+      {
+        "decisionId": "break-the-chain-cases",
+        "disposition": "accepted",
+        "source": "What this proves",
+        "statement": "Changing the scenario, the body, the projector, or the semantic authority must each break the commitment."
+      },
+      {
+        "decisionId": "design-authority-is-governed",
+        "disposition": "accepted",
+        "source": "I would actually add this to the contract",
+        "statement": "The conversation becomes a governed artifact: conversationAuthority to designDecisionAuthority to implementationAuthority to conformanceAuthority."
+      },
+      {
+        "decisionId": "decision-tie-out-matrix",
+        "disposition": "accepted",
+        "source": "Decision Tie-Out Matrix",
+        "statement": "Every implemented change maps back to a discussion decision; no implementation exists without a mapped decision."
+      },
+      {
+        "decisionId": "explicit-deviation-report",
+        "disposition": "accepted",
+        "source": "Explicit Deviation Report",
+        "statement": "Every deviation states proposal, implementation, reason, and impact. No silent interpretation."
+      },
+      {
+        "decisionId": "design-lineage-digests",
+        "disposition": "accepted",
+        "source": "Lineage Commitment",
+        "statement": "Conversation, decision record, implementation, and tie-out digests bind the design chain."
+      },
+      {
+        "decisionId": "shebang-placement",
+        "disposition": "modified",
+        "source": "Body header example",
+        "statement": "The seal is written after a shebang rather than above it."
+      },
+      {
+        "decisionId": "semantic-authority-optional",
+        "disposition": "modified",
+        "source": "Canonical lineage hash",
+        "statement": "semanticAuthority is committed as none for bodies that read no semantic authority."
+      },
+      {
+        "decisionId": "feature-slicing",
+        "disposition": "deferred",
+        "source": "Feature slicing becomes natural",
+        "statement": "Query a feature and resolve its scenarios, obligations, responsibilities, bodies, observations, and conformance."
+      },
+      {
+        "decisionId": "replay-engine",
+        "disposition": "deferred",
+        "source": "Replay",
+        "statement": "Resolve every committed authority by digest, reproject, re-execute, and compare, or emit REPLAY_AUTHORITY_UNAVAILABLE."
+      },
+      {
+        "decisionId": "simulation-mode",
+        "disposition": "deferred",
+        "source": "Simulation",
+        "statement": "Execute the semantic authority in simulation before any source projection."
+      },
+      {
+        "decisionId": "receipts-as-secondary-index",
+        "disposition": "deferred",
+        "source": "Receipts should become secondary indexes",
+        "statement": "Receipts shrink to observational records referencing artifactProvenanceSha256."
+      }
+    ],
+    "deviations": [
+      {
+        "decisionId": "shebang-placement",
+        "impact": "Command bodies carry the identical seal one line lower; the sealed payload digest is unchanged.",
+        "implemented": "A shebang line is preserved as line 1 and the seal follows immediately after it.",
+        "proposed": "The header example places @generated on the first line of the body.",
+        "reason": "A command body whose first line is not #! is not executable by the declared port."
+      },
+      {
+        "decisionId": "semantic-authority-optional",
+        "impact": "Those two body kinds commit to a subject with an explicit absence rather than an invented digest.",
+        "implemented": "The node is null and the header records none when the body reads no semantic authority.",
+        "proposed": "The lineage subject example always carries a semanticAuthority node with an authorityId and digest.",
+        "reason": "Command and verification bodies have no semantic authority to commit to; fabricating one would be a false commitment."
+      }
+    ],
+    "tieOut": [
+      {
+        "artifactIds": [
+          "message-projector.v1",
+          "message-command.v1",
+          "message-verification.v1"
+        ],
+        "decisionId": "seal-executable-lineage"
+      },
+      {
+        "artifactIds": [
+          "message-projector.v1"
+        ],
+        "decisionId": "body-is-proof-surface"
+      },
+      {
+        "artifactIds": [
+          "message-projector.v1"
+        ],
+        "decisionId": "canonical-lineage-subject"
+      },
+      {
+        "artifactIds": [
+          "message-projector.v1"
+        ],
+        "decisionId": "three-part-provenance-bind"
+      },
+      {
+        "artifactIds": [
+          "artifact-family-readme.v1"
+        ],
+        "decisionId": "cryptographic-not-encryption"
+      },
+      {
+        "artifactIds": [
+          "message-projector.v1"
+        ],
+        "decisionId": "break-the-chain-cases"
+      },
+      {
+        "artifactIds": [
+          "design-decision-record.v1"
+        ],
+        "decisionId": "design-authority-is-governed"
+      },
+      {
+        "artifactIds": [
+          "design-decision-record.v1"
+        ],
+        "decisionId": "decision-tie-out-matrix"
+      },
+      {
+        "artifactIds": [
+          "design-decision-record.v1"
+        ],
+        "decisionId": "explicit-deviation-report"
+      },
+      {
+        "artifactIds": [
+          "design-decision-record.v1"
+        ],
+        "decisionId": "design-lineage-digests"
+      },
+      {
+        "artifactIds": [
+          "message-command.v1"
+        ],
+        "decisionId": "shebang-placement"
+      },
+      {
+        "artifactIds": [
+          "message-command.v1"
+        ],
+        "decisionId": "semantic-authority-optional"
+      }
+    ]
+  },
   "effects": [
     {
       "authority": {
@@ -2194,23 +2419,23 @@
   ],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:8a6452d2f7c6d1b9b9182cdce95bd547f557c549973f51c25003379b54a45713",
-      "identity": "closed-world-artifact-conformance.v7"
+      "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+      "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:de1a4d86313058b75f80c63f678a6b2f1b6048830d56dcee66fce70b7205047b",
-      "identity": "governed-artifact-engine.0.16.0"
+      "digest": "sha256:8bbad41c2a4ad35fe81d2cd67d731aca4d0a8c31d1803324faf52c57d8ef14e8",
+      "identity": "governed-artifact-engine.0.17.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:bbfb9e0a9d5934f54fe52522a44e9968fd81fe667559b185895c18656a2af9a9",
+      "digest": "sha256:a58c3ae89b1f706e2d2878aa7d0c34f448c5d071db757d98a5036575b470eadd",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
-      "digest": "sha256:db70d2de54b5685666c133db9f4059e32b821c0aba1a626e1c72dfcd2fbe9685",
+      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {
-      "digest": "sha256:93e112836bcadd4620733a11e88c0e24819731ab6d80c4b408838c2d85ae4ac7",
+      "digest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
       "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
     },
     "verifierRegistry": {

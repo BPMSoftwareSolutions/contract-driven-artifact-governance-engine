@@ -1,0 +1,1124 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "provider-normalization.bundle.v1",
+  "ontologyId": "provider-response-normalization",
+  "inputConceptId": "provider-response",
+  "semanticLayer": {
+    "concepts": [
+      {
+        "conceptId": "provider-response",
+        "conceptType": "domain-entity",
+        "isA": [],
+        "abstract": true
+      },
+      {
+        "conceptId": "openai-response",
+        "conceptType": "response-variant",
+        "isA": [
+          "provider-response"
+        ],
+        "abstract": false,
+        "schemaId": "openai-response.schema.v1"
+      },
+      {
+        "conceptId": "gemini-response",
+        "conceptType": "response-variant",
+        "isA": [
+          "provider-response"
+        ],
+        "abstract": false,
+        "schemaId": "gemini-response.schema.v1"
+      },
+      {
+        "conceptId": "llamacpp-response",
+        "conceptType": "response-variant",
+        "isA": [
+          "provider-response"
+        ],
+        "abstract": false,
+        "schemaId": "llamacpp-response.schema.v1"
+      },
+      {
+        "conceptId": "provider-variant-id",
+        "conceptType": "classification",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "provider-variant-id.schema.v1"
+      },
+      {
+        "conceptId": "raw-finish-reason",
+        "conceptType": "domain-value",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "raw-finish-reason.schema.v1"
+      },
+      {
+        "conceptId": "canonical-finish-reason",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "canonical-finish-reason.schema.v1"
+      },
+      {
+        "conceptId": "stop-flag",
+        "conceptType": "observed-state",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "stop-flag.schema.v1"
+      },
+      {
+        "conceptId": "response-content",
+        "conceptType": "domain-value",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "response-content.schema.v1"
+      },
+      {
+        "conceptId": "presence-state",
+        "conceptType": "classification",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "presence-state.schema.v1"
+      },
+      {
+        "conceptId": "obligation-status",
+        "conceptType": "signal",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "obligation-status.schema.v1"
+      },
+      {
+        "conceptId": "result-status",
+        "conceptType": "result-discriminator",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "result-status.schema.v1"
+      },
+      {
+        "conceptId": "provider-name",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "provider-name.schema.v1"
+      },
+      {
+        "conceptId": "normalized-result-type",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "normalized-result-type.schema.v1"
+      },
+      {
+        "conceptId": "normalization-failure-code",
+        "conceptType": "disposition",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "normalization-failure-code.schema.v1"
+      },
+      {
+        "conceptId": "normalized-response",
+        "conceptType": "result-union",
+        "isA": [],
+        "abstract": true
+      },
+      {
+        "conceptId": "normalized-success",
+        "conceptType": "result",
+        "isA": [
+          "normalized-response"
+        ],
+        "abstract": false,
+        "schemaId": "normalized-success.schema.v1"
+      },
+      {
+        "conceptId": "normalized-failure",
+        "conceptType": "result",
+        "isA": [
+          "normalized-response"
+        ],
+        "abstract": false,
+        "schemaId": "normalized-failure.schema.v1"
+      }
+    ],
+    "relations": [
+      {
+        "relationId": "provider-normalizes-to-response",
+        "relationType": "normalizes-to",
+        "subjectConceptId": "provider-response",
+        "objectConceptId": "normalized-response",
+        "cardinality": "exactly-one"
+      },
+      {
+        "relationId": "finish-reason-translates-to-canonical",
+        "relationType": "translates-to",
+        "subjectConceptId": "raw-finish-reason",
+        "objectConceptId": "canonical-finish-reason",
+        "cardinality": "exactly-one"
+      },
+      {
+        "relationId": "result-type-projects-as-result-type",
+        "relationType": "projects-as",
+        "subjectConceptId": "normalized-result-type",
+        "objectConceptId": "normalized-result-type",
+        "cardinality": "exactly-one"
+      },
+      {
+        "relationId": "provider-name-projects-as-provider-name",
+        "relationType": "projects-as",
+        "subjectConceptId": "provider-name",
+        "objectConceptId": "provider-name",
+        "cardinality": "exactly-one"
+      },
+      {
+        "relationId": "response-content-projects-as-response-content",
+        "relationType": "projects-as",
+        "subjectConceptId": "response-content",
+        "objectConceptId": "response-content",
+        "cardinality": "exactly-one"
+      },
+      {
+        "relationId": "finish-reason-projects-as-finish-reason",
+        "relationType": "projects-as",
+        "subjectConceptId": "canonical-finish-reason",
+        "objectConceptId": "canonical-finish-reason",
+        "cardinality": "exactly-one"
+      },
+      {
+        "relationId": "failure-code-projects-as-failure-code",
+        "relationType": "projects-as",
+        "subjectConceptId": "normalization-failure-code",
+        "objectConceptId": "normalization-failure-code",
+        "cardinality": "exactly-one"
+      }
+    ],
+    "properties": [
+      {
+        "propertyId": "response-content-property",
+        "propertyKind": "observed",
+        "subjectConceptId": "provider-response",
+        "valueConceptId": "response-content",
+        "cardinality": "zero-or-one",
+        "resolutions": [
+          {
+            "subjectVariantConceptId": "openai-response",
+            "path": [
+              "choices",
+              0,
+              "message",
+              "content"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "gemini-response",
+            "path": [
+              "candidates",
+              0,
+              "content",
+              "parts",
+              0,
+              "text"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "llamacpp-response",
+            "path": [
+              "content"
+            ]
+          }
+        ]
+      },
+      {
+        "propertyId": "raw-finish-reason-property",
+        "propertyKind": "observed",
+        "subjectConceptId": "provider-response",
+        "valueConceptId": "raw-finish-reason",
+        "cardinality": "zero-or-one",
+        "resolutions": [
+          {
+            "subjectVariantConceptId": "openai-response",
+            "path": [
+              "choices",
+              0,
+              "finish_reason"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "gemini-response",
+            "path": [
+              "candidates",
+              0,
+              "finishReason"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "llamacpp-response",
+            "path": [
+              "stop_reason"
+            ]
+          }
+        ]
+      },
+      {
+        "propertyId": "stopped-eos-property",
+        "propertyKind": "observed",
+        "subjectConceptId": "provider-response",
+        "valueConceptId": "stop-flag",
+        "cardinality": "zero-or-one",
+        "resolutions": [
+          {
+            "subjectVariantConceptId": "openai-response",
+            "path": [
+              "stopped_eos"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "gemini-response",
+            "path": [
+              "stopped_eos"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "llamacpp-response",
+            "path": [
+              "stopped_eos"
+            ]
+          }
+        ]
+      },
+      {
+        "propertyId": "stopped-limit-property",
+        "propertyKind": "observed",
+        "subjectConceptId": "provider-response",
+        "valueConceptId": "stop-flag",
+        "cardinality": "zero-or-one",
+        "resolutions": [
+          {
+            "subjectVariantConceptId": "openai-response",
+            "path": [
+              "stopped_limit"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "gemini-response",
+            "path": [
+              "stopped_limit"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "llamacpp-response",
+            "path": [
+              "stopped_limit"
+            ]
+          }
+        ]
+      },
+      {
+        "propertyId": "stopped-word-property",
+        "propertyKind": "observed",
+        "subjectConceptId": "provider-response",
+        "valueConceptId": "stop-flag",
+        "cardinality": "zero-or-one",
+        "resolutions": [
+          {
+            "subjectVariantConceptId": "openai-response",
+            "path": [
+              "stopped_word"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "gemini-response",
+            "path": [
+              "stopped_word"
+            ]
+          },
+          {
+            "subjectVariantConceptId": "llamacpp-response",
+            "path": [
+              "stopped_word"
+            ]
+          }
+        ]
+      },
+      {
+        "propertyId": "canonical-result-type",
+        "propertyKind": "projected",
+        "subjectConceptId": "normalized-response",
+        "valueConceptId": "normalized-result-type",
+        "cardinality": "exactly-one",
+        "resolutions": []
+      },
+      {
+        "propertyId": "canonical-status",
+        "propertyKind": "projected",
+        "subjectConceptId": "normalized-response",
+        "valueConceptId": "result-status",
+        "cardinality": "exactly-one",
+        "resolutions": []
+      },
+      {
+        "propertyId": "canonical-provider",
+        "propertyKind": "projected",
+        "subjectConceptId": "normalized-response",
+        "valueConceptId": "provider-name",
+        "cardinality": "exactly-one",
+        "resolutions": []
+      },
+      {
+        "propertyId": "canonical-content",
+        "propertyKind": "projected",
+        "subjectConceptId": "normalized-response",
+        "valueConceptId": "response-content",
+        "cardinality": "exactly-one",
+        "resolutions": []
+      },
+      {
+        "propertyId": "canonical-finish-reason-property",
+        "propertyKind": "projected",
+        "subjectConceptId": "normalized-response",
+        "valueConceptId": "canonical-finish-reason",
+        "cardinality": "exactly-one",
+        "resolutions": []
+      },
+      {
+        "propertyId": "canonical-failure-code",
+        "propertyKind": "projected",
+        "subjectConceptId": "normalized-response",
+        "valueConceptId": "normalization-failure-code",
+        "cardinality": "exactly-one",
+        "resolutions": []
+      }
+    ],
+    "facts": [
+      {
+        "factId": "normalized-result-type-fact",
+        "conceptId": "normalized-result-type",
+        "value": {
+          "type": "string",
+          "value": "normalized-response"
+        }
+      },
+      {
+        "factId": "missing-content-failure-fact",
+        "conceptId": "normalization-failure-code",
+        "value": {
+          "type": "string",
+          "value": "RESPONSE_CONTENT_MISSING"
+        }
+      }
+    ]
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "classify-provider-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "provider-response",
+        "resultConceptId": "provider-variant-id",
+        "variants": [
+          "openai-response",
+          "gemini-response",
+          "llamacpp-response"
+        ],
+        "noMatchDisposition": "UNSUPPORTED_RESPONSE_VARIANT",
+        "multipleMatchDisposition": "AMBIGUOUS_RESPONSE_VARIANT"
+      },
+      {
+        "classificationId": "classify-content-state",
+        "classificationType": "property-state",
+        "propertyId": "response-content-property",
+        "resultConceptId": "presence-state",
+        "expectedValueType": "string",
+        "emptyStringState": "empty-string",
+        "states": [
+          "missing",
+          "null",
+          "empty-string",
+          "invalid-type",
+          "present"
+        ]
+      },
+      {
+        "classificationId": "classify-completion-state",
+        "classificationType": "multi-observation",
+        "subjectConceptId": "provider-response",
+        "resultConceptId": "canonical-finish-reason",
+        "observations": [
+          {
+            "inputPort": "finish-reason",
+            "propertyId": "raw-finish-reason-property"
+          },
+          {
+            "inputPort": "stopped-eos",
+            "propertyId": "stopped-eos-property"
+          },
+          {
+            "inputPort": "stopped-limit",
+            "propertyId": "stopped-limit-property"
+          },
+          {
+            "inputPort": "stopped-word",
+            "propertyId": "stopped-word-property"
+          }
+        ],
+        "cases": [
+          {
+            "caseId": "openai-stop-completed",
+            "when": [
+              {
+                "inputPort": "finish-reason",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "string",
+                    "value": "stop"
+                  }
+                }
+              }
+            ],
+            "emit": {
+              "type": "string",
+              "value": "completed"
+            }
+          },
+          {
+            "caseId": "openai-length-limited",
+            "when": [
+              {
+                "inputPort": "finish-reason",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "string",
+                    "value": "length"
+                  }
+                }
+              }
+            ],
+            "emit": {
+              "type": "string",
+              "value": "max-output-reached"
+            }
+          },
+          {
+            "caseId": "gemini-stop-completed",
+            "when": [
+              {
+                "inputPort": "finish-reason",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "string",
+                    "value": "STOP"
+                  }
+                }
+              }
+            ],
+            "emit": {
+              "type": "string",
+              "value": "completed"
+            }
+          },
+          {
+            "caseId": "gemini-max-tokens-limited",
+            "when": [
+              {
+                "inputPort": "finish-reason",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "string",
+                    "value": "MAX_TOKENS"
+                  }
+                }
+              }
+            ],
+            "emit": {
+              "type": "string",
+              "value": "max-output-reached"
+            }
+          },
+          {
+            "caseId": "llamacpp-eos-completed",
+            "when": [
+              {
+                "inputPort": "stopped-eos",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              }
+            ],
+            "emit": {
+              "type": "string",
+              "value": "completed"
+            }
+          },
+          {
+            "caseId": "llamacpp-limit-reached",
+            "when": [
+              {
+                "inputPort": "stopped-limit",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              }
+            ],
+            "emit": {
+              "type": "string",
+              "value": "max-output-reached"
+            }
+          },
+          {
+            "caseId": "llamacpp-stop-word",
+            "when": [
+              {
+                "inputPort": "stopped-word",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              }
+            ],
+            "emit": {
+              "type": "string",
+              "value": "user-stop"
+            }
+          }
+        ],
+        "noMatchDisposition": "UNKNOWN_COMPLETION_STATE",
+        "multipleMatchDisposition": "AMBIGUOUS_COMPLETION_STATE"
+      }
+    ],
+    "constraints": [
+      {
+        "constraintId": "one-provider-variant",
+        "constraintType": "exactly-one-variant",
+        "subjectAuthorityIds": [
+          "classify-provider-variant"
+        ],
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED"
+      },
+      {
+        "constraintId": "content-obligation-total",
+        "constraintType": "obligation-total",
+        "subjectAuthorityIds": [
+          "usable-content-obligation"
+        ],
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED"
+      },
+      {
+        "constraintId": "completion-classification-total",
+        "constraintType": "classification-total",
+        "subjectAuthorityIds": [
+          "classify-completion-state"
+        ],
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED"
+      },
+      {
+        "constraintId": "result-discrimination-total",
+        "constraintType": "result-discrimination",
+        "subjectAuthorityIds": [
+          "normalization-result"
+        ],
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED"
+      }
+    ],
+    "translations": [
+      {
+        "translationId": "translate-provider-identity",
+        "sourceConceptId": "provider-variant-id",
+        "targetConceptId": "provider-name",
+        "cases": [
+          {
+            "source": {
+              "type": "string",
+              "value": "openai-response"
+            },
+            "target": {
+              "type": "string",
+              "value": "openai"
+            }
+          },
+          {
+            "source": {
+              "type": "string",
+              "value": "gemini-response"
+            },
+            "target": {
+              "type": "string",
+              "value": "gemini"
+            }
+          },
+          {
+            "source": {
+              "type": "string",
+              "value": "llamacpp-response"
+            },
+            "target": {
+              "type": "string",
+              "value": "llama.cpp"
+            }
+          }
+        ],
+        "unmappedDisposition": "UNKNOWN_PROVIDER_IDENTITY"
+      }
+    ],
+    "obligations": [
+      {
+        "obligationId": "usable-content-obligation",
+        "subjectConceptId": "provider-response",
+        "classificationId": "classify-content-state",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": [
+          "present"
+        ],
+        "failureDisposition": "RESPONSE_CONTENT_MISSING"
+      }
+    ],
+    "transformations": [
+      {
+        "transformationId": "project-result-type",
+        "relationId": "result-type-projects-as-result-type",
+        "sourceAuthorityId": "normalized-result-type-fact",
+        "targetPropertyId": "canonical-result-type",
+        "outputPath": [
+          "resultType"
+        ],
+        "valueConceptId": "normalized-result-type",
+        "resultIds": [
+          "normalization-success",
+          "normalization-failure"
+        ],
+        "unavailableDisposition": "RESULT_TYPE_UNAVAILABLE",
+        "invalidTypeDisposition": "RESULT_TYPE_INVALID"
+      },
+      {
+        "transformationId": "project-provider",
+        "relationId": "provider-name-projects-as-provider-name",
+        "sourceAuthorityId": "translate-provider-identity",
+        "targetPropertyId": "canonical-provider",
+        "outputPath": [
+          "provider"
+        ],
+        "valueConceptId": "provider-name",
+        "resultIds": [
+          "normalization-success",
+          "normalization-failure"
+        ],
+        "unavailableDisposition": "PROVIDER_UNAVAILABLE",
+        "invalidTypeDisposition": "PROVIDER_INVALID"
+      },
+      {
+        "transformationId": "project-content",
+        "relationId": "response-content-projects-as-response-content",
+        "sourceAuthorityId": "response-content-property",
+        "targetPropertyId": "canonical-content",
+        "outputPath": [
+          "content"
+        ],
+        "valueConceptId": "response-content",
+        "resultIds": [
+          "normalization-success"
+        ],
+        "unavailableDisposition": "RESPONSE_CONTENT_MISSING",
+        "invalidTypeDisposition": "RESPONSE_CONTENT_INVALID"
+      },
+      {
+        "transformationId": "project-finish-reason",
+        "relationId": "finish-reason-projects-as-finish-reason",
+        "sourceAuthorityId": "classify-completion-state",
+        "targetPropertyId": "canonical-finish-reason-property",
+        "outputPath": [
+          "finishReason"
+        ],
+        "valueConceptId": "canonical-finish-reason",
+        "resultIds": [
+          "normalization-success"
+        ],
+        "unavailableDisposition": "FINISH_REASON_UNAVAILABLE",
+        "invalidTypeDisposition": "FINISH_REASON_INVALID"
+      },
+      {
+        "transformationId": "project-failure-code",
+        "relationId": "failure-code-projects-as-failure-code",
+        "sourceAuthorityId": "missing-content-failure-fact",
+        "targetPropertyId": "canonical-failure-code",
+        "outputPath": [
+          "failure",
+          "code"
+        ],
+        "valueConceptId": "normalization-failure-code",
+        "resultIds": [
+          "normalization-failure"
+        ],
+        "unavailableDisposition": "FAILURE_CODE_UNAVAILABLE",
+        "invalidTypeDisposition": "FAILURE_CODE_INVALID"
+      }
+    ],
+    "results": [
+      {
+        "resultUnionId": "normalization-result",
+        "resultTypeConceptId": "normalized-response",
+        "members": [
+          {
+            "resultId": "normalization-success",
+            "conceptId": "normalized-success",
+            "discriminator": {
+              "propertyId": "canonical-status",
+              "outputPath": [
+                "status"
+              ],
+              "value": {
+                "type": "string",
+                "value": "success"
+              }
+            }
+          },
+          {
+            "resultId": "normalization-failure",
+            "conceptId": "normalized-failure",
+            "discriminator": {
+              "propertyId": "canonical-status",
+              "outputPath": [
+                "status"
+              ],
+              "value": {
+                "type": "string",
+                "value": "failure"
+              }
+            }
+          }
+        ],
+        "selectionRules": [
+          {
+            "ruleId": "content-satisfied",
+            "when": [
+              {
+                "inputPort": "contentObligation",
+                "obligationId": "usable-content-obligation",
+                "status": "satisfied"
+              }
+            ],
+            "resultId": "normalization-success"
+          },
+          {
+            "ruleId": "content-violated",
+            "when": [
+              {
+                "inputPort": "contentObligation",
+                "obligationId": "usable-content-obligation",
+                "status": "violated"
+              }
+            ],
+            "resultId": "normalization-failure"
+          }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "NORMALIZATION_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ]
+  },
+  "context": {
+    "schemas": [
+      {
+        "schemaId": "openai-response.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "model",
+            "choices"
+          ],
+          "properties": {
+            "model": {
+              "type": "string"
+            },
+            "choices": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "required": [
+                  "message",
+                  "finish_reason"
+                ],
+                "properties": {
+                  "message": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "finish_reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "schemaId": "gemini-response.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "modelVersion",
+            "candidates"
+          ],
+          "properties": {
+            "modelVersion": {
+              "type": "string"
+            },
+            "candidates": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "required": [
+                  "content",
+                  "finishReason"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "finishReason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "schemaId": "llamacpp-response.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "model",
+            "content",
+            "stopped_eos",
+            "stopped_limit",
+            "stopped_word"
+          ],
+          "properties": {
+            "model": {
+              "type": "string"
+            },
+            "content": {},
+            "stopped_eos": {
+              "type": "boolean"
+            },
+            "stopped_limit": {
+              "type": "boolean"
+            },
+            "stopped_word": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      {
+        "schemaId": "provider-variant-id.schema.v1",
+        "value": {
+          "type": "string",
+          "enum": [
+            "openai-response",
+            "gemini-response",
+            "llamacpp-response"
+          ]
+        }
+      },
+      {
+        "schemaId": "raw-finish-reason.schema.v1",
+        "value": {
+          "type": "string"
+        }
+      },
+      {
+        "schemaId": "canonical-finish-reason.schema.v1",
+        "value": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "max-output-reached",
+            "user-stop"
+          ]
+        }
+      },
+      {
+        "schemaId": "stop-flag.schema.v1",
+        "value": {
+          "type": "boolean"
+        }
+      },
+      {
+        "schemaId": "response-content.schema.v1",
+        "value": {
+          "type": "string"
+        }
+      },
+      {
+        "schemaId": "presence-state.schema.v1",
+        "value": {
+          "type": "string",
+          "enum": [
+            "missing",
+            "null",
+            "empty-string",
+            "invalid-type",
+            "present"
+          ]
+        }
+      },
+      {
+        "schemaId": "obligation-status.schema.v1",
+        "value": {
+          "type": "string",
+          "enum": [
+            "satisfied",
+            "violated"
+          ]
+        }
+      },
+      {
+        "schemaId": "result-status.schema.v1",
+        "value": {
+          "type": "string",
+          "enum": [
+            "success",
+            "failure"
+          ]
+        }
+      },
+      {
+        "schemaId": "provider-name.schema.v1",
+        "value": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "gemini",
+            "llama.cpp"
+          ]
+        }
+      },
+      {
+        "schemaId": "normalized-result-type.schema.v1",
+        "value": {
+          "type": "string",
+          "const": "normalized-response"
+        }
+      },
+      {
+        "schemaId": "normalization-failure-code.schema.v1",
+        "value": {
+          "type": "string",
+          "const": "RESPONSE_CONTENT_MISSING"
+        }
+      },
+      {
+        "schemaId": "normalized-success.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "resultType",
+            "status",
+            "provider",
+            "content",
+            "finishReason"
+          ],
+          "properties": {
+            "resultType": {
+              "const": "normalized-response"
+            },
+            "status": {
+              "const": "success"
+            },
+            "provider": {
+              "enum": [
+                "openai",
+                "gemini",
+                "llama.cpp"
+              ]
+            },
+            "content": {
+              "type": "string",
+              "minLength": 1
+            },
+            "finishReason": {
+              "enum": [
+                "completed",
+                "max-output-reached",
+                "user-stop"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "schemaId": "normalized-failure.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "resultType",
+            "status",
+            "provider",
+            "failure"
+          ],
+          "properties": {
+            "resultType": {
+              "const": "normalized-response"
+            },
+            "status": {
+              "const": "failure"
+            },
+            "provider": {
+              "enum": [
+                "openai",
+                "gemini",
+                "llama.cpp"
+              ]
+            },
+            "failure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "const": "RESPONSE_CONTENT_MISSING"
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v1",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

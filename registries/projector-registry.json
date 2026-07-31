@@ -3,6 +3,11 @@
   "registryId": "governed-artifact-projector-registry.v1",
   "projectors": [
     {
+      "projectorId": "bound-semantic-execution-authority-projector.v1",
+      "authorityType": "canonical-json-value.v1",
+      "serialization": "bound-semantic-execution-bundle-canonical-json-v1"
+    },
+    {
       "projectorId": "canonical-json-value-projector.v1",
       "authorityType": "canonical-json-value.v1",
       "serialization": "sorted-object-keys-two-space-lf"

@@ -1898,7 +1898,7 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:d4b6bc7b78af58bab93b8d73ca4efcbc6560a738defd8b5e0fac7f88a16552f4",
+        "contentSha256": "sha256:1189f884b676162406c6254bf5c82fc48ab655ac4397621b399ccfaa36ba0fd4",
         "expectedByteLength": 23213,
         "requiredSections": [
           "# Governed Message Artifact Family",
@@ -2046,7 +2046,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.10.0",
+    "contractVersion": "1.11.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2195,15 +2195,15 @@
       "identity": "closed-world-artifact-conformance.v4"
     },
     "engine": {
-      "digest": "sha256:56db8debeed565a79567d7da0ee73fe859cb0c938fd1dd011ef4b5854bb7b2a0",
-      "identity": "governed-artifact-engine.0.11.0"
+      "digest": "sha256:e5ff7826df704a8cc88b466785c05327073515edfdf237b63568f26c492e9cb4",
+      "identity": "governed-artifact-engine.0.12.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:ca3c897d1be412a33df348f6adf3f53cf5bfd86adb64fe3a6e6b72e52bc492e1",
+      "digest": "sha256:75f4ed2fb2af9a0392e5f2a4396b89fcf3e6655932cae39f9424b35c3b9228e6",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
-      "digest": "sha256:8c03ea9a0167dd35fa7ad58b7d42c4eec5550047429e0fedee2f7990000187ea",
+      "digest": "sha256:4cc7a1af7896f8dc57af8d0ce3a80862fec4621feca654638bf8dbdf2947a1e5",
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {

@@ -357,6 +357,60 @@ ontology bundle. DTO construction, branching, validation, failure selection,
 translation, and serialization therefore remain contract data interpreted by
 the bounded runtime rather than authored mechanics in that body.
 
+## Bound semantic execution authority
+
+A closed ontology bundle also carries execution bindings, an execution graph,
+bound schema digests, proof requirements, and the runtime profile. None of that
+is meaning. It is mechanical assembly, and assembling it by hand — in a builder
+function, a fixture, or hand-written JSON — reintroduces stitching one layer
+below the body.
+
+`bound-semantic-execution-authority.v1` is therefore the authored subject, and
+the bundle is projected from it. The declaration carries meaning only:
+
+```text
+authorityId, ontologyId, inputConceptId
+semanticLayer  concepts, relations, properties, facts
+ontology       classifications, constraints, translations, obligations,
+               transformations, discriminated results
+context        bound schema values and the executor port binding
+```
+
+`bound-semantic-execution-authority-projector.v1` derives the rest:
+
+- one execution binding per semantic authority, from that authority's kind and
+  its exactly admitted runtime primitive;
+- one graph node per binding, and one graph edge per required executor input
+  port, resolved through the same semantic-edge rules that validation enforces;
+- the entry node, the serialized terminal, and the exact proof requirements;
+- the SHA-256 digest of every bound schema; and
+- the digest-bound runtime profile.
+
+Derivation is total or it fails. If declared meaning does not resolve exactly
+one source for an executor input, projection emits
+`SEMANTIC_AUTHORITY_EDGE_UNRESOLVED` or `SEMANTIC_AUTHORITY_EDGE_AMBIGUOUS` and
+refuses. Because the projector and the validator read one primitive vocabulary,
+a projected bundle is closed by construction and is still independently proved
+`ONTOLOGY_AUTHORITY_CLOSED`.
+
+The contract therefore declares the executable semantic subject, the engine
+projects one already-bound bundle, and the body only enters it:
+
+```javascript
+import { executeSemanticAuthority } from
+  "contract-driven-artifact-governance-engine";
+import normalizationOntology from
+  "../contracts/project-message.authority.json" with { type: "json" };
+
+export function projectMessage(value) {
+  return executeSemanticAuthority(normalizationOntology, value);
+}
+```
+
+The body composes nothing. It references one bound authority and forwards one
+runtime value. Replacing the body language replaces only that binding; the
+declared authority is unchanged.
+
 ## Commitment reconciliation
 
 Projected content commitments remain independent contract authority. The same
@@ -426,12 +480,14 @@ produces `RELEASE_AUTHORITY_OPEN`, `RELEASE_BOUNDARY_DRIFT`, and
 
 ## Projectors
 
-The admitted projector registry contains six data-driven projectors:
+The admitted projector registry contains seven data-driven projectors:
 
 - `canonical-json-value-projector.v1` serializes JSON with sorted object keys,
   two-space indentation, UTF-8, and one final LF;
 - `governed-artifact-contract-markdown-projector.v1` renders the structured
   contract authority as a deterministic architecture review document;
+- `bound-semantic-execution-authority-projector.v1` derives the complete bound
+  semantic execution bundle from declared meaning;
 - `deterministic-ontology-schema-projector.v1` projects an exact schema bound
   to a concrete ontology concept;
 - `deterministic-ontology-documentation-projector.v1` renders the closed

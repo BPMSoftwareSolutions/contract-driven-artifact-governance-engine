@@ -34,7 +34,10 @@ import {
   sourceTokens,
   validateContract
 } from "../lib/governed-artifact-engine.mjs";
-import { makeProviderNormalizationOntologyBundle } from "./fixtures/provider-normalization-ontology.mjs";
+import {
+  makeProviderNormalizationOntologyBundle,
+  makeProviderNormalizationSemanticAuthority
+} from "./fixtures/provider-normalization-ontology.mjs";
 import {
   DEFAULT_RELEASE_AUTHORITY_PATH,
   evaluateReleaseBoundary,
@@ -370,7 +373,7 @@ test("historical schemas and digest-to-digest migration authority are durable", 
     registry.schemaCatalog.digest,
     sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
   );
-  assert.equal(registry.migrations.length, 4);
+  assert.equal(registry.migrations.length, 5);
   const edge = registry.migrations[0];
   for (const digest of [
     edge.sourceSchemaDigest,
@@ -933,8 +936,10 @@ test("a contract-projected ontology bundle closes meaning, execution, and a mech
     bundleArtifact.artifactKind = "deterministic-ontology-bundle";
     bundleArtifact.purpose =
       "Projects the complete deterministic provider-response ontology and its bound execution subject.";
+    bundleArtifact.projection.projectorId =
+      "bound-semantic-execution-authority-projector.v1";
     bundleArtifact.projection.authority.value =
-      makeProviderNormalizationOntologyBundle();
+      makeProviderNormalizationSemanticAuthority();
     bundleArtifact.relationships = [];
 
     const projectedSchema = contract.artifacts.find(
@@ -1116,6 +1121,25 @@ test("a contract-projected ontology bundle closes meaning, execution, and a mech
       (check) => check.checkId === "evaluate-semantic-execution-bodies"
     ).disposition,
     "SEMANTIC_EXECUTION_BODY_CLOSED"
+  );
+  const projectedBundle = JSON.parse(
+    readFileSync(
+      path.join(
+        workspacePath,
+        "governed-message-artifact-family",
+        "contracts",
+        "project-message.authority.json"
+      ),
+      "utf8"
+    )
+  );
+  assert.deepEqual(
+    projectedBundle,
+    makeProviderNormalizationOntologyBundle()
+  );
+  assert.equal(
+    projectedBundle.authority.executionGraph.entryNodeId,
+    "node.input.provider-response"
   );
   const projectedBodyPath = path.join(
     workspacePath,

@@ -1,12 +1,12 @@
 {
   "archive": {
-    "entryCount": 30,
-    "fileName": "contract-driven-artifact-governance-engine-0.11.0.tgz",
-    "integrity": "sha512-Ee8ks0Z0096taFwjquHAiK2k9tCWMEA3UyYgS1unEdG7+Su3zExiM3JnyPNaKbV0FC7vo28FqrnYjEq0ZzBUQA==",
-    "sha256": "sha256:6684cffed8620bdd48bd7326508d58e9cd32d2326f9974bdeafa91d93270cd67",
-    "shasum": "050a9cafd7229feff50a8fb933be7bb842eeb653",
-    "size": 136314,
-    "unpackedSize": 946906
+    "entryCount": 33,
+    "fileName": "contract-driven-artifact-governance-engine-0.12.0.tgz",
+    "integrity": "sha512-Yb1Bd6jxNQ20zRjdZRZL2sGcYGCGTkAnMjXIy/IPdQmd8Jg0aIfqZPxJ4VW746zlmITX+zUuutAOlcY3v7Vf3w==",
+    "sha256": "sha256:379ce34dccef68482de5c9f9735c9accad01468273225f3ce744e0a8b1a96c9d",
+    "shasum": "0c7e7e266cdf14b46735dfb1da8ac670719dd9ea",
+    "size": 140155,
+    "unpackedSize": 977252
   },
   "authorityClosure": {
     "admission": {
@@ -64,9 +64,16 @@
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.11.0.tgz",
         "releaseVersion": "0.11.0",
-        "role": "current",
+        "role": "historical",
         "sha256": "sha256:6684cffed8620bdd48bd7326508d58e9cd32d2326f9974bdeafa91d93270cd67",
         "size": 136314
+      },
+      {
+        "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.12.0.tgz",
+        "releaseVersion": "0.12.0",
+        "role": "current",
+        "sha256": "sha256:379ce34dccef68482de5c9f9735c9accad01468273225f3ce744e0a8b1a96c9d",
+        "size": 140155
       },
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.2.0.tgz",
@@ -125,13 +132,13 @@
         "size": 102043
       }
     ],
-    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.11.0.tgz",
+    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.12.0.tgz",
     "exclusiveInventory": true,
     "materializationPolicy": "write-current-after-candidate-conformance"
   },
   "dependencyLock": {
     "relativePath": "package-lock.json",
-    "sha256": "sha256:658a033f7010dcdd23621885f6e2bd65bcf81ce3a6454df3aeb3391d27b4abca"
+    "sha256": "sha256:54b53b2bfe793552abb115efe1cc2456b077f27b099ca2548083c311685848a0"
   },
   "package": {
     "binaries": [
@@ -163,7 +170,7 @@
       "test",
       "README.md"
     ],
-    "version": "0.11.0"
+    "version": "0.12.0"
   },
   "packing": {
     "bundledDependencies": [],
@@ -183,14 +190,20 @@
       {
         "mode": 420,
         "relativePath": "examples/governed-message-artifact-family.contract.json",
-        "sha256": "sha256:a4d794cc441e9ddbd6a8a379467bfec1af96af202f1fb4e5fd9ebc96c4fd44cb",
+        "sha256": "sha256:a7b3066e05dedee3841a5b743e17d0d2c463822eb97059d854bcc234d62fe82a",
         "size": 67505
       },
       {
         "mode": 420,
+        "relativePath": "examples/provider-response-normalization.authority.json",
+        "sha256": "sha256:8a5fa93b4a32883aa4faf575ca75662a109a48d82a1d11a1cddb7aa2e8917d57",
+        "size": 31066
+      },
+      {
+        "mode": 420,
         "relativePath": "lib/governed-artifact-engine.mjs",
-        "sha256": "sha256:56db8debeed565a79567d7da0ee73fe859cb0c938fd1dd011ef4b5854bb7b2a0",
-        "size": 207260
+        "sha256": "sha256:e5ff7826df704a8cc88b466785c05327073515edfdf237b63568f26c492e9cb4",
+        "size": 208847
       },
       {
         "mode": 420,
@@ -201,8 +214,14 @@
       {
         "mode": 420,
         "relativePath": "lib/semantic-execution-runtime.mjs",
-        "sha256": "sha256:2874bb9ab1ba9156d70cb554a1adfb51acb3f9be0fa42d73960db931518bd970",
-        "size": 61443
+        "sha256": "sha256:4543a3710b51fec106796b2213124cf03096a37234dcac6a1246fbd228ba054b",
+        "size": 70397
+      },
+      {
+        "mode": 420,
+        "relativePath": "migrations/artifact-contract.1.10-to-1.11.json",
+        "sha256": "sha256:82ab1c75037f795e351f9247e1ece9079512dec4555238324d504d0f4c9cd398",
+        "size": 1186
       },
       {
         "mode": 420,
@@ -231,7 +250,7 @@
       {
         "mode": 420,
         "relativePath": "package.json",
-        "sha256": "sha256:e946be92036e908d176ba00116bd2d5917b61673b4bb59ca59bf605ba0faa365",
+        "sha256": "sha256:2e7ed3dc169f80e011a948af0d15fb79cc0d649d2073ffdb0b69a4c8fa6ed2dd",
         "size": 1166
       },
       {
@@ -261,26 +280,32 @@
       {
         "mode": 420,
         "relativePath": "README.md",
-        "sha256": "sha256:2773e531d3fd4526ad1afb2fe69822bab515e5a1c54229b0e75e97d725dc1284",
-        "size": 27550
+        "sha256": "sha256:17aa6622d4fdd7f313b15dd69e606a0c1697a85a2388874289dfbea7f1f5f3e6",
+        "size": 30062
       },
       {
         "mode": 420,
         "relativePath": "registries/migration-registry.json",
-        "sha256": "sha256:ca3c897d1be412a33df348f6adf3f53cf5bfd86adb64fe3a6e6b72e52bc492e1",
-        "size": 8537
+        "sha256": "sha256:75f4ed2fb2af9a0392e5f2a4396b89fcf3e6655932cae39f9424b35c3b9228e6",
+        "size": 10784
       },
       {
         "mode": 420,
         "relativePath": "registries/projector-registry.json",
-        "sha256": "sha256:8c03ea9a0167dd35fa7ad58b7d42c4eec5550047429e0fedee2f7990000187ea",
-        "size": 1250
+        "sha256": "sha256:4cc7a1af7896f8dc57af8d0ce3a80862fec4621feca654638bf8dbdf2947a1e5",
+        "size": 1460
       },
       {
         "mode": 420,
         "relativePath": "registries/verifier-registry.json",
         "sha256": "sha256:d9dcd0b53c54904a44ce15896d047d9360a6d48c5379dc3a2ebf3b8cab691f36",
         "size": 1225
+      },
+      {
+        "mode": 420,
+        "relativePath": "schemas/bound-semantic-execution-authority.schema.json",
+        "sha256": "sha256:6ab2a920b42160fcafcaf69ff4809c4aae1b4953abb25e17ecc7c039fe94b25e",
+        "size": 5506
       },
       {
         "mode": 420,
@@ -303,8 +328,8 @@
       {
         "mode": 420,
         "relativePath": "schemas/schema-catalog.json",
-        "sha256": "sha256:ea27c27ed93b1267173a93c9ed768d9a4a0219586eac478caff462874596bcb7",
-        "size": 935
+        "sha256": "sha256:6a62f0ac1f19d0afcdfb444b2f65adc7b00f90c62f4cc590949d34c437624bfe",
+        "size": 953
       },
       {
         "mode": 420,
@@ -315,8 +340,8 @@
       {
         "mode": 420,
         "relativePath": "test/engine.test.mjs",
-        "sha256": "sha256:3a464f36025a4633966c226715e36a75a5541cbb144acc7ada41afed91e4a585",
-        "size": 68559
+        "sha256": "sha256:0cc5fc286ef3a28d56ac44d417e6b561c2bd1a1da350045ff2baaad5fc66139c",
+        "size": 69152
       },
       {
         "mode": 420,
@@ -345,14 +370,14 @@
       {
         "mode": 420,
         "relativePath": "test/fixtures/provider-normalization-ontology.mjs",
-        "sha256": "sha256:3315511843f8bbf17adf06e5559e1b1957766d8c4aa487a9c2898a10c1311921",
-        "size": 29183
+        "sha256": "sha256:29afa54e52de40f224c8517b7a98baa74c80bb5dfae47f994e2f91eaf07924c1",
+        "size": 582
       },
       {
         "mode": 420,
         "relativePath": "test/semantic-ontology.test.mjs",
-        "sha256": "sha256:b144aa3392737cb85cd748bc2d7ed4ae336a3cf6aad62a9bffade5b0dcdcb30a",
-        "size": 9600
+        "sha256": "sha256:9bd503d7242b0df3820d51bc6106d544d31652fa0aece8afbf5f61c862cf9107",
+        "size": 14668
       }
     ],
     "forbiddenLifecycleScripts": [

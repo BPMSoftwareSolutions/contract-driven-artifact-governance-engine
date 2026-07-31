@@ -4,9 +4,14 @@ import {
   SemanticExecutionDispositionError,
   executeSemanticAuthority,
   inspectDeterministicOntology,
+  projectBoundSemanticExecutionBundle,
+  validateBoundSemanticExecutionAuthority,
   validateSemanticExecutionBundle
 } from "../lib/governed-artifact-engine.mjs";
-import { makeProviderNormalizationOntologyBundle } from "./fixtures/provider-normalization-ontology.mjs";
+import {
+  makeProviderNormalizationOntologyBundle,
+  makeProviderNormalizationSemanticAuthority
+} from "./fixtures/provider-normalization-ontology.mjs";
 
 function openAiResponse(content = "hello", finishReason = "stop") {
   return {
@@ -212,8 +217,14 @@ test("ontology cycles, graph cycles, orphan nodes, and ambiguous outputs fail cl
       mutate(bundle) {
         bundle.authority.executionGraph.edges.push({
           edgeId: "cycle",
-          from: { nodeId: "serialize-result", port: "result" },
-          to: { nodeId: "variant", port: "cycle" }
+          from: {
+            nodeId: "node.serialize-result.normalization-result",
+            port: "result"
+          },
+          to: {
+            nodeId: "node.validate-variant.classify-provider-variant",
+            port: "cycle"
+          }
         });
       }
     },
@@ -222,7 +233,9 @@ test("ontology cycles, graph cycles, orphan nodes, and ambiguous outputs fail cl
       mutate(bundle) {
         bundle.authority.executionGraph.edges =
           bundle.authority.executionGraph.edges.filter(
-            (entry) => entry.edgeId !== "input-to-result-type-fact"
+            (entry) =>
+              entry.edgeId !==
+              "edge.input.provider-response.to.constant.normalized-result-type-fact.activation"
           );
       }
     },
@@ -242,10 +255,14 @@ test("ontology cycles, graph cycles, orphan nodes, and ambiguous outputs fail cl
       findingId: "ONTOLOGY_EXECUTION_SEMANTIC_BINDING_MISMATCH",
       mutate(bundle) {
         const providerEdge = bundle.authority.executionGraph.edges.find(
-          (entry) => entry.edgeId === "provider-to-project"
+          (entry) =>
+            entry.edgeId ===
+            "edge.translate-value.translate-provider-identity.to.project-value.project-provider.value"
         );
         const finishEdge = bundle.authority.executionGraph.edges.find(
-          (entry) => entry.edgeId === "finish-to-project"
+          (entry) =>
+            entry.edgeId ===
+            "edge.classify-observations.classify-completion-state.to.project-value.project-finish-reason.value"
         );
         [
           providerEdge.from.nodeId,
@@ -273,9 +290,9 @@ test("ontology cycles, graph cycles, orphan nodes, and ambiguous outputs fail cl
         const edge = bundle.authority.executionGraph.edges.find(
           (entry) =>
             entry.edgeId ===
-            "stopped-eos-to-completion-classification"
+            "edge.read-path.stopped-eos-property.to.classify-observations.classify-completion-state.stopped-eos"
         );
-        edge.from.nodeId = "stopped-limit";
+        edge.from.nodeId = "node.read-path.stopped-limit-property";
       }
     },
     {
@@ -328,4 +345,151 @@ test("the runtime primitive vocabulary is an exact digest-bound authority", () =
     ),
     true
   );
+});
+
+test("declared meaning projects one bound execution bundle and nothing else", () => {
+  const declaration = makeProviderNormalizationSemanticAuthority();
+  assert.deepEqual(validateBoundSemanticExecutionAuthority(declaration), []);
+
+  const bundle = projectBoundSemanticExecutionBundle(declaration);
+  assert.deepEqual(
+    projectBoundSemanticExecutionBundle(
+      makeProviderNormalizationSemanticAuthority()
+    ),
+    bundle
+  );
+  assert.deepEqual(inspectDeterministicOntology(bundle), {
+    ontologyId: "provider-response-normalization",
+    ontologyDisposition: "ONTOLOGY_AUTHORITY_CLOSED",
+    findings: []
+  });
+
+  assert.deepEqual(Object.keys(declaration).sort(), [
+    "authorityId",
+    "authorityType",
+    "context",
+    "inputConceptId",
+    "ontology",
+    "ontologyId",
+    "semanticLayer"
+  ]);
+  for (const derived of [
+    "executionBindings",
+    "executionGraph",
+    "proofRequirements"
+  ]) {
+    assert.equal(declaration.semanticLayer[derived], undefined);
+    assert.equal(declaration.ontology[derived], undefined);
+    assert.equal(declaration.context[derived], undefined);
+    assert.equal(Array.isArray(bundle.authority[derived]) ||
+      typeof bundle.authority[derived] === "object", true);
+  }
+  for (const schema of declaration.context.schemas) {
+    assert.equal(schema.digest, undefined);
+  }
+  for (const schema of bundle.schemas) {
+    assert.match(schema.digest, /^sha256:[a-f0-9]{64}$/);
+  }
+
+  assert.equal(
+    bundle.authority.executionBindings.length,
+    bundle.authority.executionGraph.nodes.length
+  );
+  assert.equal(
+    bundle.authority.executionGraph.entryNodeId,
+    "node.input.provider-response"
+  );
+  assert.deepEqual(bundle.authority.executionGraph.terminalNodeIds, [
+    "node.serialize-result.normalization-result"
+  ]);
+  assert.deepEqual(
+    bundle.authority.proofRequirements.map(
+      (requirement) => requirement.proofType
+    ),
+    [
+      "reference-closure",
+      "type-closure",
+      "cardinality-closure",
+      "classification-totality",
+      "translation-totality",
+      "obligation-binding",
+      "result-discrimination",
+      "execution-binding",
+      "graph-closure"
+    ]
+  );
+  assert.deepEqual(
+    executeSemanticAuthority(bundle, llamaCppResponse("native", {
+      stoppedEos: false,
+      stoppedLimit: true
+    })),
+    {
+      resultType: "normalized-response",
+      status: "success",
+      provider: "llama.cpp",
+      content: "native",
+      finishReason: "max-output-reached"
+    }
+  );
+});
+
+test("undeclarable meaning refuses to project an execution bundle", () => {
+  const cases = [
+    {
+      findingId: "SEMANTIC_AUTHORITY_SCHEMA_INVALID",
+      mutate(declaration) {
+        declaration.executionBindings = [];
+      }
+    },
+    {
+      findingId: "SEMANTIC_AUTHORITY_SCHEMA_INVALID",
+      mutate(declaration) {
+        declaration.context.schemas[0].digest = `sha256:${"0".repeat(64)}`;
+      }
+    },
+    {
+      findingId: "SEMANTIC_AUTHORITY_INPUT_UNRESOLVED",
+      mutate(declaration) {
+        declaration.inputConceptId = "undeclared-subject";
+      }
+    },
+    {
+      findingId: "SEMANTIC_AUTHORITY_EDGE_UNRESOLVED",
+      mutate(declaration) {
+        declaration.ontology.translations[0].sourceConceptId =
+          "normalized-success";
+      }
+    },
+    {
+      findingId: "SEMANTIC_AUTHORITY_EDGE_AMBIGUOUS",
+      mutate(declaration) {
+        declaration.ontology.translations[0].sourceConceptId =
+          "canonical-finish-reason";
+      }
+    },
+    {
+      findingId: "SEMANTIC_AUTHORITY_TERMINAL_NOT_EXACT",
+      mutate(declaration) {
+        const duplicate = structuredClone(declaration.ontology.results[0]);
+        duplicate.resultUnionId = "normalization-result-again";
+        declaration.ontology.results.push(duplicate);
+      }
+    }
+  ];
+  for (const entry of cases) {
+    const declaration = makeProviderNormalizationSemanticAuthority();
+    entry.mutate(declaration);
+    const findings = validateBoundSemanticExecutionAuthority(declaration);
+    assert.equal(
+      findings.some((finding) => finding.findingId === entry.findingId),
+      true,
+      `${entry.findingId}: ${JSON.stringify(findings.map((finding) => finding.findingId))}`
+    );
+    assert.throws(
+      () => projectBoundSemanticExecutionBundle(declaration),
+      (error) =>
+        error instanceof SemanticExecutionDispositionError &&
+        error.disposition === "SEMANTIC_EXECUTION_AUTHORITY_NOT_PROJECTABLE"
+    );
+  }
 });

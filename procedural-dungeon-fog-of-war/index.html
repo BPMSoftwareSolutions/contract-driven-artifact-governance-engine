@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Procedural Dungeon Generator - Fog of War</title>
+<style>
+  :root {
+    --bg: #05060a;
+    --grid-line: #10233a;
+    --panel-bg: #0b1220;
+    --panel-border: #1fd6ff;
+    --accent: #1fd6ff;
+    --accent-dim: #0d7a94;
+    --text: #d8f6ff;
+    --player: #55ff33;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .app {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stage {
+    position: relative;
+    border: 2px solid var(--panel-border);
+    box-shadow: 0 0 18px rgba(31, 214, 255, 0.55), inset 0 0 24px rgba(31, 214, 255, 0.12);
+    background: #000;
+    line-height: 0;
+  }
+
+  canvas#view {
+    width: 600px;
+    height: 600px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    display: block;
+  }
+
+  .panel {
+    width: 260px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 0 14px rgba(31, 214, 255, 0.35);
+    border-radius: 6px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .panel h1 {
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px 0;
+    text-shadow: 0 0 8px rgba(31, 214, 255, 0.8);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid var(--accent-dim);
+    border-radius: 4px;
+    padding: 10px 12px;
+    background: rgba(31, 214, 255, 0.05);
+  }
+
+  .field .label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+  }
+
+  .field .value {
+    font-size: 18px;
+    color: var(--player);
+    text-shadow: 0 0 6px rgba(85, 255, 51, 0.7);
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: linear-gradient(180deg, #103049, #071522);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, transform 0.05s ease;
+  }
+
+  button:hover {
+    box-shadow: 0 0 10px rgba(31, 214, 255, 0.8);
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+
+  button.active {
+    background: linear-gradient(180deg, #1c3f22, #0a1a0d);
+    border-color: var(--player);
+    color: var(--player);
+    box-shadow: 0 0 10px rgba(85, 255, 51, 0.6);
+  }
+
+  .hint {
+    font-size: 11px;
+    color: var(--accent-dim);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="stage">
+      <canvas id="view" width="600" height="600"></canvas>
+    </div>
+    <div class="panel">
+      <h1>Dungeon Control</h1>
+      <div class="field">
+        <span class="label">Player Position</span>
+        <span class="value" id="coords">(0, 0)</span>
+      </div>
+      <button id="regenerateBtn" type="button">Regenerate Map</button>
+      <button id="godModeBtn" type="button">Toggle God Mode</button>
+      <div class="hint">
+        Move with Arrow Keys or WASD. Walls block movement and sight.
+        God Mode reveals the full generated layout for debugging.
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  var GRID_SIZE = 60;
+  var TILE_SIZE = 10;
+  var CANVAS_SIZE = GRID_SIZE * TILE_SIZE;
+  var VISION_RADIUS = 9;
+  var WALL = 1;
+  var FLOOR = 0;
+
+  var COLOR_HIDDEN = "#000000";
+  var COLOR_WALL = "#4a4e69";
+  var COLOR_FLOOR = "#9a8c98";
+  var COLOR_PLAYER = "#55ff33";
+
+  var canvas = document.getElementById("view");
+  var ctx = canvas.getContext("2d");
+  var coordsEl = document.getElementById("coords");
+  var regenerateBtn = document.getElementById("regenerateBtn");
+  var godModeBtn = document.getElementById("godModeBtn");
+
+  var map = [];
+  var visibility = [];
+  var player = { x: 0, y: 0 };
+  var godMode = false;
+
+  function randInt(min, max) {
+    if (max <= min) {
+      return min;
+    }
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function createGrid(size, fillValue) {
+    var grid = [];
+    for (var y = 0; y < size; y++) {
+      var row = [];
+      for (var x = 0; x < size; x++) {
+        row.push(fillValue);
+      }
+      grid.push(row);
+    }
+    return grid;
+  }
+
+  function inBounds(x, y) {
+    return x >= 0 && y >= 0 && x < GRID_SIZE && y < GRID_SIZE;
+  }
+
+  function carveRoom(room) {
+    for (var y = room.y; y < room.y + room.h; y++) {
+      for (var x = room.x; x < room.x + room.w; x++) {
+        if (inBounds(x, y)) {
+          map[y][x] = FLOOR;
+        }
+      }
+    }
+  }
+
+  function carveHorizontalCorridor(x1, x2, y) {
+    var from = Math.min(x1, x2);
+    var to = Math.max(x1, x2);
+    for (var x = from; x <= to; x++) {
+      if (inBounds(x, y)) {
+        map[y][x] = FLOOR;
+      }
+    }
+  }
+
+  function carveVerticalCorridor(y1, y2, x) {
+    var from = Math.min(y1, y2);
+    var to = Math.max(y1, y2);
+    for (var y = from; y <= to; y++) {
+      if (inBounds(x, y)) {
+        map[y][x] = FLOOR;
+      }
+    }
+  }
+
+  function connectPoints(a, b) {
+    if (Math.random() < 0.5) {
+      carveHorizontalCorridor(a.x, b.x, a.y);
+      carveVerticalCorridor(a.y, b.y, b.x);
+    } else {
+      carveVerticalCorridor(a.y, b.y, a.x);
+      carveHorizontalCorridor(a.x, b.x, b.y);
+    }
+  }
+
+  function pickRoomCenter(node) {
+    if (node.room) {
+      return { x: node.room.centerX, y: node.room.centerY };
+    }
+    var branch = Math.random() < 0.5 ? node.left : node.right;
+    return pickRoomCenter(branch);
+  }
+
+  var MIN_LEAF = 10;
+  var MAX_DEPTH = 4;
+
+  function splitBSP(node, depth) {
+    var canSplitWide = node.w >= MIN_LEAF * 2;
+    var canSplitTall = node.h >= MIN_LEAF * 2;
+
+    if (depth >= MAX_DEPTH || (!canSplitWide && !canSplitTall)) {
+      var roomW = randInt(4, Math.max(4, node.w - 4));
+      var roomH = randInt(4, Math.max(4, node.h - 4));
+      var roomX = node.x + randInt(1, Math.max(1, node.w - roomW - 1));
+      var roomY = node.y + randInt(1, Math.max(1, node.h - roomH - 1));
+      node.room = {
+        x: roomX,
+        y: roomY,
+        w: roomW,
+        h: roomH,
+        centerX: roomX + Math.floor(roomW / 2),
+        centerY: roomY + Math.floor(roomH / 2)
+      };
+      carveRoom(node.room);
+      return;
+    }
+
+    var splitVertical;
+    if (canSplitWide && !canSplitTall) {
+      splitVertical = true;
+    } else if (!canSplitWide && canSplitTall) {
+      splitVertical = false;
+    } else {
+      splitVertical = node.w > node.h ? true : node.w < node.h ? false : Math.random() < 0.5;
+    }
+
+    if (splitVertical) {
+      var splitX = randInt(node.x + MIN_LEAF, node.x + node.w - MIN_LEAF);
+      node.left = { x: node.x, y: node.y, w: splitX - node.x, h: node.h };
+      node.right = { x: splitX, y: node.y, w: node.x + node.w - splitX, h: node.h };
+    } else {
+      var splitY = randInt(node.y + MIN_LEAF, node.y + node.h - MIN_LEAF);
+      node.left = { x: node.x, y: node.y, w: node.w, h: splitY - node.y };
+      node.right = { x: node.x, y: splitY, w: node.w, h: node.y + node.h - splitY };
+    }
+
+    splitBSP(node.left, depth + 1);
+    splitBSP(node.right, depth + 1);
+    connectPoints(pickRoomCenter(node.left), pickRoomCenter(node.right));
+  }
+
+  function generateMap() {
+    map = createGrid(GRID_SIZE, WALL);
+    var root = { x: 1, y: 1, w: GRID_SIZE - 2, h: GRID_SIZE - 2 };
+    splitBSP(root, 0);
+
+    var floorTiles = [];
+    for (var y = 0; y < GRID_SIZE; y++) {
+      for (var x = 0; x < GRID_SIZE; x++) {
+        if (map[y][x] === FLOOR) {
+          floorTiles.push({ x: x, y: y });
+        }
+      }
+    }
+
+    var spawn = floorTiles[randInt(0, floorTiles.length - 1)];
+    player.x = spawn.x;
+    player.y = spawn.y;
+  }
+
+  function bresenhamLine(x0, y0, x1, y1) {
+    var points = [];
+    var dx = Math.abs(x1 - x0);
+    var dy = -Math.abs(y1 - y0);
+    var sx = x0 < x1 ? 1 : -1;
+    var sy = y0 < y1 ? 1 : -1;
+    var err = dx + dy;
+    var x = x0;
+    var y = y0;
+
+    while (true) {
+      points.push({ x: x, y: y });
+      if (x === x1 && y === y1) {
+        break;
+      }
+      var e2 = 2 * err;
+      if (e2 >= dy) {
+        err += dy;
+        x += sx;
+      }
+      if (e2 <= dx) {
+        err += dx;
+        y += sy;
+      }
+    }
+    return points;
+  }
+
+  function castRay(targetX, targetY) {
+    var line = bresenhamLine(player.x, player.y, targetX, targetY);
+    for (var i = 0; i < line.length; i++) {
+      var px = line[i].x;
+      var py = line[i].y;
+      if (!inBounds(px, py)) {
+        break;
+      }
+      var distance = Math.max(Math.abs(px - player.x), Math.abs(py - player.y));
+      if (distance > VISION_RADIUS) {
+        break;
+      }
+      visibility[py][px] = 1;
+      if (map[py][px] === WALL) {
+        break;
+      }
+    }
+  }
+
+  function updateVisibility() {
+    visibility[player.y][player.x] = 1;
+
+    for (var dx = -VISION_RADIUS; dx <= VISION_RADIUS; dx++) {
+      castRay(player.x + dx, player.y - VISION_RADIUS);
+      castRay(player.x + dx, player.y + VISION_RADIUS);
+    }
+    for (var dy = -VISION_RADIUS; dy <= VISION_RADIUS; dy++) {
+      castRay(player.x - VISION_RADIUS, player.y + dy);
+      castRay(player.x + VISION_RADIUS, player.y + dy);
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = COLOR_HIDDEN;
+    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+    for (var y = 0; y < GRID_SIZE; y++) {
+      for (var x = 0; x < GRID_SIZE; x++) {
+        var isRevealed = godMode || visibility[y][x] === 1;
+        if (!isRevealed) {
+          continue;
+        }
+        ctx.fillStyle = map[y][x] === WALL ? COLOR_WALL : COLOR_FLOOR;
+        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+      }
+    }
+
+    ctx.fillStyle = COLOR_PLAYER;
+    ctx.fillRect(player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  }
+
+  function updateCoordsDisplay() {
+    coordsEl.textContent = "(" + player.x + ", " + player.y + ")";
+  }
+
+  function tryMovePlayer(dx, dy) {
+    var newX = player.x + dx;
+    var newY = player.y + dy;
+    if (!inBounds(newX, newY)) {
+      return;
+    }
+    if (map[newY][newX] === WALL) {
+      return;
+    }
+    player.x = newX;
+    player.y = newY;
+    updateVisibility();
+    draw();
+    updateCoordsDisplay();
+  }
+
+  var KEY_DIRECTIONS = {
+    ArrowUp: { dx: 0, dy: -1 },
+    ArrowDown: { dx: 0, dy: 1 },
+    ArrowLeft: { dx: -1, dy: 0 },
+    ArrowRight: { dx: 1, dy: 0 },
+    w: { dx: 0, dy: -1 },
+    W: { dx: 0, dy: -1 },
+    s: { dx: 0, dy: 1 },
+    S: { dx: 0, dy: 1 },
+    a: { dx: -1, dy: 0 },
+    A: { dx: -1, dy: 0 },
+    d: { dx: 1, dy: 0 },
+    D: { dx: 1, dy: 0 }
+  };
+
+  function handleKeyDown(event) {
+    var direction = KEY_DIRECTIONS[event.key];
+    if (!direction) {
+      return;
+    }
+    event.preventDefault();
+    tryMovePlayer(direction.dx, direction.dy);
+  }
+
+  function resetGame() {
+    generateMap();
+    visibility = createGrid(GRID_SIZE, 0);
+    updateVisibility();
+    draw();
+    updateCoordsDisplay();
+  }
+
+  function toggleGodMode() {
+    godMode = !godMode;
+    godModeBtn.classList.toggle("active", godMode);
+    draw();
+  }
+
+  regenerateBtn.addEventListener("click", resetGame);
+  godModeBtn.addEventListener("click", toggleGodMode);
+  document.addEventListener("keydown", handleKeyDown);
+
+  resetGame();
+})();
+</script>
+</body>
+</html>

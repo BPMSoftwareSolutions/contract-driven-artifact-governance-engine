@@ -12,6 +12,10 @@ import {
   makeProviderNormalizationOntologyBundle,
   makeProviderNormalizationSemanticAuthority
 } from "./fixtures/provider-normalization-ontology.mjs";
+import {
+  makeBoundedArithmeticOntologyBundle,
+  makeBoundedArithmeticSemanticAuthority
+} from "./fixtures/bounded-arithmetic-ontology.mjs";
 
 function openAiResponse(content = "hello", finishReason = "stop") {
   return {
@@ -415,7 +419,9 @@ test("declared meaning projects one bound execution bundle and nothing else", ()
       "obligation-binding",
       "result-discrimination",
       "execution-binding",
-      "graph-closure"
+      "graph-closure",
+      "arithmetic-range-closure",
+      "randomness-determinism-closure"
     ]
   );
   assert.deepEqual(
@@ -492,4 +498,105 @@ test("undeclarable meaning refuses to project an execution bundle", () => {
         error.disposition === "SEMANTIC_EXECUTION_AUTHORITY_NOT_PROJECTABLE"
     );
   }
+});
+
+test("bounded arithmetic and seeded range draw close and execute deterministically", () => {
+  const bundle = makeBoundedArithmeticOntologyBundle();
+  assert.deepEqual(inspectDeterministicOntology(bundle), {
+    ontologyId: "arithmetic-smoke",
+    ontologyDisposition: "ONTOLOGY_AUTHORITY_CLOSED",
+    findings: []
+  });
+  assert.deepEqual(
+    bundle.authority.proofRequirements.map(
+      (requirement) => requirement.proofType
+    ),
+    [
+      "reference-closure",
+      "type-closure",
+      "cardinality-closure",
+      "classification-totality",
+      "translation-totality",
+      "obligation-binding",
+      "result-discrimination",
+      "execution-binding",
+      "graph-closure",
+      "arithmetic-range-closure",
+      "randomness-determinism-closure"
+    ]
+  );
+
+  const greater = executeSemanticAuthority(bundle, { a: 40, b: 15 });
+  assert.deepEqual(greater, {
+    resultType: "arithmetic-smoke-result",
+    sum: 55,
+    diff: 25,
+    order: "greater-than",
+    draw: greater.draw
+  });
+  assert.ok(greater.draw >= 0 && greater.draw <= 63);
+
+  assert.deepEqual(
+    executeSemanticAuthority(bundle, { a: 40, b: 15 }),
+    greater,
+    "the seeded draw must replay identically for the same input"
+  );
+
+  assert.equal(
+    executeSemanticAuthority(bundle, { a: 9, b: 9 }).order,
+    "equal-to"
+  );
+  const lesser = executeSemanticAuthority(bundle, { a: 2, b: 50 });
+  assert.equal(lesser.order, "less-than");
+  assert.equal(lesser.diff, -48);
+});
+
+test("unprovable arithmetic and invalid range-draw bounds fail closed", () => {
+  const rangeUnprovenDeclaration = makeBoundedArithmeticSemanticAuthority();
+  rangeUnprovenDeclaration.context.schemas.find(
+    (schema) => schema.schemaId === "bounded-sum.schema.v1"
+  ).value.maximum = 100;
+  rangeUnprovenDeclaration.context.schemas.find(
+    (schema) => schema.schemaId === "arithmetic-smoke-result.schema.v1"
+  ).value.properties.sum.maximum = 100;
+  assert.equal(
+    validateBoundSemanticExecutionAuthority(rangeUnprovenDeclaration).some(
+      (finding) => finding.findingId === "ONTOLOGY_ARITHMETIC_RANGE_UNPROVEN"
+    ),
+    true
+  );
+
+  const unboundedOperandDeclaration = makeBoundedArithmeticSemanticAuthority();
+  unboundedOperandDeclaration.context.schemas.find(
+    (schema) => schema.schemaId === "bounded-int.schema.v1"
+  ).value.maximum = 9999;
+  assert.equal(
+    validateBoundSemanticExecutionAuthority(
+      unboundedOperandDeclaration
+    ).some(
+      (finding) => finding.findingId === "ONTOLOGY_ARITHMETIC_OPERAND_UNBOUNDED"
+    ),
+    true
+  );
+
+  const invalidDrawBoundsDeclaration = makeBoundedArithmeticSemanticAuthority();
+  invalidDrawBoundsDeclaration.semanticLayer.facts.find(
+    (fact) => fact.factId === "draw-min"
+  ).value.value = 50;
+  invalidDrawBoundsDeclaration.semanticLayer.facts.find(
+    (fact) => fact.factId === "draw-max"
+  ).value.value = 10;
+  assert.deepEqual(
+    validateBoundSemanticExecutionAuthority(invalidDrawBoundsDeclaration),
+    []
+  );
+  const invalidDrawBoundsBundle = projectBoundSemanticExecutionBundle(
+    invalidDrawBoundsDeclaration
+  );
+  assert.throws(
+    () => executeSemanticAuthority(invalidDrawBoundsBundle, { a: 1, b: 1 }),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.disposition === "RANGE_DRAW_INVALID_BOUNDS"
+  );
 });

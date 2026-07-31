@@ -828,7 +828,9 @@
         "invalidResultDisposition": "NORMALIZATION_RESULT_INVALID",
         "serializerId": "identity.v1"
       }
-    ]
+    ],
+    "arithmeticOperations": [],
+    "randomDraws": []
   },
   "context": {
     "schemas": [
@@ -1117,7 +1119,7 @@
     "catalogs": [],
     "executionBinding": {
       "executorPortId": "semantic-authority-runtime.v1",
-      "runtimeProfileId": "finite-semantic-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v2",
       "serializationProfileId": "canonical-json.v1"
     }
   }

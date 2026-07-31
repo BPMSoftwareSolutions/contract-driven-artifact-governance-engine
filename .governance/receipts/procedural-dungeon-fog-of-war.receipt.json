@@ -1,0 +1,439 @@
+{
+  "artifactFamily": {
+    "artifactObservations": [
+      {
+        "artifactId": "dungeon-game.v1",
+        "exists": true,
+        "observedByteLength": 11757,
+        "observedSha256": "sha256:83eaad7c5f3f38e6adb096e47d276570357d96751a6700095f55780a2bcdce90",
+        "relativePath": "index.html"
+      },
+      {
+        "artifactId": "dungeon-family-readme.v1",
+        "exists": true,
+        "observedByteLength": 15202,
+        "observedSha256": "sha256:0e3d67687a2429db379e7c54987e0635c9f811fe76db3860524a7eeb6554db39",
+        "relativePath": "README.md"
+      }
+    ],
+    "artifactScope": {
+      "authoritySha256": "sha256:eca9b43073d3cae853c36402c74cce46d55cb60292f2bf6b58cfe9361bf2fa43",
+      "disposition": "ARTIFACT_SCOPE_CLOSED",
+      "inventoryMode": "exclusive-subtree",
+      "observationSha256": "sha256:d47d156c0626dc1973378717524c2bb2ef40861871c3005fca36090e182d56e5",
+      "resolvedGovernedPathSet": [
+        {
+          "authorityId": "dungeon-game.v1",
+          "pathKind": "artifact",
+          "relativePath": "index.html"
+        },
+        {
+          "authorityId": "dungeon-family-readme.v1",
+          "pathKind": "artifact",
+          "relativePath": "README.md"
+        }
+      ],
+      "scopeType": "exclusive-artifact-subtree.v1"
+    },
+    "artifactScopeObservation": {
+      "excludedPathsPresent": [],
+      "inventoryMode": "exclusive-subtree",
+      "observedGovernedPaths": [
+        "README.md",
+        "index.html"
+      ],
+      "outsideAuthorityClassification": {
+        "posture": "outside-authority",
+        "rule": "outside-artifact-root"
+      },
+      "resolvedGovernedPathSet": [
+        {
+          "authorityId": "dungeon-game.v1",
+          "pathKind": "artifact",
+          "relativePath": "index.html"
+        },
+        {
+          "authorityId": "dungeon-family-readme.v1",
+          "pathKind": "artifact",
+          "relativePath": "README.md"
+        }
+      ],
+      "scopeType": "exclusive-artifact-subtree.v1",
+      "undeclaredPaths": []
+    },
+    "authorityClosure": {
+      "authorityType": "closed-world-authority-closure.v1",
+      "disposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "profileSha256": "sha256:10557f242d6f932a74d71ccf1852545e9be4723571443f8299061299ada49550"
+    },
+    "authorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+    "canonicalLineage": {
+      "authoritySha256": "sha256:261eadc653c7fdfa272196e67d9ca75d72307a68fccc7d12d8453832caa68f08",
+      "authorityType": "canonical-lineage-authority.v1",
+      "bodies": [],
+      "disposition": "CANONICAL_LINEAGE_CLOSED",
+      "featureCount": 1,
+      "findings": [],
+      "obligationCount": 1,
+      "projectId": "procedural-dungeon-fog-of-war",
+      "responsibilityCount": 0,
+      "scenarioCount": 1,
+      "spine": [
+        "project",
+        "feature",
+        "scenario",
+        "obligation",
+        "responsibility",
+        "projection",
+        "body"
+      ]
+    },
+    "canonicalLineageDisposition": "CANONICAL_LINEAGE_CLOSED",
+    "conformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+    "declaredArtifactCount": 2,
+    "designAuthority": {
+      "authorityType": "conversation-design-authority.v1",
+      "conversationDigest": "sha256:8c86f6a6dc7fc416f1db31f9c89607511ab55e2b5818319dcb031d7be7126ac0",
+      "decisionRecordDigest": "sha256:7a25e337b1b408bff99145b918410c6972450f8d0eba0d4299b91bfb2304e575",
+      "designLineageSha256": "sha256:45b7f29a03de57f5007f39887d346fa88ae75cf67055e028422d5e3820ebc607",
+      "disposition": "DESIGN_AUTHORITY_CLOSED",
+      "dispositionCounts": {
+        "accepted": 6,
+        "deferred": 1,
+        "modified": 1,
+        "rejected": 0
+      },
+      "findings": [],
+      "implementationDigest": "sha256:a5f5a5bb8baa092b314faeb2ad4a25213abe8db5d96abbfdf121124c7833600e",
+      "tieOutDigest": "sha256:17accfd6868a5812a6b64387404c911f4c4d4cccae69b56ec1f2320a89cda75b"
+    },
+    "designAuthorityDisposition": "DESIGN_AUTHORITY_CLOSED",
+    "findings": [],
+    "missingArtifactIds": [],
+    "observedArtifactCount": 2,
+    "projectionLedgerObservation": {
+      "exists": true,
+      "expectedSha256": "sha256:d309da64a883df6ed0e8b790ff37ee470d58d11265bf6ae8453d06e54be4eed2",
+      "observedSha256": "sha256:d309da64a883df6ed0e8b790ff37ee470d58d11265bf6ae8453d06e54be4eed2",
+      "relativePath": ".governance/projections/procedural-dungeon-fog-of-war.ledger.json"
+    },
+    "proofDisposition": "PROOF_COMPLETE",
+    "scopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+    "subjectId": "procedural-dungeon-fog-of-war.v1",
+    "undeclaredPaths": [],
+    "workspaceAuthority": {
+      "authoritySha256": "sha256:4ce172866efc3c18d7897bb2b5690d304e43c53efcf606bf78e7dce814231aaa",
+      "authorityType": "complete-workspace-authority.v1",
+      "classifiedPathCount": 2,
+      "classifiedPaths": [
+        {
+          "authorityId": "dungeon-game.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "procedural-dungeon-fog-of-war/index.html"
+        },
+        {
+          "authorityId": "dungeon-family-readme.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "procedural-dungeon-fog-of-war/README.md"
+        }
+      ],
+      "disposition": "WORKSPACE_AUTHORITY_CLOSED",
+      "findings": [],
+      "inventoryPosture": "exhaustive",
+      "pathExceptions": [],
+      "unclassifiedPathPosture": "reject",
+      "unclassifiedPaths": []
+    },
+    "workspaceAuthorityDisposition": "WORKSPACE_AUTHORITY_CLOSED"
+  },
+  "checks": [
+    {
+      "checkId": "validate-contract",
+      "disposition": "CONTRACT_VALID",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "resolve-artifact-plan",
+      "disposition": "ARTIFACT_PLAN_RESOLVED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "observe-artifact-state",
+      "disposition": "ARTIFACT_STATE_OBSERVED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "classify-workspace-paths",
+      "disposition": "WORKSPACE_AUTHORITY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "resolve-design-authority",
+      "disposition": "DESIGN_AUTHORITY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "resolve-artifact-lineage",
+      "disposition": "CANONICAL_LINEAGE_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-inventory",
+      "disposition": "ARTIFACT_INVENTORY_CONFORMS",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-projection-identity",
+      "disposition": "PROJECTION_IDENTITY_CONFORMS",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-authority-closure",
+      "disposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "authorities": [],
+      "checkId": "evaluate-ontology-authority",
+      "disposition": "ONTOLOGY_AUTHORITY_NOT_REQUIRED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-semantic-execution-bodies",
+      "disposition": "SEMANTIC_EXECUTION_BODY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-content",
+      "disposition": "ARTIFACT_CONTENT_CONFORMS",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-structure",
+      "disposition": "ARTIFACT_STRUCTURE_CONFORMS",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-freshness",
+      "disposition": "ARTIFACT_FRESHNESS_NOT_REQUIRED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-relationships",
+      "disposition": "ARTIFACT_RELATIONSHIPS_CONFORM",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-declared-commands",
+      "disposition": "DECLARED_COMMANDS_CONFORM",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "verify-proof-subject-stability",
+      "disposition": "PROOF_SUBJECT_UNCHANGED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "issue-trust-disposition",
+      "disposition": "TRUSTED",
+      "posture": "CONFORMS"
+    }
+  ],
+  "claimPolicies": [
+    {
+      "claim": "COMPLETE",
+      "claimId": "dungeon-family-complete.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
+    },
+    {
+      "claim": "CONTRACT_AUTHORITY_CLOSED",
+      "claimId": "dungeon-contract-authority-closed.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
+    },
+    {
+      "claim": "TRUSTED",
+      "claimId": "dungeon-family-trusted.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
+    }
+  ],
+  "contract": {
+    "contractId": "procedural-dungeon-fog-of-war.v1",
+    "contractSha256": "sha256:c72f94c229b83e333c7c784c2299577b3d74fef95426320f90c08b196290edc5"
+  },
+  "interpretationBase": {
+    "conformanceProfile": {
+      "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+      "identity": "closed-world-artifact-conformance.v8"
+    },
+    "engine": {
+      "digest": "sha256:128a7b3043a73fd3da5aedb8b571e6c3c2eab8c8996db86db4999ada2ce4d4b9",
+      "identity": "governed-artifact-engine.0.18.0"
+    },
+    "migrationRegistry": {
+      "digest": "sha256:a58c3ae89b1f706e2d2878aa7d0c34f448c5d071db757d98a5036575b470eadd",
+      "identity": "governed-artifact-migration-registry.v1"
+    },
+    "projectorRegistry": {
+      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+      "identity": "governed-artifact-projector-registry.v1"
+    },
+    "schema": {
+      "digest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
+      "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
+    },
+    "verifierRegistry": {
+      "digest": "sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14",
+      "identity": "governed-artifact-verifier-registry.v1"
+    }
+  },
+  "ontologyAuthorities": [],
+  "operationAuthorities": {
+    "authority": {
+      "authoredMutation": {
+        "governedArtifacts": "forbidden",
+        "posture": "sole-authored-change-authority",
+        "target": "contract"
+      },
+      "authorityType": "governed-operation-authorities.v3",
+      "bodyPurity": {
+        "admittedAuthorityTypes": [
+          "semantic-projection-authority.v1",
+          "semantic-execution-bundle.v1"
+        ],
+        "allowedExecutableForms": [
+          "single-semantic-invocation",
+          "direct-return",
+          "declared-port-binding"
+        ],
+        "applicability": "artifacts-bound-to-semantic-authority-executor-port",
+        "consumerRelaxation": "forbidden",
+        "exactCardinality": {
+          "exportedResponsibilities": 1,
+          "resultFlows": 1,
+          "semanticInvocations": 1
+        },
+        "executionPortEffect": "execute-semantic-authority",
+        "forbiddenExecutableMechanics": [
+          "branch",
+          "iteration",
+          "exception-handling",
+          "throw",
+          "object-construction",
+          "serialization",
+          "normalization",
+          "validation",
+          "fallback",
+          "retry",
+          "state-mutation"
+        ],
+        "profileType": "semantic-execution-body.v2",
+        "semanticAuthorityLocation": "contract"
+      },
+      "migration": {
+        "artifactProjection": "forbidden",
+        "mode": "candidate-first",
+        "operation": "migrate",
+        "sourceInterpretation": "historical-schema-digest",
+        "targetMutation": "contract-only",
+        "trustIssuance": "forbidden",
+        "writeMode": "explicit-only"
+      },
+      "mutationAuthority": {
+        "authorityType": "single-source-mutation-authority.v1",
+        "consumerAuthoredAuthority": {
+          "cardinality": "exactly-one",
+          "source": "contract",
+          "target": "contract"
+        },
+        "controlEvidenceMutation": {
+          "createOrReplace": "contract-declared-control-paths-only",
+          "remove": "forbidden"
+        },
+        "derivedContractMutation": {
+          "admittedOperations": [
+            "migrate",
+            "reconcile"
+          ],
+          "target": "contract"
+        },
+        "governedArtifactMutation": {
+          "authoritySource": "validated-contract",
+          "create": "declared-projections-only",
+          "interpretationBase": "digest-bound",
+          "remove": "forbidden",
+          "replace": "declared-projections-only",
+          "undeclaredState": "observe-and-reject"
+        }
+      },
+      "projection": {
+        "artifactPosture": "replace-by-projection",
+        "operation": "project",
+        "subjectMutation": "declared-projections-only",
+        "writeMode": "explicit-only"
+      },
+      "proof": {
+        "artifactProjection": "forbidden",
+        "declaredEvaluations": "read-only",
+        "mode": "read-only",
+        "mutationDisposition": "EVALUATION_INVALIDATED_BY_MUTATION",
+        "operation": "prove",
+        "receiptTarget": "outside-governed-subject",
+        "receiptWrite": "explicit-only",
+        "requiredSubjectDisposition": "PROOF_SUBJECT_UNCHANGED",
+        "subjectMutation": "forbidden"
+      },
+      "reconciliation": {
+        "artifactProjection": "forbidden",
+        "candidateProjection": "in-memory",
+        "contractMutation": "commitment-fields-only",
+        "mode": "candidate-first",
+        "operation": "reconcile",
+        "trustIssuance": "forbidden",
+        "writeMode": "explicit-only"
+      }
+    },
+    "authoritySha256": "sha256:0c038337f4a7f10c272fb1e6df88e44ed65ec07c66b7a3b3a006f9ee9ad2f901"
+  },
+  "proofOperation": {
+    "authorityType": "governed-operation-authorities.v3",
+    "evaluationStateAfterSha256": "sha256:a93d35ca0ffafd76d60c1117d51a04d1dc7fa70b7cd2b0ea227e7eea898f474a",
+    "evaluationStateBeforeSha256": "sha256:a93d35ca0ffafd76d60c1117d51a04d1dc7fa70b7cd2b0ea227e7eea898f474a",
+    "mode": "read-only",
+    "operation": "prove",
+    "operationAuthoritiesSha256": "sha256:0c038337f4a7f10c272fb1e6df88e44ed65ec07c66b7a3b3a006f9ee9ad2f901",
+    "proofAuthoritySha256": "sha256:80808ad3458d55d6bc4e78fc8c567a99b201bac2f24212a501a176edf0a2d529",
+    "subjectAfterSha256": "sha256:a8c16b8d6b4a40d63b823f8edd0a9a4a7692ddc2dc331af2b1ac3d4b8c737b69",
+    "subjectBeforeSha256": "sha256:a8c16b8d6b4a40d63b823f8edd0a9a4a7692ddc2dc331af2b1ac3d4b8c737b69",
+    "subjectMutationDisposition": "PROOF_SUBJECT_UNCHANGED"
+  },
+  "receiptType": "governed-artifact-conformance-receipt.v1",
+  "registries": {
+    "projectorRegistry": {
+      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+      "identity": "governed-artifact-projector-registry.v1"
+    },
+    "verifierRegistry": {
+      "digest": "sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14",
+      "identity": "governed-artifact-verifier-registry.v1"
+    }
+  },
+  "schema": {
+    "contractValidationDisposition": "CONTRACT_VALID",
+    "digest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
+    "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
+  },
+  "trustDisposition": "TRUSTED",
+  "trustPosture": "CONFORMS"
+}

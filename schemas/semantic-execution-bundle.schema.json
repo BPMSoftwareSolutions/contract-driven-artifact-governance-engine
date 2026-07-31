@@ -133,7 +133,7 @@
       ],
       "properties": {
         "identity": {
-          "const": "finite-semantic-runtime.v1"
+          "const": "finite-semantic-runtime.v2"
         },
         "digest": {
           "$ref": "#/$defs/sha256"
@@ -152,7 +152,8 @@
             "maxOutputDepth",
             "maxSchemas",
             "maxTerminalResults",
-            "maxSerializedByteLength"
+            "maxSerializedByteLength",
+            "maxOperandDomainSize"
           ],
           "properties": {
             "maxGraphNodes": {
@@ -187,6 +188,9 @@
             },
             "maxSerializedByteLength": {
               "const": 1048576
+            },
+            "maxOperandDomainSize": {
+              "const": 64
             }
           }
         },
@@ -203,7 +207,7 @@
             "implicit-coercion",
             "ambient-state",
             "clock-access",
-            "randomness",
+            "ambient-randomness",
             "network-access"
           ]
         },
@@ -221,6 +225,10 @@
             "project-value.v1",
             "select-result.v1",
             "emit-result.v1",
+            "add-bounded.v1",
+            "subtract-bounded.v1",
+            "compare-bounded.v1",
+            "seeded-range-draw.v1",
             "serialize-result.v1"
           ]
         }
@@ -652,6 +660,74 @@
         }
       ]
     },
+    "boundedArithmeticOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operationId",
+        "operation",
+        "operandAConceptId",
+        "operandBConceptId",
+        "resultConceptId"
+      ],
+      "properties": {
+        "operationId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "operation": {
+          "enum": [
+            "add",
+            "subtract",
+            "compare"
+          ]
+        },
+        "operandAConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "operandBConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "seededRangeDraw": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "drawId",
+        "algorithm",
+        "seedConceptId",
+        "callIndexConceptId",
+        "minConceptId",
+        "maxConceptId",
+        "resultConceptId"
+      ],
+      "properties": {
+        "drawId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "algorithm": {
+          "const": "xorshift32"
+        },
+        "seedConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "callIndexConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "minConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "maxConceptId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "resultConceptId": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
     "constraint": {
       "type": "object",
       "additionalProperties": false,
@@ -978,6 +1054,10 @@
             "project-value.v1",
             "select-result.v1",
             "emit-result.v1",
+            "add-bounded.v1",
+            "subtract-bounded.v1",
+            "compare-bounded.v1",
+            "seeded-range-draw.v1",
             "serialize-result.v1"
           ]
         }
@@ -1006,7 +1086,9 @@
             "obligation-binding",
             "result-discrimination",
             "execution-binding",
-            "graph-closure"
+            "graph-closure",
+            "arithmetic-range-closure",
+            "randomness-determinism-closure"
           ]
         },
         "subjectAuthorityId": {
@@ -1125,6 +1207,8 @@
         "obligations",
         "transformations",
         "results",
+        "arithmeticOperations",
+        "randomDraws",
         "executionBindings",
         "executionGraph",
         "proofRequirements"
@@ -1206,6 +1290,20 @@
           "maxItems": 16,
           "items": {
             "$ref": "#/$defs/resultUnion"
+          }
+        },
+        "arithmeticOperations": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/boundedArithmeticOperation"
+          }
+        },
+        "randomDraws": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/seededRangeDraw"
           }
         },
         "executionBindings": {

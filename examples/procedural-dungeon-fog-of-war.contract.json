@@ -1,0 +1,368 @@
+{
+  "$schema": "https://canonical.local/schemas/governed-artifact-contract.schema.json",
+  "artifacts": [
+    {
+      "artifactId": "dungeon-game.v1",
+      "artifactKind": "html-document",
+      "mediaType": "text/html",
+      "projection": {
+        "authority": {
+          "authorityType": "utf8-text.v1",
+          "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Procedural Dungeon Generator - Fog of War</title>\n<style>\n  :root {\n    --bg: #05060a;\n    --grid-line: #10233a;\n    --panel-bg: #0b1220;\n    --panel-border: #1fd6ff;\n    --accent: #1fd6ff;\n    --accent-dim: #0d7a94;\n    --text: #d8f6ff;\n    --player: #55ff33;\n  }\n\n  * {\n    box-sizing: border-box;\n  }\n\n  html, body {\n    height: 100%;\n  }\n\n  body {\n    margin: 0;\n    background-color: var(--bg);\n    background-image:\n      linear-gradient(var(--grid-line) 1px, transparent 1px),\n      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);\n    background-size: 32px 32px;\n    color: var(--text);\n    font-family: \"Consolas\", \"Courier New\", monospace;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    min-height: 100vh;\n    padding: 24px;\n  }\n\n  .app {\n    display: flex;\n    gap: 24px;\n    align-items: flex-start;\n    flex-wrap: wrap;\n    justify-content: center;\n  }\n\n  .stage {\n    position: relative;\n    border: 2px solid var(--panel-border);\n    box-shadow: 0 0 18px rgba(31, 214, 255, 0.55), inset 0 0 24px rgba(31, 214, 255, 0.12);\n    background: #000;\n    line-height: 0;\n  }\n\n  canvas#view {\n    width: 600px;\n    height: 600px;\n    image-rendering: pixelated;\n    image-rendering: crisp-edges;\n    display: block;\n  }\n\n  .panel {\n    width: 260px;\n    background: var(--panel-bg);\n    border: 1px solid var(--panel-border);\n    box-shadow: 0 0 14px rgba(31, 214, 255, 0.35);\n    border-radius: 6px;\n    padding: 18px;\n    display: flex;\n    flex-direction: column;\n    gap: 16px;\n  }\n\n  .panel h1 {\n    font-size: 15px;\n    letter-spacing: 0.08em;\n    text-transform: uppercase;\n    color: var(--accent);\n    margin: 0 0 4px 0;\n    text-shadow: 0 0 8px rgba(31, 214, 255, 0.8);\n  }\n\n  .field {\n    display: flex;\n    flex-direction: column;\n    gap: 4px;\n    border: 1px solid var(--accent-dim);\n    border-radius: 4px;\n    padding: 10px 12px;\n    background: rgba(31, 214, 255, 0.05);\n  }\n\n  .field .label {\n    font-size: 10px;\n    letter-spacing: 0.12em;\n    text-transform: uppercase;\n    color: var(--accent-dim);\n  }\n\n  .field .value {\n    font-size: 18px;\n    color: var(--player);\n    text-shadow: 0 0 6px rgba(85, 255, 51, 0.7);\n  }\n\n  button {\n    font-family: inherit;\n    font-size: 12px;\n    letter-spacing: 0.06em;\n    text-transform: uppercase;\n    color: var(--text);\n    background: linear-gradient(180deg, #103049, #071522);\n    border: 1px solid var(--accent);\n    border-radius: 4px;\n    padding: 10px 12px;\n    cursor: pointer;\n    transition: box-shadow 0.15s ease, transform 0.05s ease;\n  }\n\n  button:hover {\n    box-shadow: 0 0 10px rgba(31, 214, 255, 0.8);\n  }\n\n  button:active {\n    transform: translateY(1px);\n  }\n\n  button.active {\n    background: linear-gradient(180deg, #1c3f22, #0a1a0d);\n    border-color: var(--player);\n    color: var(--player);\n    box-shadow: 0 0 10px rgba(85, 255, 51, 0.6);\n  }\n\n  .hint {\n    font-size: 11px;\n    color: var(--accent-dim);\n    line-height: 1.5;\n  }\n</style>\n</head>\n<body>\n  <div class=\"app\">\n    <div class=\"stage\">\n      <canvas id=\"view\" width=\"600\" height=\"600\"></canvas>\n    </div>\n    <div class=\"panel\">\n      <h1>Dungeon Control</h1>\n      <div class=\"field\">\n        <span class=\"label\">Player Position</span>\n        <span class=\"value\" id=\"coords\">(0, 0)</span>\n      </div>\n      <button id=\"regenerateBtn\" type=\"button\">Regenerate Map</button>\n      <button id=\"godModeBtn\" type=\"button\">Toggle God Mode</button>\n      <div class=\"hint\">\n        Move with Arrow Keys or WASD. Walls block movement and sight.\n        God Mode reveals the full generated layout for debugging.\n      </div>\n    </div>\n  </div>\n\n<script>\n(function () {\n  \"use strict\";\n\n  var GRID_SIZE = 60;\n  var TILE_SIZE = 10;\n  var CANVAS_SIZE = GRID_SIZE * TILE_SIZE;\n  var VISION_RADIUS = 9;\n  var WALL = 1;\n  var FLOOR = 0;\n\n  var COLOR_HIDDEN = \"#000000\";\n  var COLOR_WALL = \"#4a4e69\";\n  var COLOR_FLOOR = \"#9a8c98\";\n  var COLOR_PLAYER = \"#55ff33\";\n\n  var canvas = document.getElementById(\"view\");\n  var ctx = canvas.getContext(\"2d\");\n  var coordsEl = document.getElementById(\"coords\");\n  var regenerateBtn = document.getElementById(\"regenerateBtn\");\n  var godModeBtn = document.getElementById(\"godModeBtn\");\n\n  var map = [];\n  var visibility = [];\n  var player = { x: 0, y: 0 };\n  var godMode = false;\n\n  function randInt(min, max) {\n    if (max <= min) {\n      return min;\n    }\n    return Math.floor(Math.random() * (max - min + 1)) + min;\n  }\n\n  function createGrid(size, fillValue) {\n    var grid = [];\n    for (var y = 0; y < size; y++) {\n      var row = [];\n      for (var x = 0; x < size; x++) {\n        row.push(fillValue);\n      }\n      grid.push(row);\n    }\n    return grid;\n  }\n\n  function inBounds(x, y) {\n    return x >= 0 && y >= 0 && x < GRID_SIZE && y < GRID_SIZE;\n  }\n\n  function carveRoom(room) {\n    for (var y = room.y; y < room.y + room.h; y++) {\n      for (var x = room.x; x < room.x + room.w; x++) {\n        if (inBounds(x, y)) {\n          map[y][x] = FLOOR;\n        }\n      }\n    }\n  }\n\n  function carveHorizontalCorridor(x1, x2, y) {\n    var from = Math.min(x1, x2);\n    var to = Math.max(x1, x2);\n    for (var x = from; x <= to; x++) {\n      if (inBounds(x, y)) {\n        map[y][x] = FLOOR;\n      }\n    }\n  }\n\n  function carveVerticalCorridor(y1, y2, x) {\n    var from = Math.min(y1, y2);\n    var to = Math.max(y1, y2);\n    for (var y = from; y <= to; y++) {\n      if (inBounds(x, y)) {\n        map[y][x] = FLOOR;\n      }\n    }\n  }\n\n  function connectPoints(a, b) {\n    if (Math.random() < 0.5) {\n      carveHorizontalCorridor(a.x, b.x, a.y);\n      carveVerticalCorridor(a.y, b.y, b.x);\n    } else {\n      carveVerticalCorridor(a.y, b.y, a.x);\n      carveHorizontalCorridor(a.x, b.x, b.y);\n    }\n  }\n\n  function pickRoomCenter(node) {\n    if (node.room) {\n      return { x: node.room.centerX, y: node.room.centerY };\n    }\n    var branch = Math.random() < 0.5 ? node.left : node.right;\n    return pickRoomCenter(branch);\n  }\n\n  var MIN_LEAF = 10;\n  var MAX_DEPTH = 4;\n\n  function splitBSP(node, depth) {\n    var canSplitWide = node.w >= MIN_LEAF * 2;\n    var canSplitTall = node.h >= MIN_LEAF * 2;\n\n    if (depth >= MAX_DEPTH || (!canSplitWide && !canSplitTall)) {\n      var roomW = randInt(4, Math.max(4, node.w - 4));\n      var roomH = randInt(4, Math.max(4, node.h - 4));\n      var roomX = node.x + randInt(1, Math.max(1, node.w - roomW - 1));\n      var roomY = node.y + randInt(1, Math.max(1, node.h - roomH - 1));\n      node.room = {\n        x: roomX,\n        y: roomY,\n        w: roomW,\n        h: roomH,\n        centerX: roomX + Math.floor(roomW / 2),\n        centerY: roomY + Math.floor(roomH / 2)\n      };\n      carveRoom(node.room);\n      return;\n    }\n\n    var splitVertical;\n    if (canSplitWide && !canSplitTall) {\n      splitVertical = true;\n    } else if (!canSplitWide && canSplitTall) {\n      splitVertical = false;\n    } else {\n      splitVertical = node.w > node.h ? true : node.w < node.h ? false : Math.random() < 0.5;\n    }\n\n    if (splitVertical) {\n      var splitX = randInt(node.x + MIN_LEAF, node.x + node.w - MIN_LEAF);\n      node.left = { x: node.x, y: node.y, w: splitX - node.x, h: node.h };\n      node.right = { x: splitX, y: node.y, w: node.x + node.w - splitX, h: node.h };\n    } else {\n      var splitY = randInt(node.y + MIN_LEAF, node.y + node.h - MIN_LEAF);\n      node.left = { x: node.x, y: node.y, w: node.w, h: splitY - node.y };\n      node.right = { x: node.x, y: splitY, w: node.w, h: node.y + node.h - splitY };\n    }\n\n    splitBSP(node.left, depth + 1);\n    splitBSP(node.right, depth + 1);\n    connectPoints(pickRoomCenter(node.left), pickRoomCenter(node.right));\n  }\n\n  function generateMap() {\n    map = createGrid(GRID_SIZE, WALL);\n    var root = { x: 1, y: 1, w: GRID_SIZE - 2, h: GRID_SIZE - 2 };\n    splitBSP(root, 0);\n\n    var floorTiles = [];\n    for (var y = 0; y < GRID_SIZE; y++) {\n      for (var x = 0; x < GRID_SIZE; x++) {\n        if (map[y][x] === FLOOR) {\n          floorTiles.push({ x: x, y: y });\n        }\n      }\n    }\n\n    var spawn = floorTiles[randInt(0, floorTiles.length - 1)];\n    player.x = spawn.x;\n    player.y = spawn.y;\n  }\n\n  function bresenhamLine(x0, y0, x1, y1) {\n    var points = [];\n    var dx = Math.abs(x1 - x0);\n    var dy = -Math.abs(y1 - y0);\n    var sx = x0 < x1 ? 1 : -1;\n    var sy = y0 < y1 ? 1 : -1;\n    var err = dx + dy;\n    var x = x0;\n    var y = y0;\n\n    while (true) {\n      points.push({ x: x, y: y });\n      if (x === x1 && y === y1) {\n        break;\n      }\n      var e2 = 2 * err;\n      if (e2 >= dy) {\n        err += dy;\n        x += sx;\n      }\n      if (e2 <= dx) {\n        err += dx;\n        y += sy;\n      }\n    }\n    return points;\n  }\n\n  function castRay(targetX, targetY) {\n    var line = bresenhamLine(player.x, player.y, targetX, targetY);\n    for (var i = 0; i < line.length; i++) {\n      var px = line[i].x;\n      var py = line[i].y;\n      if (!inBounds(px, py)) {\n        break;\n      }\n      var distance = Math.max(Math.abs(px - player.x), Math.abs(py - player.y));\n      if (distance > VISION_RADIUS) {\n        break;\n      }\n      visibility[py][px] = 1;\n      if (map[py][px] === WALL) {\n        break;\n      }\n    }\n  }\n\n  function updateVisibility() {\n    visibility[player.y][player.x] = 1;\n\n    for (var dx = -VISION_RADIUS; dx <= VISION_RADIUS; dx++) {\n      castRay(player.x + dx, player.y - VISION_RADIUS);\n      castRay(player.x + dx, player.y + VISION_RADIUS);\n    }\n    for (var dy = -VISION_RADIUS; dy <= VISION_RADIUS; dy++) {\n      castRay(player.x - VISION_RADIUS, player.y + dy);\n      castRay(player.x + VISION_RADIUS, player.y + dy);\n    }\n  }\n\n  function draw() {\n    ctx.fillStyle = COLOR_HIDDEN;\n    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);\n\n    for (var y = 0; y < GRID_SIZE; y++) {\n      for (var x = 0; x < GRID_SIZE; x++) {\n        var isRevealed = godMode || visibility[y][x] === 1;\n        if (!isRevealed) {\n          continue;\n        }\n        ctx.fillStyle = map[y][x] === WALL ? COLOR_WALL : COLOR_FLOOR;\n        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);\n      }\n    }\n\n    ctx.fillStyle = COLOR_PLAYER;\n    ctx.fillRect(player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);\n  }\n\n  function updateCoordsDisplay() {\n    coordsEl.textContent = \"(\" + player.x + \", \" + player.y + \")\";\n  }\n\n  function tryMovePlayer(dx, dy) {\n    var newX = player.x + dx;\n    var newY = player.y + dy;\n    if (!inBounds(newX, newY)) {\n      return;\n    }\n    if (map[newY][newX] === WALL) {\n      return;\n    }\n    player.x = newX;\n    player.y = newY;\n    updateVisibility();\n    draw();\n    updateCoordsDisplay();\n  }\n\n  var KEY_DIRECTIONS = {\n    ArrowUp: { dx: 0, dy: -1 },\n    ArrowDown: { dx: 0, dy: 1 },\n    ArrowLeft: { dx: -1, dy: 0 },\n    ArrowRight: { dx: 1, dy: 0 },\n    w: { dx: 0, dy: -1 },\n    W: { dx: 0, dy: -1 },\n    s: { dx: 0, dy: 1 },\n    S: { dx: 0, dy: 1 },\n    a: { dx: -1, dy: 0 },\n    A: { dx: -1, dy: 0 },\n    d: { dx: 1, dy: 0 },\n    D: { dx: 1, dy: 0 }\n  };\n\n  function handleKeyDown(event) {\n    var direction = KEY_DIRECTIONS[event.key];\n    if (!direction) {\n      return;\n    }\n    event.preventDefault();\n    tryMovePlayer(direction.dx, direction.dy);\n  }\n\n  function resetGame() {\n    generateMap();\n    visibility = createGrid(GRID_SIZE, 0);\n    updateVisibility();\n    draw();\n    updateCoordsDisplay();\n  }\n\n  function toggleGodMode() {\n    godMode = !godMode;\n    godModeBtn.classList.toggle(\"active\", godMode);\n    draw();\n  }\n\n  regenerateBtn.addEventListener(\"click\", resetGame);\n  godModeBtn.addEventListener(\"click\", toggleGodMode);\n  document.addEventListener(\"keydown\", handleKeyDown);\n\n  resetGame();\n})();\n</script>\n</body>\n</html>\n"
+        },
+        "authorityId": "dungeon-game-authority.v1",
+        "projectorId": "utf8-text-projector.v1"
+      },
+      "proof": {
+        "contentSha256": "sha256:83eaad7c5f3f38e6adb096e47d276570357d96751a6700095f55780a2bcdce90",
+        "expectedByteLength": 11757,
+        "forbiddenText": [
+          "TODO",
+          "FIXME",
+          "implement logic here",
+          "placeholder"
+        ],
+        "verifierIds": [
+          "content-digest-verifier.v1",
+          "forbidden-text-verifier.v1"
+        ]
+      },
+      "purpose": "Renders the playable procedural dungeon: BSP map generation, keyboard movement, and Bresenham raycast fog-of-war revelation.",
+      "relationships": [
+        {
+          "artifactId": "dungeon-family-readme.v1",
+          "relationshipType": "documents"
+        }
+      ],
+      "relativePath": "index.html"
+    },
+    {
+      "artifactId": "dungeon-family-readme.v1",
+      "artifactKind": "markdown-document",
+      "mediaType": "text/markdown",
+      "projection": {
+        "authority": {
+          "authorityType": "governed-artifact-contract-markdown.v1",
+          "documentStatusLabel": "Governed review projection",
+          "documentTitle": "Procedural Dungeon Generator with Dynamic Fog of War",
+          "futureStatePreview": [
+            "One admitted contract projects the complete playable dungeon artifact and the architecture review document used to inspect it.",
+            "The review document is derived from structured contract authority, so its artifact inventory, projection bindings, and trust vocabulary cannot drift independently from the shipped game file."
+          ],
+          "reviewChecklist": [
+            "The map generator produces only connected floor tiles reachable from the player spawn point.",
+            "The player moves exactly one tile per keypress and cannot step onto a wall tile.",
+            "Every fog-of-war reveal traces a generalized Bresenham line from the player and stops at the first wall it hits.",
+            "God Mode reveals every tile without mutating the persistent visibility grid.",
+            "Regenerate Map rebuilds the layout, resets visibility, and respawns the player on a valid floor tile.",
+            "The deliverable is one self-contained HTML file with no external libraries and no placeholder logic."
+          ],
+          "reviewerPerspective": {
+            "objective": "to confirm the map generator, movement rules, and raycast fog of war are exactly the admitted authority before the team signs off",
+            "outcome": "the single HTML deliverable can be trusted to match this contract without re-reading its full source by hand",
+            "role": "a gameplay and architecture reviewer"
+          },
+          "sectionOrder": [
+            "future-state-preview",
+            "reviewer-perspective",
+            "governing-loop",
+            "contract-authority",
+            "semantic-subject",
+            "artifact-family",
+            "projection-authorities",
+            "dependency-authorities",
+            "effect-authorities",
+            "runtime-authorities",
+            "source-authority-closures",
+            "authority-closure-profile",
+            "artifact-scope-authority",
+            "operation-authorities",
+            "artifact-relationships",
+            "exclusions",
+            "conformance-evaluation",
+            "terminal-dispositions",
+            "receipt-requirements",
+            "claim-policies",
+            "review-checklist"
+          ]
+        },
+        "authorityId": "dungeon-family-readme-authority.v1",
+        "projectorId": "governed-artifact-contract-markdown-projector.v1"
+      },
+      "proof": {
+        "contentSha256": "sha256:0e3d67687a2429db379e7c54987e0635c9f811fe76db3860524a7eeb6554db39",
+        "expectedByteLength": 15202,
+        "requiredSections": [
+          "# Procedural Dungeon Generator with Dynamic Fog of War",
+          "## Future-State Preview",
+          "## Reviewer Perspective",
+          "## Governing Loop",
+          "## Contract Authority",
+          "## Semantic Subject",
+          "## Artifact Family",
+          "## Projection Authorities",
+          "## Dependency Authorities",
+          "## Effect Authorities",
+          "## Runtime Authorities",
+          "## Source Authority Closures",
+          "## Authority Closure Profile",
+          "## Artifact Scope Authority",
+          "## Operation Authorities",
+          "## Artifact Relationships",
+          "## Exclusions",
+          "## Conformance Evaluation",
+          "## Terminal Dispositions",
+          "## Receipt Requirements",
+          "## Claim Policies",
+          "## Review Checklist"
+        ],
+        "verifierIds": [
+          "content-digest-verifier.v1",
+          "markdown-section-verifier.v1"
+        ]
+      },
+      "purpose": "Projects the complete contract authority into an architecture review document for team sign-off.",
+      "relationships": [
+        {
+          "artifactId": "dungeon-game.v1",
+          "relationshipType": "documents"
+        }
+      ],
+      "relativePath": "README.md"
+    }
+  ],
+  "claims": [
+    {
+      "claim": "COMPLETE",
+      "claimId": "dungeon-family-complete.v1"
+    },
+    {
+      "claim": "CONTRACT_AUTHORITY_CLOSED",
+      "claimId": "dungeon-contract-authority-closed.v1"
+    },
+    {
+      "claim": "TRUSTED",
+      "claimId": "dungeon-family-trusted.v1"
+    }
+  ],
+  "conformance": {
+    "artifactEvaluations": []
+  },
+  "contract": {
+    "contractId": "procedural-dungeon-fog-of-war.v1",
+    "contractType": "governed-artifact-contract.v1",
+    "contractVersion": "1.13.0",
+    "status": "admitted"
+  },
+  "dependencies": [],
+  "designAuthority": {
+    "authorityType": "conversation-design-authority.v1",
+    "conversationDigest": "sha256:8c86f6a6dc7fc416f1db31f9c89607511ab55e2b5818319dcb031d7be7126ac0",
+    "decisions": [
+      {
+        "decisionId": "single-file-deliverable",
+        "disposition": "accepted",
+        "source": "Deliverable requirement in the game-engineering brief",
+        "statement": "Ship the dungeon generator as one self-contained HTML file with no external libraries or dependencies."
+      },
+      {
+        "decisionId": "map-generation-engine-choice",
+        "disposition": "accepted",
+        "source": "Choice between BSP and cellular automata for the map-generation engine",
+        "statement": "Use Binary Space Partitioning rather than cellular automata, because BSP connects every sibling room pair by construction and needs no separate pocket-connection pass."
+      },
+      {
+        "decisionId": "vision-radius-nine",
+        "disposition": "accepted",
+        "source": "Core mechanics requirement for an 8-10 tile visibility radius",
+        "statement": "Fix the fog-of-war vision radius at 9 tiles."
+      },
+      {
+        "decisionId": "persistent-fog-memory",
+        "disposition": "accepted",
+        "source": "The visibility grid is specified with exactly two states, Hidden and Revealed",
+        "statement": "Once a tile is revealed it stays revealed; there is no third remembered-but-out-of-sight state."
+      },
+      {
+        "decisionId": "opaque-text-authority-for-html",
+        "disposition": "accepted",
+        "source": "Projector registry constraint: lossless-source-tokens.v1 only admits the javascript and typescript languages",
+        "statement": "Govern the shipped file as one exact-byte utf8-text.v1 artifact instead of decomposing it under JavaScript source authority, since the deliverable is one mixed HTML document rather than an isolated JS module."
+      },
+      {
+        "decisionId": "corridor-shape",
+        "disposition": "modified",
+        "source": "Option A wording describes carving straight hallway connections",
+        "statement": "Connect sibling BSP rooms with a single straight hallway segment."
+      },
+      {
+        "decisionId": "review-markdown-for-team",
+        "disposition": "accepted",
+        "source": "Request to hand the team a document they can review",
+        "statement": "Project a contract-derived architecture review Markdown document alongside the game file."
+      },
+      {
+        "decisionId": "automated-runtime-conformance-check",
+        "disposition": "deferred",
+        "source": "Conformance evaluation is available as an optional declared command check",
+        "statement": "Add an automated headless-browser command that exercises the canvas gameplay loop as a conformance evaluation."
+      }
+    ],
+    "deviations": [
+      {
+        "decisionId": "corridor-shape",
+        "impact": "Corridors bend once instead of running perfectly straight; the BSP connectivity guarantee and overall structure are unchanged.",
+        "implemented": "Connect sibling BSP room centers with a randomized two-segment (L-shaped) corridor.",
+        "proposed": "Connect sibling BSP rooms with a single straight hallway segment.",
+        "reason": "A single straight segment cannot join two room centers unless they already share a row or column; an L-shaped two-segment corridor is the minimal deterministic extension that still guarantees a connected path between any sibling pair."
+      }
+    ],
+    "tieOut": [
+      {
+        "artifactIds": [
+          "dungeon-game.v1"
+        ],
+        "decisionId": "single-file-deliverable"
+      },
+      {
+        "artifactIds": [
+          "dungeon-game.v1"
+        ],
+        "decisionId": "map-generation-engine-choice"
+      },
+      {
+        "artifactIds": [
+          "dungeon-game.v1"
+        ],
+        "decisionId": "vision-radius-nine"
+      },
+      {
+        "artifactIds": [
+          "dungeon-game.v1"
+        ],
+        "decisionId": "persistent-fog-memory"
+      },
+      {
+        "artifactIds": [
+          "dungeon-game.v1"
+        ],
+        "decisionId": "opaque-text-authority-for-html"
+      },
+      {
+        "artifactIds": [
+          "dungeon-game.v1"
+        ],
+        "decisionId": "corridor-shape"
+      },
+      {
+        "artifactIds": [
+          "dungeon-family-readme.v1"
+        ],
+        "decisionId": "review-markdown-for-team"
+      }
+    ]
+  },
+  "effects": [],
+  "exclusions": [],
+  "interpretationBase": {
+    "conformanceProfile": {
+      "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+      "identity": "closed-world-artifact-conformance.v8"
+    },
+    "engine": {
+      "digest": "sha256:128a7b3043a73fd3da5aedb8b571e6c3c2eab8c8996db86db4999ada2ce4d4b9",
+      "identity": "governed-artifact-engine.0.18.0"
+    },
+    "migrationRegistry": {
+      "digest": "sha256:a58c3ae89b1f706e2d2878aa7d0c34f448c5d071db757d98a5036575b470eadd",
+      "identity": "governed-artifact-migration-registry.v1"
+    },
+    "projectorRegistry": {
+      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+      "identity": "governed-artifact-projector-registry.v1"
+    },
+    "schema": {
+      "digest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
+      "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
+    },
+    "verifierRegistry": {
+      "digest": "sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14",
+      "identity": "governed-artifact-verifier-registry.v1"
+    }
+  },
+  "lineage": {
+    "authorityType": "canonical-lineage-authority.v1",
+    "features": [
+      {
+        "featureId": "procedural-dungeon-generation.v1",
+        "projectId": "procedural-dungeon-fog-of-war",
+        "purpose": "Generate a connected BSP dungeon layout and reveal it to the player through Bresenham raycast fog of war."
+      }
+    ],
+    "obligations": [
+      {
+        "obligationId": "reveal-only-line-of-sight-tiles",
+        "scenarioId": "explore-the-generated-dungeon",
+        "statement": "Only tiles reached by an unobstructed Bresenham ray within the vision radius may be marked revealed, and a wall must stop its ray immediately."
+      }
+    ],
+    "projectId": "procedural-dungeon-fog-of-war",
+    "responsibilities": [],
+    "scenarios": [
+      {
+        "featureId": "procedural-dungeon-generation.v1",
+        "purpose": "A player moves through the generated dungeon while fog of war reveals tiles along traced sightlines.",
+        "scenarioId": "explore-the-generated-dungeon"
+      }
+    ]
+  },
+  "projectionLedger": {
+    "relativePath": ".governance/projections/procedural-dungeon-fog-of-war.ledger.json"
+  },
+  "receipt": {
+    "relativePath": ".governance/receipts/procedural-dungeon-fog-of-war.receipt.json"
+  },
+  "runtimeAuthorities": [],
+  "subject": {
+    "authority": {
+      "canvasSizePx": 600,
+      "colorPalette": {
+        "hiddenFogOfWar": "#000000",
+        "player": "#55ff33",
+        "visibleFloor": "#9a8c98",
+        "visibleWall": "#4a4e69"
+      },
+      "controls": [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "w",
+        "a",
+        "s",
+        "d"
+      ],
+      "gridDimensions": {
+        "heightTiles": 60,
+        "tileSizePx": 10,
+        "widthTiles": 60
+      },
+      "mapGenerationEngine": "binary-space-partitioning",
+      "visionRadiusTiles": 9
+    },
+    "purpose": "Deliver a self-contained, dependency-free procedural dungeon generator with Bresenham raycast fog of war as one browser-playable HTML artifact.",
+    "subjectId": "procedural-dungeon-fog-of-war.v1",
+    "subjectType": "artifact-family"
+  },
+  "workspace": {
+    "artifactRoot": "procedural-dungeon-fog-of-war",
+    "governedScope": {
+      "governedDirectories": [],
+      "inventoryMode": "exclusive-subtree",
+      "outsideScopePosture": "outside-authority",
+      "requiredDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "scopeType": "exclusive-artifact-subtree.v1"
+    },
+    "workspaceRoot": "."
+  }
+}

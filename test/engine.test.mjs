@@ -137,6 +137,31 @@ test("the admitted example contract is valid", () => {
   assert.equal(result.trustPosture, "NOT_EVALUATED");
 });
 
+test("structured meaning hidden in opaque text is a conformance failure", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    const artifact = contract.artifacts[0];
+    artifact.mediaType = "text/html";
+    artifact.projection = {
+      authority: {
+        authorityType: "utf8-text.v1",
+        text: "<main>opaque meaning</main>\n"
+      },
+      authorityId: artifact.projection.authorityId,
+      projectorId: "utf8-text-projector.v1"
+    };
+  });
+  const result = validateContract({ contractPath, workspacePath });
+  assert.equal(result.contractValidationDisposition, "CONTRACT_INVALID");
+  assert.equal(
+    result.findings.some(
+      (finding) =>
+        finding.findingId === "STRUCTURED_MEANING_HIDDEN_IN_TEXT"
+    ),
+    true
+  );
+});
+
 test("the contract makes every governed control surface explicit", () => {
   const contract = JSON.parse(readFileSync(exampleContractPath, "utf8"));
   const profile = JSON.parse(
@@ -258,7 +283,8 @@ test("the contract makes every governed control surface explicit", () => {
       "validation",
       "fallback",
       "retry",
-      "state-mutation"
+      "state-mutation",
+      "meaning-hidden-in-text"
     ],
     profileType: "semantic-execution-body.v2",
     semanticAuthorityLocation: "contract"
@@ -1417,6 +1443,32 @@ test("the conformance profile is mandatory and cannot be weakened", (t) => {
     validateContract({
       contractPath: weakenedProfilePath,
       conformanceProfilePath: weakenedProfileFile
+    }).contractValidationDisposition,
+    "CONTRACT_INVALID"
+  );
+
+  const opaqueMeaningProfile = JSON.parse(
+    readFileSync(DEFAULT_CONFORMANCE_PROFILE_PATH, "utf8")
+  );
+  opaqueMeaningProfile.structuredMeaningAuthority.opaqueEncodingDisposition =
+    "PERMITTED";
+  const opaqueMeaningProfileFile = path.join(
+    workspacePath,
+    "opaque-meaning-conformance-profile.json"
+  );
+  writeFileSync(
+    opaqueMeaningProfileFile,
+    canonicalJsonBytes(opaqueMeaningProfile)
+  );
+  const opaqueMeaningContractPath = copyContract(workspacePath, (contract) => {
+    contract.interpretationBase.conformanceProfile.digest = sha256(
+      canonicalJsonBytes(opaqueMeaningProfile)
+    );
+  });
+  assert.equal(
+    validateContract({
+      contractPath: opaqueMeaningContractPath,
+      conformanceProfilePath: opaqueMeaningProfileFile
     }).contractValidationDisposition,
     "CONTRACT_INVALID"
   );

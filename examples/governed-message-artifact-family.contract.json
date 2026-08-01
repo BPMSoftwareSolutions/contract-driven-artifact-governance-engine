@@ -466,7 +466,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:85c72a57fae94ce8b72055b6d3e3c0599cc63cffe5ff0aaaa4d5b3fec7e7ca98",
+        "contentSha256": "sha256:dd8d4970501122129d6e4d68d5a9ab7d240a8c743d77e2a3ceb8b6c1e26abda4",
         "expectedByteLength": 1202,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1073,7 +1073,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:d642d07262ffdcc71098fa845c935d17cf111363f9db488e6f357e129325a43d",
+        "contentSha256": "sha256:de25f58f0ab281aa95486e525e013bb931c61859ff329263c312cb73e9041367",
         "expectedByteLength": 1025,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1651,7 +1651,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:d7e62a94c2c3399b2836dd33ed026af61489e1e0b162cb757bb08342f7ccf638",
+        "contentSha256": "sha256:9969ca2ae244f139e027fe550efb6a35fc8859b8c7ec5e65378e18a8dbbf67dd",
         "expectedByteLength": 1141,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1901,8 +1901,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:ab65da7b7c0f44eb86947859d1ba1a2a23a3f376a5457eb2c4edbe873cb43d77",
-        "expectedByteLength": 24512,
+        "contentSha256": "sha256:799af3a5e4e8179435961f73ccb843113523057b7865b26b3964e5dee093e4c8",
+        "expectedByteLength": 24588,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -2419,19 +2419,19 @@
   ],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+      "digest": "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:776a241c92c4eb5d7dd1707a8513359c984b8b4effdf42964984f8555cee89f8",
+      "digest": "sha256:7c4b3ab7f515893d0e19bcc9e9d09ecfecb1dd2ffe05b80416ce7aba032733dc",
       "identity": "governed-artifact-engine.0.20.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:16d9c61d42789f099e75c421322a288999e5ec7c0a540fa2281f8368efc64b56",
+      "digest": "sha256:758a4d4aed661df85d27dedee356064d9e478226eefef1a31642721be4cd24a3",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
-      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+      "digest": "sha256:1ab8ec48c80324c862cf598813554847fc4224ecb146e8dbddf7d9b1efdb2785",
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {

@@ -480,7 +480,7 @@ produces `RELEASE_AUTHORITY_OPEN`, `RELEASE_BOUNDARY_DRIFT`, and
 
 ## Projectors
 
-The admitted projector registry contains seven data-driven projectors:
+The admitted projector registry contains ten data-driven projectors:
 
 - `canonical-json-value-projector.v1` serializes JSON with sorted object keys,
   two-space indentation, UTF-8, and one final LF;
@@ -492,9 +492,19 @@ The admitted projector registry contains seven data-driven projectors:
   to a concrete ontology concept;
 - `deterministic-ontology-documentation-projector.v1` renders the closed
   ontology as deterministic reference documentation;
-- `utf8-text-projector.v1` emits the exact admitted UTF-8 text; and
+- `design-decision-record-projector.v1` renders structured design authority;
+- `structured-html-document-projector.v1` renders a queryable HTML element
+  tree, ordered attributes, module imports, and invocations with deterministic
+  two-space indentation;
+- `provenance-sealed-source-projector.v1` seals ordered source tokens to their
+  canonical lineage;
+- `utf8-text-projector.v1` emits exact inert UTF-8 text; and
 - `lossless-source-token-projector.v1` concatenates ordered token text and
   independently rescans the result to prove token identity.
+
+The closed-world profile rejects `text/html` projected from opaque UTF-8 text
+with `STRUCTURED_MEANING_HIDDEN_IN_TEXT`. Structured artifacts must expose
+their reusable meaning through the admitted structured projection binding.
 
 No projector selects content from an artifact kind or subject identity. The
 contract supplies all artifact authority.

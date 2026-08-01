@@ -23,7 +23,10 @@ const enginePath = "lib/governed-artifact-engine.mjs";
 const profilePath = "profiles/closed-world-artifact-conformance.v8.json";
 const schemaPath = "schemas/governed-artifact-contract.schema.json";
 const registryPath = "registries/migration-registry.json";
-const contractPath = "examples/governed-message-artifact-family.contract.json";
+const contractPaths = [
+  "examples/governed-message-artifact-family.contract.json",
+  "examples/procedural-dungeon-webpage.contract.json"
+];
 
 const engineIdentity = /ENGINE_IDENTITY = "([^"]+)"/.exec(
   readFileSync(enginePath, "utf8")
@@ -48,41 +51,43 @@ head.targetSchemaDigest = digest(schemaPath);
 registry.schemaCatalog.digest = digest("schemas/schema-catalog.json");
 writeFileSync(registryPath, `${JSON.stringify(sortKeys(registry), null, 2)}\n`);
 
-const contract = JSON.parse(readFileSync(contractPath, "utf8"));
-contract.interpretationBase = {
-  ...contract.interpretationBase,
-  engine: structuredClone(head.targetInterpretationBase.engine),
-  conformanceProfile: structuredClone(
-    head.targetInterpretationBase.conformanceProfile
-  ),
-  schema: {
-    ...contract.interpretationBase.schema,
-    digest: head.targetSchemaDigest
-  },
-  migrationRegistry: {
-    ...contract.interpretationBase.migrationRegistry,
-    digest: digest(registryPath)
-  },
-  projectorRegistry: {
-    ...contract.interpretationBase.projectorRegistry,
-    digest: digest("registries/projector-registry.json")
-  },
-  verifierRegistry: {
-    ...contract.interpretationBase.verifierRegistry,
-    digest: digest("registries/verifier-registry.json")
-  }
-};
-writeFileSync(contractPath, `${JSON.stringify(sortKeys(contract), null, 2)}\n`);
+for (const contractPath of contractPaths) {
+  const contract = JSON.parse(readFileSync(contractPath, "utf8"));
+  contract.interpretationBase = {
+    ...contract.interpretationBase,
+    engine: structuredClone(head.targetInterpretationBase.engine),
+    conformanceProfile: structuredClone(
+      head.targetInterpretationBase.conformanceProfile
+    ),
+    schema: {
+      ...contract.interpretationBase.schema,
+      digest: head.targetSchemaDigest
+    },
+    migrationRegistry: {
+      ...contract.interpretationBase.migrationRegistry,
+      digest: digest(registryPath)
+    },
+    projectorRegistry: {
+      ...contract.interpretationBase.projectorRegistry,
+      digest: digest("registries/projector-registry.json")
+    },
+    verifierRegistry: {
+      ...contract.interpretationBase.verifierRegistry,
+      digest: digest("registries/verifier-registry.json")
+    }
+  };
+  writeFileSync(contractPath, `${JSON.stringify(sortKeys(contract), null, 2)}\n`);
 
-const reconciled = spawnSync(
-  process.execPath,
-  ["bin/governed-artifacts.mjs", "reconcile", "--contract", contractPath, "--write"],
-  { encoding: "utf8" }
-);
-const report = JSON.parse(reconciled.stdout);
-process.stdout.write(
-  `reconcile: ${report.reconciliationDisposition ?? report.contractValidationDisposition}\n`
-);
-if (report.findings?.length) {
-  process.stdout.write(`${JSON.stringify(report.findings, null, 2)}\n`);
+  const reconciled = spawnSync(
+    process.execPath,
+    ["bin/governed-artifacts.mjs", "reconcile", "--contract", contractPath, "--write"],
+    { encoding: "utf8" }
+  );
+  const report = JSON.parse(reconciled.stdout);
+  process.stdout.write(
+    `${contractPath}: ${report.reconciliationDisposition ?? report.contractValidationDisposition}\n`
+  );
+  if (report.findings?.length) {
+    process.stdout.write(`${JSON.stringify(report.findings, null, 2)}\n`);
+  }
 }

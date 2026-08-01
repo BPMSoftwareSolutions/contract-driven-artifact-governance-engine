@@ -33,13 +33,13 @@ flowchart LR
 | Contract ID | `procedural-dungeon-webpage.v1` |
 | Contract version | `1.13.0` |
 | Contract status | `admitted` |
-| Engine | `governed-artifact-engine.0.20.0` / `sha256:776a241c92c4eb5d7dd1707a8513359c984b8b4effdf42964984f8555cee89f8` |
+| Engine | `governed-artifact-engine.0.20.0` / `sha256:7c4b3ab7f515893d0e19bcc9e9d09ecfecb1dd2ffe05b80416ce7aba032733dc` |
 | Schema identity | `https://canonical.local/schemas/governed-artifact-contract.schema.json` |
 | Schema digest | `sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b` |
-| Conformance profile | `closed-world-artifact-conformance.v8` / `sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2` |
-| Projector registry | `governed-artifact-projector-registry.v1` / `sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf` |
+| Conformance profile | `closed-world-artifact-conformance.v8` / `sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7` |
+| Projector registry | `governed-artifact-projector-registry.v1` / `sha256:1ab8ec48c80324c862cf598813554847fc4224ecb146e8dbddf7d9b1efdb2785` |
 | Verifier registry | `governed-artifact-verifier-registry.v1` / `sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14` |
-| Migration registry | `governed-artifact-migration-registry.v1` / `sha256:16d9c61d42789f099e75c421322a288999e5ec7c0a540fa2281f8368efc64b56` |
+| Migration registry | `governed-artifact-migration-registry.v1` / `sha256:758a4d4aed661df85d27dedee356064d9e478226eefef1a31642721be4cd24a3` |
 
 ## Semantic Subject
 
@@ -125,7 +125,7 @@ Content digests and byte lengths remain in the JSON contract. They are excluded 
 
 | Artifact | Mode | Projector | Authority | Authority type |
 | --- | --- | --- | --- | --- |
-| `procedural-dungeon-webpage.v1` | `projected` | `utf8-text-projector.v1` | `procedural-dungeon-webpage-authority.v1` | `utf8-text.v1` |
+| `procedural-dungeon-webpage.v1` | `projected` | `structured-html-document-projector.v1` | `procedural-dungeon-webpage-authority.v1` | `canonical-json-value.v1` |
 | `dungeon-movement-bundle.v1` | `projected` | `bound-semantic-execution-authority-projector.v1` | `dungeon-movement-bundle.v1-authority` | `canonical-json-value.v1` |
 | `dungeon-render-role-bundle.v1` | `projected` | `bound-semantic-execution-authority-projector.v1` | `dungeon-render-role-bundle.v1-authority` | `canonical-json-value.v1` |
 | `dungeon-keyboard-command-bundle.v1` | `projected` | `bound-semantic-execution-authority-projector.v1` | `dungeon-keyboard-command-bundle.v1-authority` | `canonical-json-value.v1` |
@@ -373,7 +373,8 @@ The contract is the sole authored change authority. Governed artifacts are repla
       "validation",
       "fallback",
       "retry",
-      "state-mutation"
+      "state-mutation",
+      "meaning-hidden-in-text"
     ],
     "profileType": "semantic-execution-body.v2",
     "semanticAuthorityLocation": "contract"
@@ -489,13 +490,14 @@ Evaluation order:
 9. `evaluate-authority-closure`
 10. `evaluate-ontology-authority`
 11. `evaluate-semantic-execution-bodies`
-12. `evaluate-artifact-content`
-13. `evaluate-artifact-structure`
-14. `evaluate-artifact-freshness`
-15. `evaluate-artifact-relationships`
-16. `evaluate-declared-commands`
-17. `verify-proof-subject-stability`
-18. `issue-trust-disposition`
+12. `evaluate-structured-meaning-authority`
+13. `evaluate-artifact-content`
+14. `evaluate-artifact-structure`
+15. `evaluate-artifact-freshness`
+16. `evaluate-artifact-relationships`
+17. `evaluate-declared-commands`
+18. `verify-proof-subject-stability`
+19. `issue-trust-disposition`
 
 Declared command evaluations:
 

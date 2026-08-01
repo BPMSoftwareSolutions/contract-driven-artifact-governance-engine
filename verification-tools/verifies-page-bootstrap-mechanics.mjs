@@ -14,6 +14,29 @@ const appDir = process.argv[2] ?? process.cwd();
 const html = readFileSync(path.join(appDir, "index.html"), "utf8");
 const scripts = [...html.matchAll(/<script\s+type="module"\s*>([\s\S]*?)<\/script>/g)];
 
+assert.equal(html.includes("\r"), false, "index.html must use LF line endings");
+assert.equal(html.includes("\t"), false, "index.html indentation must not use tabs");
+
+const voidElements = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"]);
+let depth = 0;
+for (const [index, line] of html.trimEnd().split("\n").entries()) {
+  assert.equal(line.trimEnd(), line, `line ${index + 1} must not contain trailing whitespace`);
+  const content = line.trimStart();
+  const closing = content.match(/^<\/([a-z][a-z0-9-]*)>/i);
+  if (closing) depth -= 1;
+  assert.ok(depth >= 0, `line ${index + 1} closes an element outside the document hierarchy`);
+  assert.equal(
+    line.length - content.length,
+    depth * 2,
+    `line ${index + 1} must use two spaces for each HTML nesting level`
+  );
+  const opening = content.match(/^<([a-z][a-z0-9-]*)(?:\s[^>]*)?>/i);
+  if (opening && !voidElements.has(opening[1].toLowerCase()) && !content.includes(`</${opening[1]}>`)) {
+    depth += 1;
+  }
+}
+assert.equal(depth, 0, "index.html element indentation hierarchy must be balanced");
+
 assert.equal(scripts.length, 1, "index.html must contain exactly one module bootstrap");
 assert.equal(
   html.includes("<style"),

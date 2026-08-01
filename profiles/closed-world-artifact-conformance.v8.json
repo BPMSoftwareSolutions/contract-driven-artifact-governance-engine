@@ -60,6 +60,7 @@
       "evaluate-authority-closure",
       "evaluate-ontology-authority",
       "evaluate-semantic-execution-bodies",
+      "evaluate-structured-meaning-authority",
       "evaluate-artifact-content",
       "evaluate-artifact-structure",
       "evaluate-artifact-freshness",
@@ -204,7 +205,8 @@
         "validation",
         "fallback",
         "retry",
-        "state-mutation"
+        "state-mutation",
+        "meaning-hidden-in-text"
       ],
       "profileType": "semantic-execution-body.v2",
       "semanticAuthorityLocation": "contract"
@@ -339,6 +341,21 @@
       "canonical-lineage",
       "conversation-design-authority"
     ]
+  },
+  "structuredMeaningAuthority": {
+    "admittedProjectionBindings": [
+      {
+        "mediaType": "text/html",
+        "projectionAuthorityType": "canonical-json-value.v1",
+        "projectorId": "structured-html-document-projector.v1",
+        "semanticAuthorityType": "structured-html-document.v1"
+      }
+    ],
+    "authorityType": "queryable-structured-meaning-authority.v1",
+    "forbiddenEncodingMechanics": [
+      "meaning-hidden-in-text"
+    ],
+    "opaqueEncodingDisposition": "STRUCTURED_MEANING_HIDDEN_IN_TEXT"
   },
   "workspaceAuthority": {
     "admittedExceptionForms": [

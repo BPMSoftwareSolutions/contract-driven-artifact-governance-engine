@@ -7,15 +7,107 @@
       "mediaType": "text/html",
       "projection": {
         "authority": {
-          "authorityType": "utf8-text.v1",
-          "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Procedural Dungeon Generator - Fog of War</title>\n</head>\n<body>\n<main id=\"dungeon-application\" class=\"app\"></main>\n<script type=\"module\">\nimport { startsProceduralDungeonPage } from \"./src/application-adapter.mjs\";\nstartsProceduralDungeonPage(globalThis);\n</script>\n</body>\n</html>\n"
+          "authorityType": "canonical-json-value.v1",
+          "value": {
+            "authorityType": "structured-html-document.v1",
+            "documentType": "html",
+            "root": {
+              "attributes": [
+                {
+                  "name": "lang",
+                  "value": "en"
+                }
+              ],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "attributes": [
+                        {
+                          "name": "charset",
+                          "value": "UTF-8"
+                        }
+                      ],
+                      "nodeType": "element",
+                      "tagName": "meta"
+                    },
+                    {
+                      "children": [
+                        {
+                          "nodeType": "text",
+                          "value": "Procedural Dungeon Generator - Fog of War"
+                        }
+                      ],
+                      "nodeType": "element",
+                      "tagName": "title"
+                    }
+                  ],
+                  "nodeType": "element",
+                  "tagName": "head"
+                },
+                {
+                  "children": [
+                    {
+                      "attributes": [
+                        {
+                          "name": "id",
+                          "value": "dungeon-application"
+                        },
+                        {
+                          "name": "class",
+                          "value": "app"
+                        }
+                      ],
+                      "nodeType": "element",
+                      "tagName": "main"
+                    },
+                    {
+                      "attributes": [
+                        {
+                          "name": "type",
+                          "value": "module"
+                        }
+                      ],
+                      "module": {
+                        "imports": [
+                          {
+                            "bindings": [
+                              "startsProceduralDungeonPage"
+                            ],
+                            "specifier": "./src/application-adapter.mjs"
+                          }
+                        ],
+                        "invocations": [
+                          {
+                            "arguments": [
+                              {
+                                "argumentType": "global-reference",
+                                "identifier": "globalThis"
+                              }
+                            ],
+                            "callee": "startsProceduralDungeonPage"
+                          }
+                        ]
+                      },
+                      "nodeType": "element",
+                      "tagName": "script"
+                    }
+                  ],
+                  "nodeType": "element",
+                  "tagName": "body"
+                }
+              ],
+              "nodeType": "element",
+              "tagName": "html"
+            }
+          }
         },
         "authorityId": "procedural-dungeon-webpage-authority.v1",
-        "projectorId": "utf8-text-projector.v1"
+        "projectorId": "structured-html-document-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:f8dee458c02bd5782ff41fd0d0c7b668f210c14e3a02230dfaf7cf665871127d",
-        "expectedByteLength": 353,
+        "contentSha256": "sha256:9c638523d6009de6b1224d06c5842cad899739cbb24bb233f82abe40c728c733",
+        "expectedByteLength": 393,
         "forbiddenText": [
           "TODO",
           "FIXME",
@@ -2202,7 +2294,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:12a21b8de6db4824c0a38e55854db65b3aa72f821e38183d22d3e00c85bf1e95",
+        "contentSha256": "sha256:25984b45e3d59586b0de583f0f0686dcc7b4b85e095448637886a1966a7a1281",
         "expectedByteLength": 1094,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -2570,7 +2662,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:e578b7afe6b62c9300f48df33e0d90ab2c90b6b1f397be7814b1e13e13e06124",
+        "contentSha256": "sha256:8732b88881836fdc5a6da5bcc150ea508a81b75fc6dccf278ed6bcbe502e5d27",
         "expectedByteLength": 1110,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -2938,7 +3030,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:77c01cd1864aa0804bfa05ac65a1dd51d301c0d0c1960543a7514cbdd7d1378b",
+        "contentSha256": "sha256:93f4549a67c327f4bfb718a946eeb0b83a090719f021e0135c46778fe24e576e",
         "expectedByteLength": 1124,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -4981,7 +5073,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:2ee9f3501b7761ec253bc5b972a1d8eca12648119009108364e3929d1978aca9",
+        "contentSha256": "sha256:f8c255b9b37a1388e306f98daaf1f96424696587238ecee69d5a885510618bf0",
         "expectedByteLength": 1990,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -5199,8 +5291,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:9b64130a211f9f116c954ab97e98c9b2707836c5b13b1540e3671b636ef613af",
-        "expectedByteLength": 34448,
+        "contentSha256": "sha256:439ea1feb036708f2e7c9c358fd9767a0b30978d847b248885090a4e27c7ff8d",
+        "expectedByteLength": 34550,
         "requiredSections": [
           "# Procedural Dungeon Generator: Governed Webpage Projection",
           "## Future-State Preview",
@@ -27041,7 +27133,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:bc670418f5d1dfbd36aacfda2952d654650a239b8f74041581936e54f9ef7ba1",
+        "contentSha256": "sha256:d1ff04364a2bd25b15d2bd39e3d10cde73dbdf867f789bb5f7e207be24cb410f",
         "expectedByteLength": 1109,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -27409,7 +27501,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:e8226c75f393fb8dc74b9a58aff3c0f1a53bf1591558789c0dbc51351e315e96",
+        "contentSha256": "sha256:38145200445564e8f075d351727c78ca3c7f1e8ce71fca8cc81259c3732181f8",
         "expectedByteLength": 1122,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -27777,7 +27869,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:ddf5d9a21cab552dd3ef7c92f8660702b244d53825e23608c8a1c3404c7b11d1",
+        "contentSha256": "sha256:c49cd79619ee82276fc9f48d9d483889800c3815efa86d79d106e617af626bf3",
         "expectedByteLength": 1106,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -28193,10 +28285,10 @@
         "statement": "The browser-context authority declares construction of a complete pixel-grid-rendering-frame.v1 value before any canvas effect; the trusted generic executor only applies the declared ordered commands."
       },
       {
-        "decisionId": "generic-web-projector-and-full-verifier-platform-deferred",
-        "disposition": "deferred",
-        "source": "Scope realism under session constraints",
-        "statement": "Building a fully generic, registry-integrated single-file-semantic-webpage-projector and four brand-new closed-world engine verifier primitives (reusable across any future web capability, not just this one) is deferred; this contract delivers the concrete, working capability for procedural-dungeon-webpage specifically."
+        "decisionId": "generic-structured-html-projector-is-closed-world-authority",
+        "disposition": "accepted",
+        "source": "User correction: hiding reusable HTML meaning in text is a conformance issue",
+        "statement": "The engine now provides a registry-integrated structured-html-document-projector.v1 reusable across governed HTML capabilities. The closed-world profile requires its queryable document, attribute, module-import, and invocation authority for text/html and rejects opaque text encoding with STRUCTURED_MEANING_HIDDEN_IN_TEXT. The four page behavior verifiers remain contract-declared commands."
       },
       {
         "decisionId": "runtime-extended-with-guarded-and-branching-worklist-primitives",
@@ -28225,8 +28317,8 @@
       {
         "decisionId": "html-collapses-to-one-authority-invocation",
         "disposition": "accepted",
-        "source": "User correction citing the original governed HTML projection requirements and closed-world forbidden mechanics",
-        "statement": "index.html is a tiny packaging projection with one empty application root, one static import, and one authority invocation. It contains no CSS, application data, local state, branching, iteration, failure handling, object construction, or state mutation."
+        "source": "User correction requiring hidden structured text meaning to be a closed-world conformance failure",
+        "statement": "index.html is a tiny packaging projection with one empty application root, one static import, and one authority invocation. Its document hierarchy, ordered attributes, module import, invocation target, and argument are queryable structured-html-document.v1 authority objects. No HTML or bootstrap meaning is encoded as an opaque text scalar; STRUCTURED_MEANING_HIDDEN_IN_TEXT rejects that escape route."
       }
     ],
     "deviations": [
@@ -28283,7 +28375,7 @@
         "artifactIds": [
           "procedural-dungeon-webpage.v1"
         ],
-        "decisionId": "generic-web-projector-and-full-verifier-platform-deferred"
+          "decisionId": "generic-structured-html-projector-is-closed-world-authority"
       },
       {
         "artifactIds": [
@@ -28342,19 +28434,19 @@
   "exclusions": [],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+      "digest": "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:776a241c92c4eb5d7dd1707a8513359c984b8b4effdf42964984f8555cee89f8",
+      "digest": "sha256:7c4b3ab7f515893d0e19bcc9e9d09ecfecb1dd2ffe05b80416ce7aba032733dc",
       "identity": "governed-artifact-engine.0.20.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:16d9c61d42789f099e75c421322a288999e5ec7c0a540fa2281f8368efc64b56",
+      "digest": "sha256:758a4d4aed661df85d27dedee356064d9e478226eefef1a31642721be4cd24a3",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
-      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+      "digest": "sha256:1ab8ec48c80324c862cf598813554847fc4224ecb146e8dbddf7d9b1efdb2785",
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {

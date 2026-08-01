@@ -43,6 +43,11 @@
       "serialization": "provenance-header-then-ordered-token-text"
     },
     {
+      "projectorId": "structured-html-document-projector.v1",
+      "authorityType": "canonical-json-value.v1",
+      "serialization": "structured-html-two-space-lf-v1"
+    },
+    {
       "projectorId": "utf8-text-projector.v1",
       "authorityType": "utf8-text.v1",
       "serialization": "exact-utf8-text"

@@ -3,9 +3,9 @@
     {
       "artifactId": "procedural-dungeon-webpage.v1",
       "authorityId": "procedural-dungeon-webpage-authority.v1",
-      "contentSha256": "sha256:f8dee458c02bd5782ff41fd0d0c7b668f210c14e3a02230dfaf7cf665871127d",
+      "contentSha256": "sha256:9c638523d6009de6b1224d06c5842cad899739cbb24bb233f82abe40c728c733",
       "projectionMode": "projected",
-      "projectorId": "utf8-text-projector.v1"
+      "projectorId": "structured-html-document-projector.v1"
     },
     {
       "artifactId": "dungeon-movement-bundle.v1",
@@ -31,21 +31,21 @@
     {
       "artifactId": "movement-adapter.v1",
       "authorityId": "movement-adapter.v1-authority",
-      "contentSha256": "sha256:12a21b8de6db4824c0a38e55854db65b3aa72f821e38183d22d3e00c85bf1e95",
+      "contentSha256": "sha256:25984b45e3d59586b0de583f0f0686dcc7b4b85e095448637886a1966a7a1281",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "render-role-adapter.v1",
       "authorityId": "render-role-adapter.v1-authority",
-      "contentSha256": "sha256:e578b7afe6b62c9300f48df33e0d90ab2c90b6b1f397be7814b1e13e13e06124",
+      "contentSha256": "sha256:8732b88881836fdc5a6da5bcc150ea508a81b75fc6dccf278ed6bcbe502e5d27",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "keyboard-command-adapter.v1",
       "authorityId": "keyboard-command-adapter.v1-authority",
-      "contentSha256": "sha256:77c01cd1864aa0804bfa05ac65a1dd51d301c0d0c1960543a7514cbdd7d1378b",
+      "contentSha256": "sha256:93f4549a67c327f4bfb718a946eeb0b83a090719f021e0135c46778fe24e576e",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
@@ -73,14 +73,14 @@
     {
       "artifactId": "application-adapter.v1",
       "authorityId": "application-adapter-source-authority.v1",
-      "contentSha256": "sha256:2ee9f3501b7761ec253bc5b972a1d8eca12648119009108364e3929d1978aca9",
+      "contentSha256": "sha256:f8c255b9b37a1388e306f98daaf1f96424696587238ecee69d5a885510618bf0",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "procedural-dungeon-webpage-readme.v1",
       "authorityId": "procedural-dungeon-webpage-readme-authority.v1",
-      "contentSha256": "sha256:9b64130a211f9f116c954ab97e98c9b2707836c5b13b1540e3671b636ef613af",
+      "contentSha256": "sha256:439ea1feb036708f2e7c9c358fd9767a0b30978d847b248885090a4e27c7ff8d",
       "projectionMode": "projected",
       "projectorId": "governed-artifact-contract-markdown-projector.v1"
     },
@@ -108,21 +108,21 @@
     {
       "artifactId": "topology-adapter.v1",
       "authorityId": "topology-adapter.v1-authority",
-      "contentSha256": "sha256:bc670418f5d1dfbd36aacfda2952d654650a239b8f74041581936e54f9ef7ba1",
+      "contentSha256": "sha256:d1ff04364a2bd25b15d2bd39e3d10cde73dbdf867f789bb5f7e207be24cb410f",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "rasterize-adapter.v1",
       "authorityId": "rasterize-adapter.v1-authority",
-      "contentSha256": "sha256:e8226c75f393fb8dc74b9a58aff3c0f1a53bf1591558789c0dbc51351e315e96",
+      "contentSha256": "sha256:38145200445564e8f075d351727c78ca3c7f1e8ce71fca8cc81259c3732181f8",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "visibility-adapter.v1",
       "authorityId": "visibility-adapter.v1-authority",
-      "contentSha256": "sha256:ddf5d9a21cab552dd3ef7c92f8660702b244d53825e23608c8a1c3404c7b11d1",
+      "contentSha256": "sha256:c49cd79619ee82276fc9f48d9d483889800c3815efa86d79d106e617af626bf3",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     }
@@ -233,7 +233,7 @@
   },
   "authorityClosure": {
     "conformanceProfile": {
-      "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+      "digest": "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
       "identity": "closed-world-artifact-conformance.v8"
     },
     "profile": {
@@ -275,7 +275,7 @@
   },
   "contract": {
     "contractId": "procedural-dungeon-webpage.v1",
-    "contractSha256": "sha256:ce6341e28de3fb04c20932a706724462ad09e5900eb8dc0bc0dfe1f1725ca6e0"
+    "contractSha256": "sha256:302aba79d43a296d86abfc3807ad99bfff6b4691aa08bae84754120f3a78519b"
   },
   "dependencyAuthorities": [
     {
@@ -457,19 +457,19 @@
   "effectAuthorities": [],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+      "digest": "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:776a241c92c4eb5d7dd1707a8513359c984b8b4effdf42964984f8555cee89f8",
+      "digest": "sha256:7c4b3ab7f515893d0e19bcc9e9d09ecfecb1dd2ffe05b80416ce7aba032733dc",
       "identity": "governed-artifact-engine.0.20.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:16d9c61d42789f099e75c421322a288999e5ec7c0a540fa2281f8368efc64b56",
+      "digest": "sha256:758a4d4aed661df85d27dedee356064d9e478226eefef1a31642721be4cd24a3",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
-      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+      "digest": "sha256:1ab8ec48c80324c862cf598813554847fc4224ecb146e8dbddf7d9b1efdb2785",
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {
@@ -905,7 +905,8 @@
           "validation",
           "fallback",
           "retry",
-          "state-mutation"
+          "state-mutation",
+          "meaning-hidden-in-text"
         ],
         "profileType": "semantic-execution-body.v2",
         "semanticAuthorityLocation": "contract"
@@ -973,10 +974,10 @@
         "writeMode": "explicit-only"
       }
     },
-    "authoritySha256": "sha256:0c038337f4a7f10c272fb1e6df88e44ed65ec07c66b7a3b3a006f9ee9ad2f901"
+    "authoritySha256": "sha256:1ba7584beaf3c24f0d6235fdb27bba41c979841a4160bc57a29cc99d70d6978c"
   },
   "projectorRegistry": {
-    "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+    "digest": "sha256:1ab8ec48c80324c862cf598813554847fc4224ecb146e8dbddf7d9b1efdb2785",
     "identity": "governed-artifact-projector-registry.v1"
   },
   "runtimeAuthorities": [

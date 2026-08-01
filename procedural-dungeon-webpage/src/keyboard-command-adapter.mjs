@@ -6,10 +6,10 @@
 // responsibility-id: executes-keyboard-command-resolution
 // projection-profile-id: javascript-semantic-execution-body.v1
 // semantic-authority-sha256: sha256:19740422c9f6c8e433d630c91445dafe997434b288572e4ec3ac3eac024dcfde
-// projection-authority-sha256: sha256:776a241c92c4eb5d7dd1707a8513359c984b8b4effdf42964984f8555cee89f8
-// lineage-sha256: sha256:28073292396bce621dbf5bde47205d0c6b1d3fc84c87f31df1c9b6458c75516c
+// projection-authority-sha256: sha256:7c4b3ab7f515893d0e19bcc9e9d09ecfecb1dd2ffe05b80416ce7aba032733dc
+// lineage-sha256: sha256:6d32484506f130dbd59c83b7af1d053ac11bf0a623544ca7d559e30eb5a1ed49
 // body-sha256: sha256:05d74414e6f9ea2a86cbd04f1a3e6d7f3f68aa1e200660b0d2454ca5262303c9
-// artifact-provenance-sha256: sha256:d25ce2fc4ff44a9dc101ea43d02dea2514bb76543adab4bdc550f82b4245cd14
+// artifact-provenance-sha256: sha256:ded304d346bd92c68f8658ffd7b40b77fb14a3f79f4e5aa93f0a225148b57157
 //
 import { executeSemanticAuthority } from "contract-driven-artifact-governance-engine";
 import dungeonKeyboardCommandBundle from "../contracts/dungeon-keyboard-command.bundle.json" with { type: "json" };

@@ -369,7 +369,7 @@ Those answers arrive in the authorized request.
 
 # 5. The projected page should become very small
 
-> **Evidence.** The target is now realized, not deferred. [index.html](../procedural-dungeon-webpage/index.html) is 353 bytes and 14 lines: an empty application root, one static import of `application-adapter.mjs`, and one invocation with `globalThis`. It contains no CSS, application data, local state, function declaration, branch, iteration, failure mechanic, object construction, or state mutation.
+> **Evidence.** The target is now realized, not deferred. [index.html](../procedural-dungeon-webpage/index.html) is 393 bytes and 14 lines: an empty application root, one static import of `application-adapter.mjs`, and one invocation with `globalThis`. It contains no CSS, application data, local state, function declaration, branch, iteration, failure mechanic, object construction, or state mutation.
 >
 > The capability-specific [application adapter](../procedural-dungeon-webpage/src/application-adapter.mjs) is one function, one `executeBrowserApplication(...)` invocation, one direct return, and zero locally executable mechanics. The same shape remains machine-checked for all six domain-logic bindings:
 > [procedural-dungeon-webpage/src/movement-adapter.mjs](../procedural-dungeon-webpage/src/movement-adapter.mjs),
@@ -397,23 +397,26 @@ The projected body is now:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Procedural Dungeon Generator</title>
-</head>
-<body>
-  <main id="dungeon-application" class="app"></main>
-
-  <script type="module">
-    import { startsProceduralDungeonPage } from
-      "./src/application-adapter.mjs";
-    startsProceduralDungeonPage(globalThis);
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Procedural Dungeon Generator - Fog of War</title>
+  </head>
+  <body>
+    <main id="dungeon-application" class="app"></main>
+    <script type="module">
+      import { startsProceduralDungeonPage } from "./src/application-adapter.mjs";
+      startsProceduralDungeonPage(globalThis);
+    </script>
+  </body>
 </html>
 ```
 
-The HTML shell is itself projected from the contract.
+The HTML shell is projected from a `structured-html-document.v1` authority.
+Elements, attributes, text nodes, module imports, invocation targets, and
+arguments are separate queryable objects; no HTML or bootstrap program is
+hidden inside an escaped text scalar. The closed-world profile emits
+`STRUCTURED_MEANING_HIDDEN_IN_TEXT` when `text/html` uses any other projection
+binding.
 
 The capability-specific body becomes:
 
@@ -449,7 +452,7 @@ All the game meaning remains in governed JSON.
 # 6. Treat the page as several projected artifact families
 
 > **Evidence.** [examples/procedural-dungeon-webpage.contract.json](../examples/procedural-dungeon-webpage.contract.json) declares 18 independently projected and proof-checked artifacts:
-> - the 353-byte HTML packaging projection;
+> - the 393-byte structured HTML packaging projection;
 > - six bound ontology bundles and six collapsed ontology adapters;
 > - the browser-context authority containing document, presentation, state, workflow, and binding data;
 > - a browser-application port schema and aggregate semantic projection authority;
@@ -892,7 +895,7 @@ Scenario: Render one authorized dungeon frame
 
 # 12. The webpage contract should bind lineage end-to-end
 
-> **Evidence.** The complete chain is committed by the contract, the projection ledger, and the conformance receipt rather than bloating the 353-byte HTML with a copied metadata block. The generated [application adapter](../procedural-dungeon-webpage/src/application-adapter.mjs) carries the sealed Project → Feature → Scenario → Obligation → Responsibility → Semantic authority → Projection authority header. The HTML artifact's exact authority, content digest, byte length, and relationships are committed in [the contract](../examples/procedural-dungeon-webpage.contract.json) and [.governance projection ledger](../procedural-dungeon-webpage/.governance/projections/procedural-dungeon-webpage.ledger.json), with final trust in the [receipt](../procedural-dungeon-webpage/.governance/receipts/procedural-dungeon-webpage.receipt.json).
+> **Evidence.** The complete chain is committed by the contract, the projection ledger, and the conformance receipt rather than bloating the 393-byte HTML with a copied metadata block. The generated [application adapter](../procedural-dungeon-webpage/src/application-adapter.mjs) carries the sealed Project → Feature → Scenario → Obligation → Responsibility → Semantic authority → Projection authority header. The HTML artifact's exact authority, content digest, byte length, and relationships are committed in [the contract](../examples/procedural-dungeon-webpage.contract.json) and [.governance projection ledger](../procedural-dungeon-webpage/.governance/projections/procedural-dungeon-webpage.ledger.json), with final trust in the [receipt](../procedural-dungeon-webpage/.governance/receipts/procedural-dungeon-webpage.receipt.json).
 
 Every final page should carry a generated provenance header or embedded metadata block.
 
@@ -1080,7 +1083,7 @@ REJECTED
 > - `render-frame-cell-loop-is-mechanical-not-a-decision`: the page and capability body own no loop; the bounded grid projection is declared by context data and interpreted by generic infrastructure.
 > - `movement-render-role-keyboard-are-ontology-owned` and `runtime-extended-with-guarded-and-branching-worklist-primitives`: the domain algorithms remain in finite, governed ontology data.
 > - `browser-execution-module-stays-outside-governed-scope`: both generic interpreters are engine infrastructure, while structural gate-time verification makes reintroducing mechanics into `index.html` or `application-adapter.mjs` a red conformance signal.
-> - `html-collapses-to-one-authority-invocation`: the contract records and ties out the corrected 353-byte packaging projection explicitly.
+> - `html-collapses-to-one-authority-invocation`: the contract records and ties out the corrected 393-byte structured packaging projection explicitly.
 >
 > What the page knows, end to end: one empty root and how to invoke the
 > collapsed application adapter. The context knows every DOM id, style,

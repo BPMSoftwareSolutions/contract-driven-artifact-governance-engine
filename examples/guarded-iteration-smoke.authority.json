@@ -1,0 +1,238 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "guarded-iteration-smoke.bundle.v1",
+  "ontologyId": "guarded-iteration-smoke",
+  "inputConceptId": "toy-item",
+  "semanticLayer": {
+    "concepts": [
+      { "conceptId": "toy-item", "conceptType": "domain-entity", "isA": [], "abstract": false, "schemaId": "toy-item.schema.v1" },
+      { "conceptId": "toy-item-variant-id", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "toy-item-variant-id.schema.v1" },
+      { "conceptId": "toy-item-history", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "toy-item-history.schema.v1" },
+      { "conceptId": "int-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "int-value.schema.v1" },
+      { "conceptId": "int-array", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "int-array.schema.v1" },
+      { "conceptId": "presence-state", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "presence-state.schema.v1" },
+      { "conceptId": "obligation-status", "conceptType": "signal", "isA": [], "abstract": false, "schemaId": "obligation-status.schema.v1" },
+      { "conceptId": "result-type-concept", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "result-type.schema.v1" },
+      { "conceptId": "toy-sequence-result", "conceptType": "result-union", "isA": [], "abstract": false, "schemaId": "toy-sequence-result.schema.v1" }
+    ],
+    "relations": [
+      { "relationId": "sweep-produces-history", "relationType": "computes", "subjectConceptId": "toy-item-history", "objectConceptId": "toy-item-history", "cardinality": "exactly-one" }
+    ],
+    "properties": [
+      { "propertyId": "steps-field", "propertyKind": "observed", "subjectConceptId": "toy-item", "valueConceptId": "int-value", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "toy-item", "path": ["steps"] }] },
+      { "propertyId": "result-type", "propertyKind": "projected", "subjectConceptId": "toy-sequence-result", "valueConceptId": "result-type-concept", "cardinality": "exactly-one", "resolutions": [] },
+      { "propertyId": "result-history", "propertyKind": "projected", "subjectConceptId": "toy-sequence-result", "valueConceptId": "toy-item-history", "cardinality": "exactly-one", "resolutions": [] }
+    ],
+    "facts": [
+      { "factId": "guard-threshold", "conceptId": "int-value", "value": { "type": "number", "value": 1 } },
+      { "factId": "bump", "conceptId": "int-value", "value": { "type": "number", "value": 10 } },
+      { "factId": "one", "conceptId": "int-value", "value": { "type": "number", "value": 1 } },
+      { "factId": "lookup-table", "conceptId": "int-array", "value": { "type": "array", "value": [100, 200, 300] } }
+    ]
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "toy-item-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "toy-item",
+        "resultConceptId": "toy-item-variant-id",
+        "variants": ["toy-item"],
+        "noMatchDisposition": "TOY_ITEM_VARIANT_UNRESOLVED",
+        "multipleMatchDisposition": "TOY_ITEM_VARIANT_AMBIGUOUS"
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "propertyId": "steps-field",
+        "resultConceptId": "presence-state",
+        "expectedValueType": "object",
+        "emptyStringState": "present",
+        "states": ["missing", "null", "empty-string", "invalid-type", "present"]
+      }
+    ],
+    "constraints": [],
+    "translations": [],
+    "obligations": [
+      {
+        "obligationId": "always-present-obligation",
+        "subjectConceptId": "toy-item",
+        "classificationId": "presence-classification",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": ["present"],
+        "failureDisposition": "TOY_ITEM_MISSING"
+      }
+    ],
+    "transformations": [
+      { "transformationId": "emit-history", "relationId": "sweep-produces-history", "sourceAuthorityId": "guarded-sweep", "targetPropertyId": "result-history", "outputPath": ["history"], "valueConceptId": "toy-item-history", "resultIds": ["toy-sequence-ok"], "unavailableDisposition": "HISTORY_UNAVAILABLE", "invalidTypeDisposition": "HISTORY_INVALID" }
+    ],
+    "results": [
+      {
+        "resultUnionId": "toy-sequence-result-union",
+        "resultTypeConceptId": "toy-sequence-result",
+        "members": [
+          {
+            "resultId": "toy-sequence-ok",
+            "conceptId": "toy-sequence-result",
+            "discriminator": {
+              "propertyId": "result-type",
+              "outputPath": ["resultType"],
+              "value": { "type": "string", "value": "toy-sequence-result" }
+            }
+          }
+        ],
+        "selectionRules": [
+          { "ruleId": "always-ok", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "satisfied" }], "resultId": "toy-sequence-ok" },
+          { "ruleId": "still-ok-when-violated", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "violated" }], "resultId": "toy-sequence-ok" }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "TOY_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ],
+    "arithmeticOperations": [],
+    "randomDraws": [],
+    "indexedReads": [],
+    "iterations": [
+      {
+        "iterationKind": "linear",
+        "iterationId": "guarded-sweep",
+        "itemConceptId": "toy-item",
+        "resultConceptId": "toy-item-history",
+        "resultMode": "history",
+        "maxSteps": 8,
+        "unresolvedDisposition": "GUARDED_SWEEP_LIMIT_EXCEEDED",
+        "continueCondition": {
+          "operandPath": ["steps"],
+          "compareTo": { "kind": "item-field", "path": ["limit"] },
+          "continueWhenStates": ["less-than"]
+        },
+        "advance": {
+          "steps": [
+            {
+              "targetPath": ["history"],
+              "operation": "append",
+              "operand": { "kind": "item-field", "path": ["e"] }
+            },
+            {
+              "targetPath": ["historyEcho"],
+              "operation": "set",
+              "operand": { "kind": "item-field-indexed", "path": ["history"], "indexPath": ["steps"] }
+            },
+            {
+              "targetPath": ["a"],
+              "operation": "add",
+              "operand": { "kind": "fact", "factId": "bump" },
+              "when": {
+                "operand": { "kind": "item-field", "path": ["e"] },
+                "compareTo": { "kind": "fact", "factId": "guard-threshold" },
+                "matchStates": ["greater-than", "equal-to"]
+              }
+            },
+            {
+              "targetPath": ["lookup"],
+              "operation": "set",
+              "operand": { "kind": "fact-indexed", "factId": "lookup-table", "indexPath": ["steps"] }
+            },
+            {
+              "targetPath": ["e"],
+              "operation": "add",
+              "operand": { "kind": "fact", "factId": "one" }
+            },
+            {
+              "targetPath": ["steps"],
+              "operation": "add",
+              "operand": { "kind": "fact", "factId": "one" }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "context": {
+    "schemas": [
+      {
+        "schemaId": "toy-item.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["a", "e", "steps", "limit", "history", "lookup", "historyEcho"],
+          "properties": {
+            "a": { "type": "integer", "minimum": -100, "maximum": 1000 },
+            "e": { "type": "integer", "minimum": -100, "maximum": 1000 },
+            "steps": { "type": "integer", "minimum": 0, "maximum": 10 },
+            "limit": { "type": "integer", "minimum": 0, "maximum": 10 },
+            "history": { "type": "array", "maxItems": 10, "items": { "type": "integer", "minimum": -100, "maximum": 1000 } },
+            "lookup": { "type": "integer", "minimum": -100, "maximum": 1000 },
+            "historyEcho": { "type": "integer", "minimum": -100, "maximum": 1000 }
+          }
+        }
+      },
+      { "schemaId": "toy-item-variant-id.schema.v1", "value": { "const": "toy-item" } },
+      { "schemaId": "int-value.schema.v1", "value": { "type": "integer", "minimum": -100, "maximum": 1000 } },
+      { "schemaId": "int-array.schema.v1", "value": { "type": "array", "maxItems": 10, "items": { "type": "integer", "minimum": -100, "maximum": 1000 } } },
+      { "schemaId": "presence-state.schema.v1", "value": { "enum": ["missing", "null", "empty-string", "invalid-type", "present"] } },
+      { "schemaId": "obligation-status.schema.v1", "value": { "enum": ["satisfied", "violated"] } },
+      {
+        "schemaId": "toy-item-history.schema.v1",
+        "value": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["a", "e", "steps", "limit", "history", "lookup", "historyEcho"],
+            "properties": {
+              "a": { "type": "integer", "minimum": -100, "maximum": 1000 },
+              "e": { "type": "integer", "minimum": -100, "maximum": 1000 },
+              "steps": { "type": "integer", "minimum": 0, "maximum": 10 },
+              "limit": { "type": "integer", "minimum": 0, "maximum": 10 },
+              "history": { "type": "array", "maxItems": 10, "items": { "type": "integer", "minimum": -100, "maximum": 1000 } },
+              "lookup": { "type": "integer", "minimum": -100, "maximum": 1000 },
+              "historyEcho": { "type": "integer", "minimum": -100, "maximum": 1000 }
+            }
+          }
+        }
+      },
+      { "schemaId": "result-type.schema.v1", "value": { "const": "toy-sequence-result" } },
+      {
+        "schemaId": "toy-sequence-result.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["resultType", "history"],
+          "properties": {
+            "resultType": { "const": "toy-sequence-result" },
+            "history": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 10,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["a", "e", "steps", "limit", "history", "lookup", "historyEcho"],
+                "properties": {
+                  "a": { "type": "integer", "minimum": -100, "maximum": 1000 },
+                  "e": { "type": "integer", "minimum": -100, "maximum": 1000 },
+                  "steps": { "type": "integer", "minimum": 0, "maximum": 10 },
+                  "limit": { "type": "integer", "minimum": 0, "maximum": 10 },
+                  "history": { "type": "array", "maxItems": 10, "items": { "type": "integer", "minimum": -100, "maximum": 1000 } },
+                  "lookup": { "type": "integer", "minimum": -100, "maximum": 1000 },
+                  "historyEcho": { "type": "integer", "minimum": -100, "maximum": 1000 }
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v3",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

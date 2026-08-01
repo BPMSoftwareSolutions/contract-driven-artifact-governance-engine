@@ -1,0 +1,206 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "branching-worklist-smoke.bundle.v1",
+  "ontologyId": "branching-worklist-smoke",
+  "inputConceptId": "range-item",
+  "semanticLayer": {
+    "concepts": [
+      { "conceptId": "range-item", "conceptType": "domain-entity", "isA": [], "abstract": false, "schemaId": "range-item.schema.v1" },
+      { "conceptId": "range-item-variant-id", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "range-item-variant-id.schema.v1" },
+      { "conceptId": "int-value", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "int-value.schema.v1" },
+      { "conceptId": "range-partition-result", "conceptType": "domain-value", "isA": [], "abstract": false, "schemaId": "range-partition-result.schema.v1" },
+      { "conceptId": "presence-state", "conceptType": "classification", "isA": [], "abstract": false, "schemaId": "presence-state.schema.v1" },
+      { "conceptId": "obligation-status", "conceptType": "signal", "isA": [], "abstract": false, "schemaId": "obligation-status.schema.v1" },
+      { "conceptId": "result-type-concept", "conceptType": "canonical-value", "isA": [], "abstract": false, "schemaId": "result-type.schema.v1" },
+      { "conceptId": "range-sequence-result", "conceptType": "result-union", "isA": [], "abstract": false, "schemaId": "range-sequence-result.schema.v1" }
+    ],
+    "relations": [
+      { "relationId": "partition-produces-result", "relationType": "computes", "subjectConceptId": "range-partition-result", "objectConceptId": "range-partition-result", "cardinality": "exactly-one" }
+    ],
+    "properties": [
+      { "propertyId": "lo-field", "propertyKind": "observed", "subjectConceptId": "range-item", "valueConceptId": "int-value", "cardinality": "exactly-one", "resolutions": [{ "subjectVariantConceptId": "range-item", "path": ["lo"] }] },
+      { "propertyId": "result-type", "propertyKind": "projected", "subjectConceptId": "range-sequence-result", "valueConceptId": "result-type-concept", "cardinality": "exactly-one", "resolutions": [] },
+      { "propertyId": "result-partition", "propertyKind": "projected", "subjectConceptId": "range-sequence-result", "valueConceptId": "range-partition-result", "cardinality": "exactly-one", "resolutions": [] }
+    ],
+    "facts": [
+      { "factId": "max-depth", "conceptId": "int-value", "value": { "type": "number", "value": 2 } },
+      { "factId": "min-width", "conceptId": "int-value", "value": { "type": "number", "value": 3 } },
+      { "factId": "decrement", "conceptId": "int-value", "value": { "type": "number", "value": 3 } },
+      { "factId": "one", "conceptId": "int-value", "value": { "type": "number", "value": 1 } }
+    ]
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "range-item-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "range-item",
+        "resultConceptId": "range-item-variant-id",
+        "variants": ["range-item"],
+        "noMatchDisposition": "RANGE_ITEM_VARIANT_UNRESOLVED",
+        "multipleMatchDisposition": "RANGE_ITEM_VARIANT_AMBIGUOUS"
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "propertyId": "lo-field",
+        "resultConceptId": "presence-state",
+        "expectedValueType": "number",
+        "emptyStringState": "present",
+        "states": ["missing", "null", "empty-string", "invalid-type", "present"]
+      }
+    ],
+    "constraints": [],
+    "translations": [],
+    "obligations": [
+      {
+        "obligationId": "always-present-obligation",
+        "subjectConceptId": "range-item",
+        "classificationId": "presence-classification",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": ["present"],
+        "failureDisposition": "RANGE_ITEM_MISSING"
+      }
+    ],
+    "transformations": [
+      { "transformationId": "emit-partition", "relationId": "partition-produces-result", "sourceAuthorityId": "partition-ranges", "targetPropertyId": "result-partition", "outputPath": ["partition"], "valueConceptId": "range-partition-result", "resultIds": ["range-sequence-ok"], "unavailableDisposition": "PARTITION_UNAVAILABLE", "invalidTypeDisposition": "PARTITION_INVALID" }
+    ],
+    "results": [
+      {
+        "resultUnionId": "range-sequence-result-union",
+        "resultTypeConceptId": "range-sequence-result",
+        "members": [
+          {
+            "resultId": "range-sequence-ok",
+            "conceptId": "range-sequence-result",
+            "discriminator": {
+              "propertyId": "result-type",
+              "outputPath": ["resultType"],
+              "value": { "type": "string", "value": "range-sequence-result" }
+            }
+          }
+        ],
+        "selectionRules": [
+          { "ruleId": "always-ok", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "satisfied" }], "resultId": "range-sequence-ok" },
+          { "ruleId": "still-ok-when-violated", "when": [{ "inputPort": "presenceObligation", "obligationId": "always-present-obligation", "status": "violated" }], "resultId": "range-sequence-ok" }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "RANGE_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ],
+    "arithmeticOperations": [],
+    "randomDraws": [],
+    "indexedReads": [],
+    "iterations": [
+      {
+        "iterationKind": "branching",
+        "iterationId": "partition-ranges",
+        "itemConceptId": "range-item",
+        "resultConceptId": "range-partition-result",
+        "maxItems": 20,
+        "unresolvedDisposition": "RANGE_PARTITION_LIMIT_EXCEEDED",
+        "initialAccumulator": {},
+        "terminalWhen": {
+          "anyOf": [
+            [
+              {
+                "operand": { "kind": "item-field", "path": ["depth"] },
+                "compareTo": { "kind": "fact", "factId": "max-depth" },
+                "matchStates": ["greater-than", "equal-to"]
+              }
+            ],
+            [
+              {
+                "operand": { "kind": "item-field", "path": ["width"] },
+                "compareTo": { "kind": "fact", "factId": "min-width" },
+                "matchStates": ["less-than", "equal-to"]
+              }
+            ]
+          ]
+        },
+        "splitSteps": [
+          { "targetPath": ["left", "lo"], "operation": "set", "operand": { "kind": "item-field", "path": ["parent", "lo"] } },
+          { "targetPath": ["left", "width"], "operation": "set", "operand": { "kind": "item-field", "path": ["parent", "width"] } },
+          { "targetPath": ["left", "width"], "operation": "subtract", "operand": { "kind": "fact", "factId": "decrement" } },
+          { "targetPath": ["left", "depth"], "operation": "set", "operand": { "kind": "item-field", "path": ["parent", "depth"] } },
+          { "targetPath": ["left", "depth"], "operation": "add", "operand": { "kind": "fact", "factId": "one" } },
+          { "targetPath": ["right", "lo"], "operation": "set", "operand": { "kind": "item-field", "path": ["parent", "lo"] } },
+          { "targetPath": ["right", "lo"], "operation": "add", "operand": { "kind": "item-field", "path": ["parent", "width"] } },
+          { "targetPath": ["right", "width"], "operation": "set", "operand": { "kind": "item-field", "path": ["parent", "width"] } },
+          { "targetPath": ["right", "width"], "operation": "subtract", "operand": { "kind": "fact", "factId": "decrement" } },
+          { "targetPath": ["right", "depth"], "operation": "set", "operand": { "kind": "item-field", "path": ["parent", "depth"] } },
+          { "targetPath": ["right", "depth"], "operation": "add", "operand": { "kind": "fact", "factId": "one" } }
+        ],
+        "terminalSteps": [
+          { "targetPath": ["accumulator", "priorCount"], "operation": "append", "operand": { "kind": "item-field-length", "path": ["accumulator", "leafLo"] } },
+          { "targetPath": ["accumulator", "leafLo"], "operation": "append", "operand": { "kind": "item-field", "path": ["item", "lo"] } },
+          { "targetPath": ["accumulator", "leafWidth"], "operation": "append", "operand": { "kind": "item-field", "path": ["item", "width"] } }
+        ]
+      }
+    ]
+  },
+  "context": {
+    "schemas": [
+      {
+        "schemaId": "range-item.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["lo", "width", "depth"],
+          "properties": {
+            "lo": { "type": "integer", "minimum": -1000, "maximum": 1000 },
+            "width": { "type": "integer", "minimum": -1000, "maximum": 1000 },
+            "depth": { "type": "integer", "minimum": 0, "maximum": 32 }
+          }
+        }
+      },
+      { "schemaId": "range-item-variant-id.schema.v1", "value": { "const": "range-item" } },
+      { "schemaId": "int-value.schema.v1", "value": { "type": "integer", "minimum": -1000, "maximum": 1000 } },
+      { "schemaId": "presence-state.schema.v1", "value": { "enum": ["missing", "null", "empty-string", "invalid-type", "present"] } },
+      { "schemaId": "obligation-status.schema.v1", "value": { "enum": ["satisfied", "violated"] } },
+      {
+        "schemaId": "range-partition-result.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["leafLo", "leafWidth", "priorCount"],
+          "properties": {
+            "leafLo": { "type": "array", "maxItems": 20, "items": { "type": "integer" } },
+            "leafWidth": { "type": "array", "maxItems": 20, "items": { "type": "integer" } },
+            "priorCount": { "type": "array", "maxItems": 20, "items": { "type": "integer" } }
+          }
+        }
+      },
+      { "schemaId": "result-type.schema.v1", "value": { "const": "range-sequence-result" } },
+      {
+        "schemaId": "range-sequence-result.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["resultType", "partition"],
+          "properties": {
+            "resultType": { "const": "range-sequence-result" },
+            "partition": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["leafLo", "leafWidth", "priorCount"],
+              "properties": {
+                "leafLo": { "type": "array", "maxItems": 20, "items": { "type": "integer" } },
+                "leafWidth": { "type": "array", "maxItems": 20, "items": { "type": "integer" } },
+                "priorCount": { "type": "array", "maxItems": 20, "items": { "type": "integer" } }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v3",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

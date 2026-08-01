@@ -33,13 +33,13 @@ flowchart LR
 | Contract ID | `procedural-dungeon-fog-of-war.v1` |
 | Contract version | `1.13.0` |
 | Contract status | `admitted` |
-| Engine | `governed-artifact-engine.0.19.0` / `sha256:8ff88453b8969e7e577704430e83716042a218692452cd1aa71c1447e2e61e0f` |
+| Engine | `governed-artifact-engine.0.20.0` / `sha256:776a241c92c4eb5d7dd1707a8513359c984b8b4effdf42964984f8555cee89f8` |
 | Schema identity | `https://canonical.local/schemas/governed-artifact-contract.schema.json` |
 | Schema digest | `sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b` |
 | Conformance profile | `closed-world-artifact-conformance.v8` / `sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2` |
 | Projector registry | `governed-artifact-projector-registry.v1` / `sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf` |
 | Verifier registry | `governed-artifact-verifier-registry.v1` / `sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14` |
-| Migration registry | `governed-artifact-migration-registry.v1` / `sha256:a58c3ae89b1f706e2d2878aa7d0c34f448c5d071db757d98a5036575b470eadd` |
+| Migration registry | `governed-artifact-migration-registry.v1` / `sha256:16d9c61d42789f099e75c421322a288999e5ec7c0a540fa2281f8368efc64b56` |
 
 ## Semantic Subject
 

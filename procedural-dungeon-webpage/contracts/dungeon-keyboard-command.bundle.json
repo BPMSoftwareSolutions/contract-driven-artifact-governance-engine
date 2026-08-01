@@ -1,0 +1,773 @@
+{
+  "authority": {
+    "arithmeticOperations": [],
+    "authorityType": "deterministic-ontology-authority.v1",
+    "classifications": [
+      {
+        "classificationId": "keyboard-request-variant",
+        "classificationType": "concept-variant",
+        "multipleMatchDisposition": "KEYBOARD_REQUEST_VARIANT_AMBIGUOUS",
+        "noMatchDisposition": "KEYBOARD_REQUEST_VARIANT_UNRESOLVED",
+        "resultConceptId": "keyboard-request-variant-id",
+        "subjectConceptId": "keyboard-request",
+        "variants": [
+          "keyboard-request"
+        ]
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "emptyStringState": "empty-string",
+        "expectedValueType": "string",
+        "propertyId": "key-field",
+        "resultConceptId": "presence-state",
+        "states": [
+          "missing",
+          "null",
+          "empty-string",
+          "invalid-type",
+          "present"
+        ]
+      },
+      {
+        "cases": [
+          {
+            "stateId": "move-north",
+            "value": {
+              "type": "string",
+              "value": "ArrowUp"
+            }
+          },
+          {
+            "stateId": "move-north",
+            "value": {
+              "type": "string",
+              "value": "w"
+            }
+          },
+          {
+            "stateId": "move-north",
+            "value": {
+              "type": "string",
+              "value": "W"
+            }
+          },
+          {
+            "stateId": "move-south",
+            "value": {
+              "type": "string",
+              "value": "ArrowDown"
+            }
+          },
+          {
+            "stateId": "move-south",
+            "value": {
+              "type": "string",
+              "value": "s"
+            }
+          },
+          {
+            "stateId": "move-south",
+            "value": {
+              "type": "string",
+              "value": "S"
+            }
+          },
+          {
+            "stateId": "move-west",
+            "value": {
+              "type": "string",
+              "value": "ArrowLeft"
+            }
+          },
+          {
+            "stateId": "move-west",
+            "value": {
+              "type": "string",
+              "value": "a"
+            }
+          },
+          {
+            "stateId": "move-west",
+            "value": {
+              "type": "string",
+              "value": "A"
+            }
+          },
+          {
+            "stateId": "move-east",
+            "value": {
+              "type": "string",
+              "value": "ArrowRight"
+            }
+          },
+          {
+            "stateId": "move-east",
+            "value": {
+              "type": "string",
+              "value": "d"
+            }
+          },
+          {
+            "stateId": "move-east",
+            "value": {
+              "type": "string",
+              "value": "D"
+            }
+          }
+        ],
+        "classificationId": "key-command-classification",
+        "classificationType": "finite-value",
+        "resultConceptId": "command-value",
+        "subjectConceptId": "key-value",
+        "unmatchedDisposition": "INPUT_NOT_ADMITTED"
+      }
+    ],
+    "concepts": [
+      {
+        "abstract": false,
+        "conceptId": "keyboard-request",
+        "conceptType": "domain-entity",
+        "isA": [],
+        "schemaId": "keyboard-request.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "keyboard-request-variant-id",
+        "conceptType": "classification",
+        "isA": [],
+        "schemaId": "keyboard-request-variant-id.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "key-value",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "key-value.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "presence-state",
+        "conceptType": "classification",
+        "isA": [],
+        "schemaId": "presence-state.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "obligation-status",
+        "conceptType": "signal",
+        "isA": [],
+        "schemaId": "obligation-status.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "command-value",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "schemaId": "command-value.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "result-kind-concept",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "schemaId": "result-kind.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "keyboard-command-result",
+        "conceptType": "result-union",
+        "isA": [],
+        "schemaId": "keyboard-command-result.schema.v1"
+      }
+    ],
+    "constraints": [],
+    "executionBindings": [
+      {
+        "bindingId": "bind.input.keyboard-request",
+        "executorPrimitive": "input.v1",
+        "semanticAuthorityId": "keyboard-request"
+      },
+      {
+        "bindingId": "bind.read-path.key-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "key-field"
+      },
+      {
+        "bindingId": "bind.validate-variant.keyboard-request-variant",
+        "executorPrimitive": "validate-variant.v1",
+        "semanticAuthorityId": "keyboard-request-variant"
+      },
+      {
+        "bindingId": "bind.test-presence.presence-classification",
+        "executorPrimitive": "test-presence.v1",
+        "semanticAuthorityId": "presence-classification"
+      },
+      {
+        "bindingId": "bind.classify-value.key-command-classification",
+        "executorPrimitive": "classify-value.v1",
+        "semanticAuthorityId": "key-command-classification"
+      },
+      {
+        "bindingId": "bind.evaluate-obligation.always-present-obligation",
+        "executorPrimitive": "evaluate-obligation.v1",
+        "semanticAuthorityId": "always-present-obligation"
+      },
+      {
+        "bindingId": "bind.project-value.emit-command",
+        "executorPrimitive": "project-value.v1",
+        "semanticAuthorityId": "emit-command"
+      },
+      {
+        "bindingId": "bind.select-result.keyboard-command-result-union",
+        "executorPrimitive": "select-result.v1",
+        "semanticAuthorityId": "keyboard-command-result-union"
+      },
+      {
+        "bindingId": "bind.emit-result.keyboard-command-result-union",
+        "executorPrimitive": "emit-result.v1",
+        "semanticAuthorityId": "keyboard-command-result-union"
+      },
+      {
+        "bindingId": "bind.serialize-result.keyboard-command-result-union",
+        "executorPrimitive": "serialize-result.v1",
+        "semanticAuthorityId": "keyboard-command-result-union"
+      }
+    ],
+    "executionGraph": {
+      "edges": [
+        {
+          "edgeId": "edge.validate-variant.keyboard-request-variant.to.read-path.key-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.keyboard-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.key-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.keyboard-request.to.read-path.key-field.source",
+          "from": {
+            "nodeId": "node.input.keyboard-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.key-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.input.keyboard-request.to.validate-variant.keyboard-request-variant.source",
+          "from": {
+            "nodeId": "node.input.keyboard-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.validate-variant.keyboard-request-variant",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.key-field.to.test-presence.presence-classification.observation",
+          "from": {
+            "nodeId": "node.read-path.key-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.test-presence.presence-classification",
+            "port": "observation"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.key-field.to.classify-value.key-command-classification.observation",
+          "from": {
+            "nodeId": "node.read-path.key-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.classify-value.key-command-classification",
+            "port": "observation"
+          }
+        },
+        {
+          "edgeId": "edge.test-presence.presence-classification.to.evaluate-obligation.always-present-obligation.state",
+          "from": {
+            "nodeId": "node.test-presence.presence-classification",
+            "port": "state"
+          },
+          "to": {
+            "nodeId": "node.evaluate-obligation.always-present-obligation",
+            "port": "state"
+          }
+        },
+        {
+          "edgeId": "edge.classify-value.key-command-classification.to.project-value.emit-command.value",
+          "from": {
+            "nodeId": "node.classify-value.key-command-classification",
+            "port": "state"
+          },
+          "to": {
+            "nodeId": "node.project-value.emit-command",
+            "port": "value"
+          }
+        },
+        {
+          "edgeId": "edge.evaluate-obligation.always-present-obligation.to.select-result.keyboard-command-result-union.presence-obligation",
+          "from": {
+            "nodeId": "node.evaluate-obligation.always-present-obligation",
+            "port": "status"
+          },
+          "to": {
+            "nodeId": "node.select-result.keyboard-command-result-union",
+            "port": "presenceObligation"
+          }
+        },
+        {
+          "edgeId": "edge.project-value.emit-command.to.emit-result.keyboard-command-result-union.fragment-emit-command",
+          "from": {
+            "nodeId": "node.project-value.emit-command",
+            "port": "fragment"
+          },
+          "to": {
+            "nodeId": "node.emit-result.keyboard-command-result-union",
+            "port": "fragment-emit-command"
+          }
+        },
+        {
+          "edgeId": "edge.select-result.keyboard-command-result-union.to.emit-result.keyboard-command-result-union.selection",
+          "from": {
+            "nodeId": "node.select-result.keyboard-command-result-union",
+            "port": "resultId"
+          },
+          "to": {
+            "nodeId": "node.emit-result.keyboard-command-result-union",
+            "port": "selection"
+          }
+        },
+        {
+          "edgeId": "edge.emit-result.keyboard-command-result-union.to.serialize-result.keyboard-command-result-union.result",
+          "from": {
+            "nodeId": "node.emit-result.keyboard-command-result-union",
+            "port": "result"
+          },
+          "to": {
+            "nodeId": "node.serialize-result.keyboard-command-result-union",
+            "port": "result"
+          }
+        }
+      ],
+      "entryNodeId": "node.input.keyboard-request",
+      "nodes": [
+        {
+          "bindingId": "bind.input.keyboard-request",
+          "nodeId": "node.input.keyboard-request"
+        },
+        {
+          "bindingId": "bind.read-path.key-field",
+          "nodeId": "node.read-path.key-field"
+        },
+        {
+          "bindingId": "bind.validate-variant.keyboard-request-variant",
+          "nodeId": "node.validate-variant.keyboard-request-variant"
+        },
+        {
+          "bindingId": "bind.test-presence.presence-classification",
+          "nodeId": "node.test-presence.presence-classification"
+        },
+        {
+          "bindingId": "bind.classify-value.key-command-classification",
+          "nodeId": "node.classify-value.key-command-classification"
+        },
+        {
+          "bindingId": "bind.evaluate-obligation.always-present-obligation",
+          "nodeId": "node.evaluate-obligation.always-present-obligation"
+        },
+        {
+          "bindingId": "bind.project-value.emit-command",
+          "nodeId": "node.project-value.emit-command"
+        },
+        {
+          "bindingId": "bind.select-result.keyboard-command-result-union",
+          "nodeId": "node.select-result.keyboard-command-result-union"
+        },
+        {
+          "bindingId": "bind.emit-result.keyboard-command-result-union",
+          "nodeId": "node.emit-result.keyboard-command-result-union"
+        },
+        {
+          "bindingId": "bind.serialize-result.keyboard-command-result-union",
+          "nodeId": "node.serialize-result.keyboard-command-result-union"
+        }
+      ],
+      "terminalNodeIds": [
+        "node.serialize-result.keyboard-command-result-union"
+      ]
+    },
+    "facts": [],
+    "indexedReads": [],
+    "iterations": [],
+    "obligations": [
+      {
+        "classificationId": "presence-classification",
+        "failureDisposition": "KEY_MISSING",
+        "obligationId": "always-present-obligation",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": [
+          "present"
+        ],
+        "subjectConceptId": "keyboard-request"
+      }
+    ],
+    "ontologyId": "dungeon-keyboard-command",
+    "proofRequirements": [
+      {
+        "proofType": "reference-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-reference-closure",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "type-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-type-closure",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "cardinality-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-cardinality-closure",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "classification-totality",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-classification-totality",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "translation-totality",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-translation-totality",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "obligation-binding",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-obligation-binding",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "result-discrimination",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-result-discrimination",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "execution-binding",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-execution-binding",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "graph-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-graph-closure",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "arithmetic-range-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-arithmetic-range-closure",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "randomness-determinism-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-randomness-determinism-closure",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      },
+      {
+        "proofType": "iteration-termination-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-iteration-termination-closure",
+        "subjectAuthorityId": "dungeon-keyboard-command"
+      }
+    ],
+    "properties": [
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "key-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "key"
+            ],
+            "subjectVariantConceptId": "keyboard-request"
+          }
+        ],
+        "subjectConceptId": "keyboard-request",
+        "valueConceptId": "key-value"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "result-kind",
+        "propertyKind": "projected",
+        "resolutions": [],
+        "subjectConceptId": "keyboard-command-result",
+        "valueConceptId": "result-kind-concept"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "result-command",
+        "propertyKind": "projected",
+        "resolutions": [],
+        "subjectConceptId": "keyboard-command-result",
+        "valueConceptId": "command-value"
+      }
+    ],
+    "randomDraws": [],
+    "relations": [
+      {
+        "cardinality": "exactly-one",
+        "objectConceptId": "command-value",
+        "relationId": "command-produces-value",
+        "relationType": "computes",
+        "subjectConceptId": "command-value"
+      }
+    ],
+    "results": [
+      {
+        "invalidResultDisposition": "KEYBOARD_COMMAND_RESULT_INVALID",
+        "members": [
+          {
+            "conceptId": "keyboard-command-result",
+            "discriminator": {
+              "outputPath": [
+                "kind"
+              ],
+              "propertyId": "result-kind",
+              "value": {
+                "type": "string",
+                "value": "keyboard-command-result"
+              }
+            },
+            "resultId": "keyboard-command-ok"
+          }
+        ],
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "resultTypeConceptId": "keyboard-command-result",
+        "resultUnionId": "keyboard-command-result-union",
+        "selectionRules": [
+          {
+            "resultId": "keyboard-command-ok",
+            "ruleId": "always-ok",
+            "when": [
+              {
+                "inputPort": "presenceObligation",
+                "obligationId": "always-present-obligation",
+                "status": "satisfied"
+              }
+            ]
+          },
+          {
+            "resultId": "keyboard-command-ok",
+            "ruleId": "still-ok-when-violated",
+            "when": [
+              {
+                "inputPort": "presenceObligation",
+                "obligationId": "always-present-obligation",
+                "status": "violated"
+              }
+            ]
+          }
+        ],
+        "serializerId": "identity.v1"
+      }
+    ],
+    "transformations": [
+      {
+        "invalidTypeDisposition": "COMMAND_INVALID",
+        "outputPath": [
+          "command"
+        ],
+        "relationId": "command-produces-value",
+        "resultIds": [
+          "keyboard-command-ok"
+        ],
+        "sourceAuthorityId": "key-command-classification",
+        "targetPropertyId": "result-command",
+        "transformationId": "emit-command",
+        "unavailableDisposition": "COMMAND_UNAVAILABLE",
+        "valueConceptId": "command-value"
+      }
+    ],
+    "translations": []
+  },
+  "bundleId": "dungeon-keyboard-command.bundle.v1",
+  "bundleType": "semantic-execution-bundle.v1",
+  "catalogs": [],
+  "runtimeProfile": {
+    "admittedPrimitives": [
+      "input.v1",
+      "validate-variant.v1",
+      "read-path.v1",
+      "constant.v1",
+      "test-presence.v1",
+      "classify-value.v1",
+      "classify-observations.v1",
+      "translate-value.v1",
+      "evaluate-obligation.v1",
+      "project-value.v1",
+      "select-result.v1",
+      "emit-result.v1",
+      "add-bounded.v1",
+      "subtract-bounded.v1",
+      "compare-bounded.v1",
+      "seeded-range-draw.v1",
+      "read-indexed-path.v1",
+      "iterate-bounded-worklist.v1",
+      "resolve-branching-worklist.v1",
+      "serialize-result.v1"
+    ],
+    "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+    "forbiddenCapabilities": [
+      "cycles",
+      "recursion",
+      "dynamic-invocation",
+      "arbitrary-expressions",
+      "user-code",
+      "runtime-module-loading",
+      "unbounded-array-traversal",
+      "regex-authority",
+      "implicit-coercion",
+      "ambient-state",
+      "clock-access",
+      "ambient-randomness",
+      "network-access"
+    ],
+    "identity": "finite-semantic-runtime.v3",
+    "limits": {
+      "maxClassificationCases": 128,
+      "maxClassificationInputs": 16,
+      "maxGraphEdges": 128,
+      "maxGraphNodes": 64,
+      "maxIterationSteps": 8192,
+      "maxOperandDomainSize": 64,
+      "maxOutputDepth": 16,
+      "maxPathDepth": 16,
+      "maxSchemas": 32,
+      "maxSerializedByteLength": 1048576,
+      "maxTerminalResults": 1,
+      "maxTranslationCases": 128,
+      "maxVariants": 16,
+      "maxWorklistItems": 256
+    }
+  },
+  "schemas": [
+    {
+      "digest": "sha256:9d174bb6188cc571dc193b86928759539826e36ea47e49cccf2df3f68604bddc",
+      "schemaId": "keyboard-request.schema.v1",
+      "value": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "digest": "sha256:603fe8e729d7539092bf3394b171ebe47b0e548117375bf46312e55e7b69797b",
+      "schemaId": "keyboard-request-variant-id.schema.v1",
+      "value": {
+        "const": "keyboard-request"
+      }
+    },
+    {
+      "digest": "sha256:2be66a0fd128bb383dfe05acafbb4c9e8d529209dfe8aaf9d16f2801b9fda44c",
+      "schemaId": "key-value.schema.v1",
+      "value": {
+        "maxLength": 16,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    {
+      "digest": "sha256:09dc5338c2b0f2472e421603f089adb57be1058caf4cbb304639d5fe22b2bad6",
+      "schemaId": "presence-state.schema.v1",
+      "value": {
+        "enum": [
+          "missing",
+          "null",
+          "empty-string",
+          "invalid-type",
+          "present"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:5d59fc5fb020fee7ea29a2493b457aa7d8fb46f8012dff970cc65a8a2aa42cad",
+      "schemaId": "obligation-status.schema.v1",
+      "value": {
+        "enum": [
+          "satisfied",
+          "violated"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:923dd73e917c85d2dc5ebaae314b192a9de9f637569f5aeddb0329b3b072f1a2",
+      "schemaId": "command-value.schema.v1",
+      "value": {
+        "enum": [
+          "move-north",
+          "move-south",
+          "move-east",
+          "move-west"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:3ddbf3d245844c14bd200b15dcaa4dd56ae27a3f6a2d5eb6e498311359e84b2f",
+      "schemaId": "result-kind.schema.v1",
+      "value": {
+        "const": "keyboard-command-result"
+      }
+    },
+    {
+      "digest": "sha256:33b4dab677ca4e1bf7e18c12cd7b762c88574ad0f96604daa7be93a3da1eefe5",
+      "schemaId": "keyboard-command-result.schema.v1",
+      "value": {
+        "additionalProperties": false,
+        "properties": {
+          "command": {
+            "enum": [
+              "move-north",
+              "move-south",
+              "move-east",
+              "move-west"
+            ]
+          },
+          "kind": {
+            "const": "keyboard-command-result"
+          }
+        },
+        "required": [
+          "kind",
+          "command"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

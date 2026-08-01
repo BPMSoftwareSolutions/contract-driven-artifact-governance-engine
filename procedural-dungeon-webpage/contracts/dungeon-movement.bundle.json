@@ -1,0 +1,1527 @@
+{
+  "authority": {
+    "arithmeticOperations": [
+      {
+        "operandAConceptId": "border-position-x",
+        "operandBConceptId": "delta-x",
+        "operation": "add",
+        "operationId": "compute-target-x",
+        "resultConceptId": "target-position-x"
+      },
+      {
+        "operandAConceptId": "border-position-y",
+        "operandBConceptId": "delta-y",
+        "operation": "add",
+        "operationId": "compute-target-y",
+        "resultConceptId": "target-position-y"
+      },
+      {
+        "operandAConceptId": "target-position-x",
+        "operandBConceptId": "zero-constant",
+        "operation": "add",
+        "operationId": "widen-target-x",
+        "resultConceptId": "axis-position-x"
+      },
+      {
+        "operandAConceptId": "target-position-y",
+        "operandBConceptId": "zero-constant",
+        "operation": "add",
+        "operationId": "widen-target-y",
+        "resultConceptId": "axis-position-y"
+      },
+      {
+        "operandAConceptId": "border-position-x",
+        "operandBConceptId": "zero-constant",
+        "operation": "add",
+        "operationId": "widen-player-x",
+        "resultConceptId": "axis-position-x"
+      },
+      {
+        "operandAConceptId": "border-position-y",
+        "operandBConceptId": "zero-constant",
+        "operation": "add",
+        "operationId": "widen-player-y",
+        "resultConceptId": "axis-position-y"
+      }
+    ],
+    "authorityType": "deterministic-ontology-authority.v1",
+    "classifications": [
+      {
+        "classificationId": "movement-request-variant",
+        "classificationType": "concept-variant",
+        "multipleMatchDisposition": "MOVEMENT_REQUEST_VARIANT_AMBIGUOUS",
+        "noMatchDisposition": "MOVEMENT_REQUEST_VARIANT_UNRESOLVED",
+        "resultConceptId": "movement-request-variant-id",
+        "subjectConceptId": "movement-request",
+        "variants": [
+          "movement-request"
+        ]
+      },
+      {
+        "cases": [
+          {
+            "stateId": "floor",
+            "value": {
+              "type": "number",
+              "value": 0
+            }
+          },
+          {
+            "stateId": "wall",
+            "value": {
+              "type": "number",
+              "value": 1
+            }
+          }
+        ],
+        "classificationId": "cell-classification",
+        "classificationType": "finite-value",
+        "resultConceptId": "cell-disposition",
+        "subjectConceptId": "cell-value",
+        "unmatchedDisposition": "CELL_VALUE_UNRESOLVED"
+      }
+    ],
+    "concepts": [
+      {
+        "abstract": false,
+        "conceptId": "movement-request",
+        "conceptType": "domain-entity",
+        "isA": [],
+        "schemaId": "movement-request.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "movement-request-variant-id",
+        "conceptType": "classification",
+        "isA": [],
+        "schemaId": "movement-request-variant-id.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "grid-value",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "grid-value.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "border-position-x",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "border-position.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "border-position-y",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "border-position.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "delta-x",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "delta-value.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "delta-y",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "delta-value.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "zero-constant",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "zero-constant.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "target-position-x",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "position-on-axis.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "target-position-y",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "position-on-axis.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "axis-position-x",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "position-on-axis.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "axis-position-y",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "position-on-axis.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "grid-row-value",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "grid-row-value.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "cell-value",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "cell-value.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "cell-disposition",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "schemaId": "cell-disposition.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "movement-obligation-status",
+        "conceptType": "signal",
+        "isA": [],
+        "schemaId": "movement-obligation-status.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "movement-status-concept",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "schemaId": "movement-status.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "movement-result",
+        "conceptType": "result-union",
+        "isA": [],
+        "schemaId": "movement-result.schema.v1"
+      }
+    ],
+    "constraints": [],
+    "executionBindings": [
+      {
+        "bindingId": "bind.input.movement-request",
+        "executorPrimitive": "input.v1",
+        "semanticAuthorityId": "movement-request"
+      },
+      {
+        "bindingId": "bind.read-path.grid-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "grid-field"
+      },
+      {
+        "bindingId": "bind.read-path.player-x-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "player-x-field"
+      },
+      {
+        "bindingId": "bind.read-path.player-y-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "player-y-field"
+      },
+      {
+        "bindingId": "bind.read-path.dx-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "dx-field"
+      },
+      {
+        "bindingId": "bind.read-path.dy-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "dy-field"
+      },
+      {
+        "bindingId": "bind.constant.zero-offset",
+        "executorPrimitive": "constant.v1",
+        "semanticAuthorityId": "zero-offset"
+      },
+      {
+        "bindingId": "bind.validate-variant.movement-request-variant",
+        "executorPrimitive": "validate-variant.v1",
+        "semanticAuthorityId": "movement-request-variant"
+      },
+      {
+        "bindingId": "bind.classify-value.cell-classification",
+        "executorPrimitive": "classify-value.v1",
+        "semanticAuthorityId": "cell-classification"
+      },
+      {
+        "bindingId": "bind.evaluate-obligation.target-is-floor-obligation",
+        "executorPrimitive": "evaluate-obligation.v1",
+        "semanticAuthorityId": "target-is-floor-obligation"
+      },
+      {
+        "bindingId": "bind.project-value.emit-authorized-x",
+        "executorPrimitive": "project-value.v1",
+        "semanticAuthorityId": "emit-authorized-x"
+      },
+      {
+        "bindingId": "bind.project-value.emit-authorized-y",
+        "executorPrimitive": "project-value.v1",
+        "semanticAuthorityId": "emit-authorized-y"
+      },
+      {
+        "bindingId": "bind.project-value.emit-blocked-x",
+        "executorPrimitive": "project-value.v1",
+        "semanticAuthorityId": "emit-blocked-x"
+      },
+      {
+        "bindingId": "bind.project-value.emit-blocked-y",
+        "executorPrimitive": "project-value.v1",
+        "semanticAuthorityId": "emit-blocked-y"
+      },
+      {
+        "bindingId": "bind.select-result.movement-result-union",
+        "executorPrimitive": "select-result.v1",
+        "semanticAuthorityId": "movement-result-union"
+      },
+      {
+        "bindingId": "bind.emit-result.movement-result-union",
+        "executorPrimitive": "emit-result.v1",
+        "semanticAuthorityId": "movement-result-union"
+      },
+      {
+        "bindingId": "bind.serialize-result.movement-result-union",
+        "executorPrimitive": "serialize-result.v1",
+        "semanticAuthorityId": "movement-result-union"
+      },
+      {
+        "bindingId": "bind.add-bounded.compute-target-x",
+        "executorPrimitive": "add-bounded.v1",
+        "semanticAuthorityId": "compute-target-x"
+      },
+      {
+        "bindingId": "bind.add-bounded.compute-target-y",
+        "executorPrimitive": "add-bounded.v1",
+        "semanticAuthorityId": "compute-target-y"
+      },
+      {
+        "bindingId": "bind.add-bounded.widen-target-x",
+        "executorPrimitive": "add-bounded.v1",
+        "semanticAuthorityId": "widen-target-x"
+      },
+      {
+        "bindingId": "bind.add-bounded.widen-target-y",
+        "executorPrimitive": "add-bounded.v1",
+        "semanticAuthorityId": "widen-target-y"
+      },
+      {
+        "bindingId": "bind.add-bounded.widen-player-x",
+        "executorPrimitive": "add-bounded.v1",
+        "semanticAuthorityId": "widen-player-x"
+      },
+      {
+        "bindingId": "bind.add-bounded.widen-player-y",
+        "executorPrimitive": "add-bounded.v1",
+        "semanticAuthorityId": "widen-player-y"
+      },
+      {
+        "bindingId": "bind.read-indexed-path.read-target-row",
+        "executorPrimitive": "read-indexed-path.v1",
+        "semanticAuthorityId": "read-target-row"
+      },
+      {
+        "bindingId": "bind.read-indexed-path.read-target-cell",
+        "executorPrimitive": "read-indexed-path.v1",
+        "semanticAuthorityId": "read-target-cell"
+      }
+    ],
+    "executionGraph": {
+      "edges": [
+        {
+          "edgeId": "edge.validate-variant.movement-request-variant.to.read-path.grid-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.movement-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.grid-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.movement-request.to.read-path.grid-field.source",
+          "from": {
+            "nodeId": "node.input.movement-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.grid-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.validate-variant.movement-request-variant.to.read-path.player-x-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.movement-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.player-x-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.movement-request.to.read-path.player-x-field.source",
+          "from": {
+            "nodeId": "node.input.movement-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.player-x-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.validate-variant.movement-request-variant.to.read-path.player-y-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.movement-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.player-y-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.movement-request.to.read-path.player-y-field.source",
+          "from": {
+            "nodeId": "node.input.movement-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.player-y-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.validate-variant.movement-request-variant.to.read-path.dx-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.movement-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.dx-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.movement-request.to.read-path.dx-field.source",
+          "from": {
+            "nodeId": "node.input.movement-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.dx-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.validate-variant.movement-request-variant.to.read-path.dy-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.movement-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.dy-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.movement-request.to.read-path.dy-field.source",
+          "from": {
+            "nodeId": "node.input.movement-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.dy-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.input.movement-request.to.constant.zero-offset.activation",
+          "from": {
+            "nodeId": "node.input.movement-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.constant.zero-offset",
+            "port": "activation"
+          }
+        },
+        {
+          "edgeId": "edge.input.movement-request.to.validate-variant.movement-request-variant.source",
+          "from": {
+            "nodeId": "node.input.movement-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.validate-variant.movement-request-variant",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.read-indexed-path.read-target-cell.to.classify-value.cell-classification.observation",
+          "from": {
+            "nodeId": "node.read-indexed-path.read-target-cell",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.classify-value.cell-classification",
+            "port": "observation"
+          }
+        },
+        {
+          "edgeId": "edge.classify-value.cell-classification.to.evaluate-obligation.target-is-floor-obligation.state",
+          "from": {
+            "nodeId": "node.classify-value.cell-classification",
+            "port": "state"
+          },
+          "to": {
+            "nodeId": "node.evaluate-obligation.target-is-floor-obligation",
+            "port": "state"
+          }
+        },
+        {
+          "edgeId": "edge.add-bounded.widen-target-x.to.project-value.emit-authorized-x.value",
+          "from": {
+            "nodeId": "node.add-bounded.widen-target-x",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.project-value.emit-authorized-x",
+            "port": "value"
+          }
+        },
+        {
+          "edgeId": "edge.add-bounded.widen-target-y.to.project-value.emit-authorized-y.value",
+          "from": {
+            "nodeId": "node.add-bounded.widen-target-y",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.project-value.emit-authorized-y",
+            "port": "value"
+          }
+        },
+        {
+          "edgeId": "edge.add-bounded.widen-player-x.to.project-value.emit-blocked-x.value",
+          "from": {
+            "nodeId": "node.add-bounded.widen-player-x",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.project-value.emit-blocked-x",
+            "port": "value"
+          }
+        },
+        {
+          "edgeId": "edge.add-bounded.widen-player-y.to.project-value.emit-blocked-y.value",
+          "from": {
+            "nodeId": "node.add-bounded.widen-player-y",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.project-value.emit-blocked-y",
+            "port": "value"
+          }
+        },
+        {
+          "edgeId": "edge.evaluate-obligation.target-is-floor-obligation.to.select-result.movement-result-union.floor-obligation",
+          "from": {
+            "nodeId": "node.evaluate-obligation.target-is-floor-obligation",
+            "port": "status"
+          },
+          "to": {
+            "nodeId": "node.select-result.movement-result-union",
+            "port": "floorObligation"
+          }
+        },
+        {
+          "edgeId": "edge.project-value.emit-authorized-x.to.emit-result.movement-result-union.fragment-emit-authorized-x",
+          "from": {
+            "nodeId": "node.project-value.emit-authorized-x",
+            "port": "fragment"
+          },
+          "to": {
+            "nodeId": "node.emit-result.movement-result-union",
+            "port": "fragment-emit-authorized-x"
+          }
+        },
+        {
+          "edgeId": "edge.project-value.emit-authorized-y.to.emit-result.movement-result-union.fragment-emit-authorized-y",
+          "from": {
+            "nodeId": "node.project-value.emit-authorized-y",
+            "port": "fragment"
+          },
+          "to": {
+            "nodeId": "node.emit-result.movement-result-union",
+            "port": "fragment-emit-authorized-y"
+          }
+        },
+        {
+          "edgeId": "edge.project-value.emit-blocked-x.to.emit-result.movement-result-union.fragment-emit-blocked-x",
+          "from": {
+            "nodeId": "node.project-value.emit-blocked-x",
+            "port": "fragment"
+          },
+          "to": {
+            "nodeId": "node.emit-result.movement-result-union",
+            "port": "fragment-emit-blocked-x"
+          }
+        },
+        {
+          "edgeId": "edge.project-value.emit-blocked-y.to.emit-result.movement-result-union.fragment-emit-blocked-y",
+          "from": {
+            "nodeId": "node.project-value.emit-blocked-y",
+            "port": "fragment"
+          },
+          "to": {
+            "nodeId": "node.emit-result.movement-result-union",
+            "port": "fragment-emit-blocked-y"
+          }
+        },
+        {
+          "edgeId": "edge.select-result.movement-result-union.to.emit-result.movement-result-union.selection",
+          "from": {
+            "nodeId": "node.select-result.movement-result-union",
+            "port": "resultId"
+          },
+          "to": {
+            "nodeId": "node.emit-result.movement-result-union",
+            "port": "selection"
+          }
+        },
+        {
+          "edgeId": "edge.emit-result.movement-result-union.to.serialize-result.movement-result-union.result",
+          "from": {
+            "nodeId": "node.emit-result.movement-result-union",
+            "port": "result"
+          },
+          "to": {
+            "nodeId": "node.serialize-result.movement-result-union",
+            "port": "result"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.player-x-field.to.add-bounded.compute-target-x.operand-a",
+          "from": {
+            "nodeId": "node.read-path.player-x-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.compute-target-x",
+            "port": "operandA"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.dx-field.to.add-bounded.compute-target-x.operand-b",
+          "from": {
+            "nodeId": "node.read-path.dx-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.compute-target-x",
+            "port": "operandB"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.player-y-field.to.add-bounded.compute-target-y.operand-a",
+          "from": {
+            "nodeId": "node.read-path.player-y-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.compute-target-y",
+            "port": "operandA"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.dy-field.to.add-bounded.compute-target-y.operand-b",
+          "from": {
+            "nodeId": "node.read-path.dy-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.compute-target-y",
+            "port": "operandB"
+          }
+        },
+        {
+          "edgeId": "edge.add-bounded.compute-target-x.to.add-bounded.widen-target-x.operand-a",
+          "from": {
+            "nodeId": "node.add-bounded.compute-target-x",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.widen-target-x",
+            "port": "operandA"
+          }
+        },
+        {
+          "edgeId": "edge.constant.zero-offset.to.add-bounded.widen-target-x.operand-b",
+          "from": {
+            "nodeId": "node.constant.zero-offset",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.widen-target-x",
+            "port": "operandB"
+          }
+        },
+        {
+          "edgeId": "edge.add-bounded.compute-target-y.to.add-bounded.widen-target-y.operand-a",
+          "from": {
+            "nodeId": "node.add-bounded.compute-target-y",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.widen-target-y",
+            "port": "operandA"
+          }
+        },
+        {
+          "edgeId": "edge.constant.zero-offset.to.add-bounded.widen-target-y.operand-b",
+          "from": {
+            "nodeId": "node.constant.zero-offset",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.widen-target-y",
+            "port": "operandB"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.player-x-field.to.add-bounded.widen-player-x.operand-a",
+          "from": {
+            "nodeId": "node.read-path.player-x-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.widen-player-x",
+            "port": "operandA"
+          }
+        },
+        {
+          "edgeId": "edge.constant.zero-offset.to.add-bounded.widen-player-x.operand-b",
+          "from": {
+            "nodeId": "node.constant.zero-offset",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.widen-player-x",
+            "port": "operandB"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.player-y-field.to.add-bounded.widen-player-y.operand-a",
+          "from": {
+            "nodeId": "node.read-path.player-y-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.widen-player-y",
+            "port": "operandA"
+          }
+        },
+        {
+          "edgeId": "edge.constant.zero-offset.to.add-bounded.widen-player-y.operand-b",
+          "from": {
+            "nodeId": "node.constant.zero-offset",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.add-bounded.widen-player-y",
+            "port": "operandB"
+          }
+        },
+        {
+          "edgeId": "edge.add-bounded.compute-target-y.to.read-indexed-path.read-target-row.index",
+          "from": {
+            "nodeId": "node.add-bounded.compute-target-y",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-indexed-path.read-target-row",
+            "port": "index"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.grid-field.to.read-indexed-path.read-target-row.source",
+          "from": {
+            "nodeId": "node.read-path.grid-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.read-indexed-path.read-target-row",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.add-bounded.compute-target-x.to.read-indexed-path.read-target-cell.index",
+          "from": {
+            "nodeId": "node.add-bounded.compute-target-x",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-indexed-path.read-target-cell",
+            "port": "index"
+          }
+        },
+        {
+          "edgeId": "edge.read-indexed-path.read-target-row.to.read-indexed-path.read-target-cell.source",
+          "from": {
+            "nodeId": "node.read-indexed-path.read-target-row",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-indexed-path.read-target-cell",
+            "port": "source"
+          }
+        }
+      ],
+      "entryNodeId": "node.input.movement-request",
+      "nodes": [
+        {
+          "bindingId": "bind.input.movement-request",
+          "nodeId": "node.input.movement-request"
+        },
+        {
+          "bindingId": "bind.read-path.grid-field",
+          "nodeId": "node.read-path.grid-field"
+        },
+        {
+          "bindingId": "bind.read-path.player-x-field",
+          "nodeId": "node.read-path.player-x-field"
+        },
+        {
+          "bindingId": "bind.read-path.player-y-field",
+          "nodeId": "node.read-path.player-y-field"
+        },
+        {
+          "bindingId": "bind.read-path.dx-field",
+          "nodeId": "node.read-path.dx-field"
+        },
+        {
+          "bindingId": "bind.read-path.dy-field",
+          "nodeId": "node.read-path.dy-field"
+        },
+        {
+          "bindingId": "bind.constant.zero-offset",
+          "nodeId": "node.constant.zero-offset"
+        },
+        {
+          "bindingId": "bind.validate-variant.movement-request-variant",
+          "nodeId": "node.validate-variant.movement-request-variant"
+        },
+        {
+          "bindingId": "bind.classify-value.cell-classification",
+          "nodeId": "node.classify-value.cell-classification"
+        },
+        {
+          "bindingId": "bind.evaluate-obligation.target-is-floor-obligation",
+          "nodeId": "node.evaluate-obligation.target-is-floor-obligation"
+        },
+        {
+          "bindingId": "bind.project-value.emit-authorized-x",
+          "nodeId": "node.project-value.emit-authorized-x"
+        },
+        {
+          "bindingId": "bind.project-value.emit-authorized-y",
+          "nodeId": "node.project-value.emit-authorized-y"
+        },
+        {
+          "bindingId": "bind.project-value.emit-blocked-x",
+          "nodeId": "node.project-value.emit-blocked-x"
+        },
+        {
+          "bindingId": "bind.project-value.emit-blocked-y",
+          "nodeId": "node.project-value.emit-blocked-y"
+        },
+        {
+          "bindingId": "bind.select-result.movement-result-union",
+          "nodeId": "node.select-result.movement-result-union"
+        },
+        {
+          "bindingId": "bind.emit-result.movement-result-union",
+          "nodeId": "node.emit-result.movement-result-union"
+        },
+        {
+          "bindingId": "bind.serialize-result.movement-result-union",
+          "nodeId": "node.serialize-result.movement-result-union"
+        },
+        {
+          "bindingId": "bind.add-bounded.compute-target-x",
+          "nodeId": "node.add-bounded.compute-target-x"
+        },
+        {
+          "bindingId": "bind.add-bounded.compute-target-y",
+          "nodeId": "node.add-bounded.compute-target-y"
+        },
+        {
+          "bindingId": "bind.add-bounded.widen-target-x",
+          "nodeId": "node.add-bounded.widen-target-x"
+        },
+        {
+          "bindingId": "bind.add-bounded.widen-target-y",
+          "nodeId": "node.add-bounded.widen-target-y"
+        },
+        {
+          "bindingId": "bind.add-bounded.widen-player-x",
+          "nodeId": "node.add-bounded.widen-player-x"
+        },
+        {
+          "bindingId": "bind.add-bounded.widen-player-y",
+          "nodeId": "node.add-bounded.widen-player-y"
+        },
+        {
+          "bindingId": "bind.read-indexed-path.read-target-row",
+          "nodeId": "node.read-indexed-path.read-target-row"
+        },
+        {
+          "bindingId": "bind.read-indexed-path.read-target-cell",
+          "nodeId": "node.read-indexed-path.read-target-cell"
+        }
+      ],
+      "terminalNodeIds": [
+        "node.serialize-result.movement-result-union"
+      ]
+    },
+    "facts": [
+      {
+        "conceptId": "zero-constant",
+        "factId": "zero-offset",
+        "value": {
+          "type": "number",
+          "value": 0
+        }
+      }
+    ],
+    "indexedReads": [
+      {
+        "basePath": [],
+        "indexConceptId": "target-position-y",
+        "outOfBoundsDisposition": "TARGET_Y_OUT_OF_BOUNDS",
+        "readId": "read-target-row",
+        "resultConceptId": "grid-row-value",
+        "sourceConceptId": "grid-value"
+      },
+      {
+        "basePath": [],
+        "indexConceptId": "target-position-x",
+        "outOfBoundsDisposition": "TARGET_X_OUT_OF_BOUNDS",
+        "readId": "read-target-cell",
+        "resultConceptId": "cell-value",
+        "sourceConceptId": "grid-row-value"
+      }
+    ],
+    "iterations": [],
+    "obligations": [
+      {
+        "classificationId": "cell-classification",
+        "failureDisposition": "MOVEMENT_BLOCKED_BY_WALL",
+        "obligationId": "target-is-floor-obligation",
+        "resultConceptId": "movement-obligation-status",
+        "satisfiedStateIds": [
+          "floor"
+        ],
+        "subjectConceptId": "cell-value"
+      }
+    ],
+    "ontologyId": "dungeon-movement",
+    "proofRequirements": [
+      {
+        "proofType": "reference-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-reference-closure",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "type-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-type-closure",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "cardinality-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-cardinality-closure",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "classification-totality",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-classification-totality",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "translation-totality",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-translation-totality",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "obligation-binding",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-obligation-binding",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "result-discrimination",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-result-discrimination",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "execution-binding",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-execution-binding",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "graph-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-graph-closure",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "arithmetic-range-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-arithmetic-range-closure",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "randomness-determinism-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-randomness-determinism-closure",
+        "subjectAuthorityId": "dungeon-movement"
+      },
+      {
+        "proofType": "iteration-termination-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-iteration-termination-closure",
+        "subjectAuthorityId": "dungeon-movement"
+      }
+    ],
+    "properties": [
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "grid-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "grid"
+            ],
+            "subjectVariantConceptId": "movement-request"
+          }
+        ],
+        "subjectConceptId": "movement-request",
+        "valueConceptId": "grid-value"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "player-x-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "playerX"
+            ],
+            "subjectVariantConceptId": "movement-request"
+          }
+        ],
+        "subjectConceptId": "movement-request",
+        "valueConceptId": "border-position-x"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "player-y-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "playerY"
+            ],
+            "subjectVariantConceptId": "movement-request"
+          }
+        ],
+        "subjectConceptId": "movement-request",
+        "valueConceptId": "border-position-y"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "dx-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "dx"
+            ],
+            "subjectVariantConceptId": "movement-request"
+          }
+        ],
+        "subjectConceptId": "movement-request",
+        "valueConceptId": "delta-x"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "dy-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "dy"
+            ],
+            "subjectVariantConceptId": "movement-request"
+          }
+        ],
+        "subjectConceptId": "movement-request",
+        "valueConceptId": "delta-y"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "result-status",
+        "propertyKind": "projected",
+        "resolutions": [],
+        "subjectConceptId": "movement-result",
+        "valueConceptId": "movement-status-concept"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "result-x",
+        "propertyKind": "projected",
+        "resolutions": [],
+        "subjectConceptId": "movement-result",
+        "valueConceptId": "axis-position-x"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "result-y",
+        "propertyKind": "projected",
+        "resolutions": [],
+        "subjectConceptId": "movement-result",
+        "valueConceptId": "axis-position-y"
+      }
+    ],
+    "randomDraws": [],
+    "relations": [
+      {
+        "cardinality": "exactly-one",
+        "objectConceptId": "axis-position-x",
+        "relationId": "axis-x-produces-value",
+        "relationType": "computes",
+        "subjectConceptId": "axis-position-x"
+      },
+      {
+        "cardinality": "exactly-one",
+        "objectConceptId": "axis-position-y",
+        "relationId": "axis-y-produces-value",
+        "relationType": "computes",
+        "subjectConceptId": "axis-position-y"
+      }
+    ],
+    "results": [
+      {
+        "invalidResultDisposition": "MOVEMENT_RESULT_INVALID",
+        "members": [
+          {
+            "conceptId": "movement-result",
+            "discriminator": {
+              "outputPath": [
+                "status"
+              ],
+              "propertyId": "result-status",
+              "value": {
+                "type": "string",
+                "value": "MOVEMENT_AUTHORIZED"
+              }
+            },
+            "resultId": "movement-authorized"
+          },
+          {
+            "conceptId": "movement-result",
+            "discriminator": {
+              "outputPath": [
+                "status"
+              ],
+              "propertyId": "result-status",
+              "value": {
+                "type": "string",
+                "value": "MOVEMENT_BLOCKED_BY_WALL"
+              }
+            },
+            "resultId": "movement-blocked"
+          }
+        ],
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "resultTypeConceptId": "movement-result",
+        "resultUnionId": "movement-result-union",
+        "selectionRules": [
+          {
+            "resultId": "movement-authorized",
+            "ruleId": "floor-authorizes",
+            "when": [
+              {
+                "inputPort": "floorObligation",
+                "obligationId": "target-is-floor-obligation",
+                "status": "satisfied"
+              }
+            ]
+          },
+          {
+            "resultId": "movement-blocked",
+            "ruleId": "wall-blocks",
+            "when": [
+              {
+                "inputPort": "floorObligation",
+                "obligationId": "target-is-floor-obligation",
+                "status": "violated"
+              }
+            ]
+          }
+        ],
+        "serializerId": "identity.v1"
+      }
+    ],
+    "transformations": [
+      {
+        "invalidTypeDisposition": "TARGET_X_INVALID",
+        "outputPath": [
+          "x"
+        ],
+        "relationId": "axis-x-produces-value",
+        "resultIds": [
+          "movement-authorized"
+        ],
+        "sourceAuthorityId": "widen-target-x",
+        "targetPropertyId": "result-x",
+        "transformationId": "emit-authorized-x",
+        "unavailableDisposition": "TARGET_X_UNAVAILABLE",
+        "valueConceptId": "axis-position-x"
+      },
+      {
+        "invalidTypeDisposition": "TARGET_Y_INVALID",
+        "outputPath": [
+          "y"
+        ],
+        "relationId": "axis-y-produces-value",
+        "resultIds": [
+          "movement-authorized"
+        ],
+        "sourceAuthorityId": "widen-target-y",
+        "targetPropertyId": "result-y",
+        "transformationId": "emit-authorized-y",
+        "unavailableDisposition": "TARGET_Y_UNAVAILABLE",
+        "valueConceptId": "axis-position-y"
+      },
+      {
+        "invalidTypeDisposition": "PLAYER_X_INVALID",
+        "outputPath": [
+          "x"
+        ],
+        "relationId": "axis-x-produces-value",
+        "resultIds": [
+          "movement-blocked"
+        ],
+        "sourceAuthorityId": "widen-player-x",
+        "targetPropertyId": "result-x",
+        "transformationId": "emit-blocked-x",
+        "unavailableDisposition": "PLAYER_X_UNAVAILABLE",
+        "valueConceptId": "axis-position-x"
+      },
+      {
+        "invalidTypeDisposition": "PLAYER_Y_INVALID",
+        "outputPath": [
+          "y"
+        ],
+        "relationId": "axis-y-produces-value",
+        "resultIds": [
+          "movement-blocked"
+        ],
+        "sourceAuthorityId": "widen-player-y",
+        "targetPropertyId": "result-y",
+        "transformationId": "emit-blocked-y",
+        "unavailableDisposition": "PLAYER_Y_UNAVAILABLE",
+        "valueConceptId": "axis-position-y"
+      }
+    ],
+    "translations": []
+  },
+  "bundleId": "dungeon-movement.bundle.v1",
+  "bundleType": "semantic-execution-bundle.v1",
+  "catalogs": [],
+  "runtimeProfile": {
+    "admittedPrimitives": [
+      "input.v1",
+      "validate-variant.v1",
+      "read-path.v1",
+      "constant.v1",
+      "test-presence.v1",
+      "classify-value.v1",
+      "classify-observations.v1",
+      "translate-value.v1",
+      "evaluate-obligation.v1",
+      "project-value.v1",
+      "select-result.v1",
+      "emit-result.v1",
+      "add-bounded.v1",
+      "subtract-bounded.v1",
+      "compare-bounded.v1",
+      "seeded-range-draw.v1",
+      "read-indexed-path.v1",
+      "iterate-bounded-worklist.v1",
+      "resolve-branching-worklist.v1",
+      "serialize-result.v1"
+    ],
+    "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+    "forbiddenCapabilities": [
+      "cycles",
+      "recursion",
+      "dynamic-invocation",
+      "arbitrary-expressions",
+      "user-code",
+      "runtime-module-loading",
+      "unbounded-array-traversal",
+      "regex-authority",
+      "implicit-coercion",
+      "ambient-state",
+      "clock-access",
+      "ambient-randomness",
+      "network-access"
+    ],
+    "identity": "finite-semantic-runtime.v3",
+    "limits": {
+      "maxClassificationCases": 128,
+      "maxClassificationInputs": 16,
+      "maxGraphEdges": 128,
+      "maxGraphNodes": 64,
+      "maxIterationSteps": 8192,
+      "maxOperandDomainSize": 64,
+      "maxOutputDepth": 16,
+      "maxPathDepth": 16,
+      "maxSchemas": 32,
+      "maxSerializedByteLength": 1048576,
+      "maxTerminalResults": 1,
+      "maxTranslationCases": 128,
+      "maxVariants": 16,
+      "maxWorklistItems": 256
+    }
+  },
+  "schemas": [
+    {
+      "digest": "sha256:bd033a2f52581917ef4fad8629abef35e6b72b19c8c218f8d862756e385a7577",
+      "schemaId": "movement-request.schema.v1",
+      "value": {
+        "additionalProperties": false,
+        "properties": {
+          "dx": {
+            "maximum": 1,
+            "minimum": -1,
+            "type": "integer"
+          },
+          "dy": {
+            "maximum": 1,
+            "minimum": -1,
+            "type": "integer"
+          },
+          "grid": {
+            "items": {
+              "items": {
+                "enum": [
+                  0,
+                  1
+                ]
+              },
+              "maxItems": 60,
+              "minItems": 60,
+              "type": "array"
+            },
+            "maxItems": 60,
+            "minItems": 60,
+            "type": "array"
+          },
+          "playerX": {
+            "maximum": 58,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "playerY": {
+            "maximum": 58,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "grid",
+          "playerX",
+          "playerY",
+          "dx",
+          "dy"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "digest": "sha256:1c955a6f3e91bdab6bbd213e1fe7c4b709e991eaba25be4d3619d5793423dbc5",
+      "schemaId": "movement-request-variant-id.schema.v1",
+      "value": {
+        "const": "movement-request"
+      }
+    },
+    {
+      "digest": "sha256:e119e14b2c5ffeeb484c0fb3c52aec462dd9fed593779e79c1578346aea1b014",
+      "schemaId": "grid-value.schema.v1",
+      "value": {
+        "items": {
+          "items": {
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "maxItems": 60,
+          "minItems": 60,
+          "type": "array"
+        },
+        "maxItems": 60,
+        "minItems": 60,
+        "type": "array"
+      }
+    },
+    {
+      "digest": "sha256:ff02d4e0ccb60bf901996ca7c0ad95bb13318ded090f830727bf74f647306e71",
+      "schemaId": "border-position.schema.v1",
+      "value": {
+        "maximum": 58,
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    {
+      "digest": "sha256:94b2b81ea84f1c7b567bfe22087d861e1f4122dcc6ccadbf619fda471453652d",
+      "schemaId": "delta-value.schema.v1",
+      "value": {
+        "maximum": 1,
+        "minimum": -1,
+        "type": "integer"
+      }
+    },
+    {
+      "digest": "sha256:a4381024662d16b18a44401be3e7b336fd6f0f977233c3a35496261fdccab98e",
+      "schemaId": "zero-constant.schema.v1",
+      "value": {
+        "maximum": 0,
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    {
+      "digest": "sha256:53f3c1938556e280ac0cf28b25cfd8a9abbe81a974c5e2b266f7bd99677284c1",
+      "schemaId": "position-on-axis.schema.v1",
+      "value": {
+        "maximum": 59,
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    {
+      "digest": "sha256:c95711673f44e1641461b154a5f2551cd311ad06cccd781a0ad55e68dd1109a0",
+      "schemaId": "grid-row-value.schema.v1",
+      "value": {
+        "items": {
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "maxItems": 60,
+        "minItems": 60,
+        "type": "array"
+      }
+    },
+    {
+      "digest": "sha256:ba9be51dd9184e778bb3b7ca14fae24cc4c710adeb32e4374902bacd4cbd2608",
+      "schemaId": "cell-value.schema.v1",
+      "value": {
+        "enum": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "digest": "sha256:8e15cbeca514efbd929371d5866e94a0d9597c96334a10e30ac77cc7a507c12a",
+      "schemaId": "cell-disposition.schema.v1",
+      "value": {
+        "enum": [
+          "floor",
+          "wall"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:5d59fc5fb020fee7ea29a2493b457aa7d8fb46f8012dff970cc65a8a2aa42cad",
+      "schemaId": "movement-obligation-status.schema.v1",
+      "value": {
+        "enum": [
+          "satisfied",
+          "violated"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:0f9dd6ca2f94d37929b172caf35a97b14029ebc5d8fe7669e7e80b7d108f5b63",
+      "schemaId": "movement-status.schema.v1",
+      "value": {
+        "enum": [
+          "MOVEMENT_AUTHORIZED",
+          "MOVEMENT_BLOCKED_BY_WALL"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:43ffdd0ba35b1e989c0f87039ffdd09956f4442c68cc6b7cb207ab4ea722cd70",
+      "schemaId": "movement-result.schema.v1",
+      "value": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "enum": [
+              "MOVEMENT_AUTHORIZED",
+              "MOVEMENT_BLOCKED_BY_WALL"
+            ]
+          },
+          "x": {
+            "maximum": 59,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "y": {
+            "maximum": 59,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status",
+          "x",
+          "y"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

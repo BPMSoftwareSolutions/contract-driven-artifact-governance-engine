@@ -1,0 +1,3332 @@
+{
+  "authorityType": "bound-semantic-execution-authority.v1",
+  "authorityId": "dungeon-topology.bundle.v1",
+  "ontologyId": "dungeon-topology",
+  "inputConceptId": "bsp-region",
+  "semanticLayer": {
+    "concepts": [
+      {
+        "conceptId": "bsp-region",
+        "conceptType": "domain-entity",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "bsp-region.schema.v1"
+      },
+      {
+        "conceptId": "bsp-region-variant-id",
+        "conceptType": "classification",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "bsp-region-variant-id.schema.v1"
+      },
+      {
+        "conceptId": "bsp-topology-final",
+        "conceptType": "domain-value",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "bsp-topology.schema.v1"
+      },
+      {
+        "conceptId": "int-value",
+        "conceptType": "domain-value",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "int-value.schema.v1"
+      },
+      {
+        "conceptId": "presence-state",
+        "conceptType": "classification",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "presence-state.schema.v1"
+      },
+      {
+        "conceptId": "obligation-status",
+        "conceptType": "signal",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "obligation-status.schema.v1"
+      },
+      {
+        "conceptId": "result-type-concept",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "result-type.schema.v1"
+      },
+      {
+        "conceptId": "bsp-topology-result",
+        "conceptType": "result-union",
+        "isA": [],
+        "abstract": false,
+        "schemaId": "bsp-topology-result.schema.v1"
+      }
+    ],
+    "relations": [
+      {
+        "relationId": "partition-produces-topology",
+        "relationType": "computes",
+        "subjectConceptId": "bsp-topology-final",
+        "objectConceptId": "bsp-topology-final",
+        "cardinality": "exactly-one"
+      }
+    ],
+    "properties": [
+      {
+        "propertyId": "region-x-field",
+        "propertyKind": "observed",
+        "subjectConceptId": "bsp-region",
+        "valueConceptId": "int-value",
+        "cardinality": "exactly-one",
+        "resolutions": [
+          {
+            "subjectVariantConceptId": "bsp-region",
+            "path": [
+              "x"
+            ]
+          }
+        ]
+      },
+      {
+        "propertyId": "result-type",
+        "propertyKind": "projected",
+        "subjectConceptId": "bsp-topology-result",
+        "valueConceptId": "result-type-concept",
+        "cardinality": "exactly-one",
+        "resolutions": []
+      },
+      {
+        "propertyId": "result-topology",
+        "propertyKind": "projected",
+        "subjectConceptId": "bsp-topology-result",
+        "valueConceptId": "bsp-topology-final",
+        "cardinality": "exactly-one",
+        "resolutions": []
+      }
+    ],
+    "facts": [
+      {
+        "factId": "zero",
+        "conceptId": "int-value",
+        "value": {
+          "type": "number",
+          "value": 0
+        }
+      },
+      {
+        "factId": "one",
+        "conceptId": "int-value",
+        "value": {
+          "type": "number",
+          "value": 1
+        }
+      },
+      {
+        "factId": "two",
+        "conceptId": "int-value",
+        "value": {
+          "type": "number",
+          "value": 2
+        }
+      },
+      {
+        "factId": "four",
+        "conceptId": "int-value",
+        "value": {
+          "type": "number",
+          "value": 4
+        }
+      },
+      {
+        "factId": "min-leaf",
+        "conceptId": "int-value",
+        "value": {
+          "type": "number",
+          "value": 10
+        }
+      },
+      {
+        "factId": "two-min-leaf",
+        "conceptId": "int-value",
+        "value": {
+          "type": "number",
+          "value": 20
+        }
+      },
+      {
+        "factId": "max-depth",
+        "conceptId": "int-value",
+        "value": {
+          "type": "number",
+          "value": 4
+        }
+      },
+      {
+        "factId": "generation-seed",
+        "conceptId": "int-value",
+        "value": {
+          "type": "number",
+          "value": 482917
+        }
+      }
+    ]
+  },
+  "ontology": {
+    "classifications": [
+      {
+        "classificationId": "bsp-region-variant",
+        "classificationType": "concept-variant",
+        "subjectConceptId": "bsp-region",
+        "resultConceptId": "bsp-region-variant-id",
+        "variants": [
+          "bsp-region"
+        ],
+        "noMatchDisposition": "BSP_REGION_VARIANT_UNRESOLVED",
+        "multipleMatchDisposition": "BSP_REGION_VARIANT_AMBIGUOUS"
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "propertyId": "region-x-field",
+        "resultConceptId": "presence-state",
+        "expectedValueType": "number",
+        "emptyStringState": "present",
+        "states": [
+          "missing",
+          "null",
+          "empty-string",
+          "invalid-type",
+          "present"
+        ]
+      }
+    ],
+    "constraints": [],
+    "translations": [],
+    "obligations": [
+      {
+        "obligationId": "always-present-obligation",
+        "subjectConceptId": "bsp-region",
+        "classificationId": "presence-classification",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": [
+          "present"
+        ],
+        "failureDisposition": "BSP_REGION_MISSING"
+      }
+    ],
+    "transformations": [
+      {
+        "transformationId": "emit-topology",
+        "relationId": "partition-produces-topology",
+        "sourceAuthorityId": "partition-dungeon",
+        "targetPropertyId": "result-topology",
+        "outputPath": [
+          "topology"
+        ],
+        "valueConceptId": "bsp-topology-final",
+        "resultIds": [
+          "topology-ok"
+        ],
+        "unavailableDisposition": "TOPOLOGY_UNAVAILABLE",
+        "invalidTypeDisposition": "TOPOLOGY_INVALID"
+      }
+    ],
+    "results": [
+      {
+        "resultUnionId": "bsp-topology-result-union",
+        "resultTypeConceptId": "bsp-topology-result",
+        "members": [
+          {
+            "resultId": "topology-ok",
+            "conceptId": "bsp-topology-result",
+            "discriminator": {
+              "propertyId": "result-type",
+              "outputPath": [
+                "resultType"
+              ],
+              "value": {
+                "type": "string",
+                "value": "bsp-topology-result"
+              }
+            }
+          }
+        ],
+        "selectionRules": [
+          {
+            "ruleId": "always-ok",
+            "when": [
+              {
+                "inputPort": "presenceObligation",
+                "obligationId": "always-present-obligation",
+                "status": "satisfied"
+              }
+            ],
+            "resultId": "topology-ok"
+          },
+          {
+            "ruleId": "still-ok-when-violated",
+            "when": [
+              {
+                "inputPort": "presenceObligation",
+                "obligationId": "always-present-obligation",
+                "status": "violated"
+              }
+            ],
+            "resultId": "topology-ok"
+          }
+        ],
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "invalidResultDisposition": "TOPOLOGY_RESULT_INVALID",
+        "serializerId": "identity.v1"
+      }
+    ],
+    "arithmeticOperations": [],
+    "randomDraws": [],
+    "indexedReads": [],
+    "iterations": [
+      {
+        "iterationKind": "branching",
+        "iterationId": "partition-dungeon",
+        "itemConceptId": "bsp-region",
+        "resultConceptId": "bsp-topology-final",
+        "maxItems": 64,
+        "unresolvedDisposition": "BSP_PARTITION_LIMIT_EXCEEDED",
+        "initialAccumulator": {
+          "drawCounter": 0
+        },
+        "terminalWhen": {
+          "anyOf": [
+            [
+              {
+                "operand": {
+                  "kind": "item-field",
+                  "path": [
+                    "depth"
+                  ]
+                },
+                "compareTo": {
+                  "kind": "fact",
+                  "factId": "max-depth"
+                },
+                "matchStates": [
+                  "greater-than",
+                  "equal-to"
+                ]
+              }
+            ],
+            [
+              {
+                "operand": {
+                  "kind": "item-field",
+                  "path": [
+                    "w"
+                  ]
+                },
+                "compareTo": {
+                  "kind": "fact",
+                  "factId": "two-min-leaf"
+                },
+                "matchStates": [
+                  "less-than"
+                ]
+              },
+              {
+                "operand": {
+                  "kind": "item-field",
+                  "path": [
+                    "h"
+                  ]
+                },
+                "compareTo": {
+                  "kind": "fact",
+                  "factId": "two-min-leaf"
+                },
+                "matchStates": [
+                  "less-than"
+                ]
+              }
+            ]
+          ]
+        },
+        "splitSteps": [
+          {
+            "targetPath": [
+              "canSplitWide"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "fact",
+              "factId": "zero"
+            }
+          },
+          {
+            "targetPath": [
+              "canSplitWide"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "parent",
+                  "w"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "two-min-leaf"
+              },
+              "matchStates": [
+                "greater-than",
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "canSplitTall"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "fact",
+              "factId": "zero"
+            }
+          },
+          {
+            "targetPath": [
+              "canSplitTall"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "parent",
+                  "h"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "two-min-leaf"
+              },
+              "matchStates": [
+                "greater-than",
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "splitVertical"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "fact",
+              "factId": "zero"
+            }
+          },
+          {
+            "targetPath": [
+              "splitVertical"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "parent",
+                  "w"
+                ]
+              },
+              "compareTo": {
+                "kind": "item-field",
+                "path": [
+                  "parent",
+                  "h"
+                ]
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "splitVertical"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "seeded-draw",
+              "seedFactId": "generation-seed",
+              "callIndexPath": [
+                "accumulator",
+                "drawCounter"
+              ],
+              "min": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "max": {
+                "kind": "fact",
+                "factId": "one"
+              }
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "parent",
+                  "w"
+                ]
+              },
+              "compareTo": {
+                "kind": "item-field",
+                "path": [
+                  "parent",
+                  "h"
+                ]
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "drawCounter"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "loBound"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "x"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "loBound"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "y"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "loBound"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "min-leaf"
+            }
+          },
+          {
+            "targetPath": [
+              "hiBound"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "x"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "hiBound"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "y"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "hiBound"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "w"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "hiBound"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "h"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "hiBound"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "fact",
+              "factId": "min-leaf"
+            }
+          },
+          {
+            "targetPath": [
+              "splitCoord"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "seeded-draw",
+              "seedFactId": "generation-seed",
+              "callIndexPath": [
+                "accumulator",
+                "drawCounter"
+              ],
+              "min": {
+                "kind": "item-field",
+                "path": [
+                  "loBound"
+                ]
+              },
+              "max": {
+                "kind": "item-field",
+                "path": [
+                  "hiBound"
+                ]
+              }
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "drawCounter"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "x"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "x"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "y"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "y"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "w"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "w"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "h"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "h"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "w"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "splitCoord"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "w"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "x"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "h"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "splitCoord"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "h"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "y"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "depth"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "depth"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "left",
+              "depth"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "x"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "x"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "y"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "y"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "x"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "splitCoord"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "y"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "splitCoord"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "w"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "w"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "h"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "h"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "w"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "x"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "w"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "w"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "w"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "splitCoord"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "h"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "y"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "h"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "h"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "h"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "splitCoord"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "splitVertical"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "depth"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "parent",
+                "depth"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "right",
+              "depth"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          }
+        ],
+        "terminalSteps": [
+          {
+            "targetPath": [
+              "roomWMax"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "item",
+                "w"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomWMax"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "fact",
+              "factId": "four"
+            }
+          },
+          {
+            "targetPath": [
+              "roomHMax"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "item",
+                "h"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomHMax"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "fact",
+              "factId": "four"
+            }
+          },
+          {
+            "targetPath": [
+              "roomW"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "seeded-draw",
+              "seedFactId": "generation-seed",
+              "callIndexPath": [
+                "accumulator",
+                "drawCounter"
+              ],
+              "min": {
+                "kind": "fact",
+                "factId": "four"
+              },
+              "max": {
+                "kind": "item-field",
+                "path": [
+                  "roomWMax"
+                ]
+              }
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "drawCounter"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "roomH"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "seeded-draw",
+              "seedFactId": "generation-seed",
+              "callIndexPath": [
+                "accumulator",
+                "drawCounter"
+              ],
+              "min": {
+                "kind": "fact",
+                "factId": "four"
+              },
+              "max": {
+                "kind": "item-field",
+                "path": [
+                  "roomHMax"
+                ]
+              }
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "drawCounter"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "roomXMax"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "item",
+                "w"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomXMax"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomW"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomXMax"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "roomX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "seeded-draw",
+              "seedFactId": "generation-seed",
+              "callIndexPath": [
+                "accumulator",
+                "drawCounter"
+              ],
+              "min": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "max": {
+                "kind": "item-field",
+                "path": [
+                  "roomXMax"
+                ]
+              }
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "drawCounter"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "roomX"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "item",
+                "x"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomYMax"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "item",
+                "h"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomYMax"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomH"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomYMax"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "roomY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "seeded-draw",
+              "seedFactId": "generation-seed",
+              "callIndexPath": [
+                "accumulator",
+                "drawCounter"
+              ],
+              "min": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "max": {
+                "kind": "item-field",
+                "path": [
+                  "roomYMax"
+                ]
+              }
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "drawCounter"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "roomY"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "item",
+                "y"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "priorCount"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field-length",
+              "path": [
+                "accumulator",
+                "roomX"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "lastIndex"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "priorCount"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "lastIndex"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "prevConnX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field-indexed",
+              "path": [
+                "accumulator",
+                "roomX"
+              ],
+              "indexPath": [
+                "lastIndex"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "prevConnX"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "two"
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "prevConnY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field-indexed",
+              "path": [
+                "accumulator",
+                "roomY"
+              ],
+              "indexPath": [
+                "lastIndex"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "prevConnY"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "two"
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "connX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomX"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "connX"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "two"
+            }
+          },
+          {
+            "targetPath": [
+              "connY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomY"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "connY"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "two"
+            }
+          },
+          {
+            "targetPath": [
+              "horizontalFirst"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "seeded-draw",
+              "seedFactId": "generation-seed",
+              "callIndexPath": [
+                "accumulator",
+                "drawCounter"
+              ],
+              "min": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "max": {
+                "kind": "fact",
+                "factId": "one"
+              }
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "drawCounter"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "corridorFromX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "corridorFromY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "corridorToX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "corridorToY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "corridorHorizontalFirst"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "horizontalFirst"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "roomX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomX"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "roomY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomY"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "roomW"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomW"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "roomH"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomH"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectLoX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomX"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectLoY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomY"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomHiX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomX"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomHiX"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomW"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomHiX"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "roomHiY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomY"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomHiY"
+            ],
+            "operation": "add",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomH"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "roomHiY"
+            ],
+            "operation": "subtract",
+            "operand": {
+              "kind": "fact",
+              "factId": "one"
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectHiX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomHiX"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectHiY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "roomHiY"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "minCX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "maxCX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "minCX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "connX"
+                ]
+              },
+              "compareTo": {
+                "kind": "item-field",
+                "path": [
+                  "prevConnX"
+                ]
+              },
+              "matchStates": [
+                "less-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "maxCX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "connX"
+                ]
+              },
+              "compareTo": {
+                "kind": "item-field",
+                "path": [
+                  "prevConnX"
+                ]
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "minCY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "maxCY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "minCY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "connY"
+                ]
+              },
+              "compareTo": {
+                "kind": "item-field",
+                "path": [
+                  "prevConnY"
+                ]
+              },
+              "matchStates": [
+                "less-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "maxCY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "connY"
+                ]
+              },
+              "compareTo": {
+                "kind": "item-field",
+                "path": [
+                  "prevConnY"
+                ]
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segALoX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "minCX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segAHiX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "maxCX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segALoY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segAHiY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segALoX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segAHiX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "prevConnX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segALoY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "minCY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segAHiY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "maxCY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectLoX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "segALoX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectLoY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "segALoY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectHiX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "segAHiX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectHiY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "segAHiY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segBLoX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segBHiX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segBLoY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "minCY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segBHiY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "maxCY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "one"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segBLoX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "minCX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segBHiX"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "maxCX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segBLoY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "segBHiY"
+            ],
+            "operation": "set",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "connY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "horizontalFirst"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "equal-to"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectLoX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "segBLoX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectLoY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "segBLoY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectHiX"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "segBHiX"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          },
+          {
+            "targetPath": [
+              "accumulator",
+              "rectHiY"
+            ],
+            "operation": "append",
+            "operand": {
+              "kind": "item-field",
+              "path": [
+                "segBHiY"
+              ]
+            },
+            "when": {
+              "operand": {
+                "kind": "item-field",
+                "path": [
+                  "priorCount"
+                ]
+              },
+              "compareTo": {
+                "kind": "fact",
+                "factId": "zero"
+              },
+              "matchStates": [
+                "greater-than"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "context": {
+    "schemas": [
+      {
+        "schemaId": "bsp-region.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "x",
+            "y",
+            "w",
+            "h",
+            "depth"
+          ],
+          "properties": {
+            "x": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 77
+            },
+            "y": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 77
+            },
+            "w": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 58
+            },
+            "h": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 58
+            },
+            "depth": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        }
+      },
+      {
+        "schemaId": "bsp-region-variant-id.schema.v1",
+        "value": {
+          "const": "bsp-region"
+        }
+      },
+      {
+        "schemaId": "int-value.schema.v1",
+        "value": {
+          "type": "integer",
+          "minimum": -1000000,
+          "maximum": 1000000
+        }
+      },
+      {
+        "schemaId": "presence-state.schema.v1",
+        "value": {
+          "enum": [
+            "missing",
+            "null",
+            "empty-string",
+            "invalid-type",
+            "present"
+          ]
+        }
+      },
+      {
+        "schemaId": "obligation-status.schema.v1",
+        "value": {
+          "enum": [
+            "satisfied",
+            "violated"
+          ]
+        }
+      },
+      {
+        "schemaId": "bsp-topology.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "roomX",
+            "roomY",
+            "roomW",
+            "roomH",
+            "corridorFromX",
+            "corridorFromY",
+            "corridorToX",
+            "corridorToY",
+            "corridorHorizontalFirst",
+            "rectLoX",
+            "rectLoY",
+            "rectHiX",
+            "rectHiY",
+            "drawCounter"
+          ],
+          "properties": {
+            "roomX": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "roomY": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "roomW": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "roomH": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "corridorFromX": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "corridorFromY": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "corridorToX": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "corridorToY": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "corridorHorizontalFirst": {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "rectLoX": {
+              "type": "array",
+              "maxItems": 72,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "rectLoY": {
+              "type": "array",
+              "maxItems": 72,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "rectHiX": {
+              "type": "array",
+              "maxItems": 72,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "rectHiY": {
+              "type": "array",
+              "maxItems": 72,
+              "items": {
+                "type": "integer"
+              }
+            },
+            "drawCounter": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4096
+            }
+          }
+        }
+      },
+      {
+        "schemaId": "result-type.schema.v1",
+        "value": {
+          "const": "bsp-topology-result"
+        }
+      },
+      {
+        "schemaId": "bsp-topology-result.schema.v1",
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "resultType",
+            "topology"
+          ],
+          "properties": {
+            "resultType": {
+              "const": "bsp-topology-result"
+            },
+            "topology": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "roomX",
+                "roomY",
+                "roomW",
+                "roomH",
+                "corridorFromX",
+                "corridorFromY",
+                "corridorToX",
+                "corridorToY",
+                "corridorHorizontalFirst",
+                "rectLoX",
+                "rectLoY",
+                "rectHiX",
+                "rectHiY",
+                "drawCounter"
+              ],
+              "properties": {
+                "roomX": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "roomY": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "roomW": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "roomH": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "corridorFromX": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "corridorFromY": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "corridorToX": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "corridorToY": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "corridorHorizontalFirst": {
+                  "type": "array",
+                  "maxItems": 24,
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "rectLoX": {
+                  "type": "array",
+                  "maxItems": 72,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "rectLoY": {
+                  "type": "array",
+                  "maxItems": 72,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "rectHiX": {
+                  "type": "array",
+                  "maxItems": 72,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "rectHiY": {
+                  "type": "array",
+                  "maxItems": 72,
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "drawCounter": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 4096
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "catalogs": [],
+    "executionBinding": {
+      "executorPortId": "semantic-authority-runtime.v1",
+      "runtimeProfileId": "finite-semantic-runtime.v3",
+      "serializationProfileId": "canonical-json.v1"
+    }
+  }
+}

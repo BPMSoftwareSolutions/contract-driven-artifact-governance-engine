@@ -203,7 +203,7 @@
               "const": "semantic-authority-runtime.v1"
             },
             "runtimeProfileId": {
-              "const": "finite-semantic-runtime.v2"
+              "const": "finite-semantic-runtime.v3"
             },
             "serializationProfileId": {
               "const": "canonical-json.v1"

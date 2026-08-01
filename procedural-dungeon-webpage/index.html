@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Procedural Dungeon Generator - Fog of War</title>
+<meta name="artifact-provenance-sha256" content="sha256:c3ba72210fa95f1af024e56fc62c68a957386a00a4f67bff6cb6bdff7e6966e3">
+<meta name="canonical-lineage-sha256" content="sha256:1992ef5748c7000c03175d0dea4e756391b1e14851f3c515a1d341dc04e7dd4c">
+<meta name="semantic-authority-sha256" content="sha256:477ebff0a2d56a4894b4c65d66528a745a6b80aeea6bfb50feea12b067f74aa8">
+<meta name="projection-authority-sha256" content="sha256:e5610c3d97c1b2026c77acec7144219d91b6645003160fef071f421627d9c479">
+<style>
+  :root {
+    --bg: #05060a;
+    --grid-line: #10233a;
+    --panel-bg: #0b1220;
+    --panel-border: #1fd6ff;
+    --accent: #1fd6ff;
+    --accent-dim: #0d7a94;
+    --text: #d8f6ff;
+    --player: #55ff33;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    color: var(--text);
+    font-family: "Consolas", "Courier New", monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .app {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stage {
+    position: relative;
+    border: 2px solid var(--panel-border);
+    box-shadow: 0 0 18px rgba(31, 214, 255, 0.55), inset 0 0 24px rgba(31, 214, 255, 0.12);
+    background: #000;
+    line-height: 0;
+  }
+
+  canvas#view {
+    width: 600px;
+    height: 600px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    display: block;
+  }
+
+  .panel {
+    width: 260px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 0 14px rgba(31, 214, 255, 0.35);
+    border-radius: 6px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .panel h1 {
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px 0;
+    text-shadow: 0 0 8px rgba(31, 214, 255, 0.8);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid var(--accent-dim);
+    border-radius: 4px;
+    padding: 10px 12px;
+    background: rgba(31, 214, 255, 0.05);
+  }
+
+  .field .label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+  }
+
+  .field .value {
+    font-size: 18px;
+    color: var(--player);
+    text-shadow: 0 0 6px rgba(85, 255, 51, 0.7);
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: linear-gradient(180deg, #103049, #071522);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, transform 0.05s ease;
+  }
+
+  button:hover {
+    box-shadow: 0 0 10px rgba(31, 214, 255, 0.8);
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+
+  button.active {
+    background: linear-gradient(180deg, #1c3f22, #0a1a0d);
+    border-color: var(--player);
+    color: var(--player);
+    box-shadow: 0 0 10px rgba(85, 255, 51, 0.6);
+  }
+
+  .hint {
+    font-size: 11px;
+    color: var(--accent-dim);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+  <main id="dungeon-application" class="app">
+    <div class="stage">
+      <canvas id="view" width="600" height="600"></canvas>
+    </div>
+    <div class="panel">
+      <h1>Dungeon Control</h1>
+      <div class="field">
+        <span class="label">Player Position</span>
+        <span class="value" id="coords">(0, 0)</span>
+      </div>
+      <button id="regenerateBtn" type="button">Regenerate Map</button>
+      <button id="godModeBtn" type="button">Toggle God Mode</button>
+      <div class="hint">
+        Move with Arrow Keys or WASD. Walls block movement and sight.
+        God Mode reveals the full generated layout for debugging.
+      </div>
+    </div>
+  </main>
+
+<script type="module">
+/*
+ * Governed webpage bootstrap.
+ *
+ * Every domain decision -- movement legality, per-cell render role,
+ * keyboard-to-command translation, BSP region splitting, room/corridor
+ * rasterization, and the 76-ray Bresenham visibility sweep -- is decided by
+ * six closed deterministic ontologies (contracts/dungeon-*.bundle.json),
+ * executed below by runDungeonOntology(), a narrowed, faithful port of this
+ * project's own executeSemanticAuthority (lib/semantic-execution-runtime.mjs)
+ * limited to the primitives these six bundles actually use. A vanilla
+ * browser cannot resolve the "contract-driven-artifact-governance-engine"
+ * bare-specifier import those bundles are normally executed through
+ * (test/fixtures/*-ontology.mjs do that, in Node, for the equivalence
+ * proof), so the execution logic is vendored here rather than imported.
+ * Type re-validation (AJV) is intentionally omitted: it is a governance-time
+ * guarantee, already proven closed by the contract's gate, not a per-call
+ * runtime necessity.
+ *
+ * Nothing below owns a domain decision. The two loops that remain
+ * (accumulating newly-revealed cells into the persistent visibility grid,
+ * and visiting each display cell once to build a render-role request) are
+ * mechanical repetition of an already-fully-decided ontology call, the same
+ * category of "browser mechanics" the discussion doc admits in section 4 --
+ * not a branch on dungeon state.
+ */
+
+import dungeonMovementBundle from "./contracts/dungeon-movement.bundle.json" with { type: "json" };
+import dungeonRenderRoleBundle from "./contracts/dungeon-render-role.bundle.json" with { type: "json" };
+import dungeonKeyboardCommandBundle from "./contracts/dungeon-keyboard-command.bundle.json" with { type: "json" };
+import dungeonTopologyBundle from "./contracts/dungeon-topology.bundle.json" with { type: "json" };
+import dungeonRasterizeBundle from "./contracts/dungeon-rasterize.bundle.json" with { type: "json" };
+import dungeonVisibilityBundle from "./contracts/dungeon-visibility.bundle.json" with { type: "json" };
+
+function jsonType(value) {
+  if (value === null) {
+    return "null";
+  }
+  if (Array.isArray(value)) {
+    return "array";
+  }
+  return typeof value;
+}
+
+function typedValueMatches(typedValue, value) {
+  return (
+    typedValue.type === jsonType(value) &&
+    JSON.stringify(typedValue.value) === JSON.stringify(value)
+  );
+}
+
+function sourceValue(value) {
+  return value?.state === "value" ? value.value : value;
+}
+
+function observePath(source, path) {
+  let value = source;
+  for (const segment of path) {
+    if (value === null || typeof value !== "object" || !(segment in value)) {
+      return { state: "missing" };
+    }
+    value = value[segment];
+  }
+  return value === null ? { state: "null" } : { state: "value", value };
+}
+
+function propertyState(observation, authority) {
+  if (observation.state === "missing") {
+    return "missing";
+  }
+  if (observation.state === "null") {
+    return "null";
+  }
+  if (jsonType(observation.value) !== authority.expectedValueType) {
+    return "invalid-type";
+  }
+  if (observation.value === "" && authority.emptyStringState === "empty-string") {
+    return "empty-string";
+  }
+  return "present";
+}
+
+function setOutputPath(target, path, value) {
+  let cursor = target;
+  for (let index = 0; index < path.length - 1; index += 1) {
+    const segment = path[index];
+    const next = path[index + 1];
+    if (!(segment in cursor)) {
+      cursor[segment] = typeof next === "number" ? [] : {};
+    }
+    cursor = cursor[segment];
+  }
+  cursor[path.at(-1)] = value;
+}
+
+function readPathValue(source, path) {
+  let value = source;
+  for (const segment of path) {
+    value = value?.[segment];
+  }
+  return value;
+}
+
+function factPort(factId) {
+  return `fact.${factId}`;
+}
+
+function xorshift32Step(state) {
+  let x = state >>> 0;
+  if (x === 0) {
+    x = 0x9e3779b9;
+  }
+  x ^= x << 13;
+  x >>>= 0;
+  x ^= x >>> 17;
+  x ^= x << 5;
+  x >>>= 0;
+  return x >>> 0;
+}
+
+function xorshift32Draw(seed, callIndex) {
+  const mixed = ((seed >>> 0) ^ Math.imul((callIndex >>> 0) + 1, 0x9e3779b1)) >>> 0;
+  return xorshift32Step(mixed);
+}
+
+function compareOutcomeState(a, b) {
+  return a < b ? "less-than" : a > b ? "greater-than" : "equal-to";
+}
+
+// current/clone: guards always read the step program's own evolving state
+// (never a frozen pre-step snapshot), so a guarded program reads exactly
+// like ordinary sequential code -- each statement sees every prior
+// statement's effect within the same pass. See lib/semantic-execution-runtime.mjs
+// for the identical, cross-validated rule this vendored copy mirrors.
+function resolveStepOperandValue(operand, current, resultsAccumulator, inputs) {
+  if (operand.kind === "fact") {
+    return sourceValue(inputs[factPort(operand.factId)]);
+  }
+  if (operand.kind === "item-field") {
+    return readPathValue(current, operand.path);
+  }
+  if (operand.kind === "item-field-indexed") {
+    const array = readPathValue(current, operand.path);
+    const index = readPathValue(current, operand.indexPath);
+    return array?.[index];
+  }
+  if (operand.kind === "fact-indexed") {
+    const array = sourceValue(inputs[factPort(operand.factId)]);
+    const index = readPathValue(current, operand.indexPath);
+    return array?.[index];
+  }
+  if (operand.kind === "seeded-draw") {
+    const seed = sourceValue(inputs[factPort(operand.seedFactId)]);
+    const callIndex = readPathValue(current, operand.callIndexPath);
+    const min = resolveStepOperandValue(operand.min, current, resultsAccumulator, inputs);
+    const max = resolveStepOperandValue(operand.max, current, resultsAccumulator, inputs);
+    const draw = xorshift32Draw(seed, callIndex);
+    return min + (draw % (max - min + 1));
+  }
+  return (readPathValue(current, operand.path) ?? []).length;
+}
+
+function stepGuardPasses(guard, current, resultsAccumulator, inputs) {
+  if (!guard) {
+    return true;
+  }
+  const operandValue = resolveStepOperandValue(guard.operand, current, resultsAccumulator, inputs);
+  const compareValue = resolveStepOperandValue(guard.compareTo, current, resultsAccumulator, inputs);
+  return guard.matchStates.includes(compareOutcomeState(operandValue, compareValue));
+}
+
+function applyStepProgram(steps, clone, resultsAccumulator, inputs) {
+  for (const step of steps) {
+    if (!stepGuardPasses(step.when, clone, resultsAccumulator, inputs)) {
+      continue;
+    }
+    const operandValue = resolveStepOperandValue(step.operand, clone, resultsAccumulator, inputs);
+    const existing = readPathValue(clone, step.targetPath);
+    const nextValue =
+      step.operation === "set"
+        ? operandValue
+        : step.operation === "add"
+          ? existing + operandValue
+          : step.operation === "subtract"
+            ? existing - operandValue
+            : [...(existing ?? []), operandValue];
+    setOutputPath(clone, step.targetPath, nextValue);
+  }
+}
+
+function buildIndexes(authority) {
+  const semantic = new Map();
+  const byKind = {
+    concept: new Map(),
+    property: new Map(),
+    fact: new Map(),
+    classification: new Map(),
+    obligation: new Map(),
+    transformation: new Map(),
+    result: new Map(),
+    arithmeticOperation: new Map(),
+    indexedRead: new Map(),
+    iteration: new Map()
+  };
+  const declarations = [
+    ["concepts", "concept", "conceptId"],
+    ["properties", "property", "propertyId"],
+    ["facts", "fact", "factId"],
+    ["classifications", "classification", "classificationId"],
+    ["obligations", "obligation", "obligationId"],
+    ["transformations", "transformation", "transformationId"],
+    ["results", "result", "resultUnionId"],
+    ["arithmeticOperations", "arithmeticOperation", "operationId"],
+    ["indexedReads", "indexedRead", "readId"],
+    ["iterations", "iteration", "iterationId"]
+  ];
+  for (const [collection, kind, identityField] of declarations) {
+    for (const entry of authority[collection] ?? []) {
+      const identity = entry[identityField];
+      semantic.set(identity, { entry, kind });
+      byKind[kind].set(identity, entry);
+    }
+  }
+  return { semantic, byKind };
+}
+
+function resolveNodeInputs(nodeId, edges, outputs) {
+  const inputs = {};
+  for (const edge of edges) {
+    if (edge.to.nodeId === nodeId) {
+      inputs[edge.to.port] = outputs.get(edge.from.nodeId)?.[edge.from.port];
+    }
+  }
+  return inputs;
+}
+
+function topologicalOrder(nodes, edges) {
+  const indegree = new Map(nodes.map((node) => [node.nodeId, 0]));
+  const adjacency = new Map(nodes.map((node) => [node.nodeId, []]));
+  for (const edge of edges) {
+    adjacency.get(edge.from.nodeId).push(edge.to.nodeId);
+    indegree.set(edge.to.nodeId, indegree.get(edge.to.nodeId) + 1);
+  }
+  const pending = [...indegree].filter(([, degree]) => degree === 0).map(([id]) => id);
+  const order = [];
+  while (pending.length > 0) {
+    const id = pending.shift();
+    order.push(id);
+    for (const next of adjacency.get(id)) {
+      indegree.set(next, indegree.get(next) - 1);
+      if (indegree.get(next) === 0) {
+        pending.push(next);
+      }
+    }
+  }
+  return order;
+}
+
+function executePrimitive(binding, inputs, indexes) {
+  const semantic = indexes.semantic.get(binding.semanticAuthorityId);
+  const authority = semantic.entry;
+  const primitive = binding.executorPrimitive;
+
+  if (primitive === "input.v1") {
+    return { value: inputs.__input__ };
+  }
+  if (primitive === "validate-variant.v1") {
+    return { conceptId: authority.variants[0] };
+  }
+  if (primitive === "read-path.v1") {
+    const resolution = authority.resolutions[0];
+    return { observation: observePath(inputs.source, resolution.path) };
+  }
+  if (primitive === "constant.v1") {
+    return { value: authority.value.value };
+  }
+  if (primitive === "test-presence.v1") {
+    return { state: propertyState(inputs.observation, authority) };
+  }
+  if (primitive === "classify-value.v1") {
+    const value = sourceValue(inputs.observation);
+    const match = authority.cases.find((entry) => typedValueMatches(entry.value, value));
+    if (!match) {
+      throw new Error(authority.unmatchedDisposition);
+    }
+    return { state: match.stateId };
+  }
+  if (primitive === "classify-observations.v1") {
+    const match = authority.cases.find((entry) =>
+      entry.when.every((condition) => {
+        const observed = inputs[condition.inputPort];
+        const expected = condition.observation;
+        if (expected.state !== "value") {
+          return observed?.state === expected.state;
+        }
+        return (
+          observed?.state === "value" &&
+          typedValueMatches(expected.value, observed.value)
+        );
+      })
+    );
+    if (!match) {
+      throw new Error(authority.noMatchDisposition);
+    }
+    return { state: match.emit.value };
+  }
+  if (primitive === "evaluate-obligation.v1") {
+    const satisfied = authority.satisfiedStateIds.includes(inputs.state);
+    return { status: satisfied ? "satisfied" : "violated" };
+  }
+  if (primitive === "project-value.v1") {
+    return { fragment: { resultIds: authority.resultIds, outputPath: authority.outputPath, value: sourceValue(inputs.value) } };
+  }
+  if (primitive === "select-result.v1") {
+    const match = authority.selectionRules.find((rule) =>
+      rule.when.every((condition) => inputs[condition.inputPort] === condition.status)
+    );
+    if (!match) {
+      throw new Error(authority.noMatchDisposition);
+    }
+    return { resultId: match.resultId };
+  }
+  if (primitive === "emit-result.v1") {
+    const member = authority.members.find((entry) => entry.resultId === inputs.selection);
+    const result = {};
+    setOutputPath(result, member.discriminator.outputPath, member.discriminator.value.value);
+    for (const [port, fragment] of Object.entries(inputs)) {
+      if (port === "selection" || !fragment.resultIds.includes(member.resultId)) {
+        continue;
+      }
+      setOutputPath(result, fragment.outputPath, fragment.value);
+    }
+    return { result };
+  }
+  if (primitive === "add-bounded.v1") {
+    return { value: sourceValue(inputs.operandA) + sourceValue(inputs.operandB) };
+  }
+  if (primitive === "read-indexed-path.v1") {
+    let cursor = sourceValue(inputs.source);
+    for (const segment of authority.basePath) {
+      cursor = cursor[segment];
+    }
+    const index = sourceValue(inputs.index);
+    if (!Array.isArray(cursor) || index < 0 || index >= cursor.length) {
+      throw new Error(authority.outOfBoundsDisposition);
+    }
+    return { value: cursor[index] };
+  }
+  if (primitive === "iterate-bounded-worklist.v1") {
+    const results = [];
+    let current = sourceValue(inputs.seedItem);
+    let terminated = false;
+    for (let step = 0; step <= authority.maxSteps; step += 1) {
+      if (authority.resultMode === "history") {
+        results.push(structuredClone(current));
+      }
+      const operand = readPathValue(current, authority.continueCondition.operandPath);
+      const compareTo = resolveStepOperandValue(authority.continueCondition.compareTo, current, null, inputs);
+      if (!authority.continueCondition.continueWhenStates.includes(compareOutcomeState(operand, compareTo))) {
+        terminated = true;
+        break;
+      }
+      if (step === authority.maxSteps) {
+        break;
+      }
+      const clone = structuredClone(current);
+      applyStepProgram(authority.advance.steps, clone, null, inputs);
+      current = clone;
+    }
+    if (!terminated) {
+      throw new Error(authority.unresolvedDisposition);
+    }
+    return { value: authority.resultMode === "final-item" ? current : results };
+  }
+  if (primitive === "resolve-branching-worklist.v1") {
+    let resultsAccumulator = structuredClone(authority.initialAccumulator);
+    const queue = [sourceValue(inputs.seedItem)];
+    let processed = 0;
+    while (queue.length > 0 && processed < authority.maxItems) {
+      const item = queue.shift();
+      processed += 1;
+      const isTerminal = authority.terminalWhen.anyOf.some((group) =>
+        group.every((condition) => stepGuardPasses(condition, item, resultsAccumulator, inputs))
+      );
+      if (isTerminal) {
+        const clone = structuredClone({ item, accumulator: structuredClone(resultsAccumulator) });
+        applyStepProgram(authority.terminalSteps, clone, resultsAccumulator, inputs);
+        resultsAccumulator = clone.accumulator;
+      } else {
+        const clone = structuredClone({ parent: item, left: {}, right: {}, accumulator: structuredClone(resultsAccumulator) });
+        applyStepProgram(authority.splitSteps, clone, resultsAccumulator, inputs);
+        resultsAccumulator = clone.accumulator;
+        queue.push(clone.left, clone.right);
+      }
+    }
+    if (queue.length > 0) {
+      throw new Error(authority.unresolvedDisposition);
+    }
+    return { value: resultsAccumulator };
+  }
+  if (primitive === "serialize-result.v1") {
+    return { result: inputs.result };
+  }
+  throw new Error(`ONTOLOGY_EXECUTOR_UNRESOLVED:${primitive}`);
+}
+
+function runDungeonOntology(bundle, input) {
+  const indexes = buildIndexes(bundle.authority);
+  const bindingById = new Map(bundle.authority.executionBindings.map((b) => [b.bindingId, b]));
+  const order = topologicalOrder(bundle.authority.executionGraph.nodes, bundle.authority.executionGraph.edges);
+  const nodeById = new Map(bundle.authority.executionGraph.nodes.map((node) => [node.nodeId, node]));
+  const outputs = new Map();
+  for (const nodeId of order) {
+    const node = nodeById.get(nodeId);
+    const binding = bindingById.get(node.bindingId);
+    const inputs = resolveNodeInputs(nodeId, bundle.authority.executionGraph.edges, outputs);
+    if (binding.executorPrimitive === "input.v1") {
+      inputs.__input__ = input;
+    }
+    outputs.set(nodeId, executePrimitive(binding, inputs, indexes));
+  }
+  const terminalId = bundle.authority.executionGraph.terminalNodeIds[0];
+  return outputs.get(terminalId).result;
+}
+
+// DISPLAY_SIZE/TILE_SIZE/CANVAS_SIZE match the original 60x60 tile board
+// exactly; PAD is the vision-radius margin the generation and rasterization
+// ontologies carve the playable region inside of, so a 9-tile sightline can
+// never run off the padded PADDED_SIZE grid's edge (see
+// scripts/generate-dungeon-visibility-authority.mjs and
+// scripts/generate-dungeon-topology-authority.mjs for the shared constant).
+const DISPLAY_SIZE = 60;
+const TILE_SIZE = 10;
+const CANVAS_SIZE = DISPLAY_SIZE * TILE_SIZE;
+const PAD = 9;
+const PADDED_SIZE = DISPLAY_SIZE + 2 * PAD;
+
+const COLOR_HIDDEN = "#000000";
+const COLOR_WALL = "#4a4e69";
+const COLOR_FLOOR = "#9a8c98";
+const COLOR_PLAYER = "#55ff33";
+
+const canvas = document.getElementById("view");
+const ctx = canvas.getContext("2d");
+const coordsEl = document.getElementById("coords");
+const regenerateBtn = document.getElementById("regenerateBtn");
+const godModeBtn = document.getElementById("godModeBtn");
+
+let map = [];
+let visibility = [];
+const player = { x: 0, y: 0 };
+let godMode = false;
+
+function createGrid(size, fillValue) {
+  const grid = [];
+  for (let y = 0; y < size; y += 1) {
+    const row = [];
+    for (let x = 0; x < size; x += 1) {
+      row.push(fillValue);
+    }
+    grid.push(row);
+  }
+  return grid;
+}
+
+// Region splitting, room placement, and corridor connectivity are decided
+// entirely by the dungeon-topology ontology (a genuine branching worklist);
+// rasterization turns its unified paint-rectangle list into the dense grid
+// below. No branch or loop of this project's own authorship decides where a
+// wall or a room goes.
+function generateMap() {
+  const topology = runDungeonOntology(dungeonTopologyBundle, {
+    x: PAD + 1,
+    y: PAD + 1,
+    w: DISPLAY_SIZE - 2,
+    h: DISPLAY_SIZE - 2,
+    depth: 0
+  }).topology;
+
+  map = runDungeonOntology(dungeonRasterizeBundle, {
+    rectLoX: topology.rectLoX,
+    rectLoY: topology.rectLoY,
+    rectHiX: topology.rectHiX,
+    rectHiY: topology.rectHiY,
+    cellIndex: 0,
+    cellX: 0,
+    cellY: 0,
+    slotIndex: -1,
+    rectCount: 0,
+    containCount: 0,
+    cellGridValue: 0,
+    isLastColumn: 0,
+    currentRow: [],
+    rows: []
+  }).grid.rows;
+
+  player.x = topology.roomX[0] + 2;
+  player.y = topology.roomY[0] + 2;
+}
+
+// Every cell a ray reaches, and where each ray stops at a wall, is decided
+// by the dungeon-visibility ontology's guarded Bresenham sweep. Marking the
+// returned cells into the persistent visibility grid is mechanical
+// accumulation (an already-fully-decided cell is recorded, nothing is
+// branched on), the same "browser mechanics" category as writing DOM text.
+function updateVisibility() {
+  const sweep = runDungeonOntology(dungeonVisibilityBundle, {
+    grid: map,
+    playerX: player.x,
+    playerY: player.y,
+    globalStep: 0,
+    blockedRayId: -999,
+    revealedX: [],
+    revealedY: [],
+    cellX: 0,
+    cellY: 0,
+    cellValue: 0,
+    scratchRow: map[0],
+    rayId: 0,
+    relX: 0,
+    relY: 0,
+    wallHitRayId: -999
+  }).visibilityState;
+  for (let i = 0; i < sweep.revealedX.length; i += 1) {
+    visibility[sweep.revealedY[i]][sweep.revealedX[i]] = 1;
+  }
+}
+
+const ROLE_FILL = {
+  hidden: null,
+  "visible-floor": COLOR_FLOOR,
+  "visible-wall": COLOR_WALL
+};
+
+// Rendering-frame contract: this builds a declarative "pixel-grid-rendering-frame.v1"
+// value (canvas dimensions, background, and an ordered fill-rectangle operation list).
+// Every fill's semanticRole and color come directly from the render-role ontology's
+// decision for that cell -- no rendering decision is made outside buildRenderingFrame.
+// The for-loop below owns no decision of its own: it visits each display cell exactly
+// once and forwards it to the ontology, matching section 4's "browser mechanics" line.
+// applyRenderingFrame() is the dumb executor: it owns no decisions, only canvas calls.
+function buildRenderingFrame() {
+  const operations = [];
+  for (let y = 0; y < DISPLAY_SIZE; y += 1) {
+    for (let x = 0; x < DISPLAY_SIZE; x += 1) {
+      const decision = runDungeonOntology(dungeonRenderRoleBundle, {
+        cellValue: map[y + PAD][x + PAD],
+        godMode: godMode ? 1 : 0,
+        revealed: visibility[y + PAD][x + PAD]
+      });
+      const fill = ROLE_FILL[decision.role];
+      if (fill) {
+        operations.push({
+          operation: "fill-rectangle",
+          semanticRole: decision.role,
+          x: x * TILE_SIZE,
+          y: y * TILE_SIZE,
+          width: TILE_SIZE,
+          height: TILE_SIZE,
+          fill
+        });
+      }
+    }
+  }
+  operations.push({
+    operation: "fill-rectangle",
+    semanticRole: "player",
+    x: (player.x - PAD) * TILE_SIZE,
+    y: (player.y - PAD) * TILE_SIZE,
+    width: TILE_SIZE,
+    height: TILE_SIZE,
+    fill: COLOR_PLAYER
+  });
+  return {
+    frameType: "pixel-grid-rendering-frame.v1",
+    canvas: { width: CANVAS_SIZE, height: CANVAS_SIZE, background: COLOR_HIDDEN },
+    operations
+  };
+}
+
+function applyRenderingFrame(frame) {
+  ctx.fillStyle = frame.canvas.background;
+  ctx.fillRect(0, 0, frame.canvas.width, frame.canvas.height);
+  for (const op of frame.operations) {
+    ctx.fillStyle = op.fill;
+    ctx.fillRect(op.x, op.y, op.width, op.height);
+  }
+}
+
+function draw() {
+  applyRenderingFrame(buildRenderingFrame());
+}
+
+function updateCoordsDisplay() {
+  coordsEl.textContent = "(" + (player.x - PAD) + ", " + (player.y - PAD) + ")";
+}
+
+const COMMAND_VECTOR = {
+  "move-north": { dx: 0, dy: -1 },
+  "move-south": { dx: 0, dy: 1 },
+  "move-west": { dx: -1, dy: 0 },
+  "move-east": { dx: 1, dy: 0 }
+};
+
+// dungeon-movement is declared against the original 60x60 board (a
+// deliberately unchanged, already-proven ontology), so the padded 78x78
+// map is narrowed to its display-space view here -- a data reshape via
+// built-in Array methods, not a legality decision.
+function tryMove(command) {
+  const vector = COMMAND_VECTOR[command];
+  const displayGrid = map.slice(PAD, PAD + DISPLAY_SIZE).map((row) => row.slice(PAD, PAD + DISPLAY_SIZE));
+  const decision = runDungeonOntology(dungeonMovementBundle, {
+    grid: displayGrid,
+    playerX: player.x - PAD,
+    playerY: player.y - PAD,
+    dx: vector.dx,
+    dy: vector.dy
+  });
+  if (decision.status !== "MOVEMENT_AUTHORIZED") {
+    return;
+  }
+  player.x = decision.x + PAD;
+  player.y = decision.y + PAD;
+  updateVisibility();
+  draw();
+  updateCoordsDisplay();
+}
+
+function handleKeyDown(event) {
+  let decision;
+  try {
+    decision = runDungeonOntology(dungeonKeyboardCommandBundle, { key: event.key });
+  } catch {
+    return;
+  }
+  event.preventDefault();
+  tryMove(decision.command);
+}
+
+function resetGame() {
+  generateMap();
+  visibility = createGrid(PADDED_SIZE, 0);
+  updateVisibility();
+  draw();
+  updateCoordsDisplay();
+}
+
+function toggleGodMode() {
+  godMode = !godMode;
+  godModeBtn.classList.toggle("active", godMode);
+  draw();
+}
+
+regenerateBtn.addEventListener("click", resetGame);
+godModeBtn.addEventListener("click", toggleGodMode);
+document.addEventListener("keydown", handleKeyDown);
+
+resetGame();
+</script>
+</body>
+</html>

@@ -133,7 +133,7 @@
       ],
       "properties": {
         "identity": {
-          "const": "finite-semantic-runtime.v2"
+          "const": "finite-semantic-runtime.v3"
         },
         "digest": {
           "$ref": "#/$defs/sha256"
@@ -154,7 +154,8 @@
             "maxTerminalResults",
             "maxSerializedByteLength",
             "maxOperandDomainSize",
-            "maxIterationSteps"
+            "maxIterationSteps",
+            "maxWorklistItems"
           ],
           "properties": {
             "maxGraphNodes": {
@@ -194,7 +195,10 @@
               "const": 64
             },
             "maxIterationSteps": {
-              "const": 512
+              "const": 8192
+            },
+            "maxWorklistItems": {
+              "const": 256
             }
           }
         },
@@ -235,6 +239,7 @@
             "seeded-range-draw.v1",
             "read-indexed-path.v1",
             "iterate-bounded-worklist.v1",
+            "resolve-branching-worklist.v1",
             "serialize-result.v1"
           ]
         }
@@ -770,19 +775,157 @@
         }
       }
     },
+    "advanceOperand": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "factId"],
+          "properties": {
+            "kind": { "const": "fact" },
+            "factId": { "$ref": "#/$defs/identifier" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "path"],
+          "properties": {
+            "kind": { "const": "item-field" },
+            "path": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 16,
+              "items": { "$ref": "#/$defs/safePathSegment" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "path", "indexPath"],
+          "properties": {
+            "kind": { "const": "item-field-indexed" },
+            "path": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 16,
+              "items": { "$ref": "#/$defs/safePathSegment" }
+            },
+            "indexPath": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 16,
+              "items": { "$ref": "#/$defs/safePathSegment" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "factId", "indexPath"],
+          "properties": {
+            "kind": { "const": "fact-indexed" },
+            "factId": { "$ref": "#/$defs/identifier" },
+            "indexPath": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 16,
+              "items": { "$ref": "#/$defs/safePathSegment" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "path"],
+          "properties": {
+            "kind": { "const": "item-field-length" },
+            "path": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 16,
+              "items": { "$ref": "#/$defs/safePathSegment" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "seedFactId", "callIndexPath", "min", "max"],
+          "properties": {
+            "kind": { "const": "seeded-draw" },
+            "seedFactId": { "$ref": "#/$defs/identifier" },
+            "callIndexPath": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 16,
+              "items": { "$ref": "#/$defs/safePathSegment" }
+            },
+            "min": { "$ref": "#/$defs/advanceOperand" },
+            "max": { "$ref": "#/$defs/advanceOperand" }
+          }
+        }
+      ]
+    },
+    "advanceGuard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operand", "compareTo", "matchStates"],
+      "properties": {
+        "operand": { "$ref": "#/$defs/advanceOperand" },
+        "compareTo": { "$ref": "#/$defs/advanceOperand" },
+        "matchStates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["less-than", "equal-to", "greater-than"]
+          }
+        }
+      }
+    },
+    "advanceStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetPath", "operation", "operand"],
+      "properties": {
+        "targetPath": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/safePathSegment" }
+        },
+        "operation": {
+          "enum": ["add", "subtract", "set", "append"]
+        },
+        "operand": { "$ref": "#/$defs/advanceOperand" },
+        "when": { "$ref": "#/$defs/advanceGuard" }
+      }
+    },
     "boundedIteration": {
+      "oneOf": [
+        { "$ref": "#/$defs/linearIterationAuthority" },
+        { "$ref": "#/$defs/branchingWorklistAuthority" }
+      ]
+    },
+    "linearIterationAuthority": {
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "iterationKind",
         "iterationId",
         "itemConceptId",
         "resultConceptId",
+        "resultMode",
         "maxSteps",
         "unresolvedDisposition",
         "continueCondition",
         "advance"
       ],
       "properties": {
+        "iterationKind": { "const": "linear" },
         "iterationId": {
           "$ref": "#/$defs/identifier"
         },
@@ -791,6 +934,9 @@
         },
         "resultConceptId": {
           "$ref": "#/$defs/identifier"
+        },
+        "resultMode": {
+          "enum": ["history", "final-item"]
         },
         "maxSteps": {
           "type": "integer",
@@ -802,16 +948,14 @@
         "continueCondition": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["operandPath", "compareToFactId", "continueWhenStates"],
+          "required": ["operandPath", "compareTo", "continueWhenStates"],
           "properties": {
             "operandPath": {
               "type": "array",
               "maxItems": 16,
               "items": { "$ref": "#/$defs/safePathSegment" }
             },
-            "compareToFactId": {
-              "$ref": "#/$defs/identifier"
-            },
+            "compareTo": { "$ref": "#/$defs/advanceOperand" },
             "continueWhenStates": {
               "type": "array",
               "minItems": 1,
@@ -831,53 +975,90 @@
             "steps": {
               "type": "array",
               "minItems": 1,
-              "maxItems": 4,
+              "maxItems": 768,
               "items": { "$ref": "#/$defs/advanceStep" }
             }
           }
         }
       }
     },
-    "advanceStep": {
+    "branchGuardCondition": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["targetPath", "operation", "operand"],
+      "required": ["operand", "compareTo", "matchStates"],
       "properties": {
-        "targetPath": {
+        "operand": { "$ref": "#/$defs/advanceOperand" },
+        "compareTo": { "$ref": "#/$defs/advanceOperand" },
+        "matchStates": {
           "type": "array",
           "minItems": 1,
-          "maxItems": 16,
-          "items": { "$ref": "#/$defs/safePathSegment" }
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["less-than", "equal-to", "greater-than"]
+          }
+        }
+      }
+    },
+    "branchingWorklistAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "iterationKind",
+        "iterationId",
+        "itemConceptId",
+        "resultConceptId",
+        "maxItems",
+        "unresolvedDisposition",
+        "initialAccumulator",
+        "terminalWhen",
+        "splitSteps",
+        "terminalSteps"
+      ],
+      "properties": {
+        "iterationKind": { "const": "branching" },
+        "iterationId": { "$ref": "#/$defs/identifier" },
+        "itemConceptId": { "$ref": "#/$defs/identifier" },
+        "resultConceptId": { "$ref": "#/$defs/identifier" },
+        "maxItems": {
+          "type": "integer",
+          "minimum": 1
         },
-        "operation": {
-          "enum": ["add", "subtract"]
+        "unresolvedDisposition": {
+          "$ref": "#/$defs/disposition"
         },
-        "operand": {
-          "oneOf": [
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "required": ["kind", "factId"],
-              "properties": {
-                "kind": { "const": "fact" },
-                "factId": { "$ref": "#/$defs/identifier" }
-              }
-            },
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "required": ["kind", "path"],
-              "properties": {
-                "kind": { "const": "item-field" },
-                "path": {
-                  "type": "array",
-                  "minItems": 1,
-                  "maxItems": 16,
-                  "items": { "$ref": "#/$defs/safePathSegment" }
-                }
+        "initialAccumulator": {
+          "type": "object"
+        },
+        "terminalWhen": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["anyOf"],
+          "properties": {
+            "anyOf": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 8,
+                "items": { "$ref": "#/$defs/branchGuardCondition" }
               }
             }
-          ]
+          }
+        },
+        "splitSteps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/advanceStep" }
+        },
+        "terminalSteps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/advanceStep" }
         }
       }
     },
@@ -1213,6 +1394,7 @@
             "seeded-range-draw.v1",
             "read-indexed-path.v1",
             "iterate-bounded-worklist.v1",
+            "resolve-branching-worklist.v1",
             "serialize-result.v1"
           ]
         }

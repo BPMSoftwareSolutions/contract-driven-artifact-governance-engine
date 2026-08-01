@@ -1,0 +1,1158 @@
+{
+  "authority": {
+    "arithmeticOperations": [],
+    "authorityType": "deterministic-ontology-authority.v1",
+    "classifications": [
+      {
+        "classificationId": "cell-render-request-variant",
+        "classificationType": "concept-variant",
+        "multipleMatchDisposition": "CELL_RENDER_REQUEST_VARIANT_AMBIGUOUS",
+        "noMatchDisposition": "CELL_RENDER_REQUEST_VARIANT_UNRESOLVED",
+        "resultConceptId": "cell-render-request-variant-id",
+        "subjectConceptId": "cell-render-request",
+        "variants": [
+          "cell-render-request"
+        ]
+      },
+      {
+        "classificationId": "presence-classification",
+        "classificationType": "property-state",
+        "emptyStringState": "present",
+        "expectedValueType": "number",
+        "propertyId": "cell-value-field",
+        "resultConceptId": "presence-state",
+        "states": [
+          "missing",
+          "null",
+          "empty-string",
+          "invalid-type",
+          "present"
+        ]
+      },
+      {
+        "cases": [
+          {
+            "caseId": "hidden-not-revealed-floor",
+            "emit": {
+              "type": "string",
+              "value": "hidden"
+            },
+            "when": [
+              {
+                "inputPort": "god-mode",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              },
+              {
+                "inputPort": "revealed",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              },
+              {
+                "inputPort": "cell-value",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "caseId": "hidden-not-revealed-wall",
+            "emit": {
+              "type": "string",
+              "value": "hidden"
+            },
+            "when": [
+              {
+                "inputPort": "god-mode",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              },
+              {
+                "inputPort": "revealed",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              },
+              {
+                "inputPort": "cell-value",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "caseId": "revealed-floor",
+            "emit": {
+              "type": "string",
+              "value": "visible-floor"
+            },
+            "when": [
+              {
+                "inputPort": "god-mode",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              },
+              {
+                "inputPort": "revealed",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "inputPort": "cell-value",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "caseId": "revealed-wall",
+            "emit": {
+              "type": "string",
+              "value": "visible-wall"
+            },
+            "when": [
+              {
+                "inputPort": "god-mode",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              },
+              {
+                "inputPort": "revealed",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "inputPort": "cell-value",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "caseId": "god-mode-unrevealed-floor",
+            "emit": {
+              "type": "string",
+              "value": "visible-floor"
+            },
+            "when": [
+              {
+                "inputPort": "god-mode",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "inputPort": "revealed",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              },
+              {
+                "inputPort": "cell-value",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "caseId": "god-mode-unrevealed-wall",
+            "emit": {
+              "type": "string",
+              "value": "visible-wall"
+            },
+            "when": [
+              {
+                "inputPort": "god-mode",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "inputPort": "revealed",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              },
+              {
+                "inputPort": "cell-value",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "caseId": "god-mode-revealed-floor",
+            "emit": {
+              "type": "string",
+              "value": "visible-floor"
+            },
+            "when": [
+              {
+                "inputPort": "god-mode",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "inputPort": "revealed",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "inputPort": "cell-value",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "caseId": "god-mode-revealed-wall",
+            "emit": {
+              "type": "string",
+              "value": "visible-wall"
+            },
+            "when": [
+              {
+                "inputPort": "god-mode",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "inputPort": "revealed",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              },
+              {
+                "inputPort": "cell-value",
+                "observation": {
+                  "state": "value",
+                  "value": {
+                    "type": "number",
+                    "value": 1
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "classificationId": "render-role-classification",
+        "classificationType": "multi-observation",
+        "multipleMatchDisposition": "RENDER_ROLE_AMBIGUOUS",
+        "noMatchDisposition": "RENDER_ROLE_NOT_RESOLVED",
+        "observations": [
+          {
+            "inputPort": "god-mode",
+            "propertyId": "god-mode-field"
+          },
+          {
+            "inputPort": "revealed",
+            "propertyId": "revealed-field"
+          },
+          {
+            "inputPort": "cell-value",
+            "propertyId": "cell-value-field"
+          }
+        ],
+        "resultConceptId": "render-role",
+        "subjectConceptId": "cell-render-request"
+      }
+    ],
+    "concepts": [
+      {
+        "abstract": false,
+        "conceptId": "cell-render-request",
+        "conceptType": "domain-entity",
+        "isA": [],
+        "schemaId": "cell-render-request.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "cell-render-request-variant-id",
+        "conceptType": "classification",
+        "isA": [],
+        "schemaId": "cell-render-request-variant-id.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "cell-value-flag",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "flag.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "god-mode-flag",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "flag.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "revealed-flag",
+        "conceptType": "domain-value",
+        "isA": [],
+        "schemaId": "flag.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "presence-state",
+        "conceptType": "classification",
+        "isA": [],
+        "schemaId": "presence-state.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "obligation-status",
+        "conceptType": "signal",
+        "isA": [],
+        "schemaId": "obligation-status.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "render-role",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "schemaId": "render-role.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "result-kind-concept",
+        "conceptType": "canonical-value",
+        "isA": [],
+        "schemaId": "result-kind.schema.v1"
+      },
+      {
+        "abstract": false,
+        "conceptId": "render-role-result",
+        "conceptType": "result-union",
+        "isA": [],
+        "schemaId": "render-role-result.schema.v1"
+      }
+    ],
+    "constraints": [],
+    "executionBindings": [
+      {
+        "bindingId": "bind.input.cell-render-request",
+        "executorPrimitive": "input.v1",
+        "semanticAuthorityId": "cell-render-request"
+      },
+      {
+        "bindingId": "bind.read-path.cell-value-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "cell-value-field"
+      },
+      {
+        "bindingId": "bind.read-path.god-mode-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "god-mode-field"
+      },
+      {
+        "bindingId": "bind.read-path.revealed-field",
+        "executorPrimitive": "read-path.v1",
+        "semanticAuthorityId": "revealed-field"
+      },
+      {
+        "bindingId": "bind.validate-variant.cell-render-request-variant",
+        "executorPrimitive": "validate-variant.v1",
+        "semanticAuthorityId": "cell-render-request-variant"
+      },
+      {
+        "bindingId": "bind.test-presence.presence-classification",
+        "executorPrimitive": "test-presence.v1",
+        "semanticAuthorityId": "presence-classification"
+      },
+      {
+        "bindingId": "bind.classify-observations.render-role-classification",
+        "executorPrimitive": "classify-observations.v1",
+        "semanticAuthorityId": "render-role-classification"
+      },
+      {
+        "bindingId": "bind.evaluate-obligation.always-present-obligation",
+        "executorPrimitive": "evaluate-obligation.v1",
+        "semanticAuthorityId": "always-present-obligation"
+      },
+      {
+        "bindingId": "bind.project-value.emit-role",
+        "executorPrimitive": "project-value.v1",
+        "semanticAuthorityId": "emit-role"
+      },
+      {
+        "bindingId": "bind.select-result.render-role-result-union",
+        "executorPrimitive": "select-result.v1",
+        "semanticAuthorityId": "render-role-result-union"
+      },
+      {
+        "bindingId": "bind.emit-result.render-role-result-union",
+        "executorPrimitive": "emit-result.v1",
+        "semanticAuthorityId": "render-role-result-union"
+      },
+      {
+        "bindingId": "bind.serialize-result.render-role-result-union",
+        "executorPrimitive": "serialize-result.v1",
+        "semanticAuthorityId": "render-role-result-union"
+      }
+    ],
+    "executionGraph": {
+      "edges": [
+        {
+          "edgeId": "edge.validate-variant.cell-render-request-variant.to.read-path.cell-value-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.cell-render-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.cell-value-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.cell-render-request.to.read-path.cell-value-field.source",
+          "from": {
+            "nodeId": "node.input.cell-render-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.cell-value-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.validate-variant.cell-render-request-variant.to.read-path.god-mode-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.cell-render-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.god-mode-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.cell-render-request.to.read-path.god-mode-field.source",
+          "from": {
+            "nodeId": "node.input.cell-render-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.god-mode-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.validate-variant.cell-render-request-variant.to.read-path.revealed-field.concept-id",
+          "from": {
+            "nodeId": "node.validate-variant.cell-render-request-variant",
+            "port": "conceptId"
+          },
+          "to": {
+            "nodeId": "node.read-path.revealed-field",
+            "port": "conceptId"
+          }
+        },
+        {
+          "edgeId": "edge.input.cell-render-request.to.read-path.revealed-field.source",
+          "from": {
+            "nodeId": "node.input.cell-render-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.read-path.revealed-field",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.input.cell-render-request.to.validate-variant.cell-render-request-variant.source",
+          "from": {
+            "nodeId": "node.input.cell-render-request",
+            "port": "value"
+          },
+          "to": {
+            "nodeId": "node.validate-variant.cell-render-request-variant",
+            "port": "source"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.cell-value-field.to.test-presence.presence-classification.observation",
+          "from": {
+            "nodeId": "node.read-path.cell-value-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.test-presence.presence-classification",
+            "port": "observation"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.cell-value-field.to.classify-observations.render-role-classification.cell-value",
+          "from": {
+            "nodeId": "node.read-path.cell-value-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.classify-observations.render-role-classification",
+            "port": "cell-value"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.god-mode-field.to.classify-observations.render-role-classification.god-mode",
+          "from": {
+            "nodeId": "node.read-path.god-mode-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.classify-observations.render-role-classification",
+            "port": "god-mode"
+          }
+        },
+        {
+          "edgeId": "edge.read-path.revealed-field.to.classify-observations.render-role-classification.revealed",
+          "from": {
+            "nodeId": "node.read-path.revealed-field",
+            "port": "observation"
+          },
+          "to": {
+            "nodeId": "node.classify-observations.render-role-classification",
+            "port": "revealed"
+          }
+        },
+        {
+          "edgeId": "edge.test-presence.presence-classification.to.evaluate-obligation.always-present-obligation.state",
+          "from": {
+            "nodeId": "node.test-presence.presence-classification",
+            "port": "state"
+          },
+          "to": {
+            "nodeId": "node.evaluate-obligation.always-present-obligation",
+            "port": "state"
+          }
+        },
+        {
+          "edgeId": "edge.classify-observations.render-role-classification.to.project-value.emit-role.value",
+          "from": {
+            "nodeId": "node.classify-observations.render-role-classification",
+            "port": "state"
+          },
+          "to": {
+            "nodeId": "node.project-value.emit-role",
+            "port": "value"
+          }
+        },
+        {
+          "edgeId": "edge.evaluate-obligation.always-present-obligation.to.select-result.render-role-result-union.presence-obligation",
+          "from": {
+            "nodeId": "node.evaluate-obligation.always-present-obligation",
+            "port": "status"
+          },
+          "to": {
+            "nodeId": "node.select-result.render-role-result-union",
+            "port": "presenceObligation"
+          }
+        },
+        {
+          "edgeId": "edge.project-value.emit-role.to.emit-result.render-role-result-union.fragment-emit-role",
+          "from": {
+            "nodeId": "node.project-value.emit-role",
+            "port": "fragment"
+          },
+          "to": {
+            "nodeId": "node.emit-result.render-role-result-union",
+            "port": "fragment-emit-role"
+          }
+        },
+        {
+          "edgeId": "edge.select-result.render-role-result-union.to.emit-result.render-role-result-union.selection",
+          "from": {
+            "nodeId": "node.select-result.render-role-result-union",
+            "port": "resultId"
+          },
+          "to": {
+            "nodeId": "node.emit-result.render-role-result-union",
+            "port": "selection"
+          }
+        },
+        {
+          "edgeId": "edge.emit-result.render-role-result-union.to.serialize-result.render-role-result-union.result",
+          "from": {
+            "nodeId": "node.emit-result.render-role-result-union",
+            "port": "result"
+          },
+          "to": {
+            "nodeId": "node.serialize-result.render-role-result-union",
+            "port": "result"
+          }
+        }
+      ],
+      "entryNodeId": "node.input.cell-render-request",
+      "nodes": [
+        {
+          "bindingId": "bind.input.cell-render-request",
+          "nodeId": "node.input.cell-render-request"
+        },
+        {
+          "bindingId": "bind.read-path.cell-value-field",
+          "nodeId": "node.read-path.cell-value-field"
+        },
+        {
+          "bindingId": "bind.read-path.god-mode-field",
+          "nodeId": "node.read-path.god-mode-field"
+        },
+        {
+          "bindingId": "bind.read-path.revealed-field",
+          "nodeId": "node.read-path.revealed-field"
+        },
+        {
+          "bindingId": "bind.validate-variant.cell-render-request-variant",
+          "nodeId": "node.validate-variant.cell-render-request-variant"
+        },
+        {
+          "bindingId": "bind.test-presence.presence-classification",
+          "nodeId": "node.test-presence.presence-classification"
+        },
+        {
+          "bindingId": "bind.classify-observations.render-role-classification",
+          "nodeId": "node.classify-observations.render-role-classification"
+        },
+        {
+          "bindingId": "bind.evaluate-obligation.always-present-obligation",
+          "nodeId": "node.evaluate-obligation.always-present-obligation"
+        },
+        {
+          "bindingId": "bind.project-value.emit-role",
+          "nodeId": "node.project-value.emit-role"
+        },
+        {
+          "bindingId": "bind.select-result.render-role-result-union",
+          "nodeId": "node.select-result.render-role-result-union"
+        },
+        {
+          "bindingId": "bind.emit-result.render-role-result-union",
+          "nodeId": "node.emit-result.render-role-result-union"
+        },
+        {
+          "bindingId": "bind.serialize-result.render-role-result-union",
+          "nodeId": "node.serialize-result.render-role-result-union"
+        }
+      ],
+      "terminalNodeIds": [
+        "node.serialize-result.render-role-result-union"
+      ]
+    },
+    "facts": [],
+    "indexedReads": [],
+    "iterations": [],
+    "obligations": [
+      {
+        "classificationId": "presence-classification",
+        "failureDisposition": "CELL_VALUE_MISSING",
+        "obligationId": "always-present-obligation",
+        "resultConceptId": "obligation-status",
+        "satisfiedStateIds": [
+          "present"
+        ],
+        "subjectConceptId": "cell-render-request"
+      }
+    ],
+    "ontologyId": "dungeon-render-role",
+    "proofRequirements": [
+      {
+        "proofType": "reference-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-reference-closure",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "type-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-type-closure",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "cardinality-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-cardinality-closure",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "classification-totality",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-classification-totality",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "translation-totality",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-translation-totality",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "obligation-binding",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-obligation-binding",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "result-discrimination",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-result-discrimination",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "execution-binding",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-execution-binding",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "graph-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-graph-closure",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "arithmetic-range-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-arithmetic-range-closure",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "randomness-determinism-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-randomness-determinism-closure",
+        "subjectAuthorityId": "dungeon-render-role"
+      },
+      {
+        "proofType": "iteration-termination-closure",
+        "requiredDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+        "requirementId": "prove-iteration-termination-closure",
+        "subjectAuthorityId": "dungeon-render-role"
+      }
+    ],
+    "properties": [
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "cell-value-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "cellValue"
+            ],
+            "subjectVariantConceptId": "cell-render-request"
+          }
+        ],
+        "subjectConceptId": "cell-render-request",
+        "valueConceptId": "cell-value-flag"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "god-mode-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "godMode"
+            ],
+            "subjectVariantConceptId": "cell-render-request"
+          }
+        ],
+        "subjectConceptId": "cell-render-request",
+        "valueConceptId": "god-mode-flag"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "revealed-field",
+        "propertyKind": "observed",
+        "resolutions": [
+          {
+            "path": [
+              "revealed"
+            ],
+            "subjectVariantConceptId": "cell-render-request"
+          }
+        ],
+        "subjectConceptId": "cell-render-request",
+        "valueConceptId": "revealed-flag"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "result-kind",
+        "propertyKind": "projected",
+        "resolutions": [],
+        "subjectConceptId": "render-role-result",
+        "valueConceptId": "result-kind-concept"
+      },
+      {
+        "cardinality": "exactly-one",
+        "propertyId": "result-role",
+        "propertyKind": "projected",
+        "resolutions": [],
+        "subjectConceptId": "render-role-result",
+        "valueConceptId": "render-role"
+      }
+    ],
+    "randomDraws": [],
+    "relations": [
+      {
+        "cardinality": "exactly-one",
+        "objectConceptId": "render-role",
+        "relationId": "role-produces-value",
+        "relationType": "computes",
+        "subjectConceptId": "render-role"
+      }
+    ],
+    "results": [
+      {
+        "invalidResultDisposition": "RENDER_ROLE_RESULT_INVALID",
+        "members": [
+          {
+            "conceptId": "render-role-result",
+            "discriminator": {
+              "outputPath": [
+                "kind"
+              ],
+              "propertyId": "result-kind",
+              "value": {
+                "type": "string",
+                "value": "render-role-result"
+              }
+            },
+            "resultId": "render-role-ok"
+          }
+        ],
+        "multipleMatchDisposition": "RESULT_SELECTION_AMBIGUOUS",
+        "noMatchDisposition": "RESULT_SELECTION_NOT_TOTAL",
+        "resultTypeConceptId": "render-role-result",
+        "resultUnionId": "render-role-result-union",
+        "selectionRules": [
+          {
+            "resultId": "render-role-ok",
+            "ruleId": "always-ok",
+            "when": [
+              {
+                "inputPort": "presenceObligation",
+                "obligationId": "always-present-obligation",
+                "status": "satisfied"
+              }
+            ]
+          },
+          {
+            "resultId": "render-role-ok",
+            "ruleId": "still-ok-when-violated",
+            "when": [
+              {
+                "inputPort": "presenceObligation",
+                "obligationId": "always-present-obligation",
+                "status": "violated"
+              }
+            ]
+          }
+        ],
+        "serializerId": "identity.v1"
+      }
+    ],
+    "transformations": [
+      {
+        "invalidTypeDisposition": "ROLE_INVALID",
+        "outputPath": [
+          "role"
+        ],
+        "relationId": "role-produces-value",
+        "resultIds": [
+          "render-role-ok"
+        ],
+        "sourceAuthorityId": "render-role-classification",
+        "targetPropertyId": "result-role",
+        "transformationId": "emit-role",
+        "unavailableDisposition": "ROLE_UNAVAILABLE",
+        "valueConceptId": "render-role"
+      }
+    ],
+    "translations": []
+  },
+  "bundleId": "dungeon-render-role.bundle.v1",
+  "bundleType": "semantic-execution-bundle.v1",
+  "catalogs": [],
+  "runtimeProfile": {
+    "admittedPrimitives": [
+      "input.v1",
+      "validate-variant.v1",
+      "read-path.v1",
+      "constant.v1",
+      "test-presence.v1",
+      "classify-value.v1",
+      "classify-observations.v1",
+      "translate-value.v1",
+      "evaluate-obligation.v1",
+      "project-value.v1",
+      "select-result.v1",
+      "emit-result.v1",
+      "add-bounded.v1",
+      "subtract-bounded.v1",
+      "compare-bounded.v1",
+      "seeded-range-draw.v1",
+      "read-indexed-path.v1",
+      "iterate-bounded-worklist.v1",
+      "resolve-branching-worklist.v1",
+      "serialize-result.v1"
+    ],
+    "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+    "forbiddenCapabilities": [
+      "cycles",
+      "recursion",
+      "dynamic-invocation",
+      "arbitrary-expressions",
+      "user-code",
+      "runtime-module-loading",
+      "unbounded-array-traversal",
+      "regex-authority",
+      "implicit-coercion",
+      "ambient-state",
+      "clock-access",
+      "ambient-randomness",
+      "network-access"
+    ],
+    "identity": "finite-semantic-runtime.v3",
+    "limits": {
+      "maxClassificationCases": 128,
+      "maxClassificationInputs": 16,
+      "maxGraphEdges": 128,
+      "maxGraphNodes": 64,
+      "maxIterationSteps": 8192,
+      "maxOperandDomainSize": 64,
+      "maxOutputDepth": 16,
+      "maxPathDepth": 16,
+      "maxSchemas": 32,
+      "maxSerializedByteLength": 1048576,
+      "maxTerminalResults": 1,
+      "maxTranslationCases": 128,
+      "maxVariants": 16,
+      "maxWorklistItems": 256
+    }
+  },
+  "schemas": [
+    {
+      "digest": "sha256:3cab9f637e4fc6f13b655224169b99fa81c1fc2ea734f93cae0b465094eea813",
+      "schemaId": "cell-render-request.schema.v1",
+      "value": {
+        "additionalProperties": false,
+        "properties": {
+          "cellValue": {
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "godMode": {
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "revealed": {
+            "enum": [
+              0,
+              1
+            ]
+          }
+        },
+        "required": [
+          "cellValue",
+          "godMode",
+          "revealed"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "digest": "sha256:83c71cbc5328990657c7b7e10af2f0de91c7859ec65c0c41dfcbc0fe4cd94044",
+      "schemaId": "cell-render-request-variant-id.schema.v1",
+      "value": {
+        "const": "cell-render-request"
+      }
+    },
+    {
+      "digest": "sha256:ba9be51dd9184e778bb3b7ca14fae24cc4c710adeb32e4374902bacd4cbd2608",
+      "schemaId": "flag.schema.v1",
+      "value": {
+        "enum": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "digest": "sha256:09dc5338c2b0f2472e421603f089adb57be1058caf4cbb304639d5fe22b2bad6",
+      "schemaId": "presence-state.schema.v1",
+      "value": {
+        "enum": [
+          "missing",
+          "null",
+          "empty-string",
+          "invalid-type",
+          "present"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:5d59fc5fb020fee7ea29a2493b457aa7d8fb46f8012dff970cc65a8a2aa42cad",
+      "schemaId": "obligation-status.schema.v1",
+      "value": {
+        "enum": [
+          "satisfied",
+          "violated"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:6e995783d148bec1ab6db0e94bca553fc84de596dfc6f52c6b78d567ae99d6fe",
+      "schemaId": "render-role.schema.v1",
+      "value": {
+        "enum": [
+          "hidden",
+          "visible-floor",
+          "visible-wall"
+        ]
+      }
+    },
+    {
+      "digest": "sha256:05fd6fb2eba2f69a4da7c8170b16cc6a4e14ab5dd3efa0c3777d9b970982ecb3",
+      "schemaId": "result-kind.schema.v1",
+      "value": {
+        "const": "render-role-result"
+      }
+    },
+    {
+      "digest": "sha256:edf4de6bd1bae5d84ab9bd34ed94fb5d3bbfcfab4d713446621307111e2c52f2",
+      "schemaId": "render-role-result.schema.v1",
+      "value": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "render-role-result"
+          },
+          "role": {
+            "enum": [
+              "hidden",
+              "visible-floor",
+              "visible-wall"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "role"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

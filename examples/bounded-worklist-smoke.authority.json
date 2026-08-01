@@ -93,14 +93,16 @@
     "indexedReads": [],
     "iterations": [
       {
+        "iterationKind": "linear",
         "iterationId": "count-up-to-threshold",
         "itemConceptId": "counter-state",
         "resultConceptId": "counter-result-list",
+        "resultMode": "history",
         "maxSteps": 15,
         "unresolvedDisposition": "WORKLIST_ITERATION_LIMIT_EXCEEDED",
         "continueCondition": {
           "operandPath": ["count"],
-          "compareToFactId": "stop-threshold",
+          "compareTo": { "kind": "fact", "factId": "stop-threshold" },
           "continueWhenStates": ["less-than"]
         },
         "advance": {
@@ -140,7 +142,7 @@
     "catalogs": [],
     "executionBinding": {
       "executorPortId": "semantic-authority-runtime.v1",
-      "runtimeProfileId": "finite-semantic-runtime.v2",
+      "runtimeProfileId": "finite-semantic-runtime.v3",
       "serializationProfileId": "canonical-json.v1"
     }
   }

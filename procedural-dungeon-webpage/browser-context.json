@@ -1,0 +1,102 @@
+{
+  "authoritySelections": {
+    "keyboardCommandProfileId": "dungeon-keyboard-command.bundle.v1",
+    "movementProfileId": "dungeon-movement.bundle.v1",
+    "rasterizeProfileId": "dungeon-rasterize.bundle.v1",
+    "renderRoleProfileId": "dungeon-render-role.bundle.v1",
+    "topologyProfileId": "dungeon-topology.bundle.v1",
+    "visibilityProfileId": "dungeon-visibility.bundle.v1"
+  },
+  "authorityType": "browser-context-authority.v1",
+  "browserBindings": {
+    "applicationRootElementId": "dungeon-application",
+    "canvasElementId": "view",
+    "coordinatesElementId": "coords",
+    "godModeControlId": "godModeBtn",
+    "regenerateControlId": "regenerateBtn"
+  },
+  "canvasProfile": {
+    "gridHeightTiles": 60,
+    "gridWidthTiles": 60,
+    "heightPx": 600,
+    "imageRendering": "pixelated",
+    "tileSizePx": 10,
+    "widthPx": 600
+  },
+  "colorPalette": {
+    "hiddenFogOfWar": "#000000",
+    "player": "#55ff33",
+    "visibleFloor": "#9a8c98",
+    "visibleWall": "#4a4e69"
+  },
+  "contextId": "procedural-dungeon-webpage.v1",
+  "domainOperations": {
+    "authoredAlgorithm": [
+      "resolve-player-spawn",
+      "resolve-god-mode-state"
+    ],
+    "ontologyOwned": [
+      "resolve-player-movement",
+      "resolve-cell-render-role",
+      "translate-keyboard-command",
+      "resolve-dungeon-topology",
+      "rasterize-topology-into-grid",
+      "calculate-visibility-sweep"
+    ]
+  },
+  "executionBinding": {
+    "executorPortId": "browser-vendored-semantic-runtime.v1",
+    "revalidationPolicy": "governance-time-only",
+    "runtimeProfileId": "finite-semantic-runtime.v3"
+  },
+  "keyboardBindings": [
+    {
+      "command": "move-north",
+      "observedKey": "ArrowUp"
+    },
+    {
+      "command": "move-north",
+      "observedKey": "w"
+    },
+    {
+      "command": "move-north",
+      "observedKey": "W"
+    },
+    {
+      "command": "move-south",
+      "observedKey": "ArrowDown"
+    },
+    {
+      "command": "move-south",
+      "observedKey": "s"
+    },
+    {
+      "command": "move-south",
+      "observedKey": "S"
+    },
+    {
+      "command": "move-west",
+      "observedKey": "ArrowLeft"
+    },
+    {
+      "command": "move-west",
+      "observedKey": "a"
+    },
+    {
+      "command": "move-west",
+      "observedKey": "A"
+    },
+    {
+      "command": "move-east",
+      "observedKey": "ArrowRight"
+    },
+    {
+      "command": "move-east",
+      "observedKey": "d"
+    },
+    {
+      "command": "move-east",
+      "observedKey": "D"
+    }
+  ]
+}

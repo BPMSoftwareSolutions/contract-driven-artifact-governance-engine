@@ -24,6 +24,14 @@ import {
   makeIndexedReadOntologyBundle,
   makeIndexedReadSemanticAuthority
 } from "./fixtures/indexed-read-ontology.mjs";
+import {
+  makeGuardedIterationOntologyBundle,
+  makeGuardedIterationSemanticAuthority
+} from "./fixtures/guarded-iteration-ontology.mjs";
+import {
+  makeBranchingWorklistOntologyBundle,
+  makeBranchingWorklistSemanticAuthority
+} from "./fixtures/branching-worklist-ontology.mjs";
 
 function openAiResponse(content = "hello", finishReason = "stop") {
   return {
@@ -682,5 +690,94 @@ test("dynamic indexed reads resolve in-bounds and fail closed out of bounds", ()
     (error) =>
       error instanceof SemanticExecutionDispositionError &&
       error.disposition === "INDEX_OUT_OF_BOUNDS"
+  );
+});
+
+test("guarded advance steps evaluate independently against the pre-step snapshot", () => {
+  const bundle = makeGuardedIterationOntologyBundle();
+  assert.deepEqual(inspectDeterministicOntology(bundle), {
+    ontologyId: "guarded-iteration-smoke",
+    ontologyDisposition: "ONTOLOGY_AUTHORITY_CLOSED",
+    findings: []
+  });
+
+  const result = executeSemanticAuthority(bundle, {
+    a: 0,
+    e: 0,
+    steps: 0,
+    limit: 3,
+    history: [],
+    lookup: -1,
+    historyEcho: -1
+  });
+
+  assert.deepEqual(result.history, [
+    { a: 0, e: 0, steps: 0, limit: 3, history: [], lookup: -1, historyEcho: -1 },
+    { a: 0, e: 1, steps: 1, limit: 3, history: [0], lookup: 100, historyEcho: 0 },
+    { a: 10, e: 2, steps: 2, limit: 3, history: [0, 1], lookup: 200, historyEcho: 1 },
+    { a: 20, e: 3, steps: 3, limit: 3, history: [0, 1, 2], lookup: 300, historyEcho: 2 }
+  ]);
+});
+
+test("guarded iteration ceiling fails closed when the continue condition never resolves", () => {
+  const declaration = makeGuardedIterationSemanticAuthority();
+  declaration.ontology.iterations[0].maxSteps = 1;
+  const bundle = projectBoundSemanticExecutionBundle(declaration);
+  assert.throws(
+    () =>
+      executeSemanticAuthority(bundle, {
+        a: 0,
+        e: 0,
+        steps: 0,
+        limit: 3,
+        history: [],
+        lookup: -1,
+        historyEcho: -1
+      }),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.disposition === "GUARDED_SWEEP_LIMIT_EXCEEDED"
+  );
+});
+
+test("branching worklist closes and resolves a real 2-way-splitting queue deterministically", () => {
+  const bundle = makeBranchingWorklistOntologyBundle();
+  assert.deepEqual(inspectDeterministicOntology(bundle), {
+    ontologyId: "branching-worklist-smoke",
+    ontologyDisposition: "ONTOLOGY_AUTHORITY_CLOSED",
+    findings: []
+  });
+
+  const result = executeSemanticAuthority(bundle, { lo: 0, width: 8, depth: 0 });
+  assert.deepEqual(result, {
+    resultType: "range-sequence-result",
+    partition: {
+      leafLo: [0, 5, 8, 13],
+      leafWidth: [2, 2, 2, 2],
+      priorCount: [0, 1, 2, 3]
+    }
+  });
+});
+
+test("branching worklist item ceiling fails closed when the queue cannot drain in time", () => {
+  const declaration = makeBranchingWorklistSemanticAuthority();
+  declaration.ontology.iterations[0].maxItems = 3;
+  const bundle = projectBoundSemanticExecutionBundle(declaration);
+  assert.throws(
+    () => executeSemanticAuthority(bundle, { lo: 0, width: 8, depth: 0 }),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.disposition === "RANGE_PARTITION_LIMIT_EXCEEDED"
+  );
+});
+
+test("branching worklist maxItems ceiling above the runtime limit fails closed at validation", () => {
+  const declaration = makeBranchingWorklistSemanticAuthority();
+  declaration.ontology.iterations[0].maxItems = 9999;
+  assert.equal(
+    validateBoundSemanticExecutionAuthority(declaration).some(
+      (finding) => finding.findingId === "ONTOLOGY_ITERATION_UNBOUNDED"
+    ),
+    true
   );
 });

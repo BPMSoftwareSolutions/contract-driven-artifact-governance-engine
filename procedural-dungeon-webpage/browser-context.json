@@ -7,96 +7,889 @@
     "topologyProfileId": "dungeon-topology.bundle.v1",
     "visibilityProfileId": "dungeon-visibility.bundle.v1"
   },
-  "authorityType": "browser-context-authority.v1",
-  "browserBindings": {
-    "applicationRootElementId": "dungeon-application",
-    "canvasElementId": "view",
-    "coordinatesElementId": "coords",
-    "godModeControlId": "godModeBtn",
-    "regenerateControlId": "regenerateBtn"
-  },
+  "authorityType": "browser-context-authority.v2",
   "canvasProfile": {
     "gridHeightTiles": 60,
     "gridWidthTiles": 60,
     "heightPx": 600,
-    "imageRendering": "pixelated",
+    "paddingTiles": 9,
     "tileSizePx": 10,
     "widthPx": 600
   },
-  "colorPalette": {
-    "hiddenFogOfWar": "#000000",
-    "player": "#55ff33",
-    "visibleFloor": "#9a8c98",
-    "visibleWall": "#4a4e69"
-  },
-  "contextId": "procedural-dungeon-webpage.v1",
-  "domainOperations": {
-    "authoredAlgorithm": [
-      "resolve-player-spawn",
-      "resolve-god-mode-state"
-    ],
-    "ontologyOwned": [
-      "resolve-player-movement",
-      "resolve-cell-render-role",
-      "translate-keyboard-command",
-      "resolve-dungeon-topology",
-      "rasterize-topology-into-grid",
-      "calculate-visibility-sweep"
-    ]
-  },
-  "executionBinding": {
-    "executorPortId": "browser-vendored-semantic-runtime.v1",
-    "revalidationPolicy": "governance-time-only",
-    "runtimeProfileId": "finite-semantic-runtime.v3"
-  },
-  "keyboardBindings": [
-    {
-      "command": "move-north",
-      "observedKey": "ArrowUp"
+  "commandVectors": {
+    "move-east": {
+      "dx": 1,
+      "dy": 0
     },
-    {
-      "command": "move-north",
-      "observedKey": "w"
+    "move-north": {
+      "dx": 0,
+      "dy": -1
     },
-    {
-      "command": "move-north",
-      "observedKey": "W"
+    "move-south": {
+      "dx": 0,
+      "dy": 1
     },
-    {
-      "command": "move-south",
-      "observedKey": "ArrowDown"
-    },
-    {
-      "command": "move-south",
-      "observedKey": "s"
-    },
-    {
-      "command": "move-south",
-      "observedKey": "S"
-    },
-    {
-      "command": "move-west",
-      "observedKey": "ArrowLeft"
-    },
-    {
-      "command": "move-west",
-      "observedKey": "a"
-    },
-    {
-      "command": "move-west",
-      "observedKey": "A"
-    },
-    {
-      "command": "move-east",
-      "observedKey": "ArrowRight"
-    },
-    {
-      "command": "move-east",
-      "observedKey": "d"
-    },
-    {
-      "command": "move-east",
-      "observedKey": "D"
+    "move-west": {
+      "dx": -1,
+      "dy": 0
     }
-  ]
+  },
+  "contextAuthorityType": "browser-context-authority.v2",
+  "contextId": "procedural-dungeon-webpage.v2",
+  "documentProjection": {
+    "applicationRootElementId": "dungeon-application",
+    "children": [
+      {
+        "attributes": {
+          "class": "stage"
+        },
+        "children": [
+          {
+            "attributes": {
+              "height": "600",
+              "id": "view",
+              "width": "600"
+            },
+            "tag": "canvas"
+          }
+        ],
+        "tag": "div"
+      },
+      {
+        "attributes": {
+          "class": "panel"
+        },
+        "children": [
+          {
+            "tag": "h1",
+            "text": "Dungeon Control"
+          },
+          {
+            "attributes": {
+              "class": "field"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "class": "label"
+                },
+                "tag": "span",
+                "text": "Player Position"
+              },
+              {
+                "attributes": {
+                  "class": "value",
+                  "id": "coords"
+                },
+                "tag": "span",
+                "text": "(0, 0)"
+              }
+            ],
+            "tag": "div"
+          },
+          {
+            "attributes": {
+              "id": "regenerateBtn",
+              "type": "button"
+            },
+            "tag": "button",
+            "text": "Regenerate Map"
+          },
+          {
+            "attributes": {
+              "id": "godModeBtn",
+              "type": "button"
+            },
+            "tag": "button",
+            "text": "Toggle God Mode"
+          },
+          {
+            "attributes": {
+              "class": "hint"
+            },
+            "tag": "div",
+            "text": "Move with Arrow Keys or WASD. Walls block movement and sight. God Mode reveals the full generated layout for debugging."
+          }
+        ],
+        "tag": "div"
+      }
+    ],
+    "cssText": ":root{--bg:#05060a;--grid-line:#10233a;--panel-bg:#0b1220;--panel-border:#1fd6ff;--accent:#1fd6ff;--accent-dim:#0d7a94;--text:#d8f6ff;--player:#55ff33}*{box-sizing:border-box}html,body{height:100%}body{margin:0;background-color:var(--bg);background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:32px 32px;color:var(--text);font-family:Consolas,\"Courier New\",monospace;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}.app{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center}.stage{position:relative;border:2px solid var(--panel-border);box-shadow:0 0 18px rgba(31,214,255,.55),inset 0 0 24px rgba(31,214,255,.12);background:#000;line-height:0}canvas#view{width:600px;height:600px;image-rendering:pixelated;display:block}.panel{width:260px;background:var(--panel-bg);border:1px solid var(--panel-border);box-shadow:0 0 14px rgba(31,214,255,.35);border-radius:6px;padding:18px;display:flex;flex-direction:column;gap:16px}.panel h1{font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 4px;text-shadow:0 0 8px rgba(31,214,255,.8)}.field{display:flex;flex-direction:column;gap:4px;border:1px solid var(--accent-dim);border-radius:4px;padding:10px 12px;background:rgba(31,214,255,.05)}.field .label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-dim)}.field .value{font-size:18px;color:var(--player);text-shadow:0 0 6px rgba(85,255,51,.7)}button{font-family:inherit;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);background:linear-gradient(180deg,#103049,#071522);border:1px solid var(--accent);border-radius:4px;padding:10px 12px;cursor:pointer;transition:box-shadow .15s ease,transform .05s ease}button:hover{box-shadow:0 0 10px rgba(31,214,255,.8)}button:active{transform:translateY(1px)}button.active{background:linear-gradient(180deg,#1c3f22,#0a1a0d);border-color:var(--player);color:var(--player);box-shadow:0 0 10px rgba(85,255,51,.6)}.hint{font-size:11px;color:var(--accent-dim);line-height:1.5}",
+    "title": "Procedural Dungeon Generator - Fog of War"
+  },
+  "effectBindings": {
+    "coordinates": {
+      "elementId": "coords"
+    },
+    "godModeControl": {
+      "className": "active",
+      "elementId": "godModeBtn"
+    },
+    "regenerateControl": {
+      "elementId": "regenerateBtn"
+    },
+    "viewport": {
+      "elementId": "view"
+    }
+  },
+  "eventBindings": [
+    {
+      "event": "click",
+      "target": "regenerateControl",
+      "workflowId": "regenerate"
+    },
+    {
+      "event": "click",
+      "target": "godModeControl",
+      "workflowId": "toggle-god-mode"
+    },
+    {
+      "event": "keydown",
+      "target": "document",
+      "workflowId": "translate-and-move"
+    }
+  ],
+  "initialState": {
+    "godMode": 0,
+    "map": [],
+    "player": {
+      "x": 0,
+      "y": 0
+    },
+    "visibility": []
+  },
+  "lifecycle": {
+    "initialWorkflowId": "regenerate"
+  },
+  "renderingProjection": {
+    "frameType": "pixel-grid-rendering-frame.v1",
+    "palette": {
+      "background": "#000000",
+      "hidden": null,
+      "player": "#55ff33",
+      "visible-floor": "#9a8c98",
+      "visible-wall": "#4a4e69"
+    }
+  },
+  "workflows": {
+    "regenerate": [
+      {
+        "authoritySelection": "topologyProfileId",
+        "input": {
+          "$object": {
+            "depth": 0,
+            "h": {
+              "$op": "subtract",
+              "args": [
+                {
+                  "$ref": "context.canvasProfile.gridHeightTiles"
+                },
+                2
+              ]
+            },
+            "w": {
+              "$op": "subtract",
+              "args": [
+                {
+                  "$ref": "context.canvasProfile.gridWidthTiles"
+                },
+                2
+              ]
+            },
+            "x": {
+              "$op": "add",
+              "args": [
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                },
+                1
+              ]
+            },
+            "y": {
+              "$op": "add",
+              "args": [
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                },
+                1
+              ]
+            }
+          }
+        },
+        "operation": "invoke-authority",
+        "target": "local.topologyResult"
+      },
+      {
+        "authoritySelection": "rasterizeProfileId",
+        "input": {
+          "$object": {
+            "cellGridValue": 0,
+            "cellIndex": 0,
+            "cellX": 0,
+            "cellY": 0,
+            "containCount": 0,
+            "currentRow": {
+              "$array": []
+            },
+            "isLastColumn": 0,
+            "rectCount": 0,
+            "rectHiX": {
+              "$ref": "local.topologyResult.topology.rectHiX"
+            },
+            "rectHiY": {
+              "$ref": "local.topologyResult.topology.rectHiY"
+            },
+            "rectLoX": {
+              "$ref": "local.topologyResult.topology.rectLoX"
+            },
+            "rectLoY": {
+              "$ref": "local.topologyResult.topology.rectLoY"
+            },
+            "rows": {
+              "$array": []
+            },
+            "slotIndex": -1
+          }
+        },
+        "operation": "invoke-authority",
+        "target": "local.rasterResult"
+      },
+      {
+        "operation": "assign",
+        "target": "state.map",
+        "value": {
+          "$ref": "local.rasterResult.grid.rows"
+        }
+      },
+      {
+        "operation": "assign",
+        "target": "state.player.x",
+        "value": {
+          "$op": "add",
+          "args": [
+            {
+              "$op": "index",
+              "args": [
+                {
+                  "$ref": "local.topologyResult.topology.roomX"
+                },
+                0
+              ]
+            },
+            2
+          ]
+        }
+      },
+      {
+        "operation": "assign",
+        "target": "state.player.y",
+        "value": {
+          "$op": "add",
+          "args": [
+            {
+              "$op": "index",
+              "args": [
+                {
+                  "$ref": "local.topologyResult.topology.roomY"
+                },
+                0
+              ]
+            },
+            2
+          ]
+        }
+      },
+      {
+        "height": {
+          "$op": "add",
+          "args": [
+            {
+              "$ref": "context.canvasProfile.gridHeightTiles"
+            },
+            {
+              "$op": "multiply",
+              "args": [
+                2,
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                }
+              ]
+            }
+          ]
+        },
+        "operation": "fill-grid",
+        "target": "state.visibility",
+        "value": 0,
+        "width": {
+          "$op": "add",
+          "args": [
+            {
+              "$ref": "context.canvasProfile.gridWidthTiles"
+            },
+            {
+              "$op": "multiply",
+              "args": [
+                2,
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "operation": "run-workflow",
+        "workflowId": "update-visibility"
+      },
+      {
+        "operation": "run-workflow",
+        "workflowId": "render"
+      },
+      {
+        "operation": "run-workflow",
+        "workflowId": "update-coordinates"
+      }
+    ],
+    "render": [
+      {
+        "operation": "assign",
+        "target": "local.operations",
+        "value": {
+          "$array": []
+        }
+      },
+      {
+        "endExclusive": {
+          "$ref": "context.canvasProfile.gridHeightTiles"
+        },
+        "iterator": "y",
+        "operation": "for-range",
+        "start": 0,
+        "steps": [
+          {
+            "endExclusive": {
+              "$ref": "context.canvasProfile.gridWidthTiles"
+            },
+            "iterator": "x",
+            "operation": "for-range",
+            "start": 0,
+            "steps": [
+              {
+                "authoritySelection": "renderRoleProfileId",
+                "input": {
+                  "$object": {
+                    "cellValue": {
+                      "$op": "index",
+                      "args": [
+                        {
+                          "$ref": "state.map"
+                        },
+                        {
+                          "$op": "add",
+                          "args": [
+                            {
+                              "$ref": "loop.y"
+                            },
+                            {
+                              "$ref": "context.canvasProfile.paddingTiles"
+                            }
+                          ]
+                        },
+                        {
+                          "$op": "add",
+                          "args": [
+                            {
+                              "$ref": "loop.x"
+                            },
+                            {
+                              "$ref": "context.canvasProfile.paddingTiles"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "godMode": {
+                      "$ref": "state.godMode"
+                    },
+                    "revealed": {
+                      "$op": "index",
+                      "args": [
+                        {
+                          "$ref": "state.visibility"
+                        },
+                        {
+                          "$op": "add",
+                          "args": [
+                            {
+                              "$ref": "loop.y"
+                            },
+                            {
+                              "$ref": "context.canvasProfile.paddingTiles"
+                            }
+                          ]
+                        },
+                        {
+                          "$op": "add",
+                          "args": [
+                            {
+                              "$ref": "loop.x"
+                            },
+                            {
+                              "$ref": "context.canvasProfile.paddingTiles"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                "operation": "invoke-authority",
+                "target": "local.renderDecision"
+              },
+              {
+                "condition": {
+                  "$op": "not-equal",
+                  "args": [
+                    {
+                      "$op": "lookup",
+                      "args": [
+                        {
+                          "$ref": "context.renderingProjection.palette"
+                        },
+                        {
+                          "$ref": "local.renderDecision.role"
+                        }
+                      ]
+                    },
+                    null
+                  ]
+                },
+                "operation": "when",
+                "steps": [
+                  {
+                    "operation": "append",
+                    "target": {
+                      "$ref": "local.operations"
+                    },
+                    "value": {
+                      "$object": {
+                        "fill": {
+                          "$op": "lookup",
+                          "args": [
+                            {
+                              "$ref": "context.renderingProjection.palette"
+                            },
+                            {
+                              "$ref": "local.renderDecision.role"
+                            }
+                          ]
+                        },
+                        "height": {
+                          "$ref": "context.canvasProfile.tileSizePx"
+                        },
+                        "operation": "fill-rectangle",
+                        "semanticRole": {
+                          "$ref": "local.renderDecision.role"
+                        },
+                        "width": {
+                          "$ref": "context.canvasProfile.tileSizePx"
+                        },
+                        "x": {
+                          "$op": "multiply",
+                          "args": [
+                            {
+                              "$ref": "loop.x"
+                            },
+                            {
+                              "$ref": "context.canvasProfile.tileSizePx"
+                            }
+                          ]
+                        },
+                        "y": {
+                          "$op": "multiply",
+                          "args": [
+                            {
+                              "$ref": "loop.y"
+                            },
+                            {
+                              "$ref": "context.canvasProfile.tileSizePx"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operation": "append",
+        "target": {
+          "$ref": "local.operations"
+        },
+        "value": {
+          "$object": {
+            "fill": {
+              "$ref": "context.renderingProjection.palette.player"
+            },
+            "height": {
+              "$ref": "context.canvasProfile.tileSizePx"
+            },
+            "operation": "fill-rectangle",
+            "semanticRole": "player",
+            "width": {
+              "$ref": "context.canvasProfile.tileSizePx"
+            },
+            "x": {
+              "$op": "multiply",
+              "args": [
+                {
+                  "$op": "subtract",
+                  "args": [
+                    {
+                      "$ref": "state.player.x"
+                    },
+                    {
+                      "$ref": "context.canvasProfile.paddingTiles"
+                    }
+                  ]
+                },
+                {
+                  "$ref": "context.canvasProfile.tileSizePx"
+                }
+              ]
+            },
+            "y": {
+              "$op": "multiply",
+              "args": [
+                {
+                  "$op": "subtract",
+                  "args": [
+                    {
+                      "$ref": "state.player.y"
+                    },
+                    {
+                      "$ref": "context.canvasProfile.paddingTiles"
+                    }
+                  ]
+                },
+                {
+                  "$ref": "context.canvasProfile.tileSizePx"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "operation": "assign",
+        "target": "local.frame",
+        "value": {
+          "$object": {
+            "canvas": {
+              "$object": {
+                "background": {
+                  "$ref": "context.renderingProjection.palette.background"
+                },
+                "height": {
+                  "$ref": "context.canvasProfile.heightPx"
+                },
+                "width": {
+                  "$ref": "context.canvasProfile.widthPx"
+                }
+              }
+            },
+            "frameType": {
+              "$ref": "context.renderingProjection.frameType"
+            },
+            "operations": {
+              "$ref": "local.operations"
+            }
+          }
+        }
+      },
+      {
+        "bindingId": "viewport",
+        "frame": {
+          "$ref": "local.frame"
+        },
+        "operation": "apply-canvas-frame"
+      }
+    ],
+    "toggle-god-mode": [
+      {
+        "operation": "assign",
+        "target": "state.godMode",
+        "value": {
+          "$op": "toggle-binary",
+          "args": [
+            {
+              "$ref": "state.godMode"
+            }
+          ]
+        }
+      },
+      {
+        "bindingId": "godModeControl",
+        "operation": "toggle-class",
+        "present": {
+          "$op": "equal",
+          "args": [
+            {
+              "$ref": "state.godMode"
+            },
+            1
+          ]
+        }
+      },
+      {
+        "operation": "run-workflow",
+        "workflowId": "render"
+      }
+    ],
+    "translate-and-move": [
+      {
+        "authoritySelection": "keyboardCommandProfileId",
+        "failureDisposition": "halt-workflow",
+        "input": {
+          "$object": {
+            "key": {
+              "$ref": "event.key"
+            }
+          }
+        },
+        "operation": "invoke-authority",
+        "target": "local.commandDecision"
+      },
+      {
+        "operation": "prevent-default"
+      },
+      {
+        "authoritySelection": "movementProfileId",
+        "input": {
+          "$object": {
+            "dx": {
+              "$op": "index",
+              "args": [
+                {
+                  "$ref": "context.commandVectors"
+                },
+                {
+                  "$ref": "local.commandDecision.command"
+                },
+                "dx"
+              ]
+            },
+            "dy": {
+              "$op": "index",
+              "args": [
+                {
+                  "$ref": "context.commandVectors"
+                },
+                {
+                  "$ref": "local.commandDecision.command"
+                },
+                "dy"
+              ]
+            },
+            "grid": {
+              "$op": "slice-grid",
+              "args": [
+                {
+                  "$ref": "state.map"
+                },
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                },
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                },
+                {
+                  "$ref": "context.canvasProfile.gridHeightTiles"
+                },
+                {
+                  "$ref": "context.canvasProfile.gridWidthTiles"
+                }
+              ]
+            },
+            "playerX": {
+              "$op": "subtract",
+              "args": [
+                {
+                  "$ref": "state.player.x"
+                },
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                }
+              ]
+            },
+            "playerY": {
+              "$op": "subtract",
+              "args": [
+                {
+                  "$ref": "state.player.y"
+                },
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                }
+              ]
+            }
+          }
+        },
+        "operation": "invoke-authority",
+        "target": "local.movementDecision"
+      },
+      {
+        "condition": {
+          "$op": "equal",
+          "args": [
+            {
+              "$ref": "local.movementDecision.status"
+            },
+            "MOVEMENT_AUTHORIZED"
+          ]
+        },
+        "operation": "when",
+        "steps": [
+          {
+            "operation": "assign",
+            "target": "state.player.x",
+            "value": {
+              "$op": "add",
+              "args": [
+                {
+                  "$ref": "local.movementDecision.x"
+                },
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                }
+              ]
+            }
+          },
+          {
+            "operation": "assign",
+            "target": "state.player.y",
+            "value": {
+              "$op": "add",
+              "args": [
+                {
+                  "$ref": "local.movementDecision.y"
+                },
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                }
+              ]
+            }
+          },
+          {
+            "operation": "run-workflow",
+            "workflowId": "update-visibility"
+          },
+          {
+            "operation": "run-workflow",
+            "workflowId": "render"
+          },
+          {
+            "operation": "run-workflow",
+            "workflowId": "update-coordinates"
+          }
+        ]
+      }
+    ],
+    "update-coordinates": [
+      {
+        "bindingId": "coordinates",
+        "operation": "set-text",
+        "value": {
+          "$op": "format",
+          "args": [
+            "({0}, {1})",
+            {
+              "$op": "subtract",
+              "args": [
+                {
+                  "$ref": "state.player.x"
+                },
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                }
+              ]
+            },
+            {
+              "$op": "subtract",
+              "args": [
+                {
+                  "$ref": "state.player.y"
+                },
+                {
+                  "$ref": "context.canvasProfile.paddingTiles"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "update-visibility": [
+      {
+        "authoritySelection": "visibilityProfileId",
+        "input": {
+          "$object": {
+            "blockedRayId": -999,
+            "cellValue": 0,
+            "cellX": 0,
+            "cellY": 0,
+            "globalStep": 0,
+            "grid": {
+              "$ref": "state.map"
+            },
+            "playerX": {
+              "$ref": "state.player.x"
+            },
+            "playerY": {
+              "$ref": "state.player.y"
+            },
+            "rayId": 0,
+            "relX": 0,
+            "relY": 0,
+            "revealedX": {
+              "$array": []
+            },
+            "revealedY": {
+              "$array": []
+            },
+            "scratchRow": {
+              "$op": "index",
+              "args": [
+                {
+                  "$ref": "state.map"
+                },
+                0
+              ]
+            },
+            "wallHitRayId": -999
+          }
+        },
+        "operation": "invoke-authority",
+        "target": "local.visibilityResult"
+      },
+      {
+        "grid": {
+          "$ref": "state.visibility"
+        },
+        "operation": "write-indexed-pairs",
+        "value": 1,
+        "xs": {
+          "$ref": "local.visibilityResult.visibilityState.revealedX"
+        },
+        "ys": {
+          "$ref": "local.visibilityResult.visibilityState.revealedY"
+        }
+      }
+    ]
+  }
 }

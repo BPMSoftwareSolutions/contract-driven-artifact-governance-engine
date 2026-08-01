@@ -18,19 +18,24 @@ import { inspectSourceAuthority } from "contract-driven-artifact-governance-engi
 
 const appDir = process.argv[2] ?? process.cwd();
 const adapters = [
-  "movement-adapter.mjs",
-  "render-role-adapter.mjs",
-  "keyboard-command-adapter.mjs",
-  "topology-adapter.mjs",
-  "rasterize-adapter.mjs",
-  "visibility-adapter.mjs"
+  ["movement-adapter.mjs", 2, "executeSemanticAuthority"],
+  ["render-role-adapter.mjs", 2, "executeSemanticAuthority"],
+  ["keyboard-command-adapter.mjs", 2, "executeSemanticAuthority"],
+  ["topology-adapter.mjs", 2, "executeSemanticAuthority"],
+  ["rasterize-adapter.mjs", 2, "executeSemanticAuthority"],
+  ["visibility-adapter.mjs", 2, "executeSemanticAuthority"],
+  ["application-adapter.mjs", 9, "executeBrowserApplication"]
 ];
 
-for (const file of adapters) {
+for (const [file, importCount, invocation] of adapters) {
   const text = readFileSync(path.join(appDir, "src", file), "utf8");
   const inspection = inspectSourceAuthority(text, "javascript");
 
-  assert.equal(inspection.imports.length, 2, `${file}: expected exactly 2 imports`);
+  assert.equal(
+    inspection.imports.length,
+    importCount,
+    `${file}: expected exactly ${importCount} imports`
+  );
   assert.equal(inspection.functions.length, 1, `${file}: expected exactly 1 function`);
   assert.equal(
     inspection.invocationOccurrences.length,
@@ -39,8 +44,8 @@ for (const file of adapters) {
   );
   assert.equal(
     inspection.invocationOccurrences[0].invocation,
-    "executeSemanticAuthority",
-    `${file}: the one invocation must be executeSemanticAuthority`
+    invocation,
+    `${file}: the one invocation must be ${invocation}`
   );
   assert.equal(inspection.returns.length, 1, `${file}: expected exactly 1 return`);
   assert.equal(

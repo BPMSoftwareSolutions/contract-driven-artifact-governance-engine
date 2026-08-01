@@ -8,8 +8,8 @@
 > The governed capability lives at
 > [procedural-dungeon-webpage/](../procedural-dungeon-webpage/), governed by
 > [examples/procedural-dungeon-webpage.contract.json](../examples/procedural-dungeon-webpage.contract.json)
-> (15 artifacts, `TRUSTED` — see
-> [.governance/receipts/procedural-dungeon-webpage.receipt.json](../.governance/receipts/procedural-dungeon-webpage.receipt.json)).
+> (18 artifacts, `TRUSTED` — see
+> [.governance/receipts/procedural-dungeon-webpage.receipt.json](../procedural-dungeon-webpage/.governance/receipts/procedural-dungeon-webpage.receipt.json)).
 > Six deterministic ontologies now own every domain decision in the page —
 > movement, per-cell render role, keyboard translation, BSP region
 > splitting, room/corridor rasterization, and the 76-ray Bresenham
@@ -26,7 +26,7 @@
 
 The browser file should **not be the place where the dungeon rules, visibility policy, rendering meanings, UI structure, colors, controls, or acceptance expectations are invented**. The page should be a projection surface that binds DOM and Canvas ports to a closed semantic authority bundle.
 
-Your current HTML works, but almost all of the capability meaning is embedded directly in the page:
+The original HTML worked, but almost all of the capability meaning was embedded directly in the page:
 
 * Grid dimensions, tile dimensions, vision radius, map values, and colors are constants.
 * BSP generation policy is encoded through functions and branching.
@@ -311,10 +311,10 @@ The context binds it to `#regenerateBtn`.
 
 # 4. Separate domain semantics from browser mechanics
 
-> **Evidence.** [procedural-dungeon-webpage/browser-context.json:33-45](../procedural-dungeon-webpage/browser-context.json#L33-L45) declares `domainOperations.ontologyOwned` (6 operations: movement, render-role, keyboard-command, topology, rasterize, visibility) vs `domainOperations.authoredAlgorithm` (2 trivial, non-decisional operations: spawn-point selection, God-Mode toggle) — this is the classification this section asks for, made explicit and gated.
-> - The `writesCanvasRectangle`-shaped mechanical port is realized verbatim at [procedural-dungeon-webpage/index.html:750-757](../procedural-dungeon-webpage/index.html#L750-L757) (`applyRenderingFrame`): only `ctx.fillRect`/`ctx.fillStyle` calls, zero decisions.
-> - The five things a browser adapter "may not decide" are each answered by an ontology call, never a local branch: whether a tile is visible → [dungeon-render-role.authority.json](../examples/dungeon-render-role.authority.json); whether a tile is a wall / which color represents it → [dungeon-rasterize.authority.json](../examples/dungeon-rasterize.authority.json) + `ROLE_FILL` at [index.html:698-702](../procedural-dungeon-webpage/index.html#L698-L702) (colors are data, keyed by the ontology's own role string, not chosen by a conditional); whether God Mode overrides visibility → [dungeon-render-role.authority.json](../examples/dungeon-render-role.authority.json); whether a movement request is accepted → [dungeon-movement.authority.json](../examples/dungeon-movement.authority.json).
-> - The six ontology adapters realize the collapsed "browser adapter may do this" shape exactly — see section 5's evidence.
+> **Evidence.** [procedural-dungeon-webpage/browser-context.json](../procedural-dungeon-webpage/browser-context.json) now owns the document tree, CSS, initial state, event bindings, command vectors, workflows, rendering-frame projection, effect bindings, and all six ontology selections. The contract's `subject.authority.authoredAlgorithm` is empty.
+> - The `writesCanvasRectangle` mechanical port lives only in the generic trusted host, [lib/browser-application-runtime.mjs](../lib/browser-application-runtime.mjs). The governed page and its application adapter contain no canvas calls or iteration.
+> - Visibility, wall/floor meaning, God Mode rendering, movement legality, keyboard translation, topology, rasterization, and sightline resolution remain in the six ontology bundles. Palette and frame-shape data live in the context authority rather than in HTML constants.
+> - All six ontology adapters plus the aggregate [application adapter](../procedural-dungeon-webpage/src/application-adapter.mjs) realize the collapsed execution-body shape; see section 5.
 
 The browser should expose mechanical ports.
 
@@ -369,10 +369,9 @@ Those answers arrive in the authorized request.
 
 # 5. The projected page should become very small
 
-> **Evidence — stated plainly, including what this section's literal ideal does not (yet) mean here.**
-> The exact collapsed shape this section describes — one import, one
-> function, one authority invocation, one direct return, zero decisions —
-> is fully realized and machine-checked for all six domain-logic bindings:
+> **Evidence.** The target is now realized, not deferred. [index.html](../procedural-dungeon-webpage/index.html) is 353 bytes and 14 lines: an empty application root, one static import of `application-adapter.mjs`, and one invocation with `globalThis`. It contains no CSS, application data, local state, function declaration, branch, iteration, failure mechanic, object construction, or state mutation.
+>
+> The capability-specific [application adapter](../procedural-dungeon-webpage/src/application-adapter.mjs) is one function, one `executeBrowserApplication(...)` invocation, one direct return, and zero locally executable mechanics. The same shape remains machine-checked for all six domain-logic bindings:
 > [procedural-dungeon-webpage/src/movement-adapter.mjs](../procedural-dungeon-webpage/src/movement-adapter.mjs),
 > [render-role-adapter.mjs](../procedural-dungeon-webpage/src/render-role-adapter.mjs),
 > [keyboard-command-adapter.mjs](../procedural-dungeon-webpage/src/keyboard-command-adapter.mjs),
@@ -383,29 +382,17 @@ Those answers arrive in the authorized request.
 > export function resolve\*(request) { return
 > executeSemanticAuthority(bundle, request); }`, proven zero-decision by
 > static analysis at gate time
-> ([verification-tools/verifies-collapsed-adapters.mjs:20-27](../verification-tools/verifies-collapsed-adapters.mjs#L20-L27)).
+> ([verification-tools/verifies-collapsed-adapters.mjs](../verification-tools/verifies-collapsed-adapters.mjs)).
 >
-> `index.html`'s own inline `<script type="module">` is **not** reduced to
-> that one-line shape, and this is disclosed rather than glossed over: it
-> additionally contains a vendored DAG-walk executor
-> ([index.html:204-573](../procedural-dungeon-webpage/index.html#L204-L573)) because a vanilla
-> browser cannot resolve the `contract-driven-artifact-governance-engine`
-> bare-specifier import the adapters above use (decision
-> `vendored-browser-executor-skips-type-revalidation`,
-> [contract:26161-26165](../examples/procedural-dungeon-webpage.contract.json#L26161-L26165)). What *is* collapsed is every
-> capability-specific function that remains: `generateMap()`
-> ([index.html:640-668](../procedural-dungeon-webpage/index.html#L640-L668)), `updateVisibility()`
-> ([index.html:675-696](../procedural-dungeon-webpage/index.html#L675-L696)), and `tryMove()`
-> ([index.html:778-796](../procedural-dungeon-webpage/index.html#L778-L796)) are each just "gather
-> inputs, call `runDungeonOntology`, apply the authorized result" — no
-> `if`/`for` of their own decides anything about the dungeon. The vendored
-> executor itself is mechanical (a topological DAG walk, the same shape
-> whether it runs the movement ontology or the BSP ontology) and is proven
-> byte-for-byte behaviorally equivalent to the real engine for all six
-> bundles, not just asserted equivalent —
-> [verification-tools/verifies-semantic-equivalence.mjs:60-119](../verification-tools/verifies-semantic-equivalence.mjs#L60-L119).
+> The boundary is fail-closed. The gate runs
+> [verifies-page-bootstrap-mechanics.mjs](../verification-tools/verifies-page-bootstrap-mechanics.mjs),
+> which checks the complete inline program structurally and makes any extra
+> import, invocation, declaration, function, branch, iteration, failure,
+> construction, or local state a red signal. The extracted semantic executor
+> remains equivalent to the real engine for ten canonical fixtures across all
+> six bundles, proven by [verifies-semantic-equivalence.mjs](../verification-tools/verifies-semantic-equivalence.mjs).
 
-The current page has the full game embedded. The target body would look more like this:
+The projected body is now:
 
 ```html
 <!DOCTYPE html>
@@ -413,41 +400,37 @@ The current page has the full game embedded. The target body would look more lik
 <head>
   <meta charset="UTF-8">
   <title>Procedural Dungeon Generator</title>
-  <link rel="stylesheet" href="./projected-dungeon-page.css">
 </head>
 <body>
-  <main id="dungeon-application"></main>
+  <main id="dungeon-application" class="app"></main>
 
   <script type="module">
-    import { executeSemanticAuthority } from
-      "contract-driven-artifact-governance-engine/semantic-runtime";
-
-    import dungeonApplicationAuthority from
-      "./procedural-dungeon-webpage.bundle.json"
-      with { type: "json" };
-
-    executeSemanticAuthority(
-      dungeonApplicationAuthority,
-      {
-        document,
-        window
-      }
-    );
+    import { startsProceduralDungeonPage } from
+      "./src/application-adapter.mjs";
+    startsProceduralDungeonPage(globalThis);
   </script>
 </body>
 </html>
 ```
 
-Potentially, even the HTML shell can be projected.
+The HTML shell is itself projected from the contract.
 
 The capability-specific body becomes:
 
 ```javascript
-export const startsProceduralDungeonPage = browserContext =>
-  executeSemanticAuthority(
-    proceduralDungeonWebpageBundle,
-    browserContext
+export function startsProceduralDungeonPage(browserContextPort) {
+  return executeBrowserApplication(
+    applicationAuthority,
+    browserContext,
+    browserContextPort,
+    keyboardCommandAuthority,
+    movementAuthority,
+    rasterizeAuthority,
+    renderRoleAuthority,
+    topologyAuthority,
+    visibilityAuthority
   );
+}
 ```
 
 That is the whole public application body:
@@ -465,14 +448,15 @@ All the game meaning remains in governed JSON.
 
 # 6. Treat the page as several projected artifact families
 
-> **Evidence.** [examples/procedural-dungeon-webpage.contract.json:3-25940](../examples/procedural-dungeon-webpage.contract.json#L3-L25940) (`artifacts` array) declares exactly this composition as 15 independently-governed, independently-proof-checked artifacts, not one undifferentiated blob:
-> - document-structure projection: `procedural-dungeon-webpage.v1` (`utf8-text.v1`, [contract:5](../examples/procedural-dungeon-webpage.contract.json#L5))
-> - semantic-execution authority projections: `dungeon-movement-bundle.v1` / `dungeon-render-role-bundle.v1` / `dungeon-keyboard-command-bundle.v1` / `dungeon-topology-bundle.v1` / `dungeon-rasterize-bundle.v1` / `dungeon-visibility-bundle.v1` ([contract:52](../examples/procedural-dungeon-webpage.contract.json#L52), [778](../examples/procedural-dungeon-webpage.contract.json#L778), [1521](../examples/procedural-dungeon-webpage.contract.json#L1521), [3298](../examples/procedural-dungeon-webpage.contract.json#L3298), [6652](../examples/procedural-dungeon-webpage.contract.json#L6652), [21639](../examples/procedural-dungeon-webpage.contract.json#L21639))
-> - browser-binding projections: the six `*-adapter.v1` artifacts ([contract:1963](../examples/procedural-dungeon-webpage.contract.json#L1963), [2331](../examples/procedural-dungeon-webpage.contract.json#L2331), [2699](../examples/procedural-dungeon-webpage.contract.json#L2699), [24837](../examples/procedural-dungeon-webpage.contract.json#L24837), [25205](../examples/procedural-dungeon-webpage.contract.json#L25205), [25573](../examples/procedural-dungeon-webpage.contract.json#L25573))
-> - context projection: `browser-context-authority.v1` ([contract:3067](../examples/procedural-dungeon-webpage.contract.json#L3067))
-> - documentation projection: `procedural-dungeon-webpage-readme.v1` ([contract:3191](../examples/procedural-dungeon-webpage.contract.json#L3191))
+> **Evidence.** [examples/procedural-dungeon-webpage.contract.json](../examples/procedural-dungeon-webpage.contract.json) declares 18 independently projected and proof-checked artifacts:
+> - the 353-byte HTML packaging projection;
+> - six bound ontology bundles and six collapsed ontology adapters;
+> - the browser-context authority containing document, presentation, state, workflow, and binding data;
+> - a browser-application port schema and aggregate semantic projection authority;
+> - the collapsed application adapter;
+> - generated contract documentation.
 >
-> The final `index.html` is still the packaging artifact (single-file delivery, per this section's own admission that this is a delivery constraint) — but every piece of *meaning* inside it traces to one of the 14 other artifacts above, each independently gated.
+> [lib/browser-semantic-runtime.mjs](../lib/browser-semantic-runtime.mjs) and [lib/browser-application-runtime.mjs](../lib/browser-application-runtime.mjs) are shared trusted engine infrastructure outside the governed webpage workspace. They interpret declared authority; they do not carry page-specific dungeon constants, DOM structure, workflow order, palette values, key mappings, or state transitions.
 
 A single-file delivery can still be produced, but the contract should not treat it as one undifferentiated text blob.
 
@@ -511,14 +495,16 @@ A page being visually attractive is not enough. A hash match alone is also not e
 
 > **Evidence.** Every artifact declares `proof.contentSha256` +
 > `proof.expectedByteLength` checked by `content-digest-verifier.v1`, e.g.
-> [contract:25086-25095](../examples/procedural-dungeon-webpage.contract.json#L25086-L25095) (`topology-adapter.v1`, also carrying
+> the `topology-adapter.v1` entry in [the contract](../examples/procedural-dungeon-webpage.contract.json) (also carrying
 > `artifact-provenance-verifier.v1`, `authority-closure-verifier.v1`,
-> `source-token-structure-verifier.v1`). "No undeclared inline script /
-> style block / external dependency" is enforced structurally: the contract
-> declares `procedural-dungeon-webpage.v1` as one `utf8-text.v1` byte-exact
-> artifact with no separate script/style artifacts to smuggle extra code
-> into, and gate gave `TRUSTED` against exactly this rule —
-> [.governance/receipts/procedural-dungeon-webpage.receipt.json](../.governance/receipts/procedural-dungeon-webpage.receipt.json).
+> `source-token-structure-verifier.v1`). The contract declares
+> `procedural-dungeon-webpage.v1` as one `utf8-text.v1` byte-exact artifact;
+> `verify-page-bootstrap-mechanics.v1` additionally requires exactly one
+> application-adapter import and one authority invocation, while structurally
+> rejecting all local executable mechanics. The imported generic execution
+> infrastructure is checked separately for behavioral equivalence.
+> The full gate issued `TRUSTED` against that composition —
+> [procedural-dungeon-webpage receipt](../procedural-dungeon-webpage/.governance/receipts/procedural-dungeon-webpage.receipt.json).
 
 ```text
 Does index.html equal its authorized projection?
@@ -536,7 +522,7 @@ Checks:
 
 ## B. Structural conformance
 
-> **Evidence.** [verification-tools/verifies-dom-structure.mjs:27-38](../verification-tools/verifies-dom-structure.mjs#L27-L38) checks exactly the six required surfaces this section lists (main application root, 600×600 canvas, coordinate display, regenerate control, God Mode control, keyboard engagement surface), wired into the gate via [contract:25957-25966](../examples/procedural-dungeon-webpage.contract.json#L25957-L25966) (`verify-dom-structure.v1`) — passing (`DOM_STRUCTURE_CONFORMS`) as part of the `TRUSTED` gate run.
+> **Evidence.** [verification-tools/verifies-dom-structure.mjs](../verification-tools/verifies-dom-structure.mjs) executes the projected application adapter against an instrumented browser port, then compares the observed 600×600 canvas, coordinate display, regenerate control, God Mode control, event bindings, initial map/visibility state, and initial frame to [browser-context.json](../procedural-dungeon-webpage/browser-context.json). It passes as `DOM_STRUCTURE_CONFORMS` inside the `TRUSTED` gate; it no longer searches expanded HTML with regular expressions.
 
 ```text
 Does the projected page contain the required surfaces?
@@ -596,7 +582,7 @@ This happens without a browser.
 
 ## D. Projection-equivalence conformance
 
-> **Evidence.** [verification-tools/verifies-semantic-equivalence.mjs](../verification-tools/verifies-semantic-equivalence.mjs) extracts the page's own vendored executor and runs it against the exact same fixtures as the real `executeSemanticAuthority`, `assert.deepEqual`-comparing full result objects (not just a summary) for all six ontologies — [verifies-semantic-equivalence.mjs:52-118](../verification-tools/verifies-semantic-equivalence.mjs#L52-L118) — wired into the gate at [contract:25977-25986](../examples/procedural-dungeon-webpage.contract.json#L25977-L25986), passing `SEMANTIC_EXECUTION_EQUIVALENCE_CONFORMS (10 fixtures)`.
+> **Evidence.** [verification-tools/verifies-semantic-equivalence.mjs](../verification-tools/verifies-semantic-equivalence.mjs) imports the extracted browser executor directly and runs it against the exact same fixtures as the real `executeSemanticAuthority`, `assert.deepEqual`-comparing full result objects (not just a summary) for all six ontologies. It is wired into [the contract](../examples/procedural-dungeon-webpage.contract.json) and passes `SEMANTIC_EXECUTION_EQUIVALENCE_CONFORMS (10 fixtures)`.
 
 ```text
 Does the browser projection behave equivalently
@@ -629,7 +615,7 @@ For example:
 
 ## E. Visual projection conformance
 
-> **Evidence.** [verification-tools/verifies-render-command-frame.mjs:61-114](../verification-tools/verifies-render-command-frame.mjs#L61-L114) compares the authorized render-command stream (canvas dimensions, tile dimensions, operation count, rendered wall/floor count, hidden-tile omission, exact fill colors) for a canonical fixture, not pixels — wired into the gate at [contract:25987-25996](../examples/procedural-dungeon-webpage.contract.json#L25987-L25996), passing `RENDER_COMMAND_FRAME_CONFORMS`. A screenshot is deliberately not this project's primary evidence, matching this section's own "screenshot can be secondary evidence" statement.
+> **Evidence.** [verification-tools/verifies-render-command-frame.mjs](../verification-tools/verifies-render-command-frame.mjs) compares the authorized render-command stream (canvas dimensions, tile dimensions, operation count, rendered wall/floor count, hidden-tile omission, exact fill colors) for a canonical fixture, not pixels. It is wired into [the contract](../examples/procedural-dungeon-webpage.contract.json) and passes `RENDER_COMMAND_FRAME_CONFORMS`. A screenshot is deliberately not this project's primary evidence, matching this section's own "screenshot can be secondary evidence" statement.
 
 ```text
 Did the browser physically present the expected state?
@@ -656,7 +642,7 @@ A screenshot can be secondary evidence, but the primary conformance should compa
 
 # 8. Introduce a canonical rendering-frame contract
 
-> **Evidence.** `buildRenderingFrame()` at [procedural-dungeon-webpage/index.html:711-748](../procedural-dungeon-webpage/index.html#L711-L748) emits exactly this section's `pixel-grid-rendering-frame.v1` shape (`frameType`, `canvas: {width,height,background}`, `operations: [{operation:"fill-rectangle", semanticRole, x,y,width,height,fill}]`) — every `semanticRole`/`fill` comes from the render-role ontology's decision for that cell, never a local conditional. `applyRenderingFrame()` at [index.html:750-757](../procedural-dungeon-webpage/index.html#L750-L757) is the "dumb executor": only `ctx.fillRect`/`ctx.fillStyle`, zero rendering decisions. This design is a recorded, tied-out contract decision — [contract:26166-26170](../examples/procedural-dungeon-webpage.contract.json#L26166-L26170) (`rendering-frame-is-data-before-canvas-calls`). Proven by [verification-tools/verifies-render-command-frame.mjs](../verification-tools/verifies-render-command-frame.mjs) (section 7E).
+> **Evidence.** The `render` workflow and `renderingProjection` section in [browser-context.json](../procedural-dungeon-webpage/browser-context.json) declare the complete `pixel-grid-rendering-frame.v1` construction as data. Each cell role comes from the render-role ontology; dimensions, coordinates, palette lookup, player operation, and canvas binding come from context expressions and steps. [lib/browser-application-runtime.mjs](../lib/browser-application-runtime.mjs) is the generic command applicator. No renderer or frame builder remains in `index.html` or the application adapter. [verifies-render-command-frame.mjs](../verification-tools/verifies-render-command-frame.mjs) proves the declared command testimony.
 
 Do not allow the browser renderer to inspect dungeon state and decide what to draw.
 
@@ -722,7 +708,7 @@ No rendering decisions remain in the body.
 
 # 9. Model keyboard input as canonical commands
 
-> **Evidence.** [examples/dungeon-keyboard-command.authority.json:52-65](../examples/dungeon-keyboard-command.authority.json#L52-L65) declares exactly this section's `observedKey -> command` finite-value classification (all 12 original bindings: ArrowUp/w/W → move-north, etc.), with `unmatchedDisposition: "INPUT_NOT_ADMITTED"` at [line 66](../examples/dungeon-keyboard-command.authority.json#L66) matching this section's `unmappedDisposition`. The browser adapter — [procedural-dungeon-webpage/src/keyboard-command-adapter.mjs](../procedural-dungeon-webpage/src/keyboard-command-adapter.mjs) — only observes `event.key` and forwards it; `handleKeyDown()` at [index.html:798-807](../procedural-dungeon-webpage/index.html#L798-L807) translates the returned canonical command through `dungeonMovementBundle`'s own legality check, never deciding movement itself. Command-vector translation is data, not a switch statement — [index.html:767-772](../procedural-dungeon-webpage/index.html#L767-L772) (`COMMAND_VECTOR`). Proven by [test/dungeon-ontology.test.mjs:113-134](../test/dungeon-ontology.test.mjs#L113-L134) (every declared key admitted, everything else rejected).
+> **Evidence.** [examples/dungeon-keyboard-command.authority.json](../examples/dungeon-keyboard-command.authority.json) declares the 12 admitted key-to-command classifications and rejects every unmatched key. The `translate-and-move` workflow and `commandVectors` data in [browser-context.json](../procedural-dungeon-webpage/browser-context.json) bind the observed event to keyboard translation, movement authority, state transition, visibility update, frame projection, and coordinate update. No key handler, vector object, exception path, or movement branch remains in HTML. [test/dungeon-ontology.test.mjs](../test/dungeon-ontology.test.mjs) proves the finite key classification independently.
 
 The current file maps individual keyboard values directly to movement deltas. 
 
@@ -786,8 +772,10 @@ The movement ontology determines whether that command is allowed.
 > output for a given seed exactly matches an independently-authored
 > reference generator's output for that same seed, across 5 different
 > seeds — [test/dungeon-ontology.test.mjs:360-393](../test/dungeon-ontology.test.mjs#L360-L393).
-> "Regenerate" still means "recompute from the declared seed" — `resetGame()`
-> at [index.html:809-815](../procedural-dungeon-webpage/index.html#L809-L815) calls `generateMap()` fresh, which always re-derives from
+> "Regenerate" still means "recompute from the declared seed": the context's
+> `regenerate` workflow invokes topology and rasterization afresh, resets
+> visibility, projects the player spawn from the topology result, and renders.
+> The topology call always re-derives from
 > the same fact-declared seed, so it is byte-identical across runs by
 > construction — production seed rotation is the one piece this section
 > leaves as future work ("the seed may be generated mechanically"),
@@ -841,12 +829,12 @@ For production, the seed may be generated mechanically, but it must become obser
 
 # 11. Gherkin should drive the webpage proof
 
-> **Evidence.** [examples/procedural-dungeon-webpage.contract.json:26314-26457](../examples/procedural-dungeon-webpage.contract.json#L26314-L26457) (`lineage`) declares exactly this section's 4 features and their scenarios/obligations as separate, independently-traceable records (not one large scenario):
-> - "Generate a connected BSP dungeon" → feature `generate-connected-dungeon` → scenario `generate-a-connected-bsp-dungeon` → obligation `produce-only-connected-floor-regions` → responsibility `topology-adapter.v1` — [contract:26317-26321](../examples/procedural-dungeon-webpage.contract.json#L26317-L26321), [26340-26343](../examples/procedural-dungeon-webpage.contract.json#L26340-L26343), [26404-26409](../examples/procedural-dungeon-webpage.contract.json#L26404-L26409).
-> - "Move onto adjacent floor tile" / "Reject movement into a wall" → feature `move-the-player` → [contract:26432-26440](../examples/procedural-dungeon-webpage.contract.json#L26432-L26440), tested at [test/dungeon-ontology.test.mjs:36-77](../test/dungeon-ontology.test.mjs#L36-L77).
-> - "Stop a visibility ray at a wall" (the decomposed, single-outcome version this section itself flags as needing atomicity review) → feature `calculate-visibility` → obligation `reveal-only-unobstructed-cells` → responsibility `visibility-adapter.v1` — [contract:26374-26378](../examples/procedural-dungeon-webpage.contract.json#L26374-L26378), [26417-26423](../examples/procedural-dungeon-webpage.contract.json#L26417-L26423).
-> - "Render one authorized dungeon frame" → feature `present-the-dungeon` → obligation `apply-declared-canvas-operations-only` — [contract:26333-26336](../examples/procedural-dungeon-webpage.contract.json#L26333-L26336), [26360-26363](../examples/procedural-dungeon-webpage.contract.json#L26360-L26363).
-> - A fifth obligation this document doesn't name explicitly but that generation genuinely needs — rasterizing the decided topology into a grid — is also lineage-tracked: obligation `rasterize-topology-into-dense-grid`, scenario `rasterize-decided-topology-into-a-grid` — [contract:26370-26373](../examples/procedural-dungeon-webpage.contract.json#L26370-L26373), [26452-26455](../examples/procedural-dungeon-webpage.contract.json#L26452-L26455).
+> **Evidence.** The `lineage` authority in [examples/procedural-dungeon-webpage.contract.json](../examples/procedural-dungeon-webpage.contract.json) declares this section's four features and their scenarios/obligations as separate, independently traceable records:
+> - "Generate a connected BSP dungeon" → feature `generate-connected-dungeon` → scenario `generate-a-connected-bsp-dungeon` → obligation `produce-only-connected-floor-regions` → responsibility `topology-adapter.v1`.
+> - "Move onto adjacent floor tile" / "Reject movement into a wall" → feature `move-the-player`, tested by [test/dungeon-ontology.test.mjs](../test/dungeon-ontology.test.mjs).
+> - "Stop a visibility ray at a wall" → feature `calculate-visibility` → obligation `reveal-only-unobstructed-cells` → responsibility `visibility-adapter.v1`.
+> - "Render one authorized dungeon frame" → feature `present-the-dungeon` → obligation `apply-declared-canvas-operations-only` → the ontology adapter and aggregate application adapter responsibilities.
+> - Rasterizing decided topology is independently tracked as obligation `rasterize-topology-into-dense-grid` under scenario `rasterize-decided-topology-into-a-grid`.
 
 The prompt contains several independent obligations. It should not remain one large scenario.
 
@@ -904,7 +892,7 @@ Scenario: Render one authorized dungeon frame
 
 # 12. The webpage contract should bind lineage end-to-end
 
-> **Evidence.** [procedural-dungeon-webpage/index.html:6-9](../procedural-dungeon-webpage/index.html#L6-L9) carries exactly the 4 provenance `<meta>` tags this section specifies (`artifact-provenance-sha256`, `canonical-lineage-sha256`, `semantic-authority-sha256`, `projection-authority-sha256`), computed and written by `governed-artifacts project --write` from the contract's own interpretation base rather than hand-typed. The full chain this section diagrams (Project → Feature → Scenario → Obligation → Responsibility → Semantic authority → Web projection authority → HTML/CSS/JS payload) is the exact structure connecting [contract:26314-26457](../examples/procedural-dungeon-webpage.contract.json#L26314-L26457) (lineage) to the artifacts in section 6's evidence to the meta tags above. Each projected portion traces to its feature slice per this section's own table: canvas structure → `present-the-dungeon`; movement binding → `move-the-player`; visibility execution → `calculate-visibility`; generation execution → `generate-connected-dungeon` (see section 11's evidence for the exact scenario/obligation ids).
+> **Evidence.** The complete chain is committed by the contract, the projection ledger, and the conformance receipt rather than bloating the 353-byte HTML with a copied metadata block. The generated [application adapter](../procedural-dungeon-webpage/src/application-adapter.mjs) carries the sealed Project → Feature → Scenario → Obligation → Responsibility → Semantic authority → Projection authority header. The HTML artifact's exact authority, content digest, byte length, and relationships are committed in [the contract](../examples/procedural-dungeon-webpage.contract.json) and [.governance projection ledger](../procedural-dungeon-webpage/.governance/projections/procedural-dungeon-webpage.ledger.json), with final trust in the [receipt](../procedural-dungeon-webpage/.governance/receipts/procedural-dungeon-webpage.receipt.json).
 
 Every final page should carry a generated provenance header or embedded metadata block.
 
@@ -969,7 +957,7 @@ The final artifact provenance commits to the complete composition.
 
 # 13. Suggested contract anatomy
 
-> **Evidence.** [examples/procedural-dungeon-webpage.contract.json](../examples/procedural-dungeon-webpage.contract.json) realizes this anatomy under this repo's own established contract schema (a superset of the shape sketched here, since it must also satisfy `governed-artifact-contract.schema.json` v1.13.0): `subject` at [contract:26479-26503](../examples/procedural-dungeon-webpage.contract.json#L26479-L26503), the semantic/context authority equivalent as `runtimeAuthorities`+`dependencies` at [contract:26464-26478](../examples/procedural-dungeon-webpage.contract.json#L26464-L26478)/[26005-26125](../examples/procedural-dungeon-webpage.contract.json#L26005-L26125), and `artifacts[]` with exactly this section's `artifactId`/`artifactKind`/`relativePath`/`projection`/`proof.verifierIds`/`proof.contentSha256`/`proof.expectedByteLength` shape — e.g. `topology-adapter.v1` at [contract:24837-25204](../examples/procedural-dungeon-webpage.contract.json#L24837-L25204), whose `proof.verifierIds` (`artifact-provenance-verifier.v1`, `authority-closure-verifier.v1`, `content-digest-verifier.v1`, `source-token-structure-verifier.v1`) are the same four-verifier family this section proposes.
+> **Evidence.** [examples/procedural-dungeon-webpage.contract.json](../examples/procedural-dungeon-webpage.contract.json) realizes this anatomy under this repo's established v1.13 contract schema: `subject`, `runtimeAuthorities`, `dependencies`, and 18 `artifacts[]` entries carry the sketched `artifactId`/`artifactKind`/`relativePath`/`projection`/`proof` shape. Every collapsed JavaScript adapter carries the four-verifier family proposed here: provenance, authority closure, content digest, and source-token structure.
 
 ```json
 {
@@ -1023,9 +1011,9 @@ The final artifact provenance commits to the complete composition.
 > trust posture           CONFORMS
 > trust                    TRUSTED
 > ```
-> — 15 classified artifacts, sealed in
-> [.governance/receipts/procedural-dungeon-webpage.receipt.json](../.governance/receipts/procedural-dungeon-webpage.receipt.json)
-> and [.governance/projections/procedural-dungeon-webpage.ledger.json](../.governance/projections/procedural-dungeon-webpage.ledger.json).
+> — 18 classified artifacts, sealed in
+> [.governance/receipts/procedural-dungeon-webpage.receipt.json](../procedural-dungeon-webpage/.governance/receipts/procedural-dungeon-webpage.receipt.json)
+> and [.governance/projections/procedural-dungeon-webpage.ledger.json](../procedural-dungeon-webpage/.governance/projections/procedural-dungeon-webpage.ledger.json).
 > The fail-closed cascade this section diagrams is not just asserted: it is
 > the same engine-wide mechanism proven in
 > [test/engine.test.mjs](../test/engine.test.mjs) (one RED finding halts
@@ -1088,18 +1076,21 @@ REJECTED
 
 > **Evidence.** This rule is recorded as an explicit, tied-out design
 > decision, not left implicit:
-> - `bsp-generation-and-bresenham-visibility-are-ontology-owned` — [contract:26185-26189](../examples/procedural-dungeon-webpage.contract.json#L26185-L26189): "no authored branching or iteration remains for these decisions anywhere in the page or its adapters."
-> - `render-frame-cell-loop-is-mechanical-not-a-decision` — [contract:26191-26195](../examples/procedural-dungeon-webpage.contract.json#L26191-L26195): the one remaining loop in the page is classified explicitly as mechanism, not domain knowledge, with the reasoning recorded rather than assumed.
-> - `movement-render-role-keyboard-are-ontology-owned` and `runtime-extended-with-guarded-and-branching-worklist-primitives` — [contract:26143-26147](../examples/procedural-dungeon-webpage.contract.json#L26143-L26147), [26179-26183](../examples/procedural-dungeon-webpage.contract.json#L26179-L26183).
+> - `bsp-generation-and-bresenham-visibility-are-ontology-owned`: no authored branching or iteration remains for these decisions anywhere in the page or its adapters.
+> - `render-frame-cell-loop-is-mechanical-not-a-decision`: the page and capability body own no loop; the bounded grid projection is declared by context data and interpreted by generic infrastructure.
+> - `movement-render-role-keyboard-are-ontology-owned` and `runtime-extended-with-guarded-and-branching-worklist-primitives`: the domain algorithms remain in finite, governed ontology data.
+> - `browser-execution-module-stays-outside-governed-scope`: both generic interpreters are engine infrastructure, while structural gate-time verification makes reintroducing mechanics into `index.html` or `application-adapter.mjs` a red conformance signal.
+> - `html-collapses-to-one-authority-invocation`: the contract records and ties out the corrected 353-byte packaging projection explicitly.
 >
-> What the page knows, end to end: `document`/`window`/canvas element ids
-> ([browser-context.json:11-16](../procedural-dungeon-webpage/browser-context.json#L11-L16)) and how to call
-> `runDungeonOntology()` six times. What the ontologies know: a wall is
+> What the page knows, end to end: one empty root and how to invoke the
+> collapsed application adapter. The context knows every DOM id, style,
+> binding, workflow, state transition, command vector, frame expression, and
+> ontology selection. What the ontologies know: a wall is
 > `1`/floor is `0` ([dungeon-movement.authority.json](../examples/dungeon-movement.authority.json)), movement legality
 > ([dungeon-movement.authority.json](../examples/dungeon-movement.authority.json)), how visibility resolves and what
 > blocks a ray ([dungeon-visibility.authority.json](../examples/dungeon-visibility.authority.json)), what a valid
-> dungeon requires ([dungeon-topology.authority.json](../examples/dungeon-topology.authority.json)), which rendering
-> role receives which color ([dungeon-render-role.authority.json](../examples/dungeon-render-role.authority.json)). The
+> dungeon requires ([dungeon-topology.authority.json](../examples/dungeon-topology.authority.json)), and which rendering
+> role applies ([dungeon-render-role.authority.json](../examples/dungeon-render-role.authority.json)). The context maps those roles to palette colors. The
 > page is disposable in exactly the sense this section means: delete
 > `index.html` and every one of those answers still exists, gated and
 > tested, independent of any browser ever running.

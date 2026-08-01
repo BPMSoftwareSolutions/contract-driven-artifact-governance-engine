@@ -47,17 +47,13 @@ flowchart LR
 | --- | --- |
 | Subject type | `interactive-web-capability` |
 | Subject ID | `procedural-dungeon-webpage.v1` |
-| Purpose | Generate and interact with a connected dungeon under dynamic fog of war, where movement, render role, and keyboard translation are governed ontology decisions. |
+| Purpose | Generate and interact with a connected dungeon whose application structure, presentation, state transitions, workflows, rendering projection, and specialized decisions are governed by context and ontology authorities. |
 
 Structured subject authority:
 
 ```json
 {
-  "authoredAlgorithm": [
-    "generate-dungeon",
-    "resolve-player-spawn",
-    "calculate-visibility-sweep"
-  ],
+  "authoredAlgorithm": [],
   "closedLoop": [
     "ontology",
     "adapter",
@@ -69,7 +65,10 @@ Structured subject authority:
   "ontologyOwned": [
     "resolve-player-movement",
     "resolve-cell-render-role",
-    "translate-keyboard-command"
+    "translate-keyboard-command",
+    "resolve-dungeon-topology",
+    "rasterize-topology-into-grid",
+    "calculate-visibility-sweep"
   ]
 }
 ```
@@ -78,14 +77,17 @@ Structured subject authority:
 
 | Artifact | Kind | Purpose | Relative path | Media type | Ownership | Mutability |
 | --- | --- | --- | --- | --- | --- | --- |
-| `procedural-dungeon-webpage.v1` | `interactive-html-document` | Renders the playable procedural dungeon; movement, cell render role, and keyboard translation are decided by three closed ontologies, not by authored branching in this page. | `index.html` | `text/html` | `contract-owned` | `replace-by-projection` |
+| `procedural-dungeon-webpage.v1` | `interactive-html-document` | Projects only an empty application root and one invocation of the governed collapsed application adapter; it owns no executable application mechanics. | `index.html` | `text/html` | `contract-owned` | `replace-by-projection` |
 | `dungeon-movement-bundle.v1` | `deterministic-ontology-bundle` | Materializes the closed movement-resolution ontology as an executable bundle. | `contracts/dungeon-movement.bundle.json` | `application/json` | `contract-owned` | `replace-by-projection` |
 | `dungeon-render-role-bundle.v1` | `deterministic-ontology-bundle` | Materializes the closed cell render-role ontology as an executable bundle. | `contracts/dungeon-render-role.bundle.json` | `application/json` | `contract-owned` | `replace-by-projection` |
 | `dungeon-keyboard-command-bundle.v1` | `deterministic-ontology-bundle` | Materializes the closed keyboard-command ontology as an executable bundle. | `contracts/dungeon-keyboard-command.bundle.json` | `application/json` | `contract-owned` | `replace-by-projection` |
 | `movement-adapter.v1` | `javascript-module` | Binds one declared movement request to the trusted movement-resolution ontology. | `src/movement-adapter.mjs` | `text/javascript` | `contract-owned` | `replace-by-projection` |
 | `render-role-adapter.v1` | `javascript-module` | Binds one declared cell render request to the trusted render-role ontology. | `src/render-role-adapter.mjs` | `text/javascript` | `contract-owned` | `replace-by-projection` |
 | `keyboard-command-adapter.v1` | `javascript-module` | Binds one declared keyboard request to the trusted keyboard-command ontology. | `src/keyboard-command-adapter.mjs` | `text/javascript` | `contract-owned` | `replace-by-projection` |
-| `browser-context-authority.v1` | `canonical-json-value` | Declares which DOM/canvas surfaces this page binds to which ontology bundles. | `browser-context.json` | `application/json` | `contract-owned` | `replace-by-projection` |
+| `browser-context-authority.v1` | `canonical-json-value` | Owns the webpage document, presentation, state, event, workflow, rendering-frame, effect-binding, and ontology-selection semantics interpreted by the trusted browser application runtime. | `browser-context.json` | `application/json` | `contract-owned` | `replace-by-projection` |
+| `browser-application-authority.v1` | `semantic-execution-authority` | Authorizes one direct browser-application projection from the declared browser port. | `contracts/procedural-dungeon-application.authority.json` | `application/json` | `contract-owned` | `replace-by-projection` |
+| `browser-application-port-schema.v1` | `json-schema` | Constrains the browser port supplied to the aggregate page authority. | `contracts/browser-application-port.schema.json` | `application/schema+json` | `contract-owned` | `replace-by-projection` |
+| `application-adapter.v1` | `javascript-module` | Binds the one aggregate browser-context semantic projection authority to the trusted browser application executor and directly returns its result. | `src/application-adapter.mjs` | `text/javascript` | `contract-owned` | `replace-by-projection` |
 | `procedural-dungeon-webpage-readme.v1` | `markdown-document` | Projects the complete contract authority into an architecture review document for team sign-off. | `README.md` | `text/markdown` | `contract-owned` | `replace-by-projection` |
 | `dungeon-topology-bundle.v1` | `deterministic-ontology-bundle` | Materializes the closed BSP region-partitioning ontology (a genuine branching worklist, not authored recursion) as an executable bundle. | `contracts/dungeon-topology.bundle.json` | `application/json` | `contract-owned` | `replace-by-projection` |
 | `dungeon-rasterize-bundle.v1` | `deterministic-ontology-bundle` | Materializes the closed rasterization ontology (unified paint-rectangle containment sweep) as an executable bundle. | `contracts/dungeon-rasterize.bundle.json` | `application/json` | `contract-owned` | `replace-by-projection` |
@@ -106,6 +108,9 @@ Structured subject authority:
 | `render-role-adapter.v1` | `artifact-provenance-verifier.v1`, `authority-closure-verifier.v1`, `content-digest-verifier.v1`, `source-token-structure-verifier.v1` | content digest |
 | `keyboard-command-adapter.v1` | `artifact-provenance-verifier.v1`, `authority-closure-verifier.v1`, `content-digest-verifier.v1`, `source-token-structure-verifier.v1` | content digest |
 | `browser-context-authority.v1` | `content-digest-verifier.v1` | content digest |
+| `browser-application-authority.v1` | `content-digest-verifier.v1` | content digest |
+| `browser-application-port-schema.v1` | `content-digest-verifier.v1`, `json-meta-schema-verifier.v1` | content digest; meta-schema |
+| `application-adapter.v1` | `artifact-provenance-verifier.v1`, `authority-closure-verifier.v1`, `content-digest-verifier.v1`, `source-token-structure-verifier.v1` | content digest |
 | `procedural-dungeon-webpage-readme.v1` | `content-digest-verifier.v1`, `markdown-section-verifier.v1` | content digest; sections: # Procedural Dungeon Generator: Governed Webpage Projection, ## Future-State Preview, ## Reviewer Perspective, ## Governing Loop, ## Contract Authority, ## Semantic Subject, ## Artifact Family, ## Projection Authorities, ## Dependency Authorities, ## Effect Authorities, ## Runtime Authorities, ## Source Authority Closures, ## Authority Closure Profile, ## Artifact Scope Authority, ## Operation Authorities, ## Artifact Relationships, ## Exclusions, ## Conformance Evaluation, ## Terminal Dispositions, ## Receipt Requirements, ## Claim Policies, ## Review Checklist |
 | `dungeon-topology-bundle.v1` | `content-digest-verifier.v1` | content digest |
 | `dungeon-rasterize-bundle.v1` | `content-digest-verifier.v1` | content digest |
@@ -128,6 +133,9 @@ Content digests and byte lengths remain in the JSON contract. They are excluded 
 | `render-role-adapter.v1` | `projected` | `provenance-sealed-source-projector.v1` | `render-role-adapter.v1-authority` | `lossless-source-tokens.v1` |
 | `keyboard-command-adapter.v1` | `projected` | `provenance-sealed-source-projector.v1` | `keyboard-command-adapter.v1-authority` | `lossless-source-tokens.v1` |
 | `browser-context-authority.v1` | `projected` | `canonical-json-value-projector.v1` | `browser-context-authority.v1-authority` | `canonical-json-value.v1` |
+| `browser-application-authority.v1` | `projected` | `canonical-json-value-projector.v1` | `browser-application-semantic-authority.v1` | `canonical-json-value.v1` |
+| `browser-application-port-schema.v1` | `projected` | `canonical-json-value-projector.v1` | `browser-application-port-schema-authority.v1` | `canonical-json-value.v1` |
+| `application-adapter.v1` | `projected` | `provenance-sealed-source-projector.v1` | `application-adapter-source-authority.v1` | `lossless-source-tokens.v1` |
 | `procedural-dungeon-webpage-readme.v1` | `projected` | `governed-artifact-contract-markdown-projector.v1` | `procedural-dungeon-webpage-readme-authority.v1` | `governed-artifact-contract-markdown.v1` |
 | `dungeon-topology-bundle.v1` | `projected` | `bound-semantic-execution-authority-projector.v1` | `dungeon-topology-bundle.v1-authority` | `canonical-json-value.v1` |
 | `dungeon-rasterize-bundle.v1` | `projected` | `bound-semantic-execution-authority-projector.v1` | `dungeon-rasterize-bundle.v1-authority` | `canonical-json-value.v1` |
@@ -141,12 +149,15 @@ Content digests and byte lengths remain in the JSON contract. They are excluded 
 | Dependency | Specifier | Allowed imports | Allowed invocations | Used by artifacts | Authority |
 | --- | --- | --- | --- | --- | --- |
 | `semantic-authority-runtime.v1` | `contract-driven-artifact-governance-engine` | `executeSemanticAuthority` | `executeSemanticAuthority` | `movement-adapter.v1`, `render-role-adapter.v1`, `keyboard-command-adapter.v1`, `topology-adapter.v1`, `rasterize-adapter.v1`, `visibility-adapter.v1` | `semantic-authority-runtime.v1` / `execute-semantic-authority` |
-| `movement-bundle-data.v1` | `../contracts/dungeon-movement.bundle.json` | `default` |  | `movement-adapter.v1` | `movement-bundle-data.v1` / `read-semantic-authority` |
-| `render-role-bundle-data.v1` | `../contracts/dungeon-render-role.bundle.json` | `default` |  | `render-role-adapter.v1` | `render-role-bundle-data.v1` / `read-semantic-authority` |
-| `keyboard-command-bundle-data.v1` | `../contracts/dungeon-keyboard-command.bundle.json` | `default` |  | `keyboard-command-adapter.v1` | `keyboard-command-bundle-data.v1` / `read-semantic-authority` |
-| `topology-bundle-data.v1` | `../contracts/dungeon-topology.bundle.json` | `default` |  | `topology-adapter.v1` | `topology-bundle-data.v1` / `read-semantic-authority` |
-| `rasterize-bundle-data.v1` | `../contracts/dungeon-rasterize.bundle.json` | `default` |  | `rasterize-adapter.v1` | `rasterize-bundle-data.v1` / `read-semantic-authority` |
-| `visibility-bundle-data.v1` | `../contracts/dungeon-visibility.bundle.json` | `default` |  | `visibility-adapter.v1` | `visibility-bundle-data.v1` / `read-semantic-authority` |
+| `movement-bundle-data.v1` | `../contracts/dungeon-movement.bundle.json` | `default` |  | `movement-adapter.v1`, `application-adapter.v1` | `movement-bundle-data.v1` / `read-semantic-authority` |
+| `render-role-bundle-data.v1` | `../contracts/dungeon-render-role.bundle.json` | `default` |  | `render-role-adapter.v1`, `application-adapter.v1` | `render-role-bundle-data.v1` / `read-semantic-authority` |
+| `keyboard-command-bundle-data.v1` | `../contracts/dungeon-keyboard-command.bundle.json` | `default` |  | `keyboard-command-adapter.v1`, `application-adapter.v1` | `keyboard-command-bundle-data.v1` / `read-semantic-authority` |
+| `topology-bundle-data.v1` | `../contracts/dungeon-topology.bundle.json` | `default` |  | `topology-adapter.v1`, `application-adapter.v1` | `topology-bundle-data.v1` / `read-semantic-authority` |
+| `rasterize-bundle-data.v1` | `../contracts/dungeon-rasterize.bundle.json` | `default` |  | `rasterize-adapter.v1`, `application-adapter.v1` | `rasterize-bundle-data.v1` / `read-semantic-authority` |
+| `visibility-bundle-data.v1` | `../contracts/dungeon-visibility.bundle.json` | `default` |  | `visibility-adapter.v1`, `application-adapter.v1` | `visibility-bundle-data.v1` / `read-semantic-authority` |
+| `browser-application-runtime.v1` | `../../lib/browser-application-runtime.mjs` | `executeBrowserApplication` | `executeBrowserApplication` | `application-adapter.v1` | `browser-application-runtime.v1` / `execute-semantic-authority` |
+| `browser-application-authority-data.v1` | `../contracts/procedural-dungeon-application.authority.json` | `default` |  | `application-adapter.v1` | `browser-application-authority-data.v1` / `read-semantic-authority` |
+| `browser-context-data.v1` | `../browser-context.json` | `default` |  | `application-adapter.v1` | `browser-context-data.v1` / `read-semantic-authority` |
 
 ## Effect Authorities
 
@@ -157,6 +168,7 @@ No effect authorities are declared.
 | Runtime authority | Invocation | Used by artifacts | Purpose |
 | --- | --- | --- | --- |
 | `semantic-authority-runtime.v1` | `executeSemanticAuthority` | `movement-adapter.v1`, `render-role-adapter.v1`, `keyboard-command-adapter.v1`, `topology-adapter.v1`, `rasterize-adapter.v1`, `visibility-adapter.v1` | Executes the contract-declared movement, render-role, keyboard-command, BSP topology, rasterization, and visibility ontologies. |
+| `browser-application-runtime.v1` | `executeBrowserApplication` | `application-adapter.v1` | Interprets one aggregate semantic projection authority against a supplied browser port; all capability meaning remains declared in that authority and its selected ontology bundles. |
 
 ## Source Authority Closures
 
@@ -165,6 +177,7 @@ No effect authorities are declared.
 | `movement-adapter.v1` | `movement-adapter-module.v1`, `resolve-movement.v1` | `bind-movement-bundle-data.v1-edge.v1`, `execute-resolve-movement-semantics.v1` |  |  |  |  | `movement-result.v1` |
 | `render-role-adapter.v1` | `render-role-adapter-module.v1`, `resolve-render-role.v1` | `bind-render-role-bundle-data.v1-edge.v1`, `execute-resolve-render-role-semantics.v1` |  |  |  |  | `render-role-result.v1` |
 | `keyboard-command-adapter.v1` | `keyboard-command-adapter-module.v1`, `resolve-keyboard-command.v1` | `bind-keyboard-command-bundle-data.v1-edge.v1`, `execute-resolve-keyboard-command-semantics.v1` |  |  |  |  | `keyboard-command-result.v1` |
+| `application-adapter.v1` | `application-adapter-module.v1`, `start-procedural-dungeon-page.v1` | `execute-browser-application-semantics.v1` |  |  | `browser-application-projection-failure.v1` | `browser-application-projection.v1` | `browser-application-result.v1` |
 | `topology-adapter.v1` | `topology-adapter-module.v1`, `resolve-topology.v1` | `bind-topology-bundle-data.v1-edge.v1`, `execute-resolve-topology-semantics.v1` |  |  |  |  | `topology-result.v1` |
 | `rasterize-adapter.v1` | `rasterize-adapter-module.v1`, `resolve-rasterization.v1` | `bind-rasterize-bundle-data.v1-edge.v1`, `execute-resolve-rasterization-semantics.v1` |  |  |  |  | `rasterize-result.v1` |
 | `visibility-adapter.v1` | `visibility-adapter-module.v1`, `resolve-visibility.v1` | `bind-visibility-bundle-data.v1-edge.v1`, `execute-resolve-visibility-semantics.v1` |  |  |  |  | `visibility-result.v1` |
@@ -229,6 +242,11 @@ The governed path set below defines inventory authority. Paths outside it receiv
       "relativePath": "browser-context.json"
     },
     {
+      "authorityId": "browser-application-port-schema.v1",
+      "pathKind": "artifact",
+      "relativePath": "contracts/browser-application-port.schema.json"
+    },
+    {
       "authorityId": "dungeon-keyboard-command-bundle.v1",
       "pathKind": "artifact",
       "relativePath": "contracts/dungeon-keyboard-command.bundle.json"
@@ -259,6 +277,11 @@ The governed path set below defines inventory authority. Paths outside it receiv
       "relativePath": "contracts/dungeon-visibility.bundle.json"
     },
     {
+      "authorityId": "browser-application-authority.v1",
+      "pathKind": "artifact",
+      "relativePath": "contracts/procedural-dungeon-application.authority.json"
+    },
+    {
       "authorityId": "procedural-dungeon-webpage.v1",
       "pathKind": "artifact",
       "relativePath": "index.html"
@@ -267,6 +290,11 @@ The governed path set below defines inventory authority. Paths outside it receiv
       "authorityId": "procedural-dungeon-webpage-readme.v1",
       "pathKind": "artifact",
       "relativePath": "README.md"
+    },
+    {
+      "authorityId": "application-adapter.v1",
+      "pathKind": "artifact",
+      "relativePath": "src/application-adapter.mjs"
     },
     {
       "authorityId": "keyboard-command-adapter.v1",
@@ -419,13 +447,19 @@ The contract is the sole authored change authority. Governed artifacts are repla
 
 | Source artifact | Relationship | Target artifact |
 | --- | --- | --- |
-| `procedural-dungeon-webpage.v1` | `reads` | `dungeon-movement-bundle.v1` |
-| `procedural-dungeon-webpage.v1` | `reads` | `dungeon-render-role-bundle.v1` |
-| `procedural-dungeon-webpage.v1` | `reads` | `dungeon-keyboard-command-bundle.v1` |
+| `procedural-dungeon-webpage.v1` | `invokes` | `application-adapter.v1` |
 | `procedural-dungeon-webpage.v1` | `documents` | `procedural-dungeon-webpage-readme.v1` |
 | `movement-adapter.v1` | `reads` | `dungeon-movement-bundle.v1` |
 | `render-role-adapter.v1` | `reads` | `dungeon-render-role-bundle.v1` |
 | `keyboard-command-adapter.v1` | `reads` | `dungeon-keyboard-command-bundle.v1` |
+| `browser-context-authority.v1` | `reads` | `dungeon-keyboard-command-bundle.v1` |
+| `browser-context-authority.v1` | `reads` | `dungeon-movement-bundle.v1` |
+| `browser-context-authority.v1` | `reads` | `dungeon-rasterize-bundle.v1` |
+| `browser-context-authority.v1` | `reads` | `dungeon-render-role-bundle.v1` |
+| `browser-context-authority.v1` | `reads` | `dungeon-topology-bundle.v1` |
+| `browser-context-authority.v1` | `reads` | `dungeon-visibility-bundle.v1` |
+| `browser-application-authority.v1` | `reads` | `browser-application-port-schema.v1` |
+| `application-adapter.v1` | `reads` | `browser-application-authority.v1` |
 | `procedural-dungeon-webpage-readme.v1` | `documents` | `movement-adapter.v1` |
 | `procedural-dungeon-webpage-readme.v1` | `documents` | `render-role-adapter.v1` |
 | `procedural-dungeon-webpage-readme.v1` | `documents` | `keyboard-command-adapter.v1` |
@@ -471,6 +505,7 @@ Declared command evaluations:
 | `verify-collapsed-adapters.v1` | `command-exit-verifier.v1` | `node ../verification-tools/verifies-collapsed-adapters.mjs` | `0` | `COLLAPSED_BOOTSTRAP_CONFORMS` |
 | `verify-semantic-equivalence.v1` | `command-exit-verifier.v1` | `node ../verification-tools/verifies-semantic-equivalence.mjs` | `0` | `SEMANTIC_EXECUTION_EQUIVALENCE_CONFORMS` |
 | `verify-render-command-frame.v1` | `command-exit-verifier.v1` | `node ../verification-tools/verifies-render-command-frame.mjs` | `0` | `RENDER_COMMAND_FRAME_CONFORMS` |
+| `verify-page-bootstrap-mechanics.v1` | `command-exit-verifier.v1` | `node ../verification-tools/verifies-page-bootstrap-mechanics.mjs` | `0` | `PAGE_BOOTSTRAP_MECHANICS_CONFORMS` |
 
 ## Terminal Dispositions
 
@@ -581,6 +616,6 @@ Conformance-receipt evidence:
 - [ ] Every cell's render role (hidden / visible-floor / visible-wall) is decided by the dungeon-render-role ontology, including the God Mode override.
 - [ ] Every admitted keyboard key is translated by the dungeon-keyboard-command ontology; unmapped keys are rejected, not silently ignored by authored logic.
 - [ ] The three adapter modules are each exactly one import, one function, one semantic invocation, one direct return -- verified structurally, not by inspection.
-- [ ] The browser page's vendored execution logic is proven equivalent to direct semantic execution for every canonical fixture, not merely asserted.
+- [ ] The extracted browser execution module is proven equivalent to direct semantic execution for every canonical fixture, and the page bootstrap is proven free of inline interpreter machinery.
 - [ ] Procedural generation and the multi-ray visibility sweep are explicitly declared as authored-algorithm deviations, not silently unproven ontology claims.
 - [ ] The rendering frame is data (an operations list) computed before any canvas call; the canvas adapter applies it without making rendering decisions.

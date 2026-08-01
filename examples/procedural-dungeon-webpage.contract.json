@@ -8,14 +8,14 @@
       "projection": {
         "authority": {
           "authorityType": "utf8-text.v1",
-          "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Procedural Dungeon Generator - Fog of War</title>\n<meta name=\"artifact-provenance-sha256\" content=\"sha256:c3ba72210fa95f1af024e56fc62c68a957386a00a4f67bff6cb6bdff7e6966e3\">\n<meta name=\"canonical-lineage-sha256\" content=\"sha256:1992ef5748c7000c03175d0dea4e756391b1e14851f3c515a1d341dc04e7dd4c\">\n<meta name=\"semantic-authority-sha256\" content=\"sha256:477ebff0a2d56a4894b4c65d66528a745a6b80aeea6bfb50feea12b067f74aa8\">\n<meta name=\"projection-authority-sha256\" content=\"sha256:e5610c3d97c1b2026c77acec7144219d91b6645003160fef071f421627d9c479\">\n<style>\n  :root {\n    --bg: #05060a;\n    --grid-line: #10233a;\n    --panel-bg: #0b1220;\n    --panel-border: #1fd6ff;\n    --accent: #1fd6ff;\n    --accent-dim: #0d7a94;\n    --text: #d8f6ff;\n    --player: #55ff33;\n  }\n\n  * {\n    box-sizing: border-box;\n  }\n\n  html, body {\n    height: 100%;\n  }\n\n  body {\n    margin: 0;\n    background-color: var(--bg);\n    background-image:\n      linear-gradient(var(--grid-line) 1px, transparent 1px),\n      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);\n    background-size: 32px 32px;\n    color: var(--text);\n    font-family: \"Consolas\", \"Courier New\", monospace;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    min-height: 100vh;\n    padding: 24px;\n  }\n\n  .app {\n    display: flex;\n    gap: 24px;\n    align-items: flex-start;\n    flex-wrap: wrap;\n    justify-content: center;\n  }\n\n  .stage {\n    position: relative;\n    border: 2px solid var(--panel-border);\n    box-shadow: 0 0 18px rgba(31, 214, 255, 0.55), inset 0 0 24px rgba(31, 214, 255, 0.12);\n    background: #000;\n    line-height: 0;\n  }\n\n  canvas#view {\n    width: 600px;\n    height: 600px;\n    image-rendering: pixelated;\n    image-rendering: crisp-edges;\n    display: block;\n  }\n\n  .panel {\n    width: 260px;\n    background: var(--panel-bg);\n    border: 1px solid var(--panel-border);\n    box-shadow: 0 0 14px rgba(31, 214, 255, 0.35);\n    border-radius: 6px;\n    padding: 18px;\n    display: flex;\n    flex-direction: column;\n    gap: 16px;\n  }\n\n  .panel h1 {\n    font-size: 15px;\n    letter-spacing: 0.08em;\n    text-transform: uppercase;\n    color: var(--accent);\n    margin: 0 0 4px 0;\n    text-shadow: 0 0 8px rgba(31, 214, 255, 0.8);\n  }\n\n  .field {\n    display: flex;\n    flex-direction: column;\n    gap: 4px;\n    border: 1px solid var(--accent-dim);\n    border-radius: 4px;\n    padding: 10px 12px;\n    background: rgba(31, 214, 255, 0.05);\n  }\n\n  .field .label {\n    font-size: 10px;\n    letter-spacing: 0.12em;\n    text-transform: uppercase;\n    color: var(--accent-dim);\n  }\n\n  .field .value {\n    font-size: 18px;\n    color: var(--player);\n    text-shadow: 0 0 6px rgba(85, 255, 51, 0.7);\n  }\n\n  button {\n    font-family: inherit;\n    font-size: 12px;\n    letter-spacing: 0.06em;\n    text-transform: uppercase;\n    color: var(--text);\n    background: linear-gradient(180deg, #103049, #071522);\n    border: 1px solid var(--accent);\n    border-radius: 4px;\n    padding: 10px 12px;\n    cursor: pointer;\n    transition: box-shadow 0.15s ease, transform 0.05s ease;\n  }\n\n  button:hover {\n    box-shadow: 0 0 10px rgba(31, 214, 255, 0.8);\n  }\n\n  button:active {\n    transform: translateY(1px);\n  }\n\n  button.active {\n    background: linear-gradient(180deg, #1c3f22, #0a1a0d);\n    border-color: var(--player);\n    color: var(--player);\n    box-shadow: 0 0 10px rgba(85, 255, 51, 0.6);\n  }\n\n  .hint {\n    font-size: 11px;\n    color: var(--accent-dim);\n    line-height: 1.5;\n  }\n</style>\n</head>\n<body>\n  <main id=\"dungeon-application\" class=\"app\">\n    <div class=\"stage\">\n      <canvas id=\"view\" width=\"600\" height=\"600\"></canvas>\n    </div>\n    <div class=\"panel\">\n      <h1>Dungeon Control</h1>\n      <div class=\"field\">\n        <span class=\"label\">Player Position</span>\n        <span class=\"value\" id=\"coords\">(0, 0)</span>\n      </div>\n      <button id=\"regenerateBtn\" type=\"button\">Regenerate Map</button>\n      <button id=\"godModeBtn\" type=\"button\">Toggle God Mode</button>\n      <div class=\"hint\">\n        Move with Arrow Keys or WASD. Walls block movement and sight.\n        God Mode reveals the full generated layout for debugging.\n      </div>\n    </div>\n  </main>\n\n<script type=\"module\">\n/*\n * Governed webpage bootstrap.\n *\n * Every domain decision -- movement legality, per-cell render role,\n * keyboard-to-command translation, BSP region splitting, room/corridor\n * rasterization, and the 76-ray Bresenham visibility sweep -- is decided by\n * six closed deterministic ontologies (contracts/dungeon-*.bundle.json),\n * executed below by runDungeonOntology(), a narrowed, faithful port of this\n * project's own executeSemanticAuthority (lib/semantic-execution-runtime.mjs)\n * limited to the primitives these six bundles actually use. A vanilla\n * browser cannot resolve the \"contract-driven-artifact-governance-engine\"\n * bare-specifier import those bundles are normally executed through\n * (test/fixtures/*-ontology.mjs do that, in Node, for the equivalence\n * proof), so the execution logic is vendored here rather than imported.\n * Type re-validation (AJV) is intentionally omitted: it is a governance-time\n * guarantee, already proven closed by the contract's gate, not a per-call\n * runtime necessity.\n *\n * Nothing below owns a domain decision. The two loops that remain\n * (accumulating newly-revealed cells into the persistent visibility grid,\n * and visiting each display cell once to build a render-role request) are\n * mechanical repetition of an already-fully-decided ontology call, the same\n * category of \"browser mechanics\" the discussion doc admits in section 4 --\n * not a branch on dungeon state.\n */\n\nimport dungeonMovementBundle from \"./contracts/dungeon-movement.bundle.json\" with { type: \"json\" };\nimport dungeonRenderRoleBundle from \"./contracts/dungeon-render-role.bundle.json\" with { type: \"json\" };\nimport dungeonKeyboardCommandBundle from \"./contracts/dungeon-keyboard-command.bundle.json\" with { type: \"json\" };\nimport dungeonTopologyBundle from \"./contracts/dungeon-topology.bundle.json\" with { type: \"json\" };\nimport dungeonRasterizeBundle from \"./contracts/dungeon-rasterize.bundle.json\" with { type: \"json\" };\nimport dungeonVisibilityBundle from \"./contracts/dungeon-visibility.bundle.json\" with { type: \"json\" };\n\nfunction jsonType(value) {\n  if (value === null) {\n    return \"null\";\n  }\n  if (Array.isArray(value)) {\n    return \"array\";\n  }\n  return typeof value;\n}\n\nfunction typedValueMatches(typedValue, value) {\n  return (\n    typedValue.type === jsonType(value) &&\n    JSON.stringify(typedValue.value) === JSON.stringify(value)\n  );\n}\n\nfunction sourceValue(value) {\n  return value?.state === \"value\" ? value.value : value;\n}\n\nfunction observePath(source, path) {\n  let value = source;\n  for (const segment of path) {\n    if (value === null || typeof value !== \"object\" || !(segment in value)) {\n      return { state: \"missing\" };\n    }\n    value = value[segment];\n  }\n  return value === null ? { state: \"null\" } : { state: \"value\", value };\n}\n\nfunction propertyState(observation, authority) {\n  if (observation.state === \"missing\") {\n    return \"missing\";\n  }\n  if (observation.state === \"null\") {\n    return \"null\";\n  }\n  if (jsonType(observation.value) !== authority.expectedValueType) {\n    return \"invalid-type\";\n  }\n  if (observation.value === \"\" && authority.emptyStringState === \"empty-string\") {\n    return \"empty-string\";\n  }\n  return \"present\";\n}\n\nfunction setOutputPath(target, path, value) {\n  let cursor = target;\n  for (let index = 0; index < path.length - 1; index += 1) {\n    const segment = path[index];\n    const next = path[index + 1];\n    if (!(segment in cursor)) {\n      cursor[segment] = typeof next === \"number\" ? [] : {};\n    }\n    cursor = cursor[segment];\n  }\n  cursor[path.at(-1)] = value;\n}\n\nfunction readPathValue(source, path) {\n  let value = source;\n  for (const segment of path) {\n    value = value?.[segment];\n  }\n  return value;\n}\n\nfunction factPort(factId) {\n  return `fact.${factId}`;\n}\n\nfunction xorshift32Step(state) {\n  let x = state >>> 0;\n  if (x === 0) {\n    x = 0x9e3779b9;\n  }\n  x ^= x << 13;\n  x >>>= 0;\n  x ^= x >>> 17;\n  x ^= x << 5;\n  x >>>= 0;\n  return x >>> 0;\n}\n\nfunction xorshift32Draw(seed, callIndex) {\n  const mixed = ((seed >>> 0) ^ Math.imul((callIndex >>> 0) + 1, 0x9e3779b1)) >>> 0;\n  return xorshift32Step(mixed);\n}\n\nfunction compareOutcomeState(a, b) {\n  return a < b ? \"less-than\" : a > b ? \"greater-than\" : \"equal-to\";\n}\n\n// current/clone: guards always read the step program's own evolving state\n// (never a frozen pre-step snapshot), so a guarded program reads exactly\n// like ordinary sequential code -- each statement sees every prior\n// statement's effect within the same pass. See lib/semantic-execution-runtime.mjs\n// for the identical, cross-validated rule this vendored copy mirrors.\nfunction resolveStepOperandValue(operand, current, resultsAccumulator, inputs) {\n  if (operand.kind === \"fact\") {\n    return sourceValue(inputs[factPort(operand.factId)]);\n  }\n  if (operand.kind === \"item-field\") {\n    return readPathValue(current, operand.path);\n  }\n  if (operand.kind === \"item-field-indexed\") {\n    const array = readPathValue(current, operand.path);\n    const index = readPathValue(current, operand.indexPath);\n    return array?.[index];\n  }\n  if (operand.kind === \"fact-indexed\") {\n    const array = sourceValue(inputs[factPort(operand.factId)]);\n    const index = readPathValue(current, operand.indexPath);\n    return array?.[index];\n  }\n  if (operand.kind === \"seeded-draw\") {\n    const seed = sourceValue(inputs[factPort(operand.seedFactId)]);\n    const callIndex = readPathValue(current, operand.callIndexPath);\n    const min = resolveStepOperandValue(operand.min, current, resultsAccumulator, inputs);\n    const max = resolveStepOperandValue(operand.max, current, resultsAccumulator, inputs);\n    const draw = xorshift32Draw(seed, callIndex);\n    return min + (draw % (max - min + 1));\n  }\n  return (readPathValue(current, operand.path) ?? []).length;\n}\n\nfunction stepGuardPasses(guard, current, resultsAccumulator, inputs) {\n  if (!guard) {\n    return true;\n  }\n  const operandValue = resolveStepOperandValue(guard.operand, current, resultsAccumulator, inputs);\n  const compareValue = resolveStepOperandValue(guard.compareTo, current, resultsAccumulator, inputs);\n  return guard.matchStates.includes(compareOutcomeState(operandValue, compareValue));\n}\n\nfunction applyStepProgram(steps, clone, resultsAccumulator, inputs) {\n  for (const step of steps) {\n    if (!stepGuardPasses(step.when, clone, resultsAccumulator, inputs)) {\n      continue;\n    }\n    const operandValue = resolveStepOperandValue(step.operand, clone, resultsAccumulator, inputs);\n    const existing = readPathValue(clone, step.targetPath);\n    const nextValue =\n      step.operation === \"set\"\n        ? operandValue\n        : step.operation === \"add\"\n          ? existing + operandValue\n          : step.operation === \"subtract\"\n            ? existing - operandValue\n            : [...(existing ?? []), operandValue];\n    setOutputPath(clone, step.targetPath, nextValue);\n  }\n}\n\nfunction buildIndexes(authority) {\n  const semantic = new Map();\n  const byKind = {\n    concept: new Map(),\n    property: new Map(),\n    fact: new Map(),\n    classification: new Map(),\n    obligation: new Map(),\n    transformation: new Map(),\n    result: new Map(),\n    arithmeticOperation: new Map(),\n    indexedRead: new Map(),\n    iteration: new Map()\n  };\n  const declarations = [\n    [\"concepts\", \"concept\", \"conceptId\"],\n    [\"properties\", \"property\", \"propertyId\"],\n    [\"facts\", \"fact\", \"factId\"],\n    [\"classifications\", \"classification\", \"classificationId\"],\n    [\"obligations\", \"obligation\", \"obligationId\"],\n    [\"transformations\", \"transformation\", \"transformationId\"],\n    [\"results\", \"result\", \"resultUnionId\"],\n    [\"arithmeticOperations\", \"arithmeticOperation\", \"operationId\"],\n    [\"indexedReads\", \"indexedRead\", \"readId\"],\n    [\"iterations\", \"iteration\", \"iterationId\"]\n  ];\n  for (const [collection, kind, identityField] of declarations) {\n    for (const entry of authority[collection] ?? []) {\n      const identity = entry[identityField];\n      semantic.set(identity, { entry, kind });\n      byKind[kind].set(identity, entry);\n    }\n  }\n  return { semantic, byKind };\n}\n\nfunction resolveNodeInputs(nodeId, edges, outputs) {\n  const inputs = {};\n  for (const edge of edges) {\n    if (edge.to.nodeId === nodeId) {\n      inputs[edge.to.port] = outputs.get(edge.from.nodeId)?.[edge.from.port];\n    }\n  }\n  return inputs;\n}\n\nfunction topologicalOrder(nodes, edges) {\n  const indegree = new Map(nodes.map((node) => [node.nodeId, 0]));\n  const adjacency = new Map(nodes.map((node) => [node.nodeId, []]));\n  for (const edge of edges) {\n    adjacency.get(edge.from.nodeId).push(edge.to.nodeId);\n    indegree.set(edge.to.nodeId, indegree.get(edge.to.nodeId) + 1);\n  }\n  const pending = [...indegree].filter(([, degree]) => degree === 0).map(([id]) => id);\n  const order = [];\n  while (pending.length > 0) {\n    const id = pending.shift();\n    order.push(id);\n    for (const next of adjacency.get(id)) {\n      indegree.set(next, indegree.get(next) - 1);\n      if (indegree.get(next) === 0) {\n        pending.push(next);\n      }\n    }\n  }\n  return order;\n}\n\nfunction executePrimitive(binding, inputs, indexes) {\n  const semantic = indexes.semantic.get(binding.semanticAuthorityId);\n  const authority = semantic.entry;\n  const primitive = binding.executorPrimitive;\n\n  if (primitive === \"input.v1\") {\n    return { value: inputs.__input__ };\n  }\n  if (primitive === \"validate-variant.v1\") {\n    return { conceptId: authority.variants[0] };\n  }\n  if (primitive === \"read-path.v1\") {\n    const resolution = authority.resolutions[0];\n    return { observation: observePath(inputs.source, resolution.path) };\n  }\n  if (primitive === \"constant.v1\") {\n    return { value: authority.value.value };\n  }\n  if (primitive === \"test-presence.v1\") {\n    return { state: propertyState(inputs.observation, authority) };\n  }\n  if (primitive === \"classify-value.v1\") {\n    const value = sourceValue(inputs.observation);\n    const match = authority.cases.find((entry) => typedValueMatches(entry.value, value));\n    if (!match) {\n      throw new Error(authority.unmatchedDisposition);\n    }\n    return { state: match.stateId };\n  }\n  if (primitive === \"classify-observations.v1\") {\n    const match = authority.cases.find((entry) =>\n      entry.when.every((condition) => {\n        const observed = inputs[condition.inputPort];\n        const expected = condition.observation;\n        if (expected.state !== \"value\") {\n          return observed?.state === expected.state;\n        }\n        return (\n          observed?.state === \"value\" &&\n          typedValueMatches(expected.value, observed.value)\n        );\n      })\n    );\n    if (!match) {\n      throw new Error(authority.noMatchDisposition);\n    }\n    return { state: match.emit.value };\n  }\n  if (primitive === \"evaluate-obligation.v1\") {\n    const satisfied = authority.satisfiedStateIds.includes(inputs.state);\n    return { status: satisfied ? \"satisfied\" : \"violated\" };\n  }\n  if (primitive === \"project-value.v1\") {\n    return { fragment: { resultIds: authority.resultIds, outputPath: authority.outputPath, value: sourceValue(inputs.value) } };\n  }\n  if (primitive === \"select-result.v1\") {\n    const match = authority.selectionRules.find((rule) =>\n      rule.when.every((condition) => inputs[condition.inputPort] === condition.status)\n    );\n    if (!match) {\n      throw new Error(authority.noMatchDisposition);\n    }\n    return { resultId: match.resultId };\n  }\n  if (primitive === \"emit-result.v1\") {\n    const member = authority.members.find((entry) => entry.resultId === inputs.selection);\n    const result = {};\n    setOutputPath(result, member.discriminator.outputPath, member.discriminator.value.value);\n    for (const [port, fragment] of Object.entries(inputs)) {\n      if (port === \"selection\" || !fragment.resultIds.includes(member.resultId)) {\n        continue;\n      }\n      setOutputPath(result, fragment.outputPath, fragment.value);\n    }\n    return { result };\n  }\n  if (primitive === \"add-bounded.v1\") {\n    return { value: sourceValue(inputs.operandA) + sourceValue(inputs.operandB) };\n  }\n  if (primitive === \"read-indexed-path.v1\") {\n    let cursor = sourceValue(inputs.source);\n    for (const segment of authority.basePath) {\n      cursor = cursor[segment];\n    }\n    const index = sourceValue(inputs.index);\n    if (!Array.isArray(cursor) || index < 0 || index >= cursor.length) {\n      throw new Error(authority.outOfBoundsDisposition);\n    }\n    return { value: cursor[index] };\n  }\n  if (primitive === \"iterate-bounded-worklist.v1\") {\n    const results = [];\n    let current = sourceValue(inputs.seedItem);\n    let terminated = false;\n    for (let step = 0; step <= authority.maxSteps; step += 1) {\n      if (authority.resultMode === \"history\") {\n        results.push(structuredClone(current));\n      }\n      const operand = readPathValue(current, authority.continueCondition.operandPath);\n      const compareTo = resolveStepOperandValue(authority.continueCondition.compareTo, current, null, inputs);\n      if (!authority.continueCondition.continueWhenStates.includes(compareOutcomeState(operand, compareTo))) {\n        terminated = true;\n        break;\n      }\n      if (step === authority.maxSteps) {\n        break;\n      }\n      const clone = structuredClone(current);\n      applyStepProgram(authority.advance.steps, clone, null, inputs);\n      current = clone;\n    }\n    if (!terminated) {\n      throw new Error(authority.unresolvedDisposition);\n    }\n    return { value: authority.resultMode === \"final-item\" ? current : results };\n  }\n  if (primitive === \"resolve-branching-worklist.v1\") {\n    let resultsAccumulator = structuredClone(authority.initialAccumulator);\n    const queue = [sourceValue(inputs.seedItem)];\n    let processed = 0;\n    while (queue.length > 0 && processed < authority.maxItems) {\n      const item = queue.shift();\n      processed += 1;\n      const isTerminal = authority.terminalWhen.anyOf.some((group) =>\n        group.every((condition) => stepGuardPasses(condition, item, resultsAccumulator, inputs))\n      );\n      if (isTerminal) {\n        const clone = structuredClone({ item, accumulator: structuredClone(resultsAccumulator) });\n        applyStepProgram(authority.terminalSteps, clone, resultsAccumulator, inputs);\n        resultsAccumulator = clone.accumulator;\n      } else {\n        const clone = structuredClone({ parent: item, left: {}, right: {}, accumulator: structuredClone(resultsAccumulator) });\n        applyStepProgram(authority.splitSteps, clone, resultsAccumulator, inputs);\n        resultsAccumulator = clone.accumulator;\n        queue.push(clone.left, clone.right);\n      }\n    }\n    if (queue.length > 0) {\n      throw new Error(authority.unresolvedDisposition);\n    }\n    return { value: resultsAccumulator };\n  }\n  if (primitive === \"serialize-result.v1\") {\n    return { result: inputs.result };\n  }\n  throw new Error(`ONTOLOGY_EXECUTOR_UNRESOLVED:${primitive}`);\n}\n\nfunction runDungeonOntology(bundle, input) {\n  const indexes = buildIndexes(bundle.authority);\n  const bindingById = new Map(bundle.authority.executionBindings.map((b) => [b.bindingId, b]));\n  const order = topologicalOrder(bundle.authority.executionGraph.nodes, bundle.authority.executionGraph.edges);\n  const nodeById = new Map(bundle.authority.executionGraph.nodes.map((node) => [node.nodeId, node]));\n  const outputs = new Map();\n  for (const nodeId of order) {\n    const node = nodeById.get(nodeId);\n    const binding = bindingById.get(node.bindingId);\n    const inputs = resolveNodeInputs(nodeId, bundle.authority.executionGraph.edges, outputs);\n    if (binding.executorPrimitive === \"input.v1\") {\n      inputs.__input__ = input;\n    }\n    outputs.set(nodeId, executePrimitive(binding, inputs, indexes));\n  }\n  const terminalId = bundle.authority.executionGraph.terminalNodeIds[0];\n  return outputs.get(terminalId).result;\n}\n\n// DISPLAY_SIZE/TILE_SIZE/CANVAS_SIZE match the original 60x60 tile board\n// exactly; PAD is the vision-radius margin the generation and rasterization\n// ontologies carve the playable region inside of, so a 9-tile sightline can\n// never run off the padded PADDED_SIZE grid's edge (see\n// scripts/generate-dungeon-visibility-authority.mjs and\n// scripts/generate-dungeon-topology-authority.mjs for the shared constant).\nconst DISPLAY_SIZE = 60;\nconst TILE_SIZE = 10;\nconst CANVAS_SIZE = DISPLAY_SIZE * TILE_SIZE;\nconst PAD = 9;\nconst PADDED_SIZE = DISPLAY_SIZE + 2 * PAD;\n\nconst COLOR_HIDDEN = \"#000000\";\nconst COLOR_WALL = \"#4a4e69\";\nconst COLOR_FLOOR = \"#9a8c98\";\nconst COLOR_PLAYER = \"#55ff33\";\n\nconst canvas = document.getElementById(\"view\");\nconst ctx = canvas.getContext(\"2d\");\nconst coordsEl = document.getElementById(\"coords\");\nconst regenerateBtn = document.getElementById(\"regenerateBtn\");\nconst godModeBtn = document.getElementById(\"godModeBtn\");\n\nlet map = [];\nlet visibility = [];\nconst player = { x: 0, y: 0 };\nlet godMode = false;\n\nfunction createGrid(size, fillValue) {\n  const grid = [];\n  for (let y = 0; y < size; y += 1) {\n    const row = [];\n    for (let x = 0; x < size; x += 1) {\n      row.push(fillValue);\n    }\n    grid.push(row);\n  }\n  return grid;\n}\n\n// Region splitting, room placement, and corridor connectivity are decided\n// entirely by the dungeon-topology ontology (a genuine branching worklist);\n// rasterization turns its unified paint-rectangle list into the dense grid\n// below. No branch or loop of this project's own authorship decides where a\n// wall or a room goes.\nfunction generateMap() {\n  const topology = runDungeonOntology(dungeonTopologyBundle, {\n    x: PAD + 1,\n    y: PAD + 1,\n    w: DISPLAY_SIZE - 2,\n    h: DISPLAY_SIZE - 2,\n    depth: 0\n  }).topology;\n\n  map = runDungeonOntology(dungeonRasterizeBundle, {\n    rectLoX: topology.rectLoX,\n    rectLoY: topology.rectLoY,\n    rectHiX: topology.rectHiX,\n    rectHiY: topology.rectHiY,\n    cellIndex: 0,\n    cellX: 0,\n    cellY: 0,\n    slotIndex: -1,\n    rectCount: 0,\n    containCount: 0,\n    cellGridValue: 0,\n    isLastColumn: 0,\n    currentRow: [],\n    rows: []\n  }).grid.rows;\n\n  player.x = topology.roomX[0] + 2;\n  player.y = topology.roomY[0] + 2;\n}\n\n// Every cell a ray reaches, and where each ray stops at a wall, is decided\n// by the dungeon-visibility ontology's guarded Bresenham sweep. Marking the\n// returned cells into the persistent visibility grid is mechanical\n// accumulation (an already-fully-decided cell is recorded, nothing is\n// branched on), the same \"browser mechanics\" category as writing DOM text.\nfunction updateVisibility() {\n  const sweep = runDungeonOntology(dungeonVisibilityBundle, {\n    grid: map,\n    playerX: player.x,\n    playerY: player.y,\n    globalStep: 0,\n    blockedRayId: -999,\n    revealedX: [],\n    revealedY: [],\n    cellX: 0,\n    cellY: 0,\n    cellValue: 0,\n    scratchRow: map[0],\n    rayId: 0,\n    relX: 0,\n    relY: 0,\n    wallHitRayId: -999\n  }).visibilityState;\n  for (let i = 0; i < sweep.revealedX.length; i += 1) {\n    visibility[sweep.revealedY[i]][sweep.revealedX[i]] = 1;\n  }\n}\n\nconst ROLE_FILL = {\n  hidden: null,\n  \"visible-floor\": COLOR_FLOOR,\n  \"visible-wall\": COLOR_WALL\n};\n\n// Rendering-frame contract: this builds a declarative \"pixel-grid-rendering-frame.v1\"\n// value (canvas dimensions, background, and an ordered fill-rectangle operation list).\n// Every fill's semanticRole and color come directly from the render-role ontology's\n// decision for that cell -- no rendering decision is made outside buildRenderingFrame.\n// The for-loop below owns no decision of its own: it visits each display cell exactly\n// once and forwards it to the ontology, matching section 4's \"browser mechanics\" line.\n// applyRenderingFrame() is the dumb executor: it owns no decisions, only canvas calls.\nfunction buildRenderingFrame() {\n  const operations = [];\n  for (let y = 0; y < DISPLAY_SIZE; y += 1) {\n    for (let x = 0; x < DISPLAY_SIZE; x += 1) {\n      const decision = runDungeonOntology(dungeonRenderRoleBundle, {\n        cellValue: map[y + PAD][x + PAD],\n        godMode: godMode ? 1 : 0,\n        revealed: visibility[y + PAD][x + PAD]\n      });\n      const fill = ROLE_FILL[decision.role];\n      if (fill) {\n        operations.push({\n          operation: \"fill-rectangle\",\n          semanticRole: decision.role,\n          x: x * TILE_SIZE,\n          y: y * TILE_SIZE,\n          width: TILE_SIZE,\n          height: TILE_SIZE,\n          fill\n        });\n      }\n    }\n  }\n  operations.push({\n    operation: \"fill-rectangle\",\n    semanticRole: \"player\",\n    x: (player.x - PAD) * TILE_SIZE,\n    y: (player.y - PAD) * TILE_SIZE,\n    width: TILE_SIZE,\n    height: TILE_SIZE,\n    fill: COLOR_PLAYER\n  });\n  return {\n    frameType: \"pixel-grid-rendering-frame.v1\",\n    canvas: { width: CANVAS_SIZE, height: CANVAS_SIZE, background: COLOR_HIDDEN },\n    operations\n  };\n}\n\nfunction applyRenderingFrame(frame) {\n  ctx.fillStyle = frame.canvas.background;\n  ctx.fillRect(0, 0, frame.canvas.width, frame.canvas.height);\n  for (const op of frame.operations) {\n    ctx.fillStyle = op.fill;\n    ctx.fillRect(op.x, op.y, op.width, op.height);\n  }\n}\n\nfunction draw() {\n  applyRenderingFrame(buildRenderingFrame());\n}\n\nfunction updateCoordsDisplay() {\n  coordsEl.textContent = \"(\" + (player.x - PAD) + \", \" + (player.y - PAD) + \")\";\n}\n\nconst COMMAND_VECTOR = {\n  \"move-north\": { dx: 0, dy: -1 },\n  \"move-south\": { dx: 0, dy: 1 },\n  \"move-west\": { dx: -1, dy: 0 },\n  \"move-east\": { dx: 1, dy: 0 }\n};\n\n// dungeon-movement is declared against the original 60x60 board (a\n// deliberately unchanged, already-proven ontology), so the padded 78x78\n// map is narrowed to its display-space view here -- a data reshape via\n// built-in Array methods, not a legality decision.\nfunction tryMove(command) {\n  const vector = COMMAND_VECTOR[command];\n  const displayGrid = map.slice(PAD, PAD + DISPLAY_SIZE).map((row) => row.slice(PAD, PAD + DISPLAY_SIZE));\n  const decision = runDungeonOntology(dungeonMovementBundle, {\n    grid: displayGrid,\n    playerX: player.x - PAD,\n    playerY: player.y - PAD,\n    dx: vector.dx,\n    dy: vector.dy\n  });\n  if (decision.status !== \"MOVEMENT_AUTHORIZED\") {\n    return;\n  }\n  player.x = decision.x + PAD;\n  player.y = decision.y + PAD;\n  updateVisibility();\n  draw();\n  updateCoordsDisplay();\n}\n\nfunction handleKeyDown(event) {\n  let decision;\n  try {\n    decision = runDungeonOntology(dungeonKeyboardCommandBundle, { key: event.key });\n  } catch {\n    return;\n  }\n  event.preventDefault();\n  tryMove(decision.command);\n}\n\nfunction resetGame() {\n  generateMap();\n  visibility = createGrid(PADDED_SIZE, 0);\n  updateVisibility();\n  draw();\n  updateCoordsDisplay();\n}\n\nfunction toggleGodMode() {\n  godMode = !godMode;\n  godModeBtn.classList.toggle(\"active\", godMode);\n  draw();\n}\n\nregenerateBtn.addEventListener(\"click\", resetGame);\ngodModeBtn.addEventListener(\"click\", toggleGodMode);\ndocument.addEventListener(\"keydown\", handleKeyDown);\n\nresetGame();\n</script>\n</body>\n</html>\n"
+          "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Procedural Dungeon Generator - Fog of War</title>\n</head>\n<body>\n<main id=\"dungeon-application\" class=\"app\"></main>\n<script type=\"module\">\nimport { startsProceduralDungeonPage } from \"./src/application-adapter.mjs\";\nstartsProceduralDungeonPage(globalThis);\n</script>\n</body>\n</html>\n"
         },
         "authorityId": "procedural-dungeon-webpage-authority.v1",
         "projectorId": "utf8-text-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:2d0fafd5318d3ca6fe811ef26c512b44166633ef60649f6a98e892d92ef3d562",
-        "expectedByteLength": 27096,
+        "contentSha256": "sha256:f8dee458c02bd5782ff41fd0d0c7b668f210c14e3a02230dfaf7cf665871127d",
+        "expectedByteLength": 353,
         "forbiddenText": [
           "TODO",
           "FIXME",
@@ -27,19 +27,11 @@
           "forbidden-text-verifier.v1"
         ]
       },
-      "purpose": "Renders the playable procedural dungeon; movement, cell render role, and keyboard translation are decided by three closed ontologies, not by authored branching in this page.",
+      "purpose": "Projects only an empty application root and one invocation of the governed collapsed application adapter; it owns no executable application mechanics.",
       "relationships": [
         {
-          "artifactId": "dungeon-movement-bundle.v1",
-          "relationshipType": "reads"
-        },
-        {
-          "artifactId": "dungeon-render-role-bundle.v1",
-          "relationshipType": "reads"
-        },
-        {
-          "artifactId": "dungeon-keyboard-command-bundle.v1",
-          "relationshipType": "reads"
+          "artifactId": "application-adapter.v1",
+          "relationshipType": "invokes"
         },
         {
           "artifactId": "procedural-dungeon-webpage-readme.v1",
@@ -3079,113 +3071,2078 @@
               "topologyProfileId": "dungeon-topology.bundle.v1",
               "visibilityProfileId": "dungeon-visibility.bundle.v1"
             },
-            "authorityType": "browser-context-authority.v1",
-            "browserBindings": {
-              "applicationRootElementId": "dungeon-application",
-              "canvasElementId": "view",
-              "coordinatesElementId": "coords",
-              "godModeControlId": "godModeBtn",
-              "regenerateControlId": "regenerateBtn"
-            },
+            "authorityType": "browser-context-authority.v2",
             "canvasProfile": {
               "gridHeightTiles": 60,
               "gridWidthTiles": 60,
               "heightPx": 600,
-              "imageRendering": "pixelated",
+              "paddingTiles": 9,
               "tileSizePx": 10,
               "widthPx": 600
             },
-            "colorPalette": {
-              "hiddenFogOfWar": "#000000",
-              "player": "#55ff33",
-              "visibleFloor": "#9a8c98",
-              "visibleWall": "#4a4e69"
-            },
-            "contextId": "procedural-dungeon-webpage.v1",
-            "domainOperations": {
-              "authoredAlgorithm": [
-                "resolve-player-spawn",
-                "resolve-god-mode-state"
-              ],
-              "ontologyOwned": [
-                "resolve-player-movement",
-                "resolve-cell-render-role",
-                "translate-keyboard-command",
-                "resolve-dungeon-topology",
-                "rasterize-topology-into-grid",
-                "calculate-visibility-sweep"
-              ]
-            },
-            "executionBinding": {
-              "executorPortId": "browser-vendored-semantic-runtime.v1",
-              "revalidationPolicy": "governance-time-only",
-              "runtimeProfileId": "finite-semantic-runtime.v3"
-            },
-            "keyboardBindings": [
-              {
-                "command": "move-north",
-                "observedKey": "ArrowUp"
+            "commandVectors": {
+              "move-east": {
+                "dx": 1,
+                "dy": 0
               },
-              {
-                "command": "move-north",
-                "observedKey": "w"
+              "move-north": {
+                "dx": 0,
+                "dy": -1
               },
-              {
-                "command": "move-north",
-                "observedKey": "W"
+              "move-south": {
+                "dx": 0,
+                "dy": 1
               },
-              {
-                "command": "move-south",
-                "observedKey": "ArrowDown"
-              },
-              {
-                "command": "move-south",
-                "observedKey": "s"
-              },
-              {
-                "command": "move-south",
-                "observedKey": "S"
-              },
-              {
-                "command": "move-west",
-                "observedKey": "ArrowLeft"
-              },
-              {
-                "command": "move-west",
-                "observedKey": "a"
-              },
-              {
-                "command": "move-west",
-                "observedKey": "A"
-              },
-              {
-                "command": "move-east",
-                "observedKey": "ArrowRight"
-              },
-              {
-                "command": "move-east",
-                "observedKey": "d"
-              },
-              {
-                "command": "move-east",
-                "observedKey": "D"
+              "move-west": {
+                "dx": -1,
+                "dy": 0
               }
-            ]
+            },
+            "contextAuthorityType": "browser-context-authority.v2",
+            "contextId": "procedural-dungeon-webpage.v2",
+            "documentProjection": {
+              "applicationRootElementId": "dungeon-application",
+              "children": [
+                {
+                  "attributes": {
+                    "class": "stage"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "height": "600",
+                        "id": "view",
+                        "width": "600"
+                      },
+                      "tag": "canvas"
+                    }
+                  ],
+                  "tag": "div"
+                },
+                {
+                  "attributes": {
+                    "class": "panel"
+                  },
+                  "children": [
+                    {
+                      "tag": "h1",
+                      "text": "Dungeon Control"
+                    },
+                    {
+                      "attributes": {
+                        "class": "field"
+                      },
+                      "children": [
+                        {
+                          "attributes": {
+                            "class": "label"
+                          },
+                          "tag": "span",
+                          "text": "Player Position"
+                        },
+                        {
+                          "attributes": {
+                            "class": "value",
+                            "id": "coords"
+                          },
+                          "tag": "span",
+                          "text": "(0, 0)"
+                        }
+                      ],
+                      "tag": "div"
+                    },
+                    {
+                      "attributes": {
+                        "id": "regenerateBtn",
+                        "type": "button"
+                      },
+                      "tag": "button",
+                      "text": "Regenerate Map"
+                    },
+                    {
+                      "attributes": {
+                        "id": "godModeBtn",
+                        "type": "button"
+                      },
+                      "tag": "button",
+                      "text": "Toggle God Mode"
+                    },
+                    {
+                      "attributes": {
+                        "class": "hint"
+                      },
+                      "tag": "div",
+                      "text": "Move with Arrow Keys or WASD. Walls block movement and sight. God Mode reveals the full generated layout for debugging."
+                    }
+                  ],
+                  "tag": "div"
+                }
+              ],
+              "cssText": ":root{--bg:#05060a;--grid-line:#10233a;--panel-bg:#0b1220;--panel-border:#1fd6ff;--accent:#1fd6ff;--accent-dim:#0d7a94;--text:#d8f6ff;--player:#55ff33}*{box-sizing:border-box}html,body{height:100%}body{margin:0;background-color:var(--bg);background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:32px 32px;color:var(--text);font-family:Consolas,\"Courier New\",monospace;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}.app{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center}.stage{position:relative;border:2px solid var(--panel-border);box-shadow:0 0 18px rgba(31,214,255,.55),inset 0 0 24px rgba(31,214,255,.12);background:#000;line-height:0}canvas#view{width:600px;height:600px;image-rendering:pixelated;display:block}.panel{width:260px;background:var(--panel-bg);border:1px solid var(--panel-border);box-shadow:0 0 14px rgba(31,214,255,.35);border-radius:6px;padding:18px;display:flex;flex-direction:column;gap:16px}.panel h1{font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 4px;text-shadow:0 0 8px rgba(31,214,255,.8)}.field{display:flex;flex-direction:column;gap:4px;border:1px solid var(--accent-dim);border-radius:4px;padding:10px 12px;background:rgba(31,214,255,.05)}.field .label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-dim)}.field .value{font-size:18px;color:var(--player);text-shadow:0 0 6px rgba(85,255,51,.7)}button{font-family:inherit;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);background:linear-gradient(180deg,#103049,#071522);border:1px solid var(--accent);border-radius:4px;padding:10px 12px;cursor:pointer;transition:box-shadow .15s ease,transform .05s ease}button:hover{box-shadow:0 0 10px rgba(31,214,255,.8)}button:active{transform:translateY(1px)}button.active{background:linear-gradient(180deg,#1c3f22,#0a1a0d);border-color:var(--player);color:var(--player);box-shadow:0 0 10px rgba(85,255,51,.6)}.hint{font-size:11px;color:var(--accent-dim);line-height:1.5}",
+              "title": "Procedural Dungeon Generator - Fog of War"
+            },
+            "effectBindings": {
+              "coordinates": {
+                "elementId": "coords"
+              },
+              "godModeControl": {
+                "className": "active",
+                "elementId": "godModeBtn"
+              },
+              "regenerateControl": {
+                "elementId": "regenerateBtn"
+              },
+              "viewport": {
+                "elementId": "view"
+              }
+            },
+            "eventBindings": [
+              {
+                "event": "click",
+                "target": "regenerateControl",
+                "workflowId": "regenerate"
+              },
+              {
+                "event": "click",
+                "target": "godModeControl",
+                "workflowId": "toggle-god-mode"
+              },
+              {
+                "event": "keydown",
+                "target": "document",
+                "workflowId": "translate-and-move"
+              }
+            ],
+            "initialState": {
+              "godMode": 0,
+              "map": [],
+              "player": {
+                "x": 0,
+                "y": 0
+              },
+              "visibility": []
+            },
+            "lifecycle": {
+              "initialWorkflowId": "regenerate"
+            },
+            "renderingProjection": {
+              "frameType": "pixel-grid-rendering-frame.v1",
+              "palette": {
+                "background": "#000000",
+                "hidden": null,
+                "player": "#55ff33",
+                "visible-floor": "#9a8c98",
+                "visible-wall": "#4a4e69"
+              }
+            },
+            "workflows": {
+              "regenerate": [
+                {
+                  "authoritySelection": "topologyProfileId",
+                  "input": {
+                    "$object": {
+                      "depth": 0,
+                      "h": {
+                        "$op": "subtract",
+                        "args": [
+                          {
+                            "$ref": "context.canvasProfile.gridHeightTiles"
+                          },
+                          2
+                        ]
+                      },
+                      "w": {
+                        "$op": "subtract",
+                        "args": [
+                          {
+                            "$ref": "context.canvasProfile.gridWidthTiles"
+                          },
+                          2
+                        ]
+                      },
+                      "x": {
+                        "$op": "add",
+                        "args": [
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          },
+                          1
+                        ]
+                      },
+                      "y": {
+                        "$op": "add",
+                        "args": [
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          },
+                          1
+                        ]
+                      }
+                    }
+                  },
+                  "operation": "invoke-authority",
+                  "target": "local.topologyResult"
+                },
+                {
+                  "authoritySelection": "rasterizeProfileId",
+                  "input": {
+                    "$object": {
+                      "cellGridValue": 0,
+                      "cellIndex": 0,
+                      "cellX": 0,
+                      "cellY": 0,
+                      "containCount": 0,
+                      "currentRow": {
+                        "$array": []
+                      },
+                      "isLastColumn": 0,
+                      "rectCount": 0,
+                      "rectHiX": {
+                        "$ref": "local.topologyResult.topology.rectHiX"
+                      },
+                      "rectHiY": {
+                        "$ref": "local.topologyResult.topology.rectHiY"
+                      },
+                      "rectLoX": {
+                        "$ref": "local.topologyResult.topology.rectLoX"
+                      },
+                      "rectLoY": {
+                        "$ref": "local.topologyResult.topology.rectLoY"
+                      },
+                      "rows": {
+                        "$array": []
+                      },
+                      "slotIndex": -1
+                    }
+                  },
+                  "operation": "invoke-authority",
+                  "target": "local.rasterResult"
+                },
+                {
+                  "operation": "assign",
+                  "target": "state.map",
+                  "value": {
+                    "$ref": "local.rasterResult.grid.rows"
+                  }
+                },
+                {
+                  "operation": "assign",
+                  "target": "state.player.x",
+                  "value": {
+                    "$op": "add",
+                    "args": [
+                      {
+                        "$op": "index",
+                        "args": [
+                          {
+                            "$ref": "local.topologyResult.topology.roomX"
+                          },
+                          0
+                        ]
+                      },
+                      2
+                    ]
+                  }
+                },
+                {
+                  "operation": "assign",
+                  "target": "state.player.y",
+                  "value": {
+                    "$op": "add",
+                    "args": [
+                      {
+                        "$op": "index",
+                        "args": [
+                          {
+                            "$ref": "local.topologyResult.topology.roomY"
+                          },
+                          0
+                        ]
+                      },
+                      2
+                    ]
+                  }
+                },
+                {
+                  "height": {
+                    "$op": "add",
+                    "args": [
+                      {
+                        "$ref": "context.canvasProfile.gridHeightTiles"
+                      },
+                      {
+                        "$op": "multiply",
+                        "args": [
+                          2,
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "operation": "fill-grid",
+                  "target": "state.visibility",
+                  "value": 0,
+                  "width": {
+                    "$op": "add",
+                    "args": [
+                      {
+                        "$ref": "context.canvasProfile.gridWidthTiles"
+                      },
+                      {
+                        "$op": "multiply",
+                        "args": [
+                          2,
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "operation": "run-workflow",
+                  "workflowId": "update-visibility"
+                },
+                {
+                  "operation": "run-workflow",
+                  "workflowId": "render"
+                },
+                {
+                  "operation": "run-workflow",
+                  "workflowId": "update-coordinates"
+                }
+              ],
+              "render": [
+                {
+                  "operation": "assign",
+                  "target": "local.operations",
+                  "value": {
+                    "$array": []
+                  }
+                },
+                {
+                  "endExclusive": {
+                    "$ref": "context.canvasProfile.gridHeightTiles"
+                  },
+                  "iterator": "y",
+                  "operation": "for-range",
+                  "start": 0,
+                  "steps": [
+                    {
+                      "endExclusive": {
+                        "$ref": "context.canvasProfile.gridWidthTiles"
+                      },
+                      "iterator": "x",
+                      "operation": "for-range",
+                      "start": 0,
+                      "steps": [
+                        {
+                          "authoritySelection": "renderRoleProfileId",
+                          "input": {
+                            "$object": {
+                              "cellValue": {
+                                "$op": "index",
+                                "args": [
+                                  {
+                                    "$ref": "state.map"
+                                  },
+                                  {
+                                    "$op": "add",
+                                    "args": [
+                                      {
+                                        "$ref": "loop.y"
+                                      },
+                                      {
+                                        "$ref": "context.canvasProfile.paddingTiles"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "$op": "add",
+                                    "args": [
+                                      {
+                                        "$ref": "loop.x"
+                                      },
+                                      {
+                                        "$ref": "context.canvasProfile.paddingTiles"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "godMode": {
+                                "$ref": "state.godMode"
+                              },
+                              "revealed": {
+                                "$op": "index",
+                                "args": [
+                                  {
+                                    "$ref": "state.visibility"
+                                  },
+                                  {
+                                    "$op": "add",
+                                    "args": [
+                                      {
+                                        "$ref": "loop.y"
+                                      },
+                                      {
+                                        "$ref": "context.canvasProfile.paddingTiles"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "$op": "add",
+                                    "args": [
+                                      {
+                                        "$ref": "loop.x"
+                                      },
+                                      {
+                                        "$ref": "context.canvasProfile.paddingTiles"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "operation": "invoke-authority",
+                          "target": "local.renderDecision"
+                        },
+                        {
+                          "condition": {
+                            "$op": "not-equal",
+                            "args": [
+                              {
+                                "$op": "lookup",
+                                "args": [
+                                  {
+                                    "$ref": "context.renderingProjection.palette"
+                                  },
+                                  {
+                                    "$ref": "local.renderDecision.role"
+                                  }
+                                ]
+                              },
+                              null
+                            ]
+                          },
+                          "operation": "when",
+                          "steps": [
+                            {
+                              "operation": "append",
+                              "target": {
+                                "$ref": "local.operations"
+                              },
+                              "value": {
+                                "$object": {
+                                  "fill": {
+                                    "$op": "lookup",
+                                    "args": [
+                                      {
+                                        "$ref": "context.renderingProjection.palette"
+                                      },
+                                      {
+                                        "$ref": "local.renderDecision.role"
+                                      }
+                                    ]
+                                  },
+                                  "height": {
+                                    "$ref": "context.canvasProfile.tileSizePx"
+                                  },
+                                  "operation": "fill-rectangle",
+                                  "semanticRole": {
+                                    "$ref": "local.renderDecision.role"
+                                  },
+                                  "width": {
+                                    "$ref": "context.canvasProfile.tileSizePx"
+                                  },
+                                  "x": {
+                                    "$op": "multiply",
+                                    "args": [
+                                      {
+                                        "$ref": "loop.x"
+                                      },
+                                      {
+                                        "$ref": "context.canvasProfile.tileSizePx"
+                                      }
+                                    ]
+                                  },
+                                  "y": {
+                                    "$op": "multiply",
+                                    "args": [
+                                      {
+                                        "$ref": "loop.y"
+                                      },
+                                      {
+                                        "$ref": "context.canvasProfile.tileSizePx"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "operation": "append",
+                  "target": {
+                    "$ref": "local.operations"
+                  },
+                  "value": {
+                    "$object": {
+                      "fill": {
+                        "$ref": "context.renderingProjection.palette.player"
+                      },
+                      "height": {
+                        "$ref": "context.canvasProfile.tileSizePx"
+                      },
+                      "operation": "fill-rectangle",
+                      "semanticRole": "player",
+                      "width": {
+                        "$ref": "context.canvasProfile.tileSizePx"
+                      },
+                      "x": {
+                        "$op": "multiply",
+                        "args": [
+                          {
+                            "$op": "subtract",
+                            "args": [
+                              {
+                                "$ref": "state.player.x"
+                              },
+                              {
+                                "$ref": "context.canvasProfile.paddingTiles"
+                              }
+                            ]
+                          },
+                          {
+                            "$ref": "context.canvasProfile.tileSizePx"
+                          }
+                        ]
+                      },
+                      "y": {
+                        "$op": "multiply",
+                        "args": [
+                          {
+                            "$op": "subtract",
+                            "args": [
+                              {
+                                "$ref": "state.player.y"
+                              },
+                              {
+                                "$ref": "context.canvasProfile.paddingTiles"
+                              }
+                            ]
+                          },
+                          {
+                            "$ref": "context.canvasProfile.tileSizePx"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "operation": "assign",
+                  "target": "local.frame",
+                  "value": {
+                    "$object": {
+                      "canvas": {
+                        "$object": {
+                          "background": {
+                            "$ref": "context.renderingProjection.palette.background"
+                          },
+                          "height": {
+                            "$ref": "context.canvasProfile.heightPx"
+                          },
+                          "width": {
+                            "$ref": "context.canvasProfile.widthPx"
+                          }
+                        }
+                      },
+                      "frameType": {
+                        "$ref": "context.renderingProjection.frameType"
+                      },
+                      "operations": {
+                        "$ref": "local.operations"
+                      }
+                    }
+                  }
+                },
+                {
+                  "bindingId": "viewport",
+                  "frame": {
+                    "$ref": "local.frame"
+                  },
+                  "operation": "apply-canvas-frame"
+                }
+              ],
+              "toggle-god-mode": [
+                {
+                  "operation": "assign",
+                  "target": "state.godMode",
+                  "value": {
+                    "$op": "toggle-binary",
+                    "args": [
+                      {
+                        "$ref": "state.godMode"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "bindingId": "godModeControl",
+                  "operation": "toggle-class",
+                  "present": {
+                    "$op": "equal",
+                    "args": [
+                      {
+                        "$ref": "state.godMode"
+                      },
+                      1
+                    ]
+                  }
+                },
+                {
+                  "operation": "run-workflow",
+                  "workflowId": "render"
+                }
+              ],
+              "translate-and-move": [
+                {
+                  "authoritySelection": "keyboardCommandProfileId",
+                  "failureDisposition": "halt-workflow",
+                  "input": {
+                    "$object": {
+                      "key": {
+                        "$ref": "event.key"
+                      }
+                    }
+                  },
+                  "operation": "invoke-authority",
+                  "target": "local.commandDecision"
+                },
+                {
+                  "operation": "prevent-default"
+                },
+                {
+                  "authoritySelection": "movementProfileId",
+                  "input": {
+                    "$object": {
+                      "dx": {
+                        "$op": "index",
+                        "args": [
+                          {
+                            "$ref": "context.commandVectors"
+                          },
+                          {
+                            "$ref": "local.commandDecision.command"
+                          },
+                          "dx"
+                        ]
+                      },
+                      "dy": {
+                        "$op": "index",
+                        "args": [
+                          {
+                            "$ref": "context.commandVectors"
+                          },
+                          {
+                            "$ref": "local.commandDecision.command"
+                          },
+                          "dy"
+                        ]
+                      },
+                      "grid": {
+                        "$op": "slice-grid",
+                        "args": [
+                          {
+                            "$ref": "state.map"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.gridHeightTiles"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.gridWidthTiles"
+                          }
+                        ]
+                      },
+                      "playerX": {
+                        "$op": "subtract",
+                        "args": [
+                          {
+                            "$ref": "state.player.x"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          }
+                        ]
+                      },
+                      "playerY": {
+                        "$op": "subtract",
+                        "args": [
+                          {
+                            "$ref": "state.player.y"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "operation": "invoke-authority",
+                  "target": "local.movementDecision"
+                },
+                {
+                  "condition": {
+                    "$op": "equal",
+                    "args": [
+                      {
+                        "$ref": "local.movementDecision.status"
+                      },
+                      "MOVEMENT_AUTHORIZED"
+                    ]
+                  },
+                  "operation": "when",
+                  "steps": [
+                    {
+                      "operation": "assign",
+                      "target": "state.player.x",
+                      "value": {
+                        "$op": "add",
+                        "args": [
+                          {
+                            "$ref": "local.movementDecision.x"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "operation": "assign",
+                      "target": "state.player.y",
+                      "value": {
+                        "$op": "add",
+                        "args": [
+                          {
+                            "$ref": "local.movementDecision.y"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "operation": "run-workflow",
+                      "workflowId": "update-visibility"
+                    },
+                    {
+                      "operation": "run-workflow",
+                      "workflowId": "render"
+                    },
+                    {
+                      "operation": "run-workflow",
+                      "workflowId": "update-coordinates"
+                    }
+                  ]
+                }
+              ],
+              "update-coordinates": [
+                {
+                  "bindingId": "coordinates",
+                  "operation": "set-text",
+                  "value": {
+                    "$op": "format",
+                    "args": [
+                      "({0}, {1})",
+                      {
+                        "$op": "subtract",
+                        "args": [
+                          {
+                            "$ref": "state.player.x"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          }
+                        ]
+                      },
+                      {
+                        "$op": "subtract",
+                        "args": [
+                          {
+                            "$ref": "state.player.y"
+                          },
+                          {
+                            "$ref": "context.canvasProfile.paddingTiles"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "update-visibility": [
+                {
+                  "authoritySelection": "visibilityProfileId",
+                  "input": {
+                    "$object": {
+                      "blockedRayId": -999,
+                      "cellValue": 0,
+                      "cellX": 0,
+                      "cellY": 0,
+                      "globalStep": 0,
+                      "grid": {
+                        "$ref": "state.map"
+                      },
+                      "playerX": {
+                        "$ref": "state.player.x"
+                      },
+                      "playerY": {
+                        "$ref": "state.player.y"
+                      },
+                      "rayId": 0,
+                      "relX": 0,
+                      "relY": 0,
+                      "revealedX": {
+                        "$array": []
+                      },
+                      "revealedY": {
+                        "$array": []
+                      },
+                      "scratchRow": {
+                        "$op": "index",
+                        "args": [
+                          {
+                            "$ref": "state.map"
+                          },
+                          0
+                        ]
+                      },
+                      "wallHitRayId": -999
+                    }
+                  },
+                  "operation": "invoke-authority",
+                  "target": "local.visibilityResult"
+                },
+                {
+                  "grid": {
+                    "$ref": "state.visibility"
+                  },
+                  "operation": "write-indexed-pairs",
+                  "value": 1,
+                  "xs": {
+                    "$ref": "local.visibilityResult.visibilityState.revealedX"
+                  },
+                  "ys": {
+                    "$ref": "local.visibilityResult.visibilityState.revealedY"
+                  }
+                }
+              ]
+            }
           }
         },
         "authorityId": "browser-context-authority.v1-authority",
         "projectorId": "canonical-json-value-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:d5e63371297c9ec290eb7609dac24f3efe382e6ed8aa87f94395f38197d3a387",
-        "expectedByteLength": 2479,
+        "contentSha256": "sha256:e44f061df342c1531182395e5c444a678e68dbdfc48d60f9b72d4009b42db4cb",
+        "expectedByteLength": 25422,
         "verifierIds": [
           "content-digest-verifier.v1"
         ]
       },
-      "purpose": "Declares which DOM/canvas surfaces this page binds to which ontology bundles.",
-      "relationships": [],
+      "purpose": "Owns the webpage document, presentation, state, event, workflow, rendering-frame, effect-binding, and ontology-selection semantics interpreted by the trusted browser application runtime.",
+      "relationships": [
+        {
+          "artifactId": "dungeon-keyboard-command-bundle.v1",
+          "relationshipType": "reads"
+        },
+        {
+          "artifactId": "dungeon-movement-bundle.v1",
+          "relationshipType": "reads"
+        },
+        {
+          "artifactId": "dungeon-rasterize-bundle.v1",
+          "relationshipType": "reads"
+        },
+        {
+          "artifactId": "dungeon-render-role-bundle.v1",
+          "relationshipType": "reads"
+        },
+        {
+          "artifactId": "dungeon-topology-bundle.v1",
+          "relationshipType": "reads"
+        },
+        {
+          "artifactId": "dungeon-visibility-bundle.v1",
+          "relationshipType": "reads"
+        }
+      ],
       "relativePath": "browser-context.json"
+    },
+    {
+      "artifactId": "browser-application-authority.v1",
+      "artifactKind": "semantic-execution-authority",
+      "mediaType": "application/json",
+      "projection": {
+        "authority": {
+          "authorityType": "canonical-json-value.v1",
+          "value": {
+            "authorityType": "semantic-projection-authority.v1",
+            "failure": {
+              "failurePolicyId": "browser-application-projection-failure.v1",
+              "message": "BROWSER_APPLICATION_PROJECTION_FAILED"
+            },
+            "input": {
+              "schemaArtifactId": "browser-application-port-schema.v1"
+            },
+            "projection": {
+              "fields": [
+                {
+                  "outputField": "execution",
+                  "sourcePath": []
+                }
+              ],
+              "projectionMappingId": "browser-application-projection.v1"
+            },
+            "result": {
+              "resultContractId": "browser-application-result.v1",
+              "serialization": "identity"
+            }
+          }
+        },
+        "authorityId": "browser-application-semantic-authority.v1",
+        "projectorId": "canonical-json-value-projector.v1"
+      },
+      "proof": {
+        "contentSha256": "sha256:506ef5c98881eba73a860dc2e18663a866c6acb7900ab0e1c8a8400584c15dc8",
+        "expectedByteLength": 574,
+        "verifierIds": [
+          "content-digest-verifier.v1"
+        ]
+      },
+      "purpose": "Authorizes one direct browser-application projection from the declared browser port.",
+      "relationships": [
+        {
+          "artifactId": "browser-application-port-schema.v1",
+          "relationshipType": "reads"
+        }
+      ],
+      "relativePath": "contracts/procedural-dungeon-application.authority.json"
+    },
+    {
+      "artifactId": "browser-application-port-schema.v1",
+      "artifactKind": "json-schema",
+      "mediaType": "application/schema+json",
+      "projection": {
+        "authority": {
+          "authorityType": "canonical-json-value.v1",
+          "value": {
+            "$id": "urn:governed-artifacts:browser-application-port:v1",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "additionalProperties": true,
+            "properties": {
+              "document": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "document"
+            ],
+            "title": "Browser application port",
+            "type": "object"
+          }
+        },
+        "authorityId": "browser-application-port-schema-authority.v1",
+        "projectorId": "canonical-json-value-projector.v1"
+      },
+      "proof": {
+        "contentSha256": "sha256:81def044fca5a247d0b6df7290aaf3b3b1ec3600b220deb3748bf28a0cbea1e2",
+        "expectedByteLength": 324,
+        "metaSchemaValidationRequired": true,
+        "verifierIds": [
+          "content-digest-verifier.v1",
+          "json-meta-schema-verifier.v1"
+        ]
+      },
+      "purpose": "Constrains the browser port supplied to the aggregate page authority.",
+      "relationships": [],
+      "relativePath": "contracts/browser-application-port.schema.json"
+    },
+    {
+      "artifactId": "application-adapter.v1",
+      "artifactKind": "javascript-module",
+      "mediaType": "text/javascript",
+      "projection": {
+        "authority": {
+          "authorityType": "lossless-source-tokens.v1",
+          "language": "javascript",
+          "tokens": [
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "executeBrowserApplication"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../../lib/browser-application-runtime.mjs\""
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "applicationAuthority"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/procedural-dungeon-application.authority.json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "WithKeyword",
+              "text": "with"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeKeyword",
+              "text": "type"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "browserContext"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../browser-context.json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "WithKeyword",
+              "text": "with"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeKeyword",
+              "text": "type"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "keyboardCommandAuthority"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/dungeon-keyboard-command.bundle.json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "WithKeyword",
+              "text": "with"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeKeyword",
+              "text": "type"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "movementAuthority"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/dungeon-movement.bundle.json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "WithKeyword",
+              "text": "with"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeKeyword",
+              "text": "type"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "rasterizeAuthority"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/dungeon-rasterize.bundle.json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "WithKeyword",
+              "text": "with"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeKeyword",
+              "text": "type"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "renderRoleAuthority"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/dungeon-render-role.bundle.json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "WithKeyword",
+              "text": "with"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeKeyword",
+              "text": "type"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "topologyAuthority"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/dungeon-topology.bundle.json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "WithKeyword",
+              "text": "with"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeKeyword",
+              "text": "type"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ImportKeyword",
+              "text": "import"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "visibilityAuthority"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FromKeyword",
+              "text": "from"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"../contracts/dungeon-visibility.bundle.json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "WithKeyword",
+              "text": "with"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "TypeKeyword",
+              "text": "type"
+            },
+            {
+              "kind": "ColonToken",
+              "text": ":"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "StringLiteral",
+              "text": "\"json\""
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "ExportKeyword",
+              "text": "export"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "FunctionKeyword",
+              "text": "function"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "startsProceduralDungeonPage"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "browserContextPort"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "OpenBraceToken",
+              "text": "{"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": "  "
+            },
+            {
+              "kind": "ReturnKeyword",
+              "text": "return"
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "executeBrowserApplication"
+            },
+            {
+              "kind": "OpenParenToken",
+              "text": "("
+            },
+            {
+              "kind": "Identifier",
+              "text": "applicationAuthority"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "browserContext"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "browserContextPort"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "keyboardCommandAuthority"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "movementAuthority"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "rasterizeAuthority"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "renderRoleAuthority"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "topologyAuthority"
+            },
+            {
+              "kind": "CommaToken",
+              "text": ","
+            },
+            {
+              "kind": "WhitespaceTrivia",
+              "text": " "
+            },
+            {
+              "kind": "Identifier",
+              "text": "visibilityAuthority"
+            },
+            {
+              "kind": "CloseParenToken",
+              "text": ")"
+            },
+            {
+              "kind": "SemicolonToken",
+              "text": ";"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            },
+            {
+              "kind": "CloseBraceToken",
+              "text": "}"
+            },
+            {
+              "kind": "NewLineTrivia",
+              "text": "\n"
+            }
+          ]
+        },
+        "authorityId": "application-adapter-source-authority.v1",
+        "projectorId": "provenance-sealed-source-projector.v1"
+      },
+      "proof": {
+        "contentSha256": "sha256:2ee9f3501b7761ec253bc5b972a1d8eca12648119009108364e3929d1978aca9",
+        "expectedByteLength": 1990,
+        "verifierIds": [
+          "artifact-provenance-verifier.v1",
+          "authority-closure-verifier.v1",
+          "content-digest-verifier.v1",
+          "source-token-structure-verifier.v1"
+        ]
+      },
+      "purpose": "Binds the one aggregate browser-context semantic projection authority to the trusted browser application executor and directly returns its result.",
+      "relationships": [
+        {
+          "artifactId": "browser-application-authority.v1",
+          "relationshipType": "reads"
+        }
+      ],
+      "relativePath": "src/application-adapter.mjs",
+      "sourceAuthority": {
+        "decisions": [],
+        "declarations": [
+          "startsProceduralDungeonPage"
+        ],
+        "failurePolicies": [
+          {
+            "expression": "new Error(\"BROWSER_APPLICATION_PROJECTION_FAILED\")",
+            "failurePolicyId": "browser-application-projection-failure.v1",
+            "occurrences": 1,
+            "policy": "Fail the aggregate browser application projection with the declared disposition.",
+            "responsibilityId": "start-procedural-dungeon-page.v1",
+            "syntaxKind": "ThrowStatement"
+          }
+        ],
+        "forbiddenSyntaxKinds": [
+          "CatchClause",
+          "ConditionalExpression",
+          "DebuggerStatement",
+          "DoStatement",
+          "DynamicImportExpression",
+          "ForStatement",
+          "IfStatement",
+          "LogicalAndExpression",
+          "LogicalOrExpression",
+          "NullishCoalescingExpression",
+          "ObjectLiteralExpression",
+          "SwitchStatement",
+          "ThrowStatement",
+          "TryStatement",
+          "WhileStatement"
+        ],
+        "iterations": [],
+        "projectionMappings": [
+          {
+            "fields": [
+              {
+                "outputField": "execution",
+                "sourceExpression": "browserContextPort"
+              }
+            ],
+            "occurrences": 1,
+            "projectionMappingId": "browser-application-projection.v1",
+            "purpose": "Projects the admitted browser port into the application execution result.",
+            "responsibilityId": "start-procedural-dungeon-page.v1"
+          }
+        ],
+        "responsibilities": [
+          {
+            "declaration": "<module>",
+            "purpose": "Declares the admitted startsProceduralDungeonPage surface.",
+            "responsibilityId": "application-adapter-module.v1",
+            "responsibilityType": "module"
+          },
+          {
+            "declaration": "startsProceduralDungeonPage",
+            "functionKind": "function-declaration",
+            "purpose": "Directly binds the aggregate page authority and browser port to trusted semantic execution.",
+            "responsibilityId": "start-procedural-dungeon-page.v1",
+            "responsibilityType": "function"
+          }
+        ],
+        "resultContracts": [
+          {
+            "mediaType": "application/json",
+            "purpose": "Returns the browser application execution observation directly.",
+            "resultContractId": "browser-application-result.v1",
+            "resultKind": "projected-ontology-result",
+            "source": {
+              "expression": "executeBrowserApplication(applicationAuthority,browserContext,browserContextPort,keyboardCommandAuthority,movementAuthority,rasterizeAuthority,renderRoleAuthority,topologyAuthority,visibilityAuthority)",
+              "occurrences": 1,
+              "responsibilityId": "start-procedural-dungeon-page.v1",
+              "returnKind": "explicit-return",
+              "sourceType": "return"
+            }
+          }
+        ],
+        "semanticEdges": [
+          {
+            "argumentExpressions": [
+              "applicationAuthority",
+              "browserContext",
+              "browserContextPort",
+              "keyboardCommandAuthority",
+              "movementAuthority",
+              "rasterizeAuthority",
+              "renderRoleAuthority",
+              "topologyAuthority",
+              "visibilityAuthority"
+            ],
+            "authorities": [
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "browser-application-runtime.v1"
+              },
+              {
+                "authorityType": "runtime-authority",
+                "runtimeAuthorityId": "browser-application-runtime.v1"
+              },
+              {
+                "authorityType": "result-authority",
+                "resultContractId": "browser-application-result.v1"
+              },
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "browser-context-data.v1"
+              },
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "browser-application-authority-data.v1"
+              },
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "keyboard-command-bundle-data.v1"
+              },
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "movement-bundle-data.v1"
+              },
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "rasterize-bundle-data.v1"
+              },
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "render-role-bundle-data.v1"
+              },
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "topology-bundle-data.v1"
+              },
+              {
+                "authorityType": "dependency-authority",
+                "dependencyId": "visibility-bundle-data.v1"
+              }
+            ],
+            "edgeId": "execute-browser-application-semantics.v1",
+            "edgeKind": "invocation",
+            "occurrences": 1,
+            "operation": "executeBrowserApplication",
+            "purpose": "Forwards the aggregate context authority, browser port, and selected ontology bundles through the trusted browser application runtime.",
+            "responsibilityId": "start-procedural-dungeon-page.v1"
+          }
+        ]
+      }
     },
     {
       "artifactId": "procedural-dungeon-webpage-readme.v1",
@@ -3205,7 +5162,7 @@
             "Every cell's render role (hidden / visible-floor / visible-wall) is decided by the dungeon-render-role ontology, including the God Mode override.",
             "Every admitted keyboard key is translated by the dungeon-keyboard-command ontology; unmapped keys are rejected, not silently ignored by authored logic.",
             "The three adapter modules are each exactly one import, one function, one semantic invocation, one direct return -- verified structurally, not by inspection.",
-            "The browser page's vendored execution logic is proven equivalent to direct semantic execution for every canonical fixture, not merely asserted.",
+            "The extracted browser execution module is proven equivalent to direct semantic execution for every canonical fixture, and the page bootstrap is proven free of inline interpreter machinery.",
             "Procedural generation and the multi-ray visibility sweep are explicitly declared as authored-algorithm deviations, not silently unproven ontology claims.",
             "The rendering frame is data (an operations list) computed before any canvas call; the canvas adapter applies it without making rendering decisions."
           ],
@@ -3242,8 +5199,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:ef8f3f36a4ba61376b38241451cbf1bf3e62503b2628ff34b9093143e116dc8e",
-        "expectedByteLength": 30055,
+        "contentSha256": "sha256:9b64130a211f9f116c954ab97e98c9b2707836c5b13b1540e3671b636ef613af",
+        "expectedByteLength": 34448,
         "requiredSections": [
           "# Procedural Dungeon Generator: Governed Webpage Projection",
           "## Future-State Preview",
@@ -25993,6 +27950,16 @@
         "expectedExitCode": 0,
         "expectedStdoutContains": "RENDER_COMMAND_FRAME_CONFORMS",
         "verifierId": "command-exit-verifier.v1"
+      },
+      {
+        "command": [
+          "node",
+          "../verification-tools/verifies-page-bootstrap-mechanics.mjs"
+        ],
+        "evaluationId": "verify-page-bootstrap-mechanics.v1",
+        "expectedExitCode": 0,
+        "expectedStdoutContains": "PAGE_BOOTSTRAP_MECHANICS_CONFORMS",
+        "verifierId": "command-exit-verifier.v1"
       }
     ]
   },
@@ -26039,7 +28006,8 @@
       "dependencyId": "movement-bundle-data.v1",
       "specifier": "../contracts/dungeon-movement.bundle.json",
       "usedByArtifacts": [
-        "movement-adapter.v1"
+        "movement-adapter.v1",
+        "application-adapter.v1"
       ]
     },
     {
@@ -26055,7 +28023,8 @@
       "dependencyId": "render-role-bundle-data.v1",
       "specifier": "../contracts/dungeon-render-role.bundle.json",
       "usedByArtifacts": [
-        "render-role-adapter.v1"
+        "render-role-adapter.v1",
+        "application-adapter.v1"
       ]
     },
     {
@@ -26071,7 +28040,8 @@
       "dependencyId": "keyboard-command-bundle-data.v1",
       "specifier": "../contracts/dungeon-keyboard-command.bundle.json",
       "usedByArtifacts": [
-        "keyboard-command-adapter.v1"
+        "keyboard-command-adapter.v1",
+        "application-adapter.v1"
       ]
     },
     {
@@ -26087,7 +28057,8 @@
       "dependencyId": "topology-bundle-data.v1",
       "specifier": "../contracts/dungeon-topology.bundle.json",
       "usedByArtifacts": [
-        "topology-adapter.v1"
+        "topology-adapter.v1",
+        "application-adapter.v1"
       ]
     },
     {
@@ -26103,7 +28074,8 @@
       "dependencyId": "rasterize-bundle-data.v1",
       "specifier": "../contracts/dungeon-rasterize.bundle.json",
       "usedByArtifacts": [
-        "rasterize-adapter.v1"
+        "rasterize-adapter.v1",
+        "application-adapter.v1"
       ]
     },
     {
@@ -26119,7 +28091,58 @@
       "dependencyId": "visibility-bundle-data.v1",
       "specifier": "../contracts/dungeon-visibility.bundle.json",
       "usedByArtifacts": [
-        "visibility-adapter.v1"
+        "visibility-adapter.v1",
+        "application-adapter.v1"
+      ]
+    },
+    {
+      "allowedImports": [
+        "executeBrowserApplication"
+      ],
+      "allowedInvocations": [
+        "executeBrowserApplication"
+      ],
+      "authority": {
+        "authorityType": "port-authority.v1",
+        "effect": "execute-semantic-authority",
+        "portId": "browser-application-runtime.v1"
+      },
+      "dependencyId": "browser-application-runtime.v1",
+      "specifier": "../../lib/browser-application-runtime.mjs",
+      "usedByArtifacts": [
+        "application-adapter.v1"
+      ]
+    },
+    {
+      "allowedImports": [
+        "default"
+      ],
+      "allowedInvocations": [],
+      "authority": {
+        "authorityType": "port-authority.v1",
+        "effect": "read-semantic-authority",
+        "portId": "browser-application-authority-data.v1"
+      },
+      "dependencyId": "browser-application-authority-data.v1",
+      "specifier": "../contracts/procedural-dungeon-application.authority.json",
+      "usedByArtifacts": [
+        "application-adapter.v1"
+      ]
+    },
+    {
+      "allowedImports": [
+        "default"
+      ],
+      "allowedInvocations": [],
+      "authority": {
+        "authorityType": "port-authority.v1",
+        "effect": "read-semantic-authority",
+        "portId": "browser-context-data.v1"
+      },
+      "dependencyId": "browser-context-data.v1",
+      "specifier": "../browser-context.json",
+      "usedByArtifacts": [
+        "application-adapter.v1"
       ]
     }
   ],
@@ -26161,13 +28184,13 @@
         "decisionId": "vendored-browser-executor-skips-type-revalidation",
         "disposition": "accepted",
         "source": "Browser execution design (Stage 3)",
-        "statement": "The page's vendored DAG-walk executor omits AJV type re-validation at each primitive step, since type-closure is a governance-time guarantee already proven by the contract's gate, not a per-call runtime necessity."
+        "statement": "The narrowed browser executor in lib/browser-semantic-runtime.mjs omits AJV type re-validation at each primitive step, since type-closure is a governance-time guarantee already proven by the contract's gate, not a per-call runtime necessity."
       },
       {
         "decisionId": "rendering-frame-is-data-before-canvas-calls",
         "disposition": "accepted",
-        "source": "Doc section 8",
-        "statement": "buildRenderingFrame() emits a declarative pixel-grid-rendering-frame.v1 value before any canvas call; applyRenderingFrame() is a dumb executor with no rendering decisions."
+        "source": "Doc section 8 and corrected page-authority boundary",
+        "statement": "The browser-context authority declares construction of a complete pixel-grid-rendering-frame.v1 value before any canvas effect; the trusted generic executor only applies the declared ordered commands."
       },
       {
         "decisionId": "generic-web-projector-and-full-verifier-platform-deferred",
@@ -26190,8 +28213,20 @@
       {
         "decisionId": "render-frame-cell-loop-is-mechanical-not-a-decision",
         "disposition": "accepted",
-        "source": "Doc section 4 (browser ports vs domain operations)",
-        "statement": "buildRenderingFrame()'s single for-loop over the 60x60 display grid contains zero decisions of its own: every per-cell classification is delegated to the dungeon-render-role ontology. This is mechanical repetition of an already-fully-decided call, the same category the doc admits for browser mechanics, not a domain-semantics escape hatch."
+        "source": "User: HTML must collapse and forbidden executable mechanics belong above it",
+        "statement": "The page and capability body own no loop. The browser-context authority declares the bounded grid projection and per-cell ontology invocation as data; only the generic trusted context interpreter performs iteration."
+      },
+      {
+        "decisionId": "browser-execution-module-stays-outside-governed-scope",
+        "disposition": "accepted",
+        "source": "User: HTML must collapse and all data moves to semantic, ontology, and context layers",
+        "statement": "Generic semantic and browser-context interpreters live under lib/ as shared trusted engine infrastructure. The governed page contains one adapter import and one invocation; the adapter directly executes the aggregate browser-context semantic projection authority."
+      },
+      {
+        "decisionId": "html-collapses-to-one-authority-invocation",
+        "disposition": "accepted",
+        "source": "User correction citing the original governed HTML projection requirements and closed-world forbidden mechanics",
+        "statement": "index.html is a tiny packaging projection with one empty application root, one static import, and one authority invocation. It contains no CSS, application data, local state, branching, iteration, failure handling, object construction, or state mutation."
       }
     ],
     "deviations": [
@@ -26248,12 +28283,6 @@
         "artifactIds": [
           "procedural-dungeon-webpage.v1"
         ],
-        "decisionId": "rendering-frame-is-data-before-canvas-calls"
-      },
-      {
-        "artifactIds": [
-          "procedural-dungeon-webpage.v1"
-        ],
         "decisionId": "generic-web-projector-and-full-verifier-platform-deferred"
       },
       {
@@ -26277,9 +28306,35 @@
       },
       {
         "artifactIds": [
-          "procedural-dungeon-webpage.v1"
+          "procedural-dungeon-webpage.v1",
+          "browser-context-authority.v1",
+          "application-adapter.v1"
+        ],
+        "decisionId": "rendering-frame-is-data-before-canvas-calls"
+      },
+      {
+        "artifactIds": [
+          "procedural-dungeon-webpage.v1",
+          "browser-context-authority.v1",
+          "application-adapter.v1"
         ],
         "decisionId": "render-frame-cell-loop-is-mechanical-not-a-decision"
+      },
+      {
+        "artifactIds": [
+          "procedural-dungeon-webpage.v1",
+          "browser-context-authority.v1",
+          "application-adapter.v1"
+        ],
+        "decisionId": "browser-execution-module-stays-outside-governed-scope"
+      },
+      {
+        "artifactIds": [
+          "procedural-dungeon-webpage.v1",
+          "browser-context-authority.v1",
+          "application-adapter.v1"
+        ],
+        "decisionId": "html-collapses-to-one-authority-invocation"
       }
     ]
   },
@@ -26420,6 +28475,13 @@
         "projectionProfileId": "javascript-semantic-execution-body.v1",
         "responsibilityId": "executes-visibility-resolution",
         "responsibilityType": "semantic-execution"
+      },
+      {
+        "artifactId": "application-adapter.v1",
+        "obligationId": "apply-declared-canvas-operations-only",
+        "projectionProfileId": "javascript-semantic-execution-body.v1",
+        "responsibilityId": "starts-browser-application-authority",
+        "responsibilityType": "semantic-execution"
       }
     ],
     "scenarios": [
@@ -26474,15 +28536,19 @@
         "rasterize-adapter.v1",
         "visibility-adapter.v1"
       ]
+    },
+    {
+      "invocation": "executeBrowserApplication",
+      "purpose": "Interprets one aggregate semantic projection authority against a supplied browser port; all capability meaning remains declared in that authority and its selected ontology bundles.",
+      "runtimeAuthorityId": "browser-application-runtime.v1",
+      "usedByArtifacts": [
+        "application-adapter.v1"
+      ]
     }
   ],
   "subject": {
     "authority": {
-      "authoredAlgorithm": [
-        "generate-dungeon",
-        "resolve-player-spawn",
-        "calculate-visibility-sweep"
-      ],
+      "authoredAlgorithm": [],
       "closedLoop": [
         "ontology",
         "adapter",
@@ -26494,10 +28560,13 @@
       "ontologyOwned": [
         "resolve-player-movement",
         "resolve-cell-render-role",
-        "translate-keyboard-command"
+        "translate-keyboard-command",
+        "resolve-dungeon-topology",
+        "rasterize-topology-into-grid",
+        "calculate-visibility-sweep"
       ]
     },
-    "purpose": "Generate and interact with a connected dungeon under dynamic fog of war, where movement, render role, and keyboard translation are governed ontology decisions.",
+    "purpose": "Generate and interact with a connected dungeon whose application structure, presentation, state transitions, workflows, rendering projection, and specialized decisions are governed by context and ontology authorities.",
     "subjectId": "procedural-dungeon-webpage.v1",
     "subjectType": "interactive-web-capability"
   },

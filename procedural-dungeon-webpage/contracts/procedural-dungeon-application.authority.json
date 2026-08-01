@@ -1,0 +1,23 @@
+{
+  "authorityType": "semantic-projection-authority.v1",
+  "failure": {
+    "failurePolicyId": "browser-application-projection-failure.v1",
+    "message": "BROWSER_APPLICATION_PROJECTION_FAILED"
+  },
+  "input": {
+    "schemaArtifactId": "browser-application-port-schema.v1"
+  },
+  "projection": {
+    "fields": [
+      {
+        "outputField": "execution",
+        "sourcePath": []
+      }
+    ],
+    "projectionMappingId": "browser-application-projection.v1"
+  },
+  "result": {
+    "resultContractId": "browser-application-result.v1",
+    "serialization": "identity"
+  }
+}

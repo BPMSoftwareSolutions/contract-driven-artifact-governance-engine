@@ -1,0 +1,2369 @@
+{
+  "artifactFamily": {
+    "artifactObservations": [
+      {
+        "artifactId": "procedural-dungeon-webpage.v1",
+        "exists": true,
+        "observedByteLength": 353,
+        "observedSha256": "sha256:f8dee458c02bd5782ff41fd0d0c7b668f210c14e3a02230dfaf7cf665871127d",
+        "relativePath": "index.html"
+      },
+      {
+        "artifactId": "dungeon-movement-bundle.v1",
+        "exists": true,
+        "observedByteLength": 46647,
+        "observedSha256": "sha256:1daafd53f659863bcc154b76a06a17a0f9afdcd261ad304f75c2ee287e730dbc",
+        "relativePath": "contracts/dungeon-movement.bundle.json"
+      },
+      {
+        "artifactId": "dungeon-render-role-bundle.v1",
+        "exists": true,
+        "observedByteLength": 34711,
+        "observedSha256": "sha256:295ae34900a92db486599b8b261d98f2c9486fdd288ac4fc7e17f14bfae21255",
+        "relativePath": "contracts/dungeon-render-role.bundle.json"
+      },
+      {
+        "artifactId": "dungeon-keyboard-command-bundle.v1",
+        "exists": true,
+        "observedByteLength": 23679,
+        "observedSha256": "sha256:2bd2608ba04ed9bc701521853e85e1698aed156f54369ec88cf416111de7f611",
+        "relativePath": "contracts/dungeon-keyboard-command.bundle.json"
+      },
+      {
+        "artifactId": "movement-adapter.v1",
+        "exists": true,
+        "observedByteLength": 1094,
+        "observedSha256": "sha256:12a21b8de6db4824c0a38e55854db65b3aa72f821e38183d22d3e00c85bf1e95",
+        "relativePath": "src/movement-adapter.mjs",
+        "sourceAuthorityObservation": {
+          "ambientOperationOccurrences": [],
+          "ambientOperations": [],
+          "decisions": [],
+          "declarations": [
+            "resolveMovement"
+          ],
+          "failures": [],
+          "functions": [
+            {
+              "declaration": "resolveMovement",
+              "functionKind": "function-declaration"
+            }
+          ],
+          "imports": [
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "dungeonMovementBundle"
+                }
+              ],
+              "specifier": "../contracts/dungeon-movement.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "executeSemanticAuthority"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "executeSemanticAuthority",
+                  "localBinding": "executeSemanticAuthority"
+                }
+              ],
+              "specifier": "contract-driven-artifact-governance-engine"
+            }
+          ],
+          "invocationOccurrences": [
+            {
+              "argumentExpressions": [
+                "dungeonMovementBundle",
+                "request"
+              ],
+              "invocation": "executeSemanticAuthority",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveMovement"
+            }
+          ],
+          "invocations": [
+            "executeSemanticAuthority"
+          ],
+          "iterations": [],
+          "projections": [],
+          "returns": [
+            {
+              "expression": "executeSemanticAuthority(dungeonMovementBundle,request)",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveMovement",
+              "returnKind": "explicit-return"
+            }
+          ],
+          "semanticOperations": [
+            {
+              "argumentExpressions": [
+                "dungeonMovementBundle",
+                "request"
+              ],
+              "edgeKind": "invocation",
+              "occurrences": 1,
+              "operation": "executeSemanticAuthority",
+              "responsibilityDeclaration": "resolveMovement"
+            }
+          ],
+          "syntaxKinds": [
+            {
+              "occurrences": 1,
+              "syntaxKind": "ReturnStatement"
+            },
+            {
+              "occurrences": 1,
+              "syntaxKind": "WithStatement"
+            }
+          ],
+          "unresolvedFunctionForms": [],
+          "unresolvedTokens": []
+        }
+      },
+      {
+        "artifactId": "render-role-adapter.v1",
+        "exists": true,
+        "observedByteLength": 1110,
+        "observedSha256": "sha256:e578b7afe6b62c9300f48df33e0d90ab2c90b6b1f397be7814b1e13e13e06124",
+        "relativePath": "src/render-role-adapter.mjs",
+        "sourceAuthorityObservation": {
+          "ambientOperationOccurrences": [],
+          "ambientOperations": [],
+          "decisions": [],
+          "declarations": [
+            "resolveRenderRole"
+          ],
+          "failures": [],
+          "functions": [
+            {
+              "declaration": "resolveRenderRole",
+              "functionKind": "function-declaration"
+            }
+          ],
+          "imports": [
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "dungeonRenderRoleBundle"
+                }
+              ],
+              "specifier": "../contracts/dungeon-render-role.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "executeSemanticAuthority"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "executeSemanticAuthority",
+                  "localBinding": "executeSemanticAuthority"
+                }
+              ],
+              "specifier": "contract-driven-artifact-governance-engine"
+            }
+          ],
+          "invocationOccurrences": [
+            {
+              "argumentExpressions": [
+                "dungeonRenderRoleBundle",
+                "request"
+              ],
+              "invocation": "executeSemanticAuthority",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveRenderRole"
+            }
+          ],
+          "invocations": [
+            "executeSemanticAuthority"
+          ],
+          "iterations": [],
+          "projections": [],
+          "returns": [
+            {
+              "expression": "executeSemanticAuthority(dungeonRenderRoleBundle,request)",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveRenderRole",
+              "returnKind": "explicit-return"
+            }
+          ],
+          "semanticOperations": [
+            {
+              "argumentExpressions": [
+                "dungeonRenderRoleBundle",
+                "request"
+              ],
+              "edgeKind": "invocation",
+              "occurrences": 1,
+              "operation": "executeSemanticAuthority",
+              "responsibilityDeclaration": "resolveRenderRole"
+            }
+          ],
+          "syntaxKinds": [
+            {
+              "occurrences": 1,
+              "syntaxKind": "ReturnStatement"
+            },
+            {
+              "occurrences": 1,
+              "syntaxKind": "WithStatement"
+            }
+          ],
+          "unresolvedFunctionForms": [],
+          "unresolvedTokens": []
+        }
+      },
+      {
+        "artifactId": "keyboard-command-adapter.v1",
+        "exists": true,
+        "observedByteLength": 1124,
+        "observedSha256": "sha256:77c01cd1864aa0804bfa05ac65a1dd51d301c0d0c1960543a7514cbdd7d1378b",
+        "relativePath": "src/keyboard-command-adapter.mjs",
+        "sourceAuthorityObservation": {
+          "ambientOperationOccurrences": [],
+          "ambientOperations": [],
+          "decisions": [],
+          "declarations": [
+            "resolveKeyboardCommand"
+          ],
+          "failures": [],
+          "functions": [
+            {
+              "declaration": "resolveKeyboardCommand",
+              "functionKind": "function-declaration"
+            }
+          ],
+          "imports": [
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "dungeonKeyboardCommandBundle"
+                }
+              ],
+              "specifier": "../contracts/dungeon-keyboard-command.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "executeSemanticAuthority"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "executeSemanticAuthority",
+                  "localBinding": "executeSemanticAuthority"
+                }
+              ],
+              "specifier": "contract-driven-artifact-governance-engine"
+            }
+          ],
+          "invocationOccurrences": [
+            {
+              "argumentExpressions": [
+                "dungeonKeyboardCommandBundle",
+                "request"
+              ],
+              "invocation": "executeSemanticAuthority",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveKeyboardCommand"
+            }
+          ],
+          "invocations": [
+            "executeSemanticAuthority"
+          ],
+          "iterations": [],
+          "projections": [],
+          "returns": [
+            {
+              "expression": "executeSemanticAuthority(dungeonKeyboardCommandBundle,request)",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveKeyboardCommand",
+              "returnKind": "explicit-return"
+            }
+          ],
+          "semanticOperations": [
+            {
+              "argumentExpressions": [
+                "dungeonKeyboardCommandBundle",
+                "request"
+              ],
+              "edgeKind": "invocation",
+              "occurrences": 1,
+              "operation": "executeSemanticAuthority",
+              "responsibilityDeclaration": "resolveKeyboardCommand"
+            }
+          ],
+          "syntaxKinds": [
+            {
+              "occurrences": 1,
+              "syntaxKind": "ReturnStatement"
+            },
+            {
+              "occurrences": 1,
+              "syntaxKind": "WithStatement"
+            }
+          ],
+          "unresolvedFunctionForms": [],
+          "unresolvedTokens": []
+        }
+      },
+      {
+        "artifactId": "browser-context-authority.v1",
+        "exists": true,
+        "observedByteLength": 25422,
+        "observedSha256": "sha256:e44f061df342c1531182395e5c444a678e68dbdfc48d60f9b72d4009b42db4cb",
+        "relativePath": "browser-context.json"
+      },
+      {
+        "artifactId": "browser-application-authority.v1",
+        "exists": true,
+        "observedByteLength": 574,
+        "observedSha256": "sha256:506ef5c98881eba73a860dc2e18663a866c6acb7900ab0e1c8a8400584c15dc8",
+        "relativePath": "contracts/procedural-dungeon-application.authority.json"
+      },
+      {
+        "artifactId": "browser-application-port-schema.v1",
+        "exists": true,
+        "observedByteLength": 324,
+        "observedSha256": "sha256:81def044fca5a247d0b6df7290aaf3b3b1ec3600b220deb3748bf28a0cbea1e2",
+        "relativePath": "contracts/browser-application-port.schema.json"
+      },
+      {
+        "artifactId": "application-adapter.v1",
+        "exists": true,
+        "observedByteLength": 1990,
+        "observedSha256": "sha256:2ee9f3501b7761ec253bc5b972a1d8eca12648119009108364e3929d1978aca9",
+        "relativePath": "src/application-adapter.mjs",
+        "sourceAuthorityObservation": {
+          "ambientOperationOccurrences": [],
+          "ambientOperations": [],
+          "decisions": [],
+          "declarations": [
+            "startsProceduralDungeonPage"
+          ],
+          "failures": [],
+          "functions": [
+            {
+              "declaration": "startsProceduralDungeonPage",
+              "functionKind": "function-declaration"
+            }
+          ],
+          "imports": [
+            {
+              "importedBindings": [
+                "executeBrowserApplication"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "executeBrowserApplication",
+                  "localBinding": "executeBrowserApplication"
+                }
+              ],
+              "specifier": "../../lib/browser-application-runtime.mjs"
+            },
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "browserContext"
+                }
+              ],
+              "specifier": "../browser-context.json"
+            },
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "keyboardCommandAuthority"
+                }
+              ],
+              "specifier": "../contracts/dungeon-keyboard-command.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "movementAuthority"
+                }
+              ],
+              "specifier": "../contracts/dungeon-movement.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "rasterizeAuthority"
+                }
+              ],
+              "specifier": "../contracts/dungeon-rasterize.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "renderRoleAuthority"
+                }
+              ],
+              "specifier": "../contracts/dungeon-render-role.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "topologyAuthority"
+                }
+              ],
+              "specifier": "../contracts/dungeon-topology.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "visibilityAuthority"
+                }
+              ],
+              "specifier": "../contracts/dungeon-visibility.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "applicationAuthority"
+                }
+              ],
+              "specifier": "../contracts/procedural-dungeon-application.authority.json"
+            }
+          ],
+          "invocationOccurrences": [
+            {
+              "argumentExpressions": [
+                "applicationAuthority",
+                "browserContext",
+                "browserContextPort",
+                "keyboardCommandAuthority",
+                "movementAuthority",
+                "rasterizeAuthority",
+                "renderRoleAuthority",
+                "topologyAuthority",
+                "visibilityAuthority"
+              ],
+              "invocation": "executeBrowserApplication",
+              "occurrences": 1,
+              "responsibilityDeclaration": "startsProceduralDungeonPage"
+            }
+          ],
+          "invocations": [
+            "executeBrowserApplication"
+          ],
+          "iterations": [],
+          "projections": [],
+          "returns": [
+            {
+              "expression": "executeBrowserApplication(applicationAuthority,browserContext,browserContextPort,keyboardCommandAuthority,movementAuthority,rasterizeAuthority,renderRoleAuthority,topologyAuthority,visibilityAuthority)",
+              "occurrences": 1,
+              "responsibilityDeclaration": "startsProceduralDungeonPage",
+              "returnKind": "explicit-return"
+            }
+          ],
+          "semanticOperations": [
+            {
+              "argumentExpressions": [
+                "applicationAuthority",
+                "browserContext",
+                "browserContextPort",
+                "keyboardCommandAuthority",
+                "movementAuthority",
+                "rasterizeAuthority",
+                "renderRoleAuthority",
+                "topologyAuthority",
+                "visibilityAuthority"
+              ],
+              "edgeKind": "invocation",
+              "occurrences": 1,
+              "operation": "executeBrowserApplication",
+              "responsibilityDeclaration": "startsProceduralDungeonPage"
+            }
+          ],
+          "syntaxKinds": [
+            {
+              "occurrences": 1,
+              "syntaxKind": "ReturnStatement"
+            },
+            {
+              "occurrences": 8,
+              "syntaxKind": "WithStatement"
+            }
+          ],
+          "unresolvedFunctionForms": [],
+          "unresolvedTokens": []
+        }
+      },
+      {
+        "artifactId": "procedural-dungeon-webpage-readme.v1",
+        "exists": true,
+        "observedByteLength": 34448,
+        "observedSha256": "sha256:9b64130a211f9f116c954ab97e98c9b2707836c5b13b1540e3671b636ef613af",
+        "relativePath": "README.md"
+      },
+      {
+        "artifactId": "dungeon-topology-bundle.v1",
+        "exists": true,
+        "observedByteLength": 100237,
+        "observedSha256": "sha256:ca5c824e1d9acf55a104c09eb1e38dde137d0c6c18824c102553e54c661ed6fa",
+        "relativePath": "contracts/dungeon-topology.bundle.json"
+      },
+      {
+        "artifactId": "dungeon-rasterize-bundle.v1",
+        "exists": true,
+        "observedByteLength": 413400,
+        "observedSha256": "sha256:1bc618c533cf0edef6bf7d5dcbb6b875d695512a639a7b631454951036474592",
+        "relativePath": "contracts/dungeon-rasterize.bundle.json"
+      },
+      {
+        "artifactId": "dungeon-visibility-bundle.v1",
+        "exists": true,
+        "observedByteLength": 78058,
+        "observedSha256": "sha256:700f7d868464642b1112be3c2fe72b9ddbc9fba268fdd1729000d95826b45b7e",
+        "relativePath": "contracts/dungeon-visibility.bundle.json"
+      },
+      {
+        "artifactId": "topology-adapter.v1",
+        "exists": true,
+        "observedByteLength": 1109,
+        "observedSha256": "sha256:bc670418f5d1dfbd36aacfda2952d654650a239b8f74041581936e54f9ef7ba1",
+        "relativePath": "src/topology-adapter.mjs",
+        "sourceAuthorityObservation": {
+          "ambientOperationOccurrences": [],
+          "ambientOperations": [],
+          "decisions": [],
+          "declarations": [
+            "resolveTopology"
+          ],
+          "failures": [],
+          "functions": [
+            {
+              "declaration": "resolveTopology",
+              "functionKind": "function-declaration"
+            }
+          ],
+          "imports": [
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "dungeonTopologyBundle"
+                }
+              ],
+              "specifier": "../contracts/dungeon-topology.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "executeSemanticAuthority"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "executeSemanticAuthority",
+                  "localBinding": "executeSemanticAuthority"
+                }
+              ],
+              "specifier": "contract-driven-artifact-governance-engine"
+            }
+          ],
+          "invocationOccurrences": [
+            {
+              "argumentExpressions": [
+                "dungeonTopologyBundle",
+                "request"
+              ],
+              "invocation": "executeSemanticAuthority",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveTopology"
+            }
+          ],
+          "invocations": [
+            "executeSemanticAuthority"
+          ],
+          "iterations": [],
+          "projections": [],
+          "returns": [
+            {
+              "expression": "executeSemanticAuthority(dungeonTopologyBundle,request)",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveTopology",
+              "returnKind": "explicit-return"
+            }
+          ],
+          "semanticOperations": [
+            {
+              "argumentExpressions": [
+                "dungeonTopologyBundle",
+                "request"
+              ],
+              "edgeKind": "invocation",
+              "occurrences": 1,
+              "operation": "executeSemanticAuthority",
+              "responsibilityDeclaration": "resolveTopology"
+            }
+          ],
+          "syntaxKinds": [
+            {
+              "occurrences": 1,
+              "syntaxKind": "ReturnStatement"
+            },
+            {
+              "occurrences": 1,
+              "syntaxKind": "WithStatement"
+            }
+          ],
+          "unresolvedFunctionForms": [],
+          "unresolvedTokens": []
+        }
+      },
+      {
+        "artifactId": "rasterize-adapter.v1",
+        "exists": true,
+        "observedByteLength": 1122,
+        "observedSha256": "sha256:e8226c75f393fb8dc74b9a58aff3c0f1a53bf1591558789c0dbc51351e315e96",
+        "relativePath": "src/rasterize-adapter.mjs",
+        "sourceAuthorityObservation": {
+          "ambientOperationOccurrences": [],
+          "ambientOperations": [],
+          "decisions": [],
+          "declarations": [
+            "resolveRasterization"
+          ],
+          "failures": [],
+          "functions": [
+            {
+              "declaration": "resolveRasterization",
+              "functionKind": "function-declaration"
+            }
+          ],
+          "imports": [
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "dungeonRasterizeBundle"
+                }
+              ],
+              "specifier": "../contracts/dungeon-rasterize.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "executeSemanticAuthority"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "executeSemanticAuthority",
+                  "localBinding": "executeSemanticAuthority"
+                }
+              ],
+              "specifier": "contract-driven-artifact-governance-engine"
+            }
+          ],
+          "invocationOccurrences": [
+            {
+              "argumentExpressions": [
+                "dungeonRasterizeBundle",
+                "request"
+              ],
+              "invocation": "executeSemanticAuthority",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveRasterization"
+            }
+          ],
+          "invocations": [
+            "executeSemanticAuthority"
+          ],
+          "iterations": [],
+          "projections": [],
+          "returns": [
+            {
+              "expression": "executeSemanticAuthority(dungeonRasterizeBundle,request)",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveRasterization",
+              "returnKind": "explicit-return"
+            }
+          ],
+          "semanticOperations": [
+            {
+              "argumentExpressions": [
+                "dungeonRasterizeBundle",
+                "request"
+              ],
+              "edgeKind": "invocation",
+              "occurrences": 1,
+              "operation": "executeSemanticAuthority",
+              "responsibilityDeclaration": "resolveRasterization"
+            }
+          ],
+          "syntaxKinds": [
+            {
+              "occurrences": 1,
+              "syntaxKind": "ReturnStatement"
+            },
+            {
+              "occurrences": 1,
+              "syntaxKind": "WithStatement"
+            }
+          ],
+          "unresolvedFunctionForms": [],
+          "unresolvedTokens": []
+        }
+      },
+      {
+        "artifactId": "visibility-adapter.v1",
+        "exists": true,
+        "observedByteLength": 1106,
+        "observedSha256": "sha256:ddf5d9a21cab552dd3ef7c92f8660702b244d53825e23608c8a1c3404c7b11d1",
+        "relativePath": "src/visibility-adapter.mjs",
+        "sourceAuthorityObservation": {
+          "ambientOperationOccurrences": [],
+          "ambientOperations": [],
+          "decisions": [],
+          "declarations": [
+            "resolveVisibility"
+          ],
+          "failures": [],
+          "functions": [
+            {
+              "declaration": "resolveVisibility",
+              "functionKind": "function-declaration"
+            }
+          ],
+          "imports": [
+            {
+              "importedBindings": [
+                "default"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "default",
+                  "localBinding": "dungeonVisibilityBundle"
+                }
+              ],
+              "specifier": "../contracts/dungeon-visibility.bundle.json"
+            },
+            {
+              "importedBindings": [
+                "executeSemanticAuthority"
+              ],
+              "localBindings": [
+                {
+                  "importedBinding": "executeSemanticAuthority",
+                  "localBinding": "executeSemanticAuthority"
+                }
+              ],
+              "specifier": "contract-driven-artifact-governance-engine"
+            }
+          ],
+          "invocationOccurrences": [
+            {
+              "argumentExpressions": [
+                "dungeonVisibilityBundle",
+                "request"
+              ],
+              "invocation": "executeSemanticAuthority",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveVisibility"
+            }
+          ],
+          "invocations": [
+            "executeSemanticAuthority"
+          ],
+          "iterations": [],
+          "projections": [],
+          "returns": [
+            {
+              "expression": "executeSemanticAuthority(dungeonVisibilityBundle,request)",
+              "occurrences": 1,
+              "responsibilityDeclaration": "resolveVisibility",
+              "returnKind": "explicit-return"
+            }
+          ],
+          "semanticOperations": [
+            {
+              "argumentExpressions": [
+                "dungeonVisibilityBundle",
+                "request"
+              ],
+              "edgeKind": "invocation",
+              "occurrences": 1,
+              "operation": "executeSemanticAuthority",
+              "responsibilityDeclaration": "resolveVisibility"
+            }
+          ],
+          "syntaxKinds": [
+            {
+              "occurrences": 1,
+              "syntaxKind": "ReturnStatement"
+            },
+            {
+              "occurrences": 1,
+              "syntaxKind": "WithStatement"
+            }
+          ],
+          "unresolvedFunctionForms": [],
+          "unresolvedTokens": []
+        }
+      }
+    ],
+    "artifactScope": {
+      "authoritySha256": "sha256:12d1388e81c78af5307706a183fce2206a4ea16edd3a890d8bdf5e713ef10350",
+      "disposition": "ARTIFACT_SCOPE_CLOSED",
+      "inventoryMode": "declared-paths",
+      "observationSha256": "sha256:546e18ee630fb6326847b7aa3bf17cf9bf9fdb24fc3ed603a1f9ec97e7b4d99d",
+      "resolvedGovernedPathSet": [
+        {
+          "authorityId": "browser-context-authority.v1",
+          "pathKind": "artifact",
+          "relativePath": "browser-context.json"
+        },
+        {
+          "authorityId": "browser-application-port-schema.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/browser-application-port.schema.json"
+        },
+        {
+          "authorityId": "dungeon-keyboard-command-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-keyboard-command.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-movement-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-movement.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-rasterize-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-rasterize.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-render-role-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-render-role.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-topology-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-topology.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-visibility-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-visibility.bundle.json"
+        },
+        {
+          "authorityId": "browser-application-authority.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/procedural-dungeon-application.authority.json"
+        },
+        {
+          "authorityId": "procedural-dungeon-webpage.v1",
+          "pathKind": "artifact",
+          "relativePath": "index.html"
+        },
+        {
+          "authorityId": "procedural-dungeon-webpage-readme.v1",
+          "pathKind": "artifact",
+          "relativePath": "README.md"
+        },
+        {
+          "authorityId": "application-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/application-adapter.mjs"
+        },
+        {
+          "authorityId": "keyboard-command-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/keyboard-command-adapter.mjs"
+        },
+        {
+          "authorityId": "movement-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/movement-adapter.mjs"
+        },
+        {
+          "authorityId": "rasterize-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/rasterize-adapter.mjs"
+        },
+        {
+          "authorityId": "render-role-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/render-role-adapter.mjs"
+        },
+        {
+          "authorityId": "topology-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/topology-adapter.mjs"
+        },
+        {
+          "authorityId": "visibility-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/visibility-adapter.mjs"
+        }
+      ],
+      "scopeType": "declared-artifact-scope.v1"
+    },
+    "artifactScopeObservation": {
+      "excludedPathsPresent": [],
+      "inventoryMode": "declared-paths",
+      "observedGovernedPaths": [
+        "README.md",
+        "browser-context.json",
+        "contracts/browser-application-port.schema.json",
+        "contracts/dungeon-keyboard-command.bundle.json",
+        "contracts/dungeon-movement.bundle.json",
+        "contracts/dungeon-rasterize.bundle.json",
+        "contracts/dungeon-render-role.bundle.json",
+        "contracts/dungeon-topology.bundle.json",
+        "contracts/dungeon-visibility.bundle.json",
+        "contracts/procedural-dungeon-application.authority.json",
+        "index.html",
+        "src/application-adapter.mjs",
+        "src/keyboard-command-adapter.mjs",
+        "src/movement-adapter.mjs",
+        "src/rasterize-adapter.mjs",
+        "src/render-role-adapter.mjs",
+        "src/topology-adapter.mjs",
+        "src/visibility-adapter.mjs"
+      ],
+      "outsideAuthorityClassification": {
+        "posture": "outside-authority",
+        "rule": "not-declared-and-not-within-governed-directory"
+      },
+      "resolvedGovernedPathSet": [
+        {
+          "authorityId": "browser-context-authority.v1",
+          "pathKind": "artifact",
+          "relativePath": "browser-context.json"
+        },
+        {
+          "authorityId": "browser-application-port-schema.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/browser-application-port.schema.json"
+        },
+        {
+          "authorityId": "dungeon-keyboard-command-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-keyboard-command.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-movement-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-movement.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-rasterize-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-rasterize.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-render-role-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-render-role.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-topology-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-topology.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-visibility-bundle.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/dungeon-visibility.bundle.json"
+        },
+        {
+          "authorityId": "browser-application-authority.v1",
+          "pathKind": "artifact",
+          "relativePath": "contracts/procedural-dungeon-application.authority.json"
+        },
+        {
+          "authorityId": "procedural-dungeon-webpage.v1",
+          "pathKind": "artifact",
+          "relativePath": "index.html"
+        },
+        {
+          "authorityId": "procedural-dungeon-webpage-readme.v1",
+          "pathKind": "artifact",
+          "relativePath": "README.md"
+        },
+        {
+          "authorityId": "application-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/application-adapter.mjs"
+        },
+        {
+          "authorityId": "keyboard-command-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/keyboard-command-adapter.mjs"
+        },
+        {
+          "authorityId": "movement-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/movement-adapter.mjs"
+        },
+        {
+          "authorityId": "rasterize-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/rasterize-adapter.mjs"
+        },
+        {
+          "authorityId": "render-role-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/render-role-adapter.mjs"
+        },
+        {
+          "authorityId": "topology-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/topology-adapter.mjs"
+        },
+        {
+          "authorityId": "visibility-adapter.v1",
+          "pathKind": "artifact",
+          "relativePath": "src/visibility-adapter.mjs"
+        }
+      ],
+      "scopeType": "declared-artifact-scope.v1",
+      "undeclaredPaths": []
+    },
+    "authorityClosure": {
+      "authorityType": "closed-world-authority-closure.v1",
+      "disposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "profileSha256": "sha256:10557f242d6f932a74d71ccf1852545e9be4723571443f8299061299ada49550"
+    },
+    "authorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+    "canonicalLineage": {
+      "authoritySha256": "sha256:aea550c4f6e2d3ad09cf61e5388e027fa7b1eed8ca46b051d92bd2a44c3c3d12",
+      "authorityType": "canonical-lineage-authority.v1",
+      "bodies": [
+        {
+          "artifactId": "application-adapter.v1",
+          "featureId": "present-the-dungeon",
+          "obligationId": "apply-declared-canvas-operations-only",
+          "projectId": "procedural-dungeon-webpage",
+          "projectionProfileId": "javascript-semantic-execution-body.v1",
+          "relativePath": "src/application-adapter.mjs",
+          "responsibilityId": "starts-browser-application-authority",
+          "scenarioId": "render-one-authorized-dungeon-frame"
+        },
+        {
+          "artifactId": "keyboard-command-adapter.v1",
+          "featureId": "move-the-player",
+          "obligationId": "translate-only-admitted-keys",
+          "projectId": "procedural-dungeon-webpage",
+          "projectionProfileId": "javascript-semantic-execution-body.v1",
+          "relativePath": "src/keyboard-command-adapter.mjs",
+          "responsibilityId": "executes-keyboard-command-resolution",
+          "scenarioId": "move-onto-adjacent-floor-tile"
+        },
+        {
+          "artifactId": "movement-adapter.v1",
+          "featureId": "move-the-player",
+          "obligationId": "advance-player-position-by-one-tile",
+          "projectId": "procedural-dungeon-webpage",
+          "projectionProfileId": "javascript-semantic-execution-body.v1",
+          "relativePath": "src/movement-adapter.mjs",
+          "responsibilityId": "executes-movement-resolution",
+          "scenarioId": "move-onto-adjacent-floor-tile"
+        },
+        {
+          "artifactId": "rasterize-adapter.v1",
+          "featureId": "generate-connected-dungeon",
+          "obligationId": "rasterize-topology-into-dense-grid",
+          "projectId": "procedural-dungeon-webpage",
+          "projectionProfileId": "javascript-semantic-execution-body.v1",
+          "relativePath": "src/rasterize-adapter.mjs",
+          "responsibilityId": "executes-rasterize-resolution",
+          "scenarioId": "rasterize-decided-topology-into-a-grid"
+        },
+        {
+          "artifactId": "render-role-adapter.v1",
+          "featureId": "calculate-visibility",
+          "obligationId": "resolve-cell-render-role-exactly",
+          "projectId": "procedural-dungeon-webpage",
+          "projectionProfileId": "javascript-semantic-execution-body.v1",
+          "relativePath": "src/render-role-adapter.mjs",
+          "responsibilityId": "executes-render-role-resolution",
+          "scenarioId": "stop-a-visibility-ray-at-a-wall"
+        },
+        {
+          "artifactId": "topology-adapter.v1",
+          "featureId": "generate-connected-dungeon",
+          "obligationId": "produce-only-connected-floor-regions",
+          "projectId": "procedural-dungeon-webpage",
+          "projectionProfileId": "javascript-semantic-execution-body.v1",
+          "relativePath": "src/topology-adapter.mjs",
+          "responsibilityId": "executes-topology-resolution",
+          "scenarioId": "generate-a-connected-bsp-dungeon"
+        },
+        {
+          "artifactId": "visibility-adapter.v1",
+          "featureId": "calculate-visibility",
+          "obligationId": "reveal-only-unobstructed-cells",
+          "projectId": "procedural-dungeon-webpage",
+          "projectionProfileId": "javascript-semantic-execution-body.v1",
+          "relativePath": "src/visibility-adapter.mjs",
+          "responsibilityId": "executes-visibility-resolution",
+          "scenarioId": "stop-a-visibility-ray-at-a-wall"
+        }
+      ],
+      "disposition": "CANONICAL_LINEAGE_CLOSED",
+      "featureCount": 4,
+      "findings": [],
+      "obligationCount": 8,
+      "projectId": "procedural-dungeon-webpage",
+      "responsibilityCount": 7,
+      "scenarioCount": 6,
+      "spine": [
+        "project",
+        "feature",
+        "scenario",
+        "obligation",
+        "responsibility",
+        "projection",
+        "body"
+      ]
+    },
+    "canonicalLineageDisposition": "CANONICAL_LINEAGE_CLOSED",
+    "conformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+    "declaredArtifactCount": 18,
+    "designAuthority": {
+      "authorityType": "conversation-design-authority.v1",
+      "conversationDigest": "sha256:8c86f6a6dc7fc416f1db31f9c89607511ab55e2b5818319dcb031d7be7126ac0",
+      "decisionRecordDigest": "sha256:8a53b662f19b9791ffb3e4dbff42186c5f8d242d9746b94e065f65ef19789e1f",
+      "designLineageSha256": "sha256:a38efbb292d92405e7e7474a22b61b7b9f83ef1c889561c552b23b3cee982433",
+      "disposition": "DESIGN_AUTHORITY_CLOSED",
+      "dispositionCounts": {
+        "accepted": 11,
+        "deferred": 1,
+        "modified": 1,
+        "rejected": 0
+      },
+      "findings": [],
+      "implementationDigest": "sha256:49e92b2f5c817b5adeb862fa7d064cee07715f64c4f9fa8ea35f0b74a33c9b4c",
+      "tieOutDigest": "sha256:acb40b50699ff775928fea22e7f39450ea45466269f81ab5f7dbe9ce3003a1b9"
+    },
+    "designAuthorityDisposition": "DESIGN_AUTHORITY_CLOSED",
+    "findings": [],
+    "missingArtifactIds": [],
+    "observedArtifactCount": 18,
+    "projectionLedgerObservation": {
+      "exists": true,
+      "expectedSha256": "sha256:6142bcbfdffb48640e4a4d4f8c337fda268dbee8e3e90d47f5772fc48218e004",
+      "observedSha256": "sha256:6142bcbfdffb48640e4a4d4f8c337fda268dbee8e3e90d47f5772fc48218e004",
+      "relativePath": ".governance/projections/procedural-dungeon-webpage.ledger.json"
+    },
+    "proofDisposition": "PROOF_COMPLETE",
+    "scopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+    "subjectId": "procedural-dungeon-webpage.v1",
+    "undeclaredPaths": [],
+    "workspaceAuthority": {
+      "authoritySha256": "sha256:4ce172866efc3c18d7897bb2b5690d304e43c53efcf606bf78e7dce814231aaa",
+      "authorityType": "complete-workspace-authority.v1",
+      "classifiedPathCount": 18,
+      "classifiedPaths": [
+        {
+          "authorityId": "browser-context-authority.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "browser-context.json"
+        },
+        {
+          "authorityId": "browser-application-port-schema.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "contracts/browser-application-port.schema.json"
+        },
+        {
+          "authorityId": "dungeon-keyboard-command-bundle.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "contracts/dungeon-keyboard-command.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-movement-bundle.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "contracts/dungeon-movement.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-rasterize-bundle.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "contracts/dungeon-rasterize.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-render-role-bundle.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "contracts/dungeon-render-role.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-topology-bundle.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "contracts/dungeon-topology.bundle.json"
+        },
+        {
+          "authorityId": "dungeon-visibility-bundle.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "contracts/dungeon-visibility.bundle.json"
+        },
+        {
+          "authorityId": "browser-application-authority.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "contracts/procedural-dungeon-application.authority.json"
+        },
+        {
+          "authorityId": "procedural-dungeon-webpage.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "index.html"
+        },
+        {
+          "authorityId": "procedural-dungeon-webpage-readme.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "README.md"
+        },
+        {
+          "authorityId": "application-adapter.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "src/application-adapter.mjs"
+        },
+        {
+          "authorityId": "keyboard-command-adapter.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "src/keyboard-command-adapter.mjs"
+        },
+        {
+          "authorityId": "movement-adapter.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "src/movement-adapter.mjs"
+        },
+        {
+          "authorityId": "rasterize-adapter.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "src/rasterize-adapter.mjs"
+        },
+        {
+          "authorityId": "render-role-adapter.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "src/render-role-adapter.mjs"
+        },
+        {
+          "authorityId": "topology-adapter.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "src/topology-adapter.mjs"
+        },
+        {
+          "authorityId": "visibility-adapter.v1",
+          "pathRole": "PROJECTED_ARTIFACT",
+          "relativePath": "src/visibility-adapter.mjs"
+        }
+      ],
+      "disposition": "WORKSPACE_AUTHORITY_CLOSED",
+      "findings": [],
+      "inventoryPosture": "exhaustive",
+      "pathExceptions": [],
+      "unclassifiedPathPosture": "reject",
+      "unclassifiedPaths": []
+    },
+    "workspaceAuthorityDisposition": "WORKSPACE_AUTHORITY_CLOSED"
+  },
+  "checks": [
+    {
+      "checkId": "validate-contract",
+      "disposition": "CONTRACT_VALID",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "resolve-artifact-plan",
+      "disposition": "ARTIFACT_PLAN_RESOLVED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "observe-artifact-state",
+      "disposition": "ARTIFACT_STATE_OBSERVED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "classify-workspace-paths",
+      "disposition": "WORKSPACE_AUTHORITY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "resolve-design-authority",
+      "disposition": "DESIGN_AUTHORITY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "resolve-artifact-lineage",
+      "disposition": "CANONICAL_LINEAGE_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-inventory",
+      "disposition": "ARTIFACT_INVENTORY_CONFORMS",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-projection-identity",
+      "disposition": "PROJECTION_IDENTITY_CONFORMS",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-authority-closure",
+      "disposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "authorities": [
+        {
+          "artifactId": "dungeon-movement-bundle.v1",
+          "bundleId": "dungeon-movement.bundle.v1",
+          "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+          "ontologyId": "dungeon-movement",
+          "ontologySha256": "sha256:81fbec1c20c3a23138f381e979a94ddf915271025782fbd28a18225dc613ceb9",
+          "runtimeProfile": {
+            "admittedPrimitives": [
+              "input.v1",
+              "validate-variant.v1",
+              "read-path.v1",
+              "constant.v1",
+              "test-presence.v1",
+              "classify-value.v1",
+              "classify-observations.v1",
+              "translate-value.v1",
+              "evaluate-obligation.v1",
+              "project-value.v1",
+              "select-result.v1",
+              "emit-result.v1",
+              "add-bounded.v1",
+              "subtract-bounded.v1",
+              "compare-bounded.v1",
+              "seeded-range-draw.v1",
+              "read-indexed-path.v1",
+              "iterate-bounded-worklist.v1",
+              "resolve-branching-worklist.v1",
+              "serialize-result.v1"
+            ],
+            "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+            "forbiddenCapabilities": [
+              "cycles",
+              "recursion",
+              "dynamic-invocation",
+              "arbitrary-expressions",
+              "user-code",
+              "runtime-module-loading",
+              "unbounded-array-traversal",
+              "regex-authority",
+              "implicit-coercion",
+              "ambient-state",
+              "clock-access",
+              "ambient-randomness",
+              "network-access"
+            ],
+            "identity": "finite-semantic-runtime.v3",
+            "limits": {
+              "maxClassificationCases": 128,
+              "maxClassificationInputs": 16,
+              "maxGraphEdges": 128,
+              "maxGraphNodes": 64,
+              "maxIterationSteps": 8192,
+              "maxOperandDomainSize": 64,
+              "maxOutputDepth": 16,
+              "maxPathDepth": 16,
+              "maxSchemas": 32,
+              "maxSerializedByteLength": 1048576,
+              "maxTerminalResults": 1,
+              "maxTranslationCases": 128,
+              "maxVariants": 16,
+              "maxWorklistItems": 256
+            }
+          }
+        },
+        {
+          "artifactId": "dungeon-render-role-bundle.v1",
+          "bundleId": "dungeon-render-role.bundle.v1",
+          "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+          "ontologyId": "dungeon-render-role",
+          "ontologySha256": "sha256:aa45b5483392c8a1fd113da9878b7a9964687cee3ff9f0728b09512b497dc0ae",
+          "runtimeProfile": {
+            "admittedPrimitives": [
+              "input.v1",
+              "validate-variant.v1",
+              "read-path.v1",
+              "constant.v1",
+              "test-presence.v1",
+              "classify-value.v1",
+              "classify-observations.v1",
+              "translate-value.v1",
+              "evaluate-obligation.v1",
+              "project-value.v1",
+              "select-result.v1",
+              "emit-result.v1",
+              "add-bounded.v1",
+              "subtract-bounded.v1",
+              "compare-bounded.v1",
+              "seeded-range-draw.v1",
+              "read-indexed-path.v1",
+              "iterate-bounded-worklist.v1",
+              "resolve-branching-worklist.v1",
+              "serialize-result.v1"
+            ],
+            "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+            "forbiddenCapabilities": [
+              "cycles",
+              "recursion",
+              "dynamic-invocation",
+              "arbitrary-expressions",
+              "user-code",
+              "runtime-module-loading",
+              "unbounded-array-traversal",
+              "regex-authority",
+              "implicit-coercion",
+              "ambient-state",
+              "clock-access",
+              "ambient-randomness",
+              "network-access"
+            ],
+            "identity": "finite-semantic-runtime.v3",
+            "limits": {
+              "maxClassificationCases": 128,
+              "maxClassificationInputs": 16,
+              "maxGraphEdges": 128,
+              "maxGraphNodes": 64,
+              "maxIterationSteps": 8192,
+              "maxOperandDomainSize": 64,
+              "maxOutputDepth": 16,
+              "maxPathDepth": 16,
+              "maxSchemas": 32,
+              "maxSerializedByteLength": 1048576,
+              "maxTerminalResults": 1,
+              "maxTranslationCases": 128,
+              "maxVariants": 16,
+              "maxWorklistItems": 256
+            }
+          }
+        },
+        {
+          "artifactId": "dungeon-keyboard-command-bundle.v1",
+          "bundleId": "dungeon-keyboard-command.bundle.v1",
+          "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+          "ontologyId": "dungeon-keyboard-command",
+          "ontologySha256": "sha256:5dfcd89deff35b5772bc1f5c26fe63d1f975a3bd24d210ce9357b5e5fa706ad8",
+          "runtimeProfile": {
+            "admittedPrimitives": [
+              "input.v1",
+              "validate-variant.v1",
+              "read-path.v1",
+              "constant.v1",
+              "test-presence.v1",
+              "classify-value.v1",
+              "classify-observations.v1",
+              "translate-value.v1",
+              "evaluate-obligation.v1",
+              "project-value.v1",
+              "select-result.v1",
+              "emit-result.v1",
+              "add-bounded.v1",
+              "subtract-bounded.v1",
+              "compare-bounded.v1",
+              "seeded-range-draw.v1",
+              "read-indexed-path.v1",
+              "iterate-bounded-worklist.v1",
+              "resolve-branching-worklist.v1",
+              "serialize-result.v1"
+            ],
+            "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+            "forbiddenCapabilities": [
+              "cycles",
+              "recursion",
+              "dynamic-invocation",
+              "arbitrary-expressions",
+              "user-code",
+              "runtime-module-loading",
+              "unbounded-array-traversal",
+              "regex-authority",
+              "implicit-coercion",
+              "ambient-state",
+              "clock-access",
+              "ambient-randomness",
+              "network-access"
+            ],
+            "identity": "finite-semantic-runtime.v3",
+            "limits": {
+              "maxClassificationCases": 128,
+              "maxClassificationInputs": 16,
+              "maxGraphEdges": 128,
+              "maxGraphNodes": 64,
+              "maxIterationSteps": 8192,
+              "maxOperandDomainSize": 64,
+              "maxOutputDepth": 16,
+              "maxPathDepth": 16,
+              "maxSchemas": 32,
+              "maxSerializedByteLength": 1048576,
+              "maxTerminalResults": 1,
+              "maxTranslationCases": 128,
+              "maxVariants": 16,
+              "maxWorklistItems": 256
+            }
+          }
+        },
+        {
+          "artifactId": "dungeon-topology-bundle.v1",
+          "bundleId": "dungeon-topology.bundle.v1",
+          "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+          "ontologyId": "dungeon-topology",
+          "ontologySha256": "sha256:8608528530fba86ed0d11c1eac3b0bfb861a6b655742c09fe4b0957c6698beda",
+          "runtimeProfile": {
+            "admittedPrimitives": [
+              "input.v1",
+              "validate-variant.v1",
+              "read-path.v1",
+              "constant.v1",
+              "test-presence.v1",
+              "classify-value.v1",
+              "classify-observations.v1",
+              "translate-value.v1",
+              "evaluate-obligation.v1",
+              "project-value.v1",
+              "select-result.v1",
+              "emit-result.v1",
+              "add-bounded.v1",
+              "subtract-bounded.v1",
+              "compare-bounded.v1",
+              "seeded-range-draw.v1",
+              "read-indexed-path.v1",
+              "iterate-bounded-worklist.v1",
+              "resolve-branching-worklist.v1",
+              "serialize-result.v1"
+            ],
+            "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+            "forbiddenCapabilities": [
+              "cycles",
+              "recursion",
+              "dynamic-invocation",
+              "arbitrary-expressions",
+              "user-code",
+              "runtime-module-loading",
+              "unbounded-array-traversal",
+              "regex-authority",
+              "implicit-coercion",
+              "ambient-state",
+              "clock-access",
+              "ambient-randomness",
+              "network-access"
+            ],
+            "identity": "finite-semantic-runtime.v3",
+            "limits": {
+              "maxClassificationCases": 128,
+              "maxClassificationInputs": 16,
+              "maxGraphEdges": 128,
+              "maxGraphNodes": 64,
+              "maxIterationSteps": 8192,
+              "maxOperandDomainSize": 64,
+              "maxOutputDepth": 16,
+              "maxPathDepth": 16,
+              "maxSchemas": 32,
+              "maxSerializedByteLength": 1048576,
+              "maxTerminalResults": 1,
+              "maxTranslationCases": 128,
+              "maxVariants": 16,
+              "maxWorklistItems": 256
+            }
+          }
+        },
+        {
+          "artifactId": "dungeon-rasterize-bundle.v1",
+          "bundleId": "dungeon-rasterize.bundle.v1",
+          "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+          "ontologyId": "dungeon-rasterize",
+          "ontologySha256": "sha256:21d36205bb7f566edaea5b09bfd1425f7f93718170d755f70d3692b5872f4639",
+          "runtimeProfile": {
+            "admittedPrimitives": [
+              "input.v1",
+              "validate-variant.v1",
+              "read-path.v1",
+              "constant.v1",
+              "test-presence.v1",
+              "classify-value.v1",
+              "classify-observations.v1",
+              "translate-value.v1",
+              "evaluate-obligation.v1",
+              "project-value.v1",
+              "select-result.v1",
+              "emit-result.v1",
+              "add-bounded.v1",
+              "subtract-bounded.v1",
+              "compare-bounded.v1",
+              "seeded-range-draw.v1",
+              "read-indexed-path.v1",
+              "iterate-bounded-worklist.v1",
+              "resolve-branching-worklist.v1",
+              "serialize-result.v1"
+            ],
+            "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+            "forbiddenCapabilities": [
+              "cycles",
+              "recursion",
+              "dynamic-invocation",
+              "arbitrary-expressions",
+              "user-code",
+              "runtime-module-loading",
+              "unbounded-array-traversal",
+              "regex-authority",
+              "implicit-coercion",
+              "ambient-state",
+              "clock-access",
+              "ambient-randomness",
+              "network-access"
+            ],
+            "identity": "finite-semantic-runtime.v3",
+            "limits": {
+              "maxClassificationCases": 128,
+              "maxClassificationInputs": 16,
+              "maxGraphEdges": 128,
+              "maxGraphNodes": 64,
+              "maxIterationSteps": 8192,
+              "maxOperandDomainSize": 64,
+              "maxOutputDepth": 16,
+              "maxPathDepth": 16,
+              "maxSchemas": 32,
+              "maxSerializedByteLength": 1048576,
+              "maxTerminalResults": 1,
+              "maxTranslationCases": 128,
+              "maxVariants": 16,
+              "maxWorklistItems": 256
+            }
+          }
+        },
+        {
+          "artifactId": "dungeon-visibility-bundle.v1",
+          "bundleId": "dungeon-visibility.bundle.v1",
+          "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+          "ontologyId": "dungeon-visibility",
+          "ontologySha256": "sha256:2679ea6eec1d497158854cf9716593f467cd55ae643fb445d0be3ac2b1f1696a",
+          "runtimeProfile": {
+            "admittedPrimitives": [
+              "input.v1",
+              "validate-variant.v1",
+              "read-path.v1",
+              "constant.v1",
+              "test-presence.v1",
+              "classify-value.v1",
+              "classify-observations.v1",
+              "translate-value.v1",
+              "evaluate-obligation.v1",
+              "project-value.v1",
+              "select-result.v1",
+              "emit-result.v1",
+              "add-bounded.v1",
+              "subtract-bounded.v1",
+              "compare-bounded.v1",
+              "seeded-range-draw.v1",
+              "read-indexed-path.v1",
+              "iterate-bounded-worklist.v1",
+              "resolve-branching-worklist.v1",
+              "serialize-result.v1"
+            ],
+            "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+            "forbiddenCapabilities": [
+              "cycles",
+              "recursion",
+              "dynamic-invocation",
+              "arbitrary-expressions",
+              "user-code",
+              "runtime-module-loading",
+              "unbounded-array-traversal",
+              "regex-authority",
+              "implicit-coercion",
+              "ambient-state",
+              "clock-access",
+              "ambient-randomness",
+              "network-access"
+            ],
+            "identity": "finite-semantic-runtime.v3",
+            "limits": {
+              "maxClassificationCases": 128,
+              "maxClassificationInputs": 16,
+              "maxGraphEdges": 128,
+              "maxGraphNodes": 64,
+              "maxIterationSteps": 8192,
+              "maxOperandDomainSize": 64,
+              "maxOutputDepth": 16,
+              "maxPathDepth": 16,
+              "maxSchemas": 32,
+              "maxSerializedByteLength": 1048576,
+              "maxTerminalResults": 1,
+              "maxTranslationCases": 128,
+              "maxVariants": 16,
+              "maxWorklistItems": 256
+            }
+          }
+        }
+      ],
+      "checkId": "evaluate-ontology-authority",
+      "disposition": "ONTOLOGY_AUTHORITY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-semantic-execution-bodies",
+      "disposition": "SEMANTIC_EXECUTION_BODY_CLOSED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-content",
+      "disposition": "ARTIFACT_CONTENT_CONFORMS",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-structure",
+      "disposition": "ARTIFACT_STRUCTURE_CONFORMS",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-freshness",
+      "disposition": "ARTIFACT_FRESHNESS_NOT_REQUIRED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-artifact-relationships",
+      "disposition": "ARTIFACT_RELATIONSHIPS_CONFORM",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "evaluate-declared-commands",
+      "disposition": "DECLARED_COMMANDS_CONFORM",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "verify-proof-subject-stability",
+      "disposition": "PROOF_SUBJECT_UNCHANGED",
+      "posture": "CONFORMS"
+    },
+    {
+      "checkId": "issue-trust-disposition",
+      "disposition": "TRUSTED",
+      "posture": "CONFORMS"
+    }
+  ],
+  "claimPolicies": [
+    {
+      "claim": "COMPLETE",
+      "claimId": "dungeon-webpage-complete.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
+    },
+    {
+      "claim": "CONTRACT_AUTHORITY_CLOSED",
+      "claimId": "dungeon-webpage-contract-authority-closed.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
+    },
+    {
+      "claim": "TRUSTED",
+      "claimId": "dungeon-webpage-trusted.v1",
+      "requiredAuthorityClosureDisposition": "ARTIFACT_AUTHORITY_CLOSED",
+      "requiredConformanceDisposition": "CONTRACT_AUTHORITY_CLOSED",
+      "requiredProofDisposition": "PROOF_COMPLETE",
+      "requiredScopeDisposition": "ARTIFACT_SCOPE_CLOSED",
+      "requiredTrustDisposition": "TRUSTED"
+    }
+  ],
+  "contract": {
+    "contractId": "procedural-dungeon-webpage.v1",
+    "contractSha256": "sha256:ce6341e28de3fb04c20932a706724462ad09e5900eb8dc0bc0dfe1f1725ca6e0"
+  },
+  "interpretationBase": {
+    "conformanceProfile": {
+      "digest": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
+      "identity": "closed-world-artifact-conformance.v8"
+    },
+    "engine": {
+      "digest": "sha256:776a241c92c4eb5d7dd1707a8513359c984b8b4effdf42964984f8555cee89f8",
+      "identity": "governed-artifact-engine.0.20.0"
+    },
+    "migrationRegistry": {
+      "digest": "sha256:16d9c61d42789f099e75c421322a288999e5ec7c0a540fa2281f8368efc64b56",
+      "identity": "governed-artifact-migration-registry.v1"
+    },
+    "projectorRegistry": {
+      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+      "identity": "governed-artifact-projector-registry.v1"
+    },
+    "schema": {
+      "digest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
+      "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
+    },
+    "verifierRegistry": {
+      "digest": "sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14",
+      "identity": "governed-artifact-verifier-registry.v1"
+    }
+  },
+  "ontologyAuthorities": [
+    {
+      "artifactId": "dungeon-movement-bundle.v1",
+      "bundleId": "dungeon-movement.bundle.v1",
+      "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+      "ontologyId": "dungeon-movement",
+      "ontologySha256": "sha256:81fbec1c20c3a23138f381e979a94ddf915271025782fbd28a18225dc613ceb9",
+      "runtimeProfile": {
+        "admittedPrimitives": [
+          "input.v1",
+          "validate-variant.v1",
+          "read-path.v1",
+          "constant.v1",
+          "test-presence.v1",
+          "classify-value.v1",
+          "classify-observations.v1",
+          "translate-value.v1",
+          "evaluate-obligation.v1",
+          "project-value.v1",
+          "select-result.v1",
+          "emit-result.v1",
+          "add-bounded.v1",
+          "subtract-bounded.v1",
+          "compare-bounded.v1",
+          "seeded-range-draw.v1",
+          "read-indexed-path.v1",
+          "iterate-bounded-worklist.v1",
+          "resolve-branching-worklist.v1",
+          "serialize-result.v1"
+        ],
+        "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+        "forbiddenCapabilities": [
+          "cycles",
+          "recursion",
+          "dynamic-invocation",
+          "arbitrary-expressions",
+          "user-code",
+          "runtime-module-loading",
+          "unbounded-array-traversal",
+          "regex-authority",
+          "implicit-coercion",
+          "ambient-state",
+          "clock-access",
+          "ambient-randomness",
+          "network-access"
+        ],
+        "identity": "finite-semantic-runtime.v3",
+        "limits": {
+          "maxClassificationCases": 128,
+          "maxClassificationInputs": 16,
+          "maxGraphEdges": 128,
+          "maxGraphNodes": 64,
+          "maxIterationSteps": 8192,
+          "maxOperandDomainSize": 64,
+          "maxOutputDepth": 16,
+          "maxPathDepth": 16,
+          "maxSchemas": 32,
+          "maxSerializedByteLength": 1048576,
+          "maxTerminalResults": 1,
+          "maxTranslationCases": 128,
+          "maxVariants": 16,
+          "maxWorklistItems": 256
+        }
+      }
+    },
+    {
+      "artifactId": "dungeon-render-role-bundle.v1",
+      "bundleId": "dungeon-render-role.bundle.v1",
+      "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+      "ontologyId": "dungeon-render-role",
+      "ontologySha256": "sha256:aa45b5483392c8a1fd113da9878b7a9964687cee3ff9f0728b09512b497dc0ae",
+      "runtimeProfile": {
+        "admittedPrimitives": [
+          "input.v1",
+          "validate-variant.v1",
+          "read-path.v1",
+          "constant.v1",
+          "test-presence.v1",
+          "classify-value.v1",
+          "classify-observations.v1",
+          "translate-value.v1",
+          "evaluate-obligation.v1",
+          "project-value.v1",
+          "select-result.v1",
+          "emit-result.v1",
+          "add-bounded.v1",
+          "subtract-bounded.v1",
+          "compare-bounded.v1",
+          "seeded-range-draw.v1",
+          "read-indexed-path.v1",
+          "iterate-bounded-worklist.v1",
+          "resolve-branching-worklist.v1",
+          "serialize-result.v1"
+        ],
+        "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+        "forbiddenCapabilities": [
+          "cycles",
+          "recursion",
+          "dynamic-invocation",
+          "arbitrary-expressions",
+          "user-code",
+          "runtime-module-loading",
+          "unbounded-array-traversal",
+          "regex-authority",
+          "implicit-coercion",
+          "ambient-state",
+          "clock-access",
+          "ambient-randomness",
+          "network-access"
+        ],
+        "identity": "finite-semantic-runtime.v3",
+        "limits": {
+          "maxClassificationCases": 128,
+          "maxClassificationInputs": 16,
+          "maxGraphEdges": 128,
+          "maxGraphNodes": 64,
+          "maxIterationSteps": 8192,
+          "maxOperandDomainSize": 64,
+          "maxOutputDepth": 16,
+          "maxPathDepth": 16,
+          "maxSchemas": 32,
+          "maxSerializedByteLength": 1048576,
+          "maxTerminalResults": 1,
+          "maxTranslationCases": 128,
+          "maxVariants": 16,
+          "maxWorklistItems": 256
+        }
+      }
+    },
+    {
+      "artifactId": "dungeon-keyboard-command-bundle.v1",
+      "bundleId": "dungeon-keyboard-command.bundle.v1",
+      "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+      "ontologyId": "dungeon-keyboard-command",
+      "ontologySha256": "sha256:5dfcd89deff35b5772bc1f5c26fe63d1f975a3bd24d210ce9357b5e5fa706ad8",
+      "runtimeProfile": {
+        "admittedPrimitives": [
+          "input.v1",
+          "validate-variant.v1",
+          "read-path.v1",
+          "constant.v1",
+          "test-presence.v1",
+          "classify-value.v1",
+          "classify-observations.v1",
+          "translate-value.v1",
+          "evaluate-obligation.v1",
+          "project-value.v1",
+          "select-result.v1",
+          "emit-result.v1",
+          "add-bounded.v1",
+          "subtract-bounded.v1",
+          "compare-bounded.v1",
+          "seeded-range-draw.v1",
+          "read-indexed-path.v1",
+          "iterate-bounded-worklist.v1",
+          "resolve-branching-worklist.v1",
+          "serialize-result.v1"
+        ],
+        "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+        "forbiddenCapabilities": [
+          "cycles",
+          "recursion",
+          "dynamic-invocation",
+          "arbitrary-expressions",
+          "user-code",
+          "runtime-module-loading",
+          "unbounded-array-traversal",
+          "regex-authority",
+          "implicit-coercion",
+          "ambient-state",
+          "clock-access",
+          "ambient-randomness",
+          "network-access"
+        ],
+        "identity": "finite-semantic-runtime.v3",
+        "limits": {
+          "maxClassificationCases": 128,
+          "maxClassificationInputs": 16,
+          "maxGraphEdges": 128,
+          "maxGraphNodes": 64,
+          "maxIterationSteps": 8192,
+          "maxOperandDomainSize": 64,
+          "maxOutputDepth": 16,
+          "maxPathDepth": 16,
+          "maxSchemas": 32,
+          "maxSerializedByteLength": 1048576,
+          "maxTerminalResults": 1,
+          "maxTranslationCases": 128,
+          "maxVariants": 16,
+          "maxWorklistItems": 256
+        }
+      }
+    },
+    {
+      "artifactId": "dungeon-topology-bundle.v1",
+      "bundleId": "dungeon-topology.bundle.v1",
+      "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+      "ontologyId": "dungeon-topology",
+      "ontologySha256": "sha256:8608528530fba86ed0d11c1eac3b0bfb861a6b655742c09fe4b0957c6698beda",
+      "runtimeProfile": {
+        "admittedPrimitives": [
+          "input.v1",
+          "validate-variant.v1",
+          "read-path.v1",
+          "constant.v1",
+          "test-presence.v1",
+          "classify-value.v1",
+          "classify-observations.v1",
+          "translate-value.v1",
+          "evaluate-obligation.v1",
+          "project-value.v1",
+          "select-result.v1",
+          "emit-result.v1",
+          "add-bounded.v1",
+          "subtract-bounded.v1",
+          "compare-bounded.v1",
+          "seeded-range-draw.v1",
+          "read-indexed-path.v1",
+          "iterate-bounded-worklist.v1",
+          "resolve-branching-worklist.v1",
+          "serialize-result.v1"
+        ],
+        "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+        "forbiddenCapabilities": [
+          "cycles",
+          "recursion",
+          "dynamic-invocation",
+          "arbitrary-expressions",
+          "user-code",
+          "runtime-module-loading",
+          "unbounded-array-traversal",
+          "regex-authority",
+          "implicit-coercion",
+          "ambient-state",
+          "clock-access",
+          "ambient-randomness",
+          "network-access"
+        ],
+        "identity": "finite-semantic-runtime.v3",
+        "limits": {
+          "maxClassificationCases": 128,
+          "maxClassificationInputs": 16,
+          "maxGraphEdges": 128,
+          "maxGraphNodes": 64,
+          "maxIterationSteps": 8192,
+          "maxOperandDomainSize": 64,
+          "maxOutputDepth": 16,
+          "maxPathDepth": 16,
+          "maxSchemas": 32,
+          "maxSerializedByteLength": 1048576,
+          "maxTerminalResults": 1,
+          "maxTranslationCases": 128,
+          "maxVariants": 16,
+          "maxWorklistItems": 256
+        }
+      }
+    },
+    {
+      "artifactId": "dungeon-rasterize-bundle.v1",
+      "bundleId": "dungeon-rasterize.bundle.v1",
+      "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+      "ontologyId": "dungeon-rasterize",
+      "ontologySha256": "sha256:21d36205bb7f566edaea5b09bfd1425f7f93718170d755f70d3692b5872f4639",
+      "runtimeProfile": {
+        "admittedPrimitives": [
+          "input.v1",
+          "validate-variant.v1",
+          "read-path.v1",
+          "constant.v1",
+          "test-presence.v1",
+          "classify-value.v1",
+          "classify-observations.v1",
+          "translate-value.v1",
+          "evaluate-obligation.v1",
+          "project-value.v1",
+          "select-result.v1",
+          "emit-result.v1",
+          "add-bounded.v1",
+          "subtract-bounded.v1",
+          "compare-bounded.v1",
+          "seeded-range-draw.v1",
+          "read-indexed-path.v1",
+          "iterate-bounded-worklist.v1",
+          "resolve-branching-worklist.v1",
+          "serialize-result.v1"
+        ],
+        "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+        "forbiddenCapabilities": [
+          "cycles",
+          "recursion",
+          "dynamic-invocation",
+          "arbitrary-expressions",
+          "user-code",
+          "runtime-module-loading",
+          "unbounded-array-traversal",
+          "regex-authority",
+          "implicit-coercion",
+          "ambient-state",
+          "clock-access",
+          "ambient-randomness",
+          "network-access"
+        ],
+        "identity": "finite-semantic-runtime.v3",
+        "limits": {
+          "maxClassificationCases": 128,
+          "maxClassificationInputs": 16,
+          "maxGraphEdges": 128,
+          "maxGraphNodes": 64,
+          "maxIterationSteps": 8192,
+          "maxOperandDomainSize": 64,
+          "maxOutputDepth": 16,
+          "maxPathDepth": 16,
+          "maxSchemas": 32,
+          "maxSerializedByteLength": 1048576,
+          "maxTerminalResults": 1,
+          "maxTranslationCases": 128,
+          "maxVariants": 16,
+          "maxWorklistItems": 256
+        }
+      }
+    },
+    {
+      "artifactId": "dungeon-visibility-bundle.v1",
+      "bundleId": "dungeon-visibility.bundle.v1",
+      "ontologyDisposition": "ONTOLOGY_AUTHORITY_CLOSED",
+      "ontologyId": "dungeon-visibility",
+      "ontologySha256": "sha256:2679ea6eec1d497158854cf9716593f467cd55ae643fb445d0be3ac2b1f1696a",
+      "runtimeProfile": {
+        "admittedPrimitives": [
+          "input.v1",
+          "validate-variant.v1",
+          "read-path.v1",
+          "constant.v1",
+          "test-presence.v1",
+          "classify-value.v1",
+          "classify-observations.v1",
+          "translate-value.v1",
+          "evaluate-obligation.v1",
+          "project-value.v1",
+          "select-result.v1",
+          "emit-result.v1",
+          "add-bounded.v1",
+          "subtract-bounded.v1",
+          "compare-bounded.v1",
+          "seeded-range-draw.v1",
+          "read-indexed-path.v1",
+          "iterate-bounded-worklist.v1",
+          "resolve-branching-worklist.v1",
+          "serialize-result.v1"
+        ],
+        "digest": "sha256:18ca4acba6be2b4d1a0acb6c35df5d32aa5d5afc2acd17b412b0773c1e3cb151",
+        "forbiddenCapabilities": [
+          "cycles",
+          "recursion",
+          "dynamic-invocation",
+          "arbitrary-expressions",
+          "user-code",
+          "runtime-module-loading",
+          "unbounded-array-traversal",
+          "regex-authority",
+          "implicit-coercion",
+          "ambient-state",
+          "clock-access",
+          "ambient-randomness",
+          "network-access"
+        ],
+        "identity": "finite-semantic-runtime.v3",
+        "limits": {
+          "maxClassificationCases": 128,
+          "maxClassificationInputs": 16,
+          "maxGraphEdges": 128,
+          "maxGraphNodes": 64,
+          "maxIterationSteps": 8192,
+          "maxOperandDomainSize": 64,
+          "maxOutputDepth": 16,
+          "maxPathDepth": 16,
+          "maxSchemas": 32,
+          "maxSerializedByteLength": 1048576,
+          "maxTerminalResults": 1,
+          "maxTranslationCases": 128,
+          "maxVariants": 16,
+          "maxWorklistItems": 256
+        }
+      }
+    }
+  ],
+  "operationAuthorities": {
+    "authority": {
+      "authoredMutation": {
+        "governedArtifacts": "forbidden",
+        "posture": "sole-authored-change-authority",
+        "target": "contract"
+      },
+      "authorityType": "governed-operation-authorities.v3",
+      "bodyPurity": {
+        "admittedAuthorityTypes": [
+          "semantic-projection-authority.v1",
+          "semantic-execution-bundle.v1"
+        ],
+        "allowedExecutableForms": [
+          "single-semantic-invocation",
+          "direct-return",
+          "declared-port-binding"
+        ],
+        "applicability": "artifacts-bound-to-semantic-authority-executor-port",
+        "consumerRelaxation": "forbidden",
+        "exactCardinality": {
+          "exportedResponsibilities": 1,
+          "resultFlows": 1,
+          "semanticInvocations": 1
+        },
+        "executionPortEffect": "execute-semantic-authority",
+        "forbiddenExecutableMechanics": [
+          "branch",
+          "iteration",
+          "exception-handling",
+          "throw",
+          "object-construction",
+          "serialization",
+          "normalization",
+          "validation",
+          "fallback",
+          "retry",
+          "state-mutation"
+        ],
+        "profileType": "semantic-execution-body.v2",
+        "semanticAuthorityLocation": "contract"
+      },
+      "migration": {
+        "artifactProjection": "forbidden",
+        "mode": "candidate-first",
+        "operation": "migrate",
+        "sourceInterpretation": "historical-schema-digest",
+        "targetMutation": "contract-only",
+        "trustIssuance": "forbidden",
+        "writeMode": "explicit-only"
+      },
+      "mutationAuthority": {
+        "authorityType": "single-source-mutation-authority.v1",
+        "consumerAuthoredAuthority": {
+          "cardinality": "exactly-one",
+          "source": "contract",
+          "target": "contract"
+        },
+        "controlEvidenceMutation": {
+          "createOrReplace": "contract-declared-control-paths-only",
+          "remove": "forbidden"
+        },
+        "derivedContractMutation": {
+          "admittedOperations": [
+            "migrate",
+            "reconcile"
+          ],
+          "target": "contract"
+        },
+        "governedArtifactMutation": {
+          "authoritySource": "validated-contract",
+          "create": "declared-projections-only",
+          "interpretationBase": "digest-bound",
+          "remove": "forbidden",
+          "replace": "declared-projections-only",
+          "undeclaredState": "observe-and-reject"
+        }
+      },
+      "projection": {
+        "artifactPosture": "replace-by-projection",
+        "operation": "project",
+        "subjectMutation": "declared-projections-only",
+        "writeMode": "explicit-only"
+      },
+      "proof": {
+        "artifactProjection": "forbidden",
+        "declaredEvaluations": "read-only",
+        "mode": "read-only",
+        "mutationDisposition": "EVALUATION_INVALIDATED_BY_MUTATION",
+        "operation": "prove",
+        "receiptTarget": "outside-governed-subject",
+        "receiptWrite": "explicit-only",
+        "requiredSubjectDisposition": "PROOF_SUBJECT_UNCHANGED",
+        "subjectMutation": "forbidden"
+      },
+      "reconciliation": {
+        "artifactProjection": "forbidden",
+        "candidateProjection": "in-memory",
+        "contractMutation": "commitment-fields-only",
+        "mode": "candidate-first",
+        "operation": "reconcile",
+        "trustIssuance": "forbidden",
+        "writeMode": "explicit-only"
+      }
+    },
+    "authoritySha256": "sha256:0c038337f4a7f10c272fb1e6df88e44ed65ec07c66b7a3b3a006f9ee9ad2f901"
+  },
+  "proofOperation": {
+    "authorityType": "governed-operation-authorities.v3",
+    "evaluationStateAfterSha256": "sha256:cd6a1de52f9ca56af49879a816338cf8cc142b74d92e58b8d5da376512ece942",
+    "evaluationStateBeforeSha256": "sha256:cd6a1de52f9ca56af49879a816338cf8cc142b74d92e58b8d5da376512ece942",
+    "mode": "read-only",
+    "operation": "prove",
+    "operationAuthoritiesSha256": "sha256:0c038337f4a7f10c272fb1e6df88e44ed65ec07c66b7a3b3a006f9ee9ad2f901",
+    "proofAuthoritySha256": "sha256:80808ad3458d55d6bc4e78fc8c567a99b201bac2f24212a501a176edf0a2d529",
+    "subjectAfterSha256": "sha256:15c1cfe2205fea5fef79de63aa870853d6e14790c5b40a4245930f49e9d6ab2b",
+    "subjectBeforeSha256": "sha256:15c1cfe2205fea5fef79de63aa870853d6e14790c5b40a4245930f49e9d6ab2b",
+    "subjectMutationDisposition": "PROOF_SUBJECT_UNCHANGED"
+  },
+  "receiptType": "governed-artifact-conformance-receipt.v1",
+  "registries": {
+    "projectorRegistry": {
+      "digest": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
+      "identity": "governed-artifact-projector-registry.v1"
+    },
+    "verifierRegistry": {
+      "digest": "sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14",
+      "identity": "governed-artifact-verifier-registry.v1"
+    }
+  },
+  "schema": {
+    "contractValidationDisposition": "CONTRACT_VALID",
+    "digest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
+    "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
+  },
+  "trustDisposition": "TRUSTED",
+  "trustPosture": "CONFORMS"
+}

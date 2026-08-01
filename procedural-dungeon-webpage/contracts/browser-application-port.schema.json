@@ -1,0 +1,15 @@
+{
+  "$id": "urn:governed-artifacts:browser-application-port:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "document": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "document"
+  ],
+  "title": "Browser application port",
+  "type": "object"
+}

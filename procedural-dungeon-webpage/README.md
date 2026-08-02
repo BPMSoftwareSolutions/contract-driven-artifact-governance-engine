@@ -33,13 +33,13 @@ flowchart LR
 | Contract ID | `procedural-dungeon-webpage.v1` |
 | Contract version | `1.13.0` |
 | Contract status | `admitted` |
-| Engine | `governed-artifact-engine.0.20.0` / `sha256:7c4b3ab7f515893d0e19bcc9e9d09ecfecb1dd2ffe05b80416ce7aba032733dc` |
+| Engine | `governed-artifact-engine.0.20.0` / `sha256:1c04ce5626b45359c19c046645ee9c54e64a463634c0a26dc151de5941d16fbd` |
 | Schema identity | `https://canonical.local/schemas/governed-artifact-contract.schema.json` |
 | Schema digest | `sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b` |
 | Conformance profile | `closed-world-artifact-conformance.v8` / `sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7` |
 | Projector registry | `governed-artifact-projector-registry.v1` / `sha256:1ab8ec48c80324c862cf598813554847fc4224ecb146e8dbddf7d9b1efdb2785` |
 | Verifier registry | `governed-artifact-verifier-registry.v1` / `sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14` |
-| Migration registry | `governed-artifact-migration-registry.v1` / `sha256:758a4d4aed661df85d27dedee356064d9e478226eefef1a31642721be4cd24a3` |
+| Migration registry | `governed-artifact-migration-registry.v1` / `sha256:a9dbb25163dcbc8084a329a8ee3f27b44fde63a19bfa52c8ad2a75b2dffed433` |
 
 ## Semantic Subject
 

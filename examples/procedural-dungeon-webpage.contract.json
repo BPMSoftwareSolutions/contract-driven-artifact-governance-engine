@@ -2294,7 +2294,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:25984b45e3d59586b0de583f0f0686dcc7b4b85e095448637886a1966a7a1281",
+        "contentSha256": "sha256:ae08c048a4f25e65254920199494ed583884cb06f427c9625df6b4ef8f9db3b4",
         "expectedByteLength": 1094,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -2662,7 +2662,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:8732b88881836fdc5a6da5bcc150ea508a81b75fc6dccf278ed6bcbe502e5d27",
+        "contentSha256": "sha256:a033bb0a24007e30f680cf8023ca54f8fc3ad10c36aeec1b46c1e9b6e7baa7c6",
         "expectedByteLength": 1110,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -3030,7 +3030,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:93f4549a67c327f4bfb718a946eeb0b83a090719f021e0135c46778fe24e576e",
+        "contentSha256": "sha256:31d30afee4eed5af1ad9e2f0885225ee9c666cce763bbca50da8df0b1f8d8d4f",
         "expectedByteLength": 1124,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -5073,7 +5073,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:f8c255b9b37a1388e306f98daaf1f96424696587238ecee69d5a885510618bf0",
+        "contentSha256": "sha256:8bdfbfe052692ff377d6bfe998fb8a18c502e000d886bbbb3f98df6ccd744f9c",
         "expectedByteLength": 1990,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -5291,7 +5291,7 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:439ea1feb036708f2e7c9c358fd9767a0b30978d847b248885090a4e27c7ff8d",
+        "contentSha256": "sha256:dc0df0056dbeee70dce92f209f14c3e7ee9faa2a9ce018fbddb7bdd8d5b43410",
         "expectedByteLength": 34550,
         "requiredSections": [
           "# Procedural Dungeon Generator: Governed Webpage Projection",
@@ -27133,7 +27133,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:d1ff04364a2bd25b15d2bd39e3d10cde73dbdf867f789bb5f7e207be24cb410f",
+        "contentSha256": "sha256:6fdad64103c165b5c19c76734e786a5baed3d9a0aa958d9e003c0b807c37d6df",
         "expectedByteLength": 1109,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -27501,7 +27501,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:38145200445564e8f075d351727c78ca3c7f1e8ce71fca8cc81259c3732181f8",
+        "contentSha256": "sha256:3991558fefe8fb3ef3376df513c5d712ffa2baa57a9fd8c8c91cbbaf8a488948",
         "expectedByteLength": 1122,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -27869,7 +27869,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:c49cd79619ee82276fc9f48d9d483889800c3815efa86d79d106e617af626bf3",
+        "contentSha256": "sha256:ab55db82ecd3943d4ecd47f1d869e72af8ec1480456a6b83e2dc9d7d83f5d3bb",
         "expectedByteLength": 1106,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -28375,7 +28375,7 @@
         "artifactIds": [
           "procedural-dungeon-webpage.v1"
         ],
-          "decisionId": "generic-structured-html-projector-is-closed-world-authority"
+        "decisionId": "generic-structured-html-projector-is-closed-world-authority"
       },
       {
         "artifactIds": [
@@ -28438,11 +28438,11 @@
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:7c4b3ab7f515893d0e19bcc9e9d09ecfecb1dd2ffe05b80416ce7aba032733dc",
+      "digest": "sha256:1c04ce5626b45359c19c046645ee9c54e64a463634c0a26dc151de5941d16fbd",
       "identity": "governed-artifact-engine.0.20.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:758a4d4aed661df85d27dedee356064d9e478226eefef1a31642721be4cd24a3",
+      "digest": "sha256:a9dbb25163dcbc8084a329a8ee3f27b44fde63a19bfa52c8ad2a75b2dffed433",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {

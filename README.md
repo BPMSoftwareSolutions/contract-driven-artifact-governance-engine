@@ -134,6 +134,17 @@ Ambient operations such as process input and output require separate effect
 authorities bound to exact ports. Runtime operations such as `JSON.parse` and
 `new URL` require named runtime authorities.
 
+Invocation closure follows imported capabilities through immutable local
+bindings. For example, if `server` is initialized by `http.createServer()`,
+calls such as `server.listen()` and `server.close()` are normalized back to
+the `node:http` dependency and must appear in its `allowedInvocations` set.
+Unbound global calls are observed without a fixed global-name allowlist, so
+constructors and operations such as `new Promise`, `Buffer.byteLength`, and
+`Math.min` require exact runtime or effect authority. Effect observation also
+matches declared operations on bound object capabilities; after an effect root
+such as `response` is declared, any undeclared sibling call on that root is an
+authority escape.
+
 The evaluator observes source structure before byte comparison. Undeclared
 paths, imports, package operations, functions, semantic edges, effects,
 decisions, iterations, failure policies, DTO mappings, and results therefore

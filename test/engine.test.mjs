@@ -831,6 +831,135 @@ test("source observation records exact semantic expressions", () => {
   );
 });
 
+test("source observation closes ambient globals and imported object graphs", () => {
+  const observation = inspectSourceAuthority([
+    'import http from "node:http";',
+    'import { readFile as read } from "node:fs/promises";',
+    "export function serve(request, response) {",
+    "  const server = http.createServer();",
+    '  request.on("data", consume);',
+    '  response.setHeader("Content-Type", "application/json");',
+    "  response.end(JSON.stringify({ size: Buffer.byteLength('ok') }));",
+    '  server.listen({ host: "127.0.0.1", port: 0 });',
+    "  const address = server.address();",
+    "  Math.min(address.port, 65535);",
+    '  new URL("/", "http://127.0.0.1");',
+    "  return new Promise();",
+    "}",
+    ""
+  ].join("\n"));
+
+  assert.deepEqual(observation.ambientOperations, [
+    "Buffer.byteLength",
+    "JSON.stringify",
+    "Math.min",
+    "new Promise",
+    "new URL",
+    "request.on",
+    "response.end",
+    "response.setHeader"
+  ]);
+  assert.deepEqual(observation.dependencyOperations, [
+    {
+      specifier: "node:http",
+      operation: "default.createServer",
+      occurrences: 1
+    },
+    {
+      specifier: "node:http",
+      operation: "default.createServer.address",
+      occurrences: 1
+    },
+    {
+      specifier: "node:http",
+      operation: "default.createServer.listen",
+      occurrences: 1
+    }
+  ]);
+  assert.equal(
+    observation.ambientOperations.includes("request.on"),
+    true
+  );
+  assert.equal(
+    observation.ambientOperations.includes("response.end"),
+    true
+  );
+});
+
+test("declared effects close calls on bound object capabilities", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    const artifact = contract.artifacts.find(
+      (entry) => entry.artifactId === "message-command.v1"
+    );
+    const bodyText = artifact.projection.authority.tokens
+      .map((token) => token.text)
+      .join("")
+      .replace("process.stdout.write", "value.end");
+    artifact.projection.authority.tokens = sourceTokens(bodyText);
+    artifact.sourceAuthority.semanticEdges.find(
+      (edge) => edge.edgeId === "write-message-output-edge.v1"
+    ).operation = "value.end";
+    const sourceEdge = artifact.sourceAuthority.semanticEdges.find(
+      (edge) => edge.edgeId === "write-message-output-edge.v1"
+    );
+    sourceEdge.authorities.find(
+      (authority) => authority.authorityType === "effect-authority"
+    ).effectId = "write-bound-object-output.v1";
+    artifact.sourceAuthority.resultContracts[0].source.effectId =
+      "write-bound-object-output.v1";
+    const sharedOutputEffect = contract.effects.find(
+      (effect) => effect.effectId === "write-message-output.v1"
+    );
+    sharedOutputEffect.usedByArtifacts = ["message-verification.v1"];
+    contract.effects.push({
+      authority: {
+        authorityType: "port-authority.v1",
+        effect: "write-bound-object-output",
+        portId: "write-bound-object-output.v1"
+      },
+      effectId: "write-bound-object-output.v1",
+      operation: "value.end",
+      usedByArtifacts: ["message-command.v1"]
+    });
+    recommitReviewDocument(contract);
+  });
+  reconcileContractCommitments({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  projectArtifactFamily({ contractPath, workspacePath, mode: "write" });
+
+  const admitted = evaluateConformance({ contractPath, workspacePath });
+  assert.equal(
+    admitted.artifactFamily?.conformanceDisposition,
+    "CONTRACT_AUTHORITY_CLOSED",
+    JSON.stringify(admitted)
+  );
+
+  const sourcePath = path.join(
+    workspacePath,
+    "governed-message-artifact-family",
+    "bin",
+    "run-message.mjs"
+  );
+  writeFileSync(
+    sourcePath,
+    readFileSync(sourcePath, "utf8").replace("value.end", "value.flush")
+  );
+  const escaped = evaluateConformance({ contractPath, workspacePath });
+  assert.equal(
+    escaped.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "EFFECT_BYPASSES_DECLARED_PORT" &&
+        finding.operation === "value.flush"
+    ),
+    true,
+    JSON.stringify(escaped.artifactFamily.findings)
+  );
+});
+
 test("the complete closed loop projects, evaluates, and writes deterministic trust evidence", (t) => {
   const workspacePath = makeWorkspace(t);
   const projection = projectArtifactFamily({
@@ -1853,6 +1982,10 @@ test("authority closure emits deterministic findings for source escape routes", 
     {
       expectedFindingId: "EFFECT_BYPASSES_DECLARED_PORT",
       mutate: (text) => `${text}\nprocess.exit(0);\n`
+    },
+    {
+      expectedFindingId: "EFFECT_BYPASSES_DECLARED_PORT",
+      mutate: (text) => `${text}\nMath.random();\n`
     },
     {
       expectedFindingId: "UNDECLARED_RESPONSIBILITY",

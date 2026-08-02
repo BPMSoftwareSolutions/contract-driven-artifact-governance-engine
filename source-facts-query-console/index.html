@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Source Facts · Semantic Refactor Console</title>
+  <style>
+    :root {
+      --bg: #08100f;
+      --panel: #0d1715;
+      --panel-2: #111e1b;
+      --line: #24352f;
+      --text: #e7f2ed;
+      --muted: #8fa59c;
+      --green: #73e2a7;
+      --green-soft: #183b2b;
+      --amber: #efc56b;
+      --amber-soft: #3a2f18;
+      --red: #ff8d8d;
+      --red-soft: #3a1e20;
+      --blue: #88bfff;
+      --blue-soft: #172c41;
+      --violet: #c9a7ff;
+      --shadow: 0 22px 70px rgba(0,0,0,.35);
+      --radius: 16px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; background: radial-gradient(circle at 10% -10%, #17392c 0, transparent 28%), var(--bg); color: var(--text); font-family: var(--sans); overflow: hidden; }
+    button, input, textarea, select { font: inherit; }
+    button { color: inherit; }
+    .app { display: grid; grid-template-columns: 260px minmax(0,1fr); height: 100vh; }
+    .sidebar { border-right: 1px solid var(--line); background: rgba(7,14,13,.92); padding: 22px 16px; display: flex; flex-direction: column; gap: 22px; }
+    .brand { display: flex; gap: 12px; align-items: center; padding: 0 8px; }
+    .brand-mark { width: 38px; height: 38px; border: 1px solid #3e6757; border-radius: 12px; display:grid; place-items:center; background: linear-gradient(145deg,#17382c,#0c1815); box-shadow: inset 0 0 0 1px rgba(255,255,255,.03); }
+    .brand-mark svg { width: 22px; }
+    .brand h1 { font-size: 14px; margin:0; letter-spacing:.02em; }
+    .brand p { margin:3px 0 0; font-size:11px; color:var(--muted); }
+    .nav-label { color:#667b72; text-transform:uppercase; letter-spacing:.12em; font-size:10px; padding:0 10px; }
+    .nav { display:flex; flex-direction:column; gap:6px; }
+    .nav button { border:0; background:transparent; padding:10px 11px; border-radius:10px; text-align:left; display:flex; gap:10px; align-items:center; cursor:pointer; color:#a7bab2; }
+    .nav button:hover, .nav button.active { background:#14231f; color:var(--text); }
+    .nav svg { width:16px; opacity:.8; }
+    .scope-card { margin-top:auto; border:1px solid var(--line); border-radius:14px; padding:13px; background:#0d1815; }
+    .scope-card .kicker { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
+    .scope-card strong { font-family:var(--mono); font-size:11px; display:block; margin:8px 0 10px; line-height:1.45; }
+    .scope-row { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); padding-top:8px; border-top:1px solid var(--line); }
+    .scope-row span:last-child { color:var(--green); }
+    .main { min-width:0; display:grid; grid-template-rows:auto minmax(0,1fr); }
+    .topbar { height:70px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; border-bottom:1px solid var(--line); background:rgba(9,17,15,.82); backdrop-filter: blur(16px); }
+    .title-wrap h2 { font-size:17px; margin:0; font-weight:650; }
+    .title-wrap p { margin:4px 0 0; color:var(--muted); font-size:12px; }
+    .top-actions { display:flex; gap:10px; align-items:center; }
+    .status-pill { padding:8px 10px; border:1px solid #2d5143; border-radius:999px; color:var(--green); font-family:var(--mono); font-size:10px; background:#10241c; }
+    .btn { border:1px solid var(--line); background:#13211e; padding:9px 12px; border-radius:10px; cursor:pointer; font-size:12px; }
+    .btn:hover { border-color:#3f5d52; }
+    .btn.primary { background:var(--green); border-color:var(--green); color:#062116; font-weight:750; }
+    .workspace { min-height:0; display:grid; grid-template-columns:minmax(420px, 1.05fr) minmax(360px, .95fr); gap:14px; padding:14px; }
+    .column { min-height:0; display:flex; flex-direction:column; gap:14px; }
+    .panel { border:1px solid var(--line); background:linear-gradient(180deg,rgba(16,28,24,.96),rgba(11,20,18,.96)); border-radius:var(--radius); box-shadow:var(--shadow); min-height:0; overflow:hidden; }
+    .panel-header { min-height:48px; padding:0 15px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
+    .panel-header h3 { font-size:12px; margin:0; letter-spacing:.02em; }
+    .panel-header .meta { color:var(--muted); font-family:var(--mono); font-size:10px; }
+    .query-panel { flex:0 0 320px; display:flex; flex-direction:column; }
+    .query-tools { display:flex; gap:7px; }
+    .chip { border:1px solid var(--line); background:#10201c; color:#9eb1a9; border-radius:999px; padding:5px 8px; font-size:10px; cursor:pointer; }
+    .chip:hover, .chip.active { color:var(--green); border-color:#3c6554; background:#173026; }
+    .editor { flex:1; display:grid; grid-template-columns:44px 1fr; background:#07110f; font-family:var(--mono); font-size:12px; line-height:1.72; }
+    .line-nos { color:#3e514a; text-align:right; padding:14px 10px; user-select:none; border-right:1px solid #182621; }
+    textarea { width:100%; height:100%; border:0; resize:none; outline:0; padding:14px; color:#d4e5de; background:transparent; font-family:var(--mono); font-size:12px; line-height:1.72; }
+    .query-footer { padding:10px 12px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); background:#0d1916; }
+    .query-footer .hint { color:var(--muted); font-size:10px; }
+    .run-actions { display:flex; gap:8px; }
+    .results-panel { flex:1; display:flex; flex-direction:column; }
+    .tabs { display:flex; gap:3px; }
+    .tab { border:0; background:transparent; color:var(--muted); font-size:11px; padding:15px 11px 12px; cursor:pointer; border-bottom:2px solid transparent; }
+    .tab.active { color:var(--text); border-color:var(--green); }
+    .table-wrap { overflow:auto; flex:1; }
+    table { width:100%; border-collapse:collapse; font-size:11px; }
+    th { position:sticky; top:0; z-index:1; background:#101d1a; text-align:left; color:#80968d; font-weight:600; padding:10px 12px; border-bottom:1px solid var(--line); }
+    td { padding:11px 12px; border-bottom:1px solid #1c2b26; vertical-align:top; }
+    tr { cursor:pointer; }
+    tbody tr:hover, tbody tr.selected { background:#14241f; }
+    .mono { font-family:var(--mono); }
+    .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 7px; border-radius:7px; font-size:9px; font-weight:750; letter-spacing:.04em; }
+    .badge.red { color:var(--red); background:var(--red-soft); }
+    .badge.amber { color:var(--amber); background:var(--amber-soft); }
+    .badge.green { color:var(--green); background:var(--green-soft); }
+    .badge.blue { color:var(--blue); background:var(--blue-soft); }
+    .mechanics-panel { flex:0 0 246px; }
+    .mechanics-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:12px; overflow:auto; max-height:200px; }
+    .mechanic { border:1px solid var(--line); border-radius:11px; padding:10px; background:#0c1714; cursor:pointer; min-width:0; }
+    .mechanic.active { border-color:#795358; background:#231719; }
+    .mechanic .name { font-family:var(--mono); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mechanic .count { font-size:20px; font-weight:700; margin-top:7px; }
+    .mechanic .disp { font-size:9px; color:var(--muted); margin-top:3px; }
+    .detail-panel { flex:1; display:flex; flex-direction:column; }
+    .detail-content { min-height:0; overflow:auto; padding:14px; }
+    .source-head { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; margin-bottom:12px; }
+    .source-head h4 { margin:0; font-family:var(--mono); font-size:12px; }
+    .source-head p { margin:5px 0 0; font-size:10px; color:var(--muted); }
+    .source-code { border:1px solid var(--line); background:#07100e; border-radius:12px; overflow:auto; font-family:var(--mono); font-size:11px; line-height:1.65; }
+    .code-line { display:grid; grid-template-columns:36px 1fr; min-width:620px; }
+    .code-line .ln { color:#42564e; text-align:right; padding:0 10px 0 0; user-select:none; }
+    .code-line .src { white-space:pre; padding-right:20px; }
+    .code-line.hit { background:#3a1e20; }
+    .code-line.hit .src { color:#ffd6d6; }
+    .migration { margin-top:12px; display:grid; grid-template-columns:1fr 34px 1fr; gap:9px; align-items:stretch; }
+    .layer-card { border:1px solid var(--line); border-radius:12px; padding:11px; background:#0e1916; }
+    .layer-card h5 { margin:0 0 8px; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.09em; }
+    .layer-card code { font-family:var(--mono); color:#d8e8e1; font-size:10px; white-space:pre-wrap; }
+    .arrow { display:grid; place-items:center; color:var(--green); }
+    .insight { margin-top:12px; padding:11px; border-left:3px solid var(--amber); background:#211b10; border-radius:0 10px 10px 0; font-size:10px; color:#d9caa6; line-height:1.55; }
+    .receipt-row { display:flex; gap:12px; color:var(--muted); font-family:var(--mono); font-size:9px; padding:10px 14px; border-top:1px solid var(--line); white-space:nowrap; overflow:auto; }
+    .empty { height:100%; display:grid; place-items:center; color:var(--muted); font-size:12px; }
+    @media (max-width: 1050px) { .app { grid-template-columns:76px minmax(0,1fr); } .brand .words,.nav span,.scope-card {display:none;} .brand {justify-content:center;padding:0;} .nav button{justify-content:center;} .workspace{grid-template-columns:1fr;} body{overflow:auto}.main{min-height:100vh}.workspace{overflow:visible}.query-panel{min-height:320px}.results-panel{min-height:430px}.mechanics-panel{min-height:250px}.detail-panel{min-height:600px} }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 6.5 12 3l7 3.5v7L12 21l-7-3.5v-11Z" stroke="#73e2a7"/><path d="M8 9h8M8 12h5M8 15h7" stroke="#73e2a7" stroke-linecap="round"/></svg>
+      </div>
+      <div class="words"><h1>Source Facts</h1><p>Semantic Refactor Console</p></div>
+    </div>
+    <div>
+      <div class="nav-label">Explore</div>
+      <nav class="nav">
+        <button class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m21 21-4.4-4.4M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg><span>Query Console</span></button>
+        <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg><span>Fact Collections</span></button>
+        <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 18 19 6M7 6h4v4M13 14h4v4"/></svg><span>Topology</span></button>
+        <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M3 12h18"/></svg><span>Authority Alignment</span></button>
+      </nav>
+    </div>
+    <div>
+      <div class="nav-label">Refactor</div>
+      <nav class="nav">
+        <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16M7 4v6M6 14h12v6H6z"/></svg><span>Mechanic Inventory</span></button>
+        <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 12h6l2-7 3 14 2-7h3"/></svg><span>Semantic Migration</span></button>
+      </nav>
+    </div>
+    <div class="scope-card">
+      <div class="kicker">Active index</div>
+      <strong>governance-engine<br/>sha256:94bf…0d22</strong>
+      <div class="scope-row"><span>Coverage</span><span>INDEX_COMPLETE</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="title-wrap"><h2>Executable Mechanics Refactor</h2><p>Locate domain meaning still authored below the projection boundary.</p></div>
+      <div class="top-actions"><span class="status-pill">RELATIONAL_QUERY_READY</span><button class="btn">Load index</button><button class="btn primary" id="runTop">Run query</button></div>
+    </header>
+
+    <section class="workspace">
+      <div class="column">
+        <section class="panel query-panel">
+          <div class="panel-header">
+            <h3>Source-fact query</h3>
+            <div class="query-tools">
+              <button class="chip active" data-preset="mechanics">Forbidden mechanics</button>
+              <button class="chip" data-preset="branch">Branches</button>
+              <button class="chip" data-preset="construction">Object construction</button>
+              <button class="chip" data-preset="hidden">Meaning in text</button>
+            </div>
+          </div>
+          <div class="editor">
+            <div class="line-nos">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</div>
+            <textarea id="query">SELECT mechanicKind, relativePath, enclosingSymbol, sourceStartLine,
+       evidenceClass, evaluationDisposition
+FROM bodyMechanics
+WHERE mechanicKind IN (
+  'branch', 'iteration', 'exception-handling', 'object-construction',
+  'serialization', 'normalization', 'validation', 'fallback', 'retry',
+  'state-mutation', 'meaning-hidden-in-text'
+)
+ORDER BY mechanicKind, relativePath</textarea>
+          </div>
+          <div class="query-footer"><span class="hint">Ctrl + Enter to execute · Results inherit index coverage</span><div class="run-actions"><button class="btn" id="format">Format</button><button class="btn primary" id="run">Run query</button></div></div>
+        </section>
+
+        <section class="panel results-panel">
+          <div class="panel-header"><div class="tabs"><button class="tab active">Results</button><button class="tab">Query receipt</button><button class="tab">Canonical JSON</button></div><span class="meta" id="resultMeta">12 rows · 8 ms</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Mechanic</th><th>Source</th><th>Enclosing symbol</th><th>Evidence</th><th>Disposition</th></tr></thead>
+              <tbody id="results"></tbody>
+            </table>
+          </div>
+          <div class="receipt-row"><span>index sha256:94bf…0d22</span><span>query sha256:4a1d…ef90</span><span>plan sha256:9d33…62b1</span><span>result sha256:c002…7f0a</span></div>
+        </section>
+      </div>
+
+      <div class="column">
+        <section class="panel mechanics-panel">
+          <div class="panel-header"><h3>Forbidden executable mechanics</h3><span class="meta">3,255 observations</span></div>
+          <div class="mechanics-grid" id="mechanics"></div>
+        </section>
+
+        <section class="panel detail-panel">
+          <div class="panel-header"><h3>Source → semantic migration</h3><span class="meta" id="detailStatus">OBSERVED_NOT_EVALUATED</span></div>
+          <div class="detail-content" id="detail"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+const mechanics = [
+  ['branch',214],['iteration',61],['exception-handling',48],['throw',22],['object-construction',392],['serialization',17],['normalization',29],['validation',86],['fallback',34],['retry',11],['state-mutation',145],['meaning-hidden-in-text',53]
+];
+const rows = [
+ {kind:'branch',path:'lib/governed-artifact-engine.mjs',symbol:'verifySourceAuthorityClosure',line:2144,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['const finding = mismatches.length > 0','  ? projectFinding("SOURCE_AUTHORITY_OPEN", mismatches)','  : null;'], migration:'decision catalog', authority:'resolve-source-authority-closure-disposition', semantic:'classification-total + first-blocker policy'},
+ {kind:'iteration',path:'src/project.js',symbol:'projectSourceFactIndex',line:488,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['for (const file of admittedFiles) {','  projectFileFacts(file, index);','}'], migration:'iteration authority', authority:'project-admitted-source-files', semantic:'ordered collection + per-item projection'},
+ {kind:'object-construction',path:'src/project.js',symbol:'projectRelationshipFact',line:711,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['return {','  relationshipId, relationshipKind, fromSymbolId,','  target, sourceReferenceId, evidenceClass: "observed"','};'], migration:'semantic projection', authority:'project-source-relationship-fact', semantic:'field mappings + contract validation'},
+ {kind:'normalization',path:'src/query.js',symbol:'normalizeQueryInput',line:37,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['const commandText = value.query ?? value.commandText ?? value.sql;','return String(commandText).trim();'], migration:'translation authority', authority:'translate-query-request-to-command-text', semantic:'finite accepted aliases + unmapped disposition'},
+ {kind:'validation',path:'src/project.js',symbol:'validateIndex',line:1288,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['if (!validator(index)) {','  throw new Error(formatErrors(validator.errors));','}'], migration:'obligation + result union', authority:'evaluate-source-index-contract-obligation', semantic:'satisfied state + failure disposition'},
+ {kind:'fallback',path:'src/query.js',symbol:'resolveProjection',line:242,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['return requestedProjection ?? registry.defaultProjection ?? canonicalJson;'], migration:'decision catalog', authority:'resolve-query-projection-authority', semantic:'ordered authority selection + no implicit fallback'},
+ {kind:'retry',path:'scripts/prove-smoke.mjs',symbol:'readStableIndex',line:93,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['for (let attempt = 0; attempt < 3; attempt += 1) {','  const value = await readIndex();','  if (value.indexId === expected) return value;','}'], migration:'continuation policy', authority:'resolve-stable-index-read-continuation', semantic:'bounded attempts + progress signal + terminal stop'},
+ {kind:'state-mutation',path:'src/project.js',symbol:'registerSymbol',line:329,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['index.symbols.push(symbol);','symbolByKey.set(logicalKey, symbol.symbolId);'], migration:'execution model + state transition', authority:'register-observed-symbol', semantic:'declared append/set effects + post-state proof'},
+ {kind:'meaning-hidden-in-text',path:'src/cli.js',symbol:'printSummary',line:182,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['console.log(`Document facts: ${coverage.documentFacts}`);','console.log(`Disposition: ${coverage.disposition}`);'], migration:'presentation projection', authority:'project-source-index-summary', semantic:'typed report model + renderer binding'},
+ {kind:'serialization',path:'src/json-projector.js',symbol:'canonicalStringify',line:19,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['return JSON.stringify(sortObject(value), null, 2) + "\\n";'], migration:'serialization profile', authority:'canonical-json.v1', semantic:'stable key ordering + newline policy'},
+ {kind:'exception-handling',path:'src/cli.js',symbol:'runCommand',line:401,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['try {','  await executeCommand(command);','} catch (error) {','  process.exitCode = 1;','}'], migration:'failure observation + classification', authority:'classify-cli-command-failure', semantic:'mechanical catch + semantic disposition'},
+ {kind:'throw',path:'src/project.js',symbol:'assertContainedPath',line:92,evidence:'observed',disp:'OBSERVED_NOT_EVALUATED',snippet:['if (!isContainedBy(root, path)) {','  throw new Error("WORKSPACE_ESCAPE");','}'], migration:'result union', authority:'resolve-contained-path-result', semantic:'success/failure discrimination'}
+];
+let current = rows[0];
+const mechanicEl = document.getElementById('mechanics');
+const resultsEl = document.getElementById('results');
+const detailEl = document.getElementById('detail');
+function renderMechanics(active='branch') {
+ mechanicEl.innerHTML = mechanics.map(([name,count]) => `<div class="mechanic ${name===active?'active':''}" data-name="${name}"><div class="name">${name}</div><div class="count">${count}</div><div class="disp">observed facts</div></div>`).join('');
+ mechanicEl.querySelectorAll('.mechanic').forEach(el=>el.onclick=()=>filterMechanic(el.dataset.name));
+}
+function renderRows(list=rows) {
+ resultsEl.innerHTML = list.map((r,i)=>`<tr data-i="${rows.indexOf(r)}" class="${r===current?'selected':''}"><td><span class="badge red">${r.kind}</span></td><td><span class="mono">${r.path}:${r.line}</span></td><td class="mono">${r.symbol}</td><td><span class="badge blue">${r.evidence}</span></td><td><span class="badge amber">${r.disp}</span></td></tr>`).join('');
+ resultsEl.querySelectorAll('tr').forEach(tr=>tr.onclick=()=>selectRow(rows[Number(tr.dataset.i)]));
+ document.getElementById('resultMeta').textContent = `${list.length} rows · ${Math.max(3,list.length)} ms`;
+}
+function selectRow(row){ current=row; renderRows(rows); renderMechanics(row.kind); renderDetail(row); }
+function renderDetail(r){
+ const start=r.line-1;
+ const code=r.snippet.map((s,i)=>`<div class="code-line ${i===0?'hit':''}"><span class="ln">${start+i}</span><span class="src">${escapeHtml(s)}</span></div>`).join('');
+ detailEl.innerHTML=`
+ <div class="source-head"><div><h4>${r.path}</h4><p>${r.symbol} · exact source range · UTF-16 offsets retained</p></div><span class="badge red">${r.kind}</span></div>
+ <div class="source-code">${code}</div>
+ <div class="migration">
+   <div class="layer-card"><h5>Executable body today</h5><code>${escapeHtml(r.snippet.join('\n'))}</code></div>
+   <div class="arrow">→</div>
+   <div class="layer-card"><h5>${r.migration}</h5><code>${r.authority}\n\n${r.semantic}</code></div>
+ </div>
+ <div class="insight"><strong>Refactor posture:</strong> Preserve this source fact as observed evidence. Move its domain-specific meaning into the named semantic authority, project the replacement body, and compare direct semantic execution with projected behavior before promotion.</div>`;
+ document.getElementById('detailStatus').textContent=r.disp;
+}
+function filterMechanic(name){ const list=rows.filter(r=>r.kind===name); if(list.length){current=list[0];renderRows(list);renderMechanics(name);renderDetail(current);} }
+function runQuery(){
+ const text=document.getElementById('query').value.toLowerCase();
+ const matching=mechanics.map(x=>x[0]).filter(k=>text.includes(`'${k}'`)||text.includes(k));
+ let list=matching.length?rows.filter(r=>matching.includes(r.kind)):rows;
+ if(text.includes('object-construction')) list=rows.filter(r=>r.kind==='object-construction');
+ if(text.includes('meaning-hidden-in-text')) list=rows.filter(r=>r.kind==='meaning-hidden-in-text');
+ current=list[0]||rows[0]; renderRows(list); renderMechanics(current.kind); renderDetail(current);
+}
+const presets={
+ mechanics:document.getElementById('query').value,
+ branch:"SELECT relativePath, enclosingSymbol, sourceStartLine, conditionText\nFROM bodyMechanics\nWHERE mechanicKind = 'branch'\nORDER BY relativePath, sourceStartLine",
+ construction:"SELECT relativePath, enclosingSymbol, sourceStartLine, projectedFields\nFROM bodyMechanics\nWHERE mechanicKind = 'object-construction'\nORDER BY relativePath, sourceStartLine",
+ hidden:"SELECT relativePath, enclosingSymbol, sourceStartLine, textPurposeCandidate\nFROM bodyMechanics\nWHERE mechanicKind = 'meaning-hidden-in-text'\nORDER BY relativePath, sourceStartLine"
+};
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-preset]').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('query').value=presets[b.dataset.preset];runQuery();});
+document.getElementById('run').onclick=runQuery; document.getElementById('runTop').onclick=runQuery;
+document.getElementById('query').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')runQuery();});
+document.getElementById('format').onclick=()=>{document.getElementById('query').value=document.getElementById('query').value.trim().replace(/\n{3,}/g,'\n\n');};
+function escapeHtml(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+renderMechanics();renderRows();renderDetail(current);
+</script>
+</body>
+</html>

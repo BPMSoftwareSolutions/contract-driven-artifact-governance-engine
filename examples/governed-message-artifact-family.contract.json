@@ -466,7 +466,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:dd8d4970501122129d6e4d68d5a9ab7d240a8c743d77e2a3ceb8b6c1e26abda4",
+        "contentSha256": "sha256:a897dc80fb5a75f92f482144569f8255e8ea281310fdcfe111fbcf39c50a1a6c",
         "expectedByteLength": 1202,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1073,7 +1073,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:de25f58f0ab281aa95486e525e013bb931c61859ff329263c312cb73e9041367",
+        "contentSha256": "sha256:8193ca835cabedc15471ef01d66e806e41751cab6fe061e66ad5af6e1e7924fd",
         "expectedByteLength": 1025,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1651,7 +1651,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:9969ca2ae244f139e027fe550efb6a35fc8859b8c7ec5e65378e18a8dbbf67dd",
+        "contentSha256": "sha256:8d2ad2b062204245d047732d725f3cbd871ec74aebde093f16ad5dcac1f10d9f",
         "expectedByteLength": 1141,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -1901,7 +1901,7 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:799af3a5e4e8179435961f73ccb843113523057b7865b26b3964e5dee093e4c8",
+        "contentSha256": "sha256:40577c5710cb37157a6d901af8d204186b2e000c364ae893ed9f7ae960a5fe1f",
         "expectedByteLength": 24588,
         "requiredSections": [
           "# Governed Message Artifact Family",
@@ -2423,11 +2423,11 @@
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:7c4b3ab7f515893d0e19bcc9e9d09ecfecb1dd2ffe05b80416ce7aba032733dc",
+      "digest": "sha256:1c04ce5626b45359c19c046645ee9c54e64a463634c0a26dc151de5941d16fbd",
       "identity": "governed-artifact-engine.0.20.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:758a4d4aed661df85d27dedee356064d9e478226eefef1a31642721be4cd24a3",
+      "digest": "sha256:a9dbb25163dcbc8084a329a8ee3f27b44fde63a19bfa52c8ad2a75b2dffed433",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {

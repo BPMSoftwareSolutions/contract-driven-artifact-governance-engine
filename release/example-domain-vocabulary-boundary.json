@@ -1,0 +1,44 @@
+{
+  "boundary": {
+    "boundaryType": "closed-world-example-domain-vocabulary.v1",
+    "status": "admitted"
+  },
+  "classifications": [
+    {
+      "relativePath": "examples/procedural-dungeon-fog-of-war.contract.json",
+      "sha256": "sha256:9097cdf89ec70cc4d72aa2ad4dd7398207a740c0c1e2645ec1b7ef6556777053",
+      "terms": [
+        {
+          "count": 7,
+          "term": "generator"
+        },
+        {
+          "count": 1,
+          "term": "pass"
+        }
+      ]
+    },
+    {
+      "relativePath": "examples/procedural-dungeon-webpage.contract.json",
+      "sha256": "sha256:460c7cc9e7b9fdb8b06ca9ddb8e10aee94b24a22dde76244f47d4f72b7e6ce21",
+      "terms": [
+        {
+          "count": 3,
+          "term": "capability"
+        },
+        {
+          "count": 4,
+          "term": "generator"
+        }
+      ]
+    }
+  ],
+  "resolution": {
+    "classificationScope": "exact-file",
+    "contentIdentity": "sha256",
+    "matching": "case-insensitive-whole-word-with-declared-inflections",
+    "undeclaredFiles": "reject",
+    "undeclaredTerms": "reject",
+    "unusedDeclarations": "reject"
+  }
+}

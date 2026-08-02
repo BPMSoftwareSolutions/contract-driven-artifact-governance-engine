@@ -1,12 +1,12 @@
 {
   "archive": {
-    "entryCount": 42,
-    "fileName": "contract-driven-artifact-governance-engine-0.17.0.tgz",
-    "integrity": "sha512-Xho2qsvSPmX0hmDwigMSB+i80ugaf0RQU05Gihlu9OTkhWjLIXxnEiEGUhHOo7W0Jl2djwaA2NALtY0mC+c3kw==",
-    "sha256": "sha256:c0e00d5c295a38a97fea3ca88365be42eead31c15643a8d7f053fc329beac143",
-    "shasum": "4e33338660d919923433768c1e0cac682332f12a",
-    "size": 168472,
-    "unpackedSize": 1183288
+    "entryCount": 71,
+    "fileName": "contract-driven-artifact-governance-engine-0.21.0.tgz",
+    "integrity": "sha512-V/Bva+cxY36FyGpnP3Mf9m40wKlGrjZM06Ae479au8/HVVj6SesWBg/ZBxemOyX9kZnav0HJyKEWgksQzBudlw==",
+    "sha256": "sha256:4064be6909a4a3452dcae964a8924d28fe9a420d4a37fbb3546ede06c0004620",
+    "shasum": "cd0d69af0e66068f4f3614f334c36a01d6c6be3c",
+    "size": 272412,
+    "unpackedSize": 3026133
   },
   "authorityClosure": {
     "admission": {
@@ -113,7 +113,7 @@
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.17.0.tgz",
         "releaseVersion": "0.17.0",
-        "role": "current",
+        "role": "historical",
         "sha256": "sha256:c0e00d5c295a38a97fea3ca88365be42eead31c15643a8d7f053fc329beac143",
         "size": 168472
       },
@@ -123,6 +123,13 @@
         "role": "historical",
         "sha256": "sha256:b07d6c4433d14e504467bf4d73251236385866715fc02594046fa67c488cda29",
         "size": 21951
+      },
+      {
+        "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.21.0.tgz",
+        "releaseVersion": "0.21.0",
+        "role": "current",
+        "sha256": "sha256:4064be6909a4a3452dcae964a8924d28fe9a420d4a37fbb3546ede06c0004620",
+        "size": 272412
       },
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.3.0.tgz",
@@ -174,13 +181,13 @@
         "size": 102043
       }
     ],
-    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.17.0.tgz",
+    "currentArtifactPath": "release/artifacts/contract-driven-artifact-governance-engine-0.21.0.tgz",
     "exclusiveInventory": true,
     "materializationPolicy": "write-current-after-candidate-conformance"
   },
   "dependencyLock": {
     "relativePath": "package-lock.json",
-    "sha256": "sha256:1c3011846d7e5c99a21aa1ffc5fb2b8b0929214870167ef617c09c565e876100"
+    "sha256": "sha256:964cd15741e7c8db34a36a5966480dce74a65e42940f7870af9c1ee653a32753"
   },
   "package": {
     "binaries": [
@@ -212,7 +219,7 @@
       "test",
       "README.md"
     ],
-    "version": "0.17.0"
+    "version": "0.21.0"
   },
   "packing": {
     "bundledDependencies": [],
@@ -231,21 +238,111 @@
       },
       {
         "mode": 420,
+        "relativePath": "examples/bounded-arithmetic-smoke.authority.json",
+        "sha256": "sha256:3e1d6e446623b592b3e1297610ec1b58e64a04cbad50761ed5d527e047c96502",
+        "size": 12155
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/bounded-worklist-smoke.authority.json",
+        "sha256": "sha256:d0370599bfd940a5cac6cda5f84e2fa87f195d1427bb9ac287dd1d1e6825b9f9",
+        "size": 8061
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/branching-worklist-smoke.authority.json",
+        "sha256": "sha256:b55d0ba6294182dc73b4b9f9201c846696dafc03aae5df93291c6288ec699aac",
+        "size": 11076
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/dungeon-keyboard-command.authority.json",
+        "sha256": "sha256:9f160a39f81d774c719b0325ff9e62e3e9fe55adea2f0a273802874ce3b72f3d",
+        "size": 7899
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/dungeon-movement.authority.json",
+        "sha256": "sha256:3d2c8b97d67ba4c7dcf7e29deb2aed54d469d5c6b3e1a577ca4d29dece181a58",
+        "size": 13570
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/dungeon-rasterize.authority.json",
+        "sha256": "sha256:eac98c8ce696b1218d85644e41d5d18cb302d5238265bd1e0b8e2ccf83fd9263",
+        "size": 394856
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/dungeon-render-role.authority.json",
+        "sha256": "sha256:5ecf280004dd7fe6d79e723fd32007de5db031c311b22f6b579b78d5783ddf93",
+        "size": 11484
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/dungeon-topology.authority.json",
+        "sha256": "sha256:d5fccfd47741f5780d518208c11277570d1548fcff79199232dbd56caec38142",
+        "size": 80634
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/dungeon-visibility.authority.json",
+        "sha256": "sha256:8e56f1ef479d970af97e9692437412e31afa5645d842ae304010a9c987870d65",
+        "size": 59004
+      },
+      {
+        "mode": 420,
         "relativePath": "examples/governed-message-artifact-family.contract.json",
-        "sha256": "sha256:37758d3b9bb293327c69bea784f3cde060dcca40a978152fc86459e36c3734e7",
+        "sha256": "sha256:45f4d9bec4fa235fa9d771aedfc6f3a00d7350002f8e262afb8d421b5c83a847",
         "size": 78753
       },
       {
         "mode": 420,
+        "relativePath": "examples/guarded-iteration-smoke.authority.json",
+        "sha256": "sha256:95ab863216177813afc009b08e0c91356e3fe9e543c92066ae7b086cb8396c46",
+        "size": 11654
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/indexed-read-smoke.authority.json",
+        "sha256": "sha256:0a340fb1146bb73d171f5a2c42fa83909ca357503ab4396f9350094f07a15167",
+        "size": 7061
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/procedural-dungeon-fog-of-war.contract.json",
+        "sha256": "sha256:9097cdf89ec70cc4d72aa2ad4dd7398207a740c0c1e2645ec1b7ef6556777053",
+        "size": 26455
+      },
+      {
+        "mode": 420,
+        "relativePath": "examples/procedural-dungeon-webpage.contract.json",
+        "sha256": "sha256:460c7cc9e7b9fdb8b06ca9ddb8e10aee94b24a22dde76244f47d4f72b7e6ce21",
+        "size": 991143
+      },
+      {
+        "mode": 420,
         "relativePath": "examples/provider-response-normalization.authority.json",
-        "sha256": "sha256:8a5fa93b4a32883aa4faf575ca75662a109a48d82a1d11a1cddb7aa2e8917d57",
-        "size": 31066
+        "sha256": "sha256:fe69a4bac4bbab599ca4b78276e1d237de9d295ea993ce5cea6a8a78ce4f96c2",
+        "size": 31167
+      },
+      {
+        "mode": 420,
+        "relativePath": "lib/browser-application-runtime.mjs",
+        "sha256": "sha256:ab48cb50950c4760476c767cd60e6bd220391891aeeaa3d206e6415200ee3629",
+        "size": 8833
+      },
+      {
+        "mode": 420,
+        "relativePath": "lib/browser-semantic-runtime.mjs",
+        "sha256": "sha256:7844311abe53b3653b03043ead2950316b74755166f3398f80c5d938ffdd8ff8",
+        "size": 15795
       },
       {
         "mode": 420,
         "relativePath": "lib/governed-artifact-engine.mjs",
-        "sha256": "sha256:8bbad41c2a4ad35fe81d2cd67d731aca4d0a8c31d1803324faf52c57d8ef14e8",
-        "size": 246588
+        "sha256": "sha256:2fc2f89e1ec5402d34ff86655f554b3e8add78a4bc6f6ba07086a86e8e927ad3",
+        "size": 292036
       },
       {
         "mode": 420,
@@ -256,8 +353,8 @@
       {
         "mode": 420,
         "relativePath": "lib/semantic-execution-runtime.mjs",
-        "sha256": "sha256:4543a3710b51fec106796b2213124cf03096a37234dcac6a1246fbd228ba054b",
-        "size": 70397
+        "sha256": "sha256:42265b5c131da4bb0dd823720ef22ed153b714d70cdfb8673ddde9e2b0445fed",
+        "size": 93175
       },
       {
         "mode": 420,
@@ -268,20 +365,26 @@
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.10-to-1.11.json",
-        "sha256": "sha256:93714e4cef247ff1ee0316f1fb09dde01a4e82edf59517dad9c25825fbf906b7",
-        "size": 1424
+        "sha256": "sha256:4b54c6446d5ee629f48979e5d0f0bfedd97dd7741f540eb2a41bb371d214afc8",
+        "size": 1540
       },
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.11-to-1.12.json",
-        "sha256": "sha256:455e7bb3ec2eca8ab2f713d08447177337555fddce1fb57a90a14ad7a134d4a5",
-        "size": 1616
+        "sha256": "sha256:31defacdcceeda3905995e29e9b8c10c66cb05003ecd55ccc570e0229e9f585d",
+        "size": 1732
       },
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.12-to-1.13.json",
-        "sha256": "sha256:381543e1e4ad433ec7f0e5936bcd4b7e4fab1f1080c0d5d95bf3f65366c98485",
-        "size": 2280
+        "sha256": "sha256:b706544c7a8cd1b05ff898ea4684ab5f87d465b1119d7c94784b5ad9038a1d48",
+        "size": 2396
+      },
+      {
+        "mode": 420,
+        "relativePath": "migrations/artifact-contract.1.13-to-1.14.json",
+        "sha256": "sha256:532c92faf1ac10789a00699106b18530f25f143cdd85e4ce2069d94bea8219a4",
+        "size": 1646
       },
       {
         "mode": 420,
@@ -292,26 +395,26 @@
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.6-to-1.7.json",
-        "sha256": "sha256:166b05b08acfd3bbd7979189f3fdec9b9a007faaa6b82c5127089d09d525be9f",
-        "size": 1419
+        "sha256": "sha256:bd8ac48c638d3360ca2af83c3ba4cdd4e16e5b5d1ecd5dd20bd02276be350081",
+        "size": 1535
       },
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.8-to-1.9.json",
-        "sha256": "sha256:01692b2c45442aa7e7e5cd9ef047cc1a56769894f06e85ec5d1d8e4296436ffa",
-        "size": 1419
+        "sha256": "sha256:7467771c488bffabe76a8e5fde3957197f34e976a90c9468f7cabda00c75c2c3",
+        "size": 1535
       },
       {
         "mode": 420,
         "relativePath": "migrations/artifact-contract.1.9-to-1.10.json",
-        "sha256": "sha256:8a0e774eea06747949e42b8d09569903581500853c2ee55d30b88a3437b429d6",
-        "size": 1305
+        "sha256": "sha256:8e6854d29719bef68afa5519a47e944a9ca137d049247e5810454563e1a2fe68",
+        "size": 1421
       },
       {
         "mode": 420,
         "relativePath": "package.json",
-        "sha256": "sha256:e149bf92fad654ceef00e38937664cbb714901b7bc9c8f8b05449109e604e300",
-        "size": 1166
+        "sha256": "sha256:cdb911683e8dee7722ff8a8b6e4e56964ffd9e6f437491f5632a9624813a1d6b",
+        "size": 1197
       },
       {
         "mode": 420,
@@ -358,38 +461,44 @@
       {
         "mode": 420,
         "relativePath": "profiles/closed-world-artifact-conformance.v8.json",
-        "sha256": "sha256:29387d6e10b6ff4f2c79db1e1cd640b84f18052246e42547a43d1a0cd19a26a2",
-        "size": 11502
+        "sha256": "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
+        "size": 12113
       },
       {
         "mode": 420,
         "relativePath": "README.md",
-        "sha256": "sha256:17aa6622d4fdd7f313b15dd69e606a0c1697a85a2388874289dfbea7f1f5f3e6",
-        "size": 30062
+        "sha256": "sha256:25bd490f99322c4f931d6128217f4299a08306c3f2deb0439af27f75af936177",
+        "size": 33154
       },
       {
         "mode": 420,
         "relativePath": "registries/migration-registry.json",
-        "sha256": "sha256:a58c3ae89b1f706e2d2878aa7d0c34f448c5d071db757d98a5036575b470eadd",
-        "size": 15346
+        "sha256": "sha256:7b4e0ee1074288b095d6f71d7430299447a9498c40ceb14106c858b2991a766b",
+        "size": 17718
       },
       {
         "mode": 420,
         "relativePath": "registries/projector-registry.json",
-        "sha256": "sha256:68f46ba39dfb15ddd970759e212299e36f7695fea5f00ffe4a2e62234f5b09bf",
-        "size": 1840
+        "sha256": "sha256:1ab8ec48c80324c862cf598813554847fc4224ecb146e8dbddf7d9b1efdb2785",
+        "size": 2022
       },
       {
         "mode": 420,
         "relativePath": "registries/verifier-registry.json",
-        "sha256": "sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14",
-        "size": 1388
+        "sha256": "sha256:fb7df5deb813be792c2da1fd573f2456236c5af17594001c803d2fc10899c17a",
+        "size": 1400
       },
       {
         "mode": 420,
         "relativePath": "schemas/bound-semantic-execution-authority.schema.json",
-        "sha256": "sha256:6ab2a920b42160fcafcaf69ff4809c4aae1b4953abb25e17ecc7c039fe94b25e",
-        "size": 5506
+        "sha256": "sha256:1c227679dfbbc427e9919d3014b3a94328763ef6c105af362419d84f23cd4b8e",
+        "size": 6572
+      },
+      {
+        "mode": 420,
+        "relativePath": "schemas/catalog/sha256-1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b.schema.json",
+        "sha256": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
+        "size": 43140
       },
       {
         "mode": 420,
@@ -412,8 +521,8 @@
       {
         "mode": 420,
         "relativePath": "schemas/governed-artifact-contract.schema.json",
-        "sha256": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
-        "size": 43140
+        "sha256": "sha256:beea2f82130ea5c4b419c70374deb0aaa0c7a98763a92eabac24894af635e8d4",
+        "size": 43320
       },
       {
         "mode": 420,
@@ -424,20 +533,80 @@
       {
         "mode": 420,
         "relativePath": "schemas/schema-catalog.json",
-        "sha256": "sha256:09d36a286d183c78b8b424f5b8c7f2dee38132d34cd9e08d934550459252b64e",
-        "size": 1745
+        "sha256": "sha256:6a3af059856fa9c3897c826cd2a77f5dd9cad25ab8328057a831411498cd9530",
+        "size": 2141
       },
       {
         "mode": 420,
         "relativePath": "schemas/semantic-execution-bundle.schema.json",
-        "sha256": "sha256:64fc08bd9f37b83d133f1d247c70b4171435fb1ecf944c5a555b5f777bf536d2",
-        "size": 29651
+        "sha256": "sha256:5f634ba62c94e10d17ebbbc083f43af3cbabebd4d8817ef62b9dd846551bf8ae",
+        "size": 42239
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/dungeon-ontology.test.mjs",
+        "sha256": "sha256:b183fa2839f684265c844504d212a174128983d05b4a65655cd656396491f77f",
+        "size": 15318
       },
       {
         "mode": 420,
         "relativePath": "test/engine.test.mjs",
-        "sha256": "sha256:2fde7613c47699c42bd0fed81996b9f73a7ce3a9ade2b5ca84347b759802c692",
-        "size": 78513
+        "sha256": "sha256:51241269213ea50004c3b14beac23501953a0e0fbd6f63c6d5f17d3eb8e876b3",
+        "size": 95545
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/bounded-arithmetic-ontology.mjs",
+        "sha256": "sha256:ef089510a9bd1faeb1ef2593fac3b87639d3f73710b1b4fb67a84af205f9eaf0",
+        "size": 563
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/bounded-worklist-ontology.mjs",
+        "sha256": "sha256:82178b638cc0844583c00354b6da6cf969271038d6f1ae7e160e2ab51188655d",
+        "size": 555
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/branching-worklist-ontology.mjs",
+        "sha256": "sha256:ccf78458d3524d87398e66ecaae5c77299c823b290e9d5c362a2269dca5044ca",
+        "size": 563
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/dungeon-keyboard-command-ontology.mjs",
+        "sha256": "sha256:4f34c83d6f3a6ac9e5575a925cae0251dc18d6378abba54f8db2d9ca0b32b539",
+        "size": 578
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/dungeon-movement-ontology.mjs",
+        "sha256": "sha256:2e20b69a84a32edb683a1e82473ce7521703f4e9e93f2b1cbea8f4858c1b012a",
+        "size": 531
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/dungeon-rasterize-ontology.mjs",
+        "sha256": "sha256:46bea0c65e1ad4355228d94937cd2723fad2c0dfaa2d9956392d09a1dd9f898f",
+        "size": 908
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/dungeon-render-role-ontology.mjs",
+        "sha256": "sha256:bba901bb59512d31c52912af7a13fa387b60c636d5816c1dd3a692dcb8cf6cea",
+        "size": 540
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/dungeon-topology-ontology.mjs",
+        "sha256": "sha256:8caa0ce31c4d786309557463e49463ef274747e15e2af69b99b77c6ae9bb9765",
+        "size": 611
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/dungeon-visibility-ontology.mjs",
+        "sha256": "sha256:1ae25fbb669f4b421fd6a8cbf049d7847bb0a1a46fbc4ba82123f59506bc6f5e",
+        "size": 874
       },
       {
         "mode": 420,
@@ -465,6 +634,18 @@
       },
       {
         "mode": 420,
+        "relativePath": "test/fixtures/guarded-iteration-ontology.mjs",
+        "sha256": "sha256:282911c398c8fae17de302cff3151627641ccebf947e89d94d7dc6c2ddd58d5f",
+        "size": 559
+      },
+      {
+        "mode": 420,
+        "relativePath": "test/fixtures/indexed-read-ontology.mjs",
+        "sha256": "sha256:9276b19c1c221103f620a7ef70bf6689f91c528c0f79af45bbaf616ab8a261ab",
+        "size": 539
+      },
+      {
+        "mode": 420,
         "relativePath": "test/fixtures/provider-normalization-ontology.mjs",
         "sha256": "sha256:29afa54e52de40f224c8517b7a98baa74c80bb5dfae47f994e2f91eaf07924c1",
         "size": 582
@@ -472,8 +653,8 @@
       {
         "mode": 420,
         "relativePath": "test/semantic-ontology.test.mjs",
-        "sha256": "sha256:9bd503d7242b0df3820d51bc6106d544d31652fa0aece8afbf5f61c862cf9107",
-        "size": 14668
+        "sha256": "sha256:e080f8aee12b9daf106b518ff11f8db2cf322b80d8d98f8d133471dc0c947904",
+        "size": 24323
       }
     ],
     "forbiddenLifecycleScripts": [
@@ -505,7 +686,7 @@
   },
   "release": {
     "authorityType": "governed-npm-release-boundary.v1",
-    "authorityVersion": "1.8.0",
+    "authorityVersion": "1.9.0",
     "releaseId": "contract-driven-artifact-governance-engine-release.v1",
     "status": "admitted"
   },

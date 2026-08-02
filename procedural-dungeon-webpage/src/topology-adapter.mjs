@@ -6,10 +6,10 @@
 // responsibility-id: executes-topology-resolution
 // projection-profile-id: javascript-semantic-execution-body.v1
 // semantic-authority-sha256: sha256:79acb5ef834e7945c6d67e1e94b85242020fcee00d3e861dc24cfff0229251a1
-// projection-authority-sha256: sha256:4013303f8428a5f3900396898d8e173cc889c9417632373d7a0e1e271f813107
-// lineage-sha256: sha256:e63a0502d1a6f700fab46d6365d1c16902a81dcf293ffa628a6b49740329c45b
+// projection-authority-sha256: sha256:2fc2f89e1ec5402d34ff86655f554b3e8add78a4bc6f6ba07086a86e8e927ad3
+// lineage-sha256: sha256:d09347bc7e24b245bd9183293c35f5be4bf65cc3c8d86b71be850b00de4f4497
 // body-sha256: sha256:64102120ec4238b2aea7897a92d0c813bd91e9216bd917f8e9427cdc4030a295
-// artifact-provenance-sha256: sha256:efa59efcb05f9ea0b6565e9f9aa6d0f697877d1fc73cad472c88251c9836d757
+// artifact-provenance-sha256: sha256:2e4d5926e3a446bd415c430cc98659530af73373af443905805e88264367bc95
 //
 import { executeSemanticAuthority } from "contract-driven-artifact-governance-engine";
 import dungeonTopologyBundle from "../contracts/dungeon-topology.bundle.json" with { type: "json" };

@@ -6,10 +6,10 @@
 // responsibility-id: starts-browser-application-authority
 // projection-profile-id: javascript-semantic-execution-body.v1
 // semantic-authority-sha256: sha256:506ef5c98881eba73a860dc2e18663a866c6acb7900ab0e1c8a8400584c15dc8
-// projection-authority-sha256: sha256:4013303f8428a5f3900396898d8e173cc889c9417632373d7a0e1e271f813107
-// lineage-sha256: sha256:3b49d599b57f84b1a0837667de534d34d7ca0b7b3922556a471314d3a9e5276b
+// projection-authority-sha256: sha256:2fc2f89e1ec5402d34ff86655f554b3e8add78a4bc6f6ba07086a86e8e927ad3
+// lineage-sha256: sha256:a6efc31b967f93afe134383e2819e069dfe85dd7cf62eb5618c04d121423d9f3
 // body-sha256: sha256:c2c608b246e16f544c7c4a9eeee85f98eb04bde59acf3e75f088120d2a4bce07
-// artifact-provenance-sha256: sha256:ccb69f0c7c083035d99ba7dc3c22ca4f302f6c0d5d0663d5439a86d55c7f4ea7
+// artifact-provenance-sha256: sha256:7f953d5b480babef6e1e92368e1e26cc6bb2535b666c9eb38cc1a09d52c84a65
 //
 import { executeBrowserApplication } from "../../lib/browser-application-runtime.mjs";
 import applicationAuthority from "../contracts/procedural-dungeon-application.authority.json" with { type: "json" };

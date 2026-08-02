@@ -2773,7 +2773,7 @@ test("release candidate, durable artifact, toolchain, archive, and receipt drift
   assert.equal(commandResult.status, 1);
 });
 
-test("the published surface uses only governed-artifact language", () => {
+test("the published surface keeps engine vocabulary closed and example vocabulary explicit", () => {
   const roots = [
     "bin",
     "examples",
@@ -2811,15 +2811,96 @@ test("the published surface uses only governed-artifact language", () => {
   ];
   const disallowed = new RegExp(
     `\\b(?:${disallowedWords.map((word) => `${word}(?:s|ed|es|ing)?`).join("|")})\\b`,
-    "i"
+    "gi"
   );
-  for (const filePath of files) {
+  const boundaryPath = path.join(
+    packageRoot,
+    "release",
+    "example-domain-vocabulary-boundary.json"
+  );
+  const boundaryBytes = readFileSync(boundaryPath);
+  const boundary = JSON.parse(boundaryBytes.toString("utf8"));
+  assert.deepEqual(boundaryBytes, canonicalJsonBytes(boundary));
+  assert.deepEqual(boundary.boundary, {
+    boundaryType: "closed-world-example-domain-vocabulary.v1",
+    status: "admitted"
+  });
+  assert.deepEqual(boundary.resolution, {
+    classificationScope: "exact-file",
+    contentIdentity: "sha256",
+    matching: "case-insensitive-whole-word-with-declared-inflections",
+    undeclaredFiles: "reject",
+    undeclaredTerms: "reject",
+    unusedDeclarations: "reject"
+  });
+  const classifications = new Map();
+  for (const classification of boundary.classifications) {
+    assert.deepEqual(Object.keys(classification), [
+      "relativePath",
+      "sha256",
+      "terms"
+    ]);
     assert.equal(
-      disallowed.test(readFileSync(filePath, "utf8")),
-      false,
-      `Disallowed public vocabulary in ${path.relative(packageRoot, filePath)}`
+      classification.relativePath.startsWith("examples/"),
+      true
     );
+    assert.equal(
+      path.posix.normalize(classification.relativePath),
+      classification.relativePath
+    );
+    assert.equal(
+      classifications.has(classification.relativePath),
+      false
+    );
+    assert.equal(
+      /^sha256:[0-9a-f]{64}$/.test(classification.sha256),
+      true
+    );
+    const terms = classification.terms.map(({ count, term }) => {
+      assert.equal(Number.isSafeInteger(count) && count > 0, true);
+      assert.equal(disallowedWords.includes(term), true);
+      return term;
+    });
+    assert.deepEqual(terms, [...new Set(terms)].sort());
+    classifications.set(classification.relativePath, classification);
   }
+  const observedClassifications = new Set();
+  for (const filePath of files) {
+    const bytes = readFileSync(filePath);
+    const relativePath = path
+      .relative(packageRoot, filePath)
+      .split(path.sep)
+      .join("/");
+    const matches = [...bytes.toString("utf8").matchAll(disallowed)];
+    const classification = classifications.get(relativePath);
+    if (classification === undefined) {
+      assert.deepEqual(
+        matches,
+        [],
+        `Disallowed public vocabulary in ${relativePath}`
+      );
+      continue;
+    }
+    assert.equal(sha256(bytes), classification.sha256);
+    const counts = new Map();
+    for (const match of matches) {
+      const term = disallowedWords.find((word) =>
+        new RegExp(`^${word}(?:s|ed|es|ing)?$`, "i").test(match[0])
+      );
+      counts.set(term, (counts.get(term) ?? 0) + 1);
+    }
+    assert.deepEqual(
+      [...counts]
+        .map(([term, count]) => ({ count, term }))
+        .sort((left, right) => left.term.localeCompare(right.term)),
+      classification.terms
+    );
+    observedClassifications.add(relativePath);
+  }
+  assert.deepEqual(
+    [...observedClassifications].sort(),
+    [...classifications.keys()].sort()
+  );
 });
 
 test("executable bodies are authorized by canonical lineage, not by declared bytes", (t) => {

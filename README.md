@@ -503,6 +503,12 @@ The release authority declares:
 - canonical release-receipt evidence; and
 - the proof requirements for the `RELEASE_READY` claim.
 
+Example-specific language is governed separately by
+`release/example-domain-vocabulary-boundary.json`. That external boundary
+admits only exact example-file paths, exact content digests, and exact observed
+term counts. Engine-owned published files remain zero-tolerance, and the
+boundary accepts no directory scopes, suffix rules, or wildcard paths.
+
 Release evaluation creates the archive in an isolated temporary directory,
 parses the gzip and tar bytes independently, checks tar-header checksums, and
 compares every observation with the authority. It separately observes the

@@ -293,7 +293,7 @@ function xorshift32DrawReference(seed, callIndex) {
   return xorshift32StepReference(mixed);
 }
 
-// Independently-authored reference generator for the same BSP topology the
+// Independently-authored reference implementation for the same BSP topology the
 // ontology decides. Its counter bookkeeping mirrors the ontology's own step
 // program exactly (see scripts/generate-dungeon-topology-authority.mjs): a
 // draw-counter slot is always consumed for the split-axis decision (drawn

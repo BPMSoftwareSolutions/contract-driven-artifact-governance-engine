@@ -31,21 +31,21 @@
     {
       "artifactId": "movement-adapter.v1",
       "authorityId": "movement-adapter.v1-authority",
-      "contentSha256": "sha256:996999cb435992b05ca3bf8e8418f5150bbf84eb6ebe6ca79a3cf72d60615e68",
+      "contentSha256": "sha256:fa4d41ebce19eeeefdf609a7c679072657c7fbc615bb6a719bc99f8a5570f188",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "render-role-adapter.v1",
       "authorityId": "render-role-adapter.v1-authority",
-      "contentSha256": "sha256:a3e8d2518ad8418a9f9728a4397a20792b9fe05478237a7c964534865e2ec955",
+      "contentSha256": "sha256:7c41c8e17f12f01362837eb2d661ca146d04bd74fc0d4e52741c5b6de56f2bba",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "keyboard-command-adapter.v1",
       "authorityId": "keyboard-command-adapter.v1-authority",
-      "contentSha256": "sha256:eadd2bbaed396277f3ce40fdb4ef904d61582e32e746b62ce748218995e51443",
+      "contentSha256": "sha256:693779c6952652633d3831faf1a7260f6c6e5a49f3f885cd1d44b35b4ef4330d",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
@@ -73,14 +73,14 @@
     {
       "artifactId": "application-adapter.v1",
       "authorityId": "application-adapter-source-authority.v1",
-      "contentSha256": "sha256:9257a78405ba733835a2eab2dfa405a06a2a9e08e4f4e2e04ac2ff1e3e1cd830",
+      "contentSha256": "sha256:fc894c3ed0dc4190554c3a95ce219b143f3b33faf0fefc390991294101b5fccb",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "procedural-dungeon-webpage-readme.v1",
       "authorityId": "procedural-dungeon-webpage-readme-authority.v1",
-      "contentSha256": "sha256:386522e4bba087b255951c2f9907ec7c1c4e5c632a7350f0150642df84e88bf6",
+      "contentSha256": "sha256:19e4d7d410f97e6beabc2484b5205baecdf4cfc1c9dcade3992d57abdf3543ad",
       "projectionMode": "projected",
       "projectorId": "governed-artifact-contract-markdown-projector.v1"
     },
@@ -108,21 +108,21 @@
     {
       "artifactId": "topology-adapter.v1",
       "authorityId": "topology-adapter.v1-authority",
-      "contentSha256": "sha256:ebf2180058446c85319c0bc2f4a049e36c38ad83c8766d534bc08dacd0800994",
+      "contentSha256": "sha256:c26cf38615538afd4d5adeebdf4ed3c9fed094555a3b5c1462f9df3febf1d14a",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "rasterize-adapter.v1",
       "authorityId": "rasterize-adapter.v1-authority",
-      "contentSha256": "sha256:91269dc58367ee23b0c3578a7120f48de06176c63009ce4048c4745fbe3ca6f0",
+      "contentSha256": "sha256:705b3e322bf124928808f982e32414546a2dd300288ace56e51f56397403bdc6",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     },
     {
       "artifactId": "visibility-adapter.v1",
       "authorityId": "visibility-adapter.v1-authority",
-      "contentSha256": "sha256:a1a58f19383ebda69d5748853b23be77ccc4cbb47a2807dd2502201a55a46e6b",
+      "contentSha256": "sha256:58132f4cb82bdbefffdef42e3671242586694e75c91828f5d95a1564e7d9ffc7",
       "projectionMode": "projected",
       "projectorId": "provenance-sealed-source-projector.v1"
     }
@@ -275,7 +275,7 @@
   },
   "contract": {
     "contractId": "procedural-dungeon-webpage.v1",
-    "contractSha256": "sha256:ea118eef8eed623119d62e09c34512580c3f55c4e8b1e58610f262f247e73340"
+    "contractSha256": "sha256:460c7cc9e7b9fdb8b06ca9ddb8e10aee94b24a22dde76244f47d4f72b7e6ce21"
   },
   "dependencyAuthorities": [
     {
@@ -461,11 +461,11 @@
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:4013303f8428a5f3900396898d8e173cc889c9417632373d7a0e1e271f813107",
+      "digest": "sha256:2fc2f89e1ec5402d34ff86655f554b3e8add78a4bc6f6ba07086a86e8e927ad3",
       "identity": "governed-artifact-engine.0.21.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:6953ebe870087cc7b19c3f4ce9f384e8c872b105f0463fdcfc8a346a668e6d26",
+      "digest": "sha256:7b4e0ee1074288b095d6f71d7430299447a9498c40ceb14106c858b2991a766b",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {

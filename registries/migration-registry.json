@@ -439,7 +439,7 @@
           "identity": "closed-world-artifact-conformance.v8"
         },
         "engine": {
-          "digest": "sha256:4013303f8428a5f3900396898d8e173cc889c9417632373d7a0e1e271f813107",
+          "digest": "sha256:2fc2f89e1ec5402d34ff86655f554b3e8add78a4bc6f6ba07086a86e8e927ad3",
           "identity": "governed-artifact-engine.0.21.0"
         }
       },

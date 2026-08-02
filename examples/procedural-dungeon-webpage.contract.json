@@ -2294,7 +2294,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:ae08c048a4f25e65254920199494ed583884cb06f427c9625df6b4ef8f9db3b4",
+        "contentSha256": "sha256:996999cb435992b05ca3bf8e8418f5150bbf84eb6ebe6ca79a3cf72d60615e68",
         "expectedByteLength": 1094,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -2662,7 +2662,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:a033bb0a24007e30f680cf8023ca54f8fc3ad10c36aeec1b46c1e9b6e7baa7c6",
+        "contentSha256": "sha256:a3e8d2518ad8418a9f9728a4397a20792b9fe05478237a7c964534865e2ec955",
         "expectedByteLength": 1110,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -3030,7 +3030,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:31d30afee4eed5af1ad9e2f0885225ee9c666cce763bbca50da8df0b1f8d8d4f",
+        "contentSha256": "sha256:eadd2bbaed396277f3ce40fdb4ef904d61582e32e746b62ce748218995e51443",
         "expectedByteLength": 1124,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -5073,7 +5073,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:8bdfbfe052692ff377d6bfe998fb8a18c502e000d886bbbb3f98df6ccd744f9c",
+        "contentSha256": "sha256:9257a78405ba733835a2eab2dfa405a06a2a9e08e4f4e2e04ac2ff1e3e1cd830",
         "expectedByteLength": 1990,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -5291,8 +5291,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:dc0df0056dbeee70dce92f209f14c3e7ee9faa2a9ce018fbddb7bdd8d5b43410",
-        "expectedByteLength": 34550,
+        "contentSha256": "sha256:386522e4bba087b255951c2f9907ec7c1c4e5c632a7350f0150642df84e88bf6",
+        "expectedByteLength": 34740,
         "requiredSections": [
           "# Procedural Dungeon Generator: Governed Webpage Projection",
           "## Future-State Preview",
@@ -27133,7 +27133,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:6fdad64103c165b5c19c76734e786a5baed3d9a0aa958d9e003c0b807c37d6df",
+        "contentSha256": "sha256:ebf2180058446c85319c0bc2f4a049e36c38ad83c8766d534bc08dacd0800994",
         "expectedByteLength": 1109,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -27501,7 +27501,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:3991558fefe8fb3ef3376df513c5d712ffa2baa57a9fd8c8c91cbbaf8a488948",
+        "contentSha256": "sha256:91269dc58367ee23b0c3578a7120f48de06176c63009ce4048c4745fbe3ca6f0",
         "expectedByteLength": 1122,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -27869,7 +27869,7 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:ab55db82ecd3943d4ecd47f1d869e72af8ec1480456a6b83e2dc9d7d83f5d3bb",
+        "contentSha256": "sha256:a1a58f19383ebda69d5748853b23be77ccc4cbb47a2807dd2502201a55a46e6b",
         "expectedByteLength": 1106,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
@@ -28058,7 +28058,7 @@
   "contract": {
     "contractId": "procedural-dungeon-webpage.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.13.0",
+    "contractVersion": "1.14.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -28438,11 +28438,11 @@
       "identity": "closed-world-artifact-conformance.v8"
     },
     "engine": {
-      "digest": "sha256:1c04ce5626b45359c19c046645ee9c54e64a463634c0a26dc151de5941d16fbd",
-      "identity": "governed-artifact-engine.0.20.0"
+      "digest": "sha256:4013303f8428a5f3900396898d8e173cc889c9417632373d7a0e1e271f813107",
+      "identity": "governed-artifact-engine.0.21.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:a9dbb25163dcbc8084a329a8ee3f27b44fde63a19bfa52c8ad2a75b2dffed433",
+      "digest": "sha256:6953ebe870087cc7b19c3f4ce9f384e8c872b105f0463fdcfc8a346a668e6d26",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
@@ -28450,11 +28450,11 @@
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {
-      "digest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
+      "digest": "sha256:beea2f82130ea5c4b419c70374deb0aaa0c7a98763a92eabac24894af635e8d4",
       "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
     },
     "verifierRegistry": {
-      "digest": "sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14",
+      "digest": "sha256:fb7df5deb813be792c2da1fd573f2456236c5af17594001c803d2fc10899c17a",
       "identity": "governed-artifact-verifier-registry.v1"
     }
   },

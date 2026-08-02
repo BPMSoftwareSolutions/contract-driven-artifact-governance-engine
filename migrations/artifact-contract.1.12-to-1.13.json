@@ -45,6 +45,10 @@
       "pathPattern": "/interpretationBase/schema/digest"
     },
     {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/verifierRegistry/digest"
+    },
+    {
       "disposition": "introduced",
       "pathPattern": "/lineage"
     }

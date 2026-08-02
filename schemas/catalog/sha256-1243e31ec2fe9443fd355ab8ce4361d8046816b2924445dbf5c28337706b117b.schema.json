@@ -529,12 +529,6 @@
         "forbiddenSyntaxKinds"
       ],
       "properties": {
-        "objectGraphClosure": {
-          "enum": [
-            "invocation-only.v1",
-            "object-graph.v1"
-          ]
-        },
         "declarations": {
           "type": "array",
           "items": {
@@ -680,9 +674,7 @@
         "edgeKind": {
           "enum": [
             "invocation",
-            "read",
-            "reference",
-            "write"
+            "reference"
           ]
         },
         "operation": {

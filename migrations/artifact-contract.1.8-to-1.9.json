@@ -35,6 +35,10 @@
     {
       "disposition": "transformed",
       "pathPattern": "/interpretationBase/projectorRegistry/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/verifierRegistry/digest"
     }
   ],
   "migrationId": "artifact-contract.1.8-to-1.9",

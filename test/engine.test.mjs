@@ -413,7 +413,7 @@ test("historical schemas and digest-to-digest migration authority are durable", 
     registry.schemaCatalog.digest,
     sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
   );
-  assert.equal(registry.migrations.length, 7);
+  assert.equal(registry.migrations.length, 8);
   const edge = registry.migrations[0];
   for (const digest of [
     edge.sourceSchemaDigest,
@@ -617,6 +617,57 @@ test("ontology interpretation migration is admitted without schema churn", (t) =
     contractPath,
     workspacePath
   });
+  assert.equal(replay.migrationDisposition, "MIGRATION_NOT_REQUIRED");
+  assert.deepEqual(replay.diff, []);
+});
+
+test("object-graph authority migration preserves historical 1.13 interpretation", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    contract.contract.contractVersion = "1.13.0";
+    contract.interpretationBase.engine = {
+      digest:
+        "sha256:1c04ce5626b45359c19c046645ee9c54e64a463634c0a26dc151de5941d16fbd",
+      identity: "governed-artifact-engine.0.20.0"
+    };
+    contract.interpretationBase.schema.digest =
+      "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b";
+    contract.interpretationBase.conformanceProfile = {
+      digest:
+        "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
+      identity: "closed-world-artifact-conformance.v8"
+    };
+    for (const artifact of contract.artifacts) {
+      delete artifact.sourceAuthority?.objectGraphClosure;
+    }
+  });
+  const preview = migrateContract({ contractPath, workspacePath });
+  assert.equal(
+    preview.migrationDisposition,
+    "CONTRACT_MIGRATION_REQUIRED"
+  );
+  assert.equal(
+    preview.migrationId,
+    "artifact-contract.1.13-to-1.14"
+  );
+  assert.notEqual(preview.sourceSchemaDigest, preview.targetSchemaDigest);
+
+  const written = migrateContract({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(written.migrationDisposition, "CONTRACT_MIGRATED");
+  assert.equal(
+    written.candidateContract.contract.contractVersion,
+    "1.14.0"
+  );
+  assert.equal(
+    validateContract({ contractPath, workspacePath })
+      .contractValidationDisposition,
+    "CONTRACT_VALID"
+  );
+  const replay = migrateContract({ contractPath, workspacePath });
   assert.equal(replay.migrationDisposition, "MIGRATION_NOT_REQUIRED");
   assert.deepEqual(replay.diff, []);
 });
@@ -883,6 +934,216 @@ test("source observation closes ambient globals and imported object graphs", () 
   assert.equal(
     observation.ambientOperations.includes("response.end"),
     true
+  );
+});
+
+test("object-graph observation closes callbacks, reads, writes, and computed calls", () => {
+  const observation = inspectSourceAuthority([
+    'import http from "node:http";',
+    'import path from "node:path";',
+    "export function serve({ request, response }) {",
+    "  const routes = { GET: () => response.end() };",
+    "  const server = http.createServer((incoming, outgoing) => {",
+    "    outgoing.statusCode = 200;",
+    '    incoming.on("data", (chunk) => chunk.length);',
+    "  });",
+    "  server.listen();",
+    "  const address = server.address();",
+    "  response.statusCode = address.port;",
+    "  path.sep;",
+    "  return routes[request.method]();",
+    "}",
+    ""
+  ].join("\n"));
+
+  assert.equal(observation.unresolvedFunctionForms.length, 0);
+  assert.equal(observation.unresolvedObjectGraphForms.length, 0);
+  assert.deepEqual(
+    observation.functions
+      .filter((entry) => entry.declaration.startsWith("callback"))
+      .map((entry) => entry.declaration),
+    ["callback1", "callback2", "callback3"]
+  );
+  assert.equal(
+    observation.objectGraphOperations.some(
+      (entry) =>
+        entry.edgeKind === "write" &&
+        entry.operation === "outgoing.statusCode.$write"
+    ),
+    true
+  );
+  assert.equal(
+    observation.objectGraphOperations.some(
+      (entry) =>
+        entry.edgeKind === "invocation" &&
+        entry.operation === "routes.$computed" &&
+        JSON.stringify(entry.argumentExpressions) ===
+          JSON.stringify(["request.method"])
+    ),
+    true
+  );
+  assert.equal(
+    observation.objectGraphOperations.some(
+      (entry) =>
+        entry.edgeKind === "read" &&
+        entry.operation === "$parameter1.request.$read"
+    ),
+    true
+  );
+  assert.deepEqual(
+    observation.dependencyObjectGraphOperations.filter(
+      (entry) => entry.operation.endsWith(".$read")
+    ),
+    [
+      {
+        specifier: "node:http",
+        operation: "default.createServer.address.port.$read",
+        occurrences: 1
+      },
+      {
+        specifier: "node:path",
+        operation: "default.sep.$read",
+        occurrences: 1
+      }
+    ]
+  );
+});
+
+test("object-graph closure rejects undeclared member writes and computed selectors", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    const artifact = contract.artifacts.find(
+      (entry) => entry.artifactId === "message-command.v1"
+    );
+    const bodyText = artifact.projection.authority.tokens
+      .map((token) => token.text)
+      .join("")
+      .replace(
+        "process.stdout.write(projectMessage(value));",
+        "process.stdout.statusCode = 200;\nprocess.stdout.write(projectMessage(value));"
+      );
+    artifact.projection.authority.tokens = sourceTokens(bodyText);
+    artifact.sourceAuthority.objectGraphClosure = "object-graph.v1";
+
+    const inputEdge = artifact.sourceAuthority.semanticEdges.find(
+      (edge) => edge.edgeId === "read-message-input-reference.v1"
+    );
+    inputEdge.edgeKind = "read";
+    inputEdge.operation = "process.argv.$computed.$read";
+    inputEdge.argumentExpressions = ["2"];
+    contract.effects.find(
+      (effect) => effect.effectId === "read-message-input.v1"
+    ).operation = "process.argv.$computed.$read";
+
+    contract.runtimeAuthorities.push({
+      invocation: "import.meta.url.$read",
+      purpose: "Reads the current module URL through the declared runtime.",
+      runtimeAuthorityId: "import-meta-url-runtime.v1",
+      usedByArtifacts: ["message-command.v1"]
+    });
+    artifact.sourceAuthority.semanticEdges.push({
+      argumentExpressions: [],
+      authorities: [
+        {
+          authorityType: "runtime-authority",
+          runtimeAuthorityId: "import-meta-url-runtime.v1"
+        }
+      ],
+      edgeId: "read-command-module-url.v1",
+      edgeKind: "read",
+      occurrences: 1,
+      operation: "import.meta.url.$read",
+      purpose: "Reads the declared module URL used by URL construction.",
+      responsibilityId: "run-message-command.v1"
+    });
+
+    contract.effects.push({
+      authority: {
+        authorityType: "port-authority.v1",
+        effect: "write-output-status",
+        portId: "write-output-status.v1"
+      },
+      effectId: "write-output-status.v1",
+      operation: "process.stdout.statusCode.$write",
+      usedByArtifacts: ["message-command.v1"]
+    });
+    artifact.sourceAuthority.semanticEdges.push({
+      argumentExpressions: [],
+      authorities: [
+        {
+          authorityType: "effect-authority",
+          effectId: "write-output-status.v1"
+        }
+      ],
+      edgeId: "write-command-output-status.v1",
+      edgeKind: "write",
+      occurrences: 1,
+      operation: "process.stdout.statusCode.$write",
+      purpose: "Writes the declared output status member.",
+      responsibilityId: "run-message-command.v1"
+    });
+    recommitReviewDocument(contract);
+  });
+  reconcileContractCommitments({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  projectArtifactFamily({ contractPath, workspacePath, mode: "write" });
+
+  const admitted = evaluateConformance({ contractPath, workspacePath });
+  assert.equal(
+    admitted.artifactFamily?.conformanceDisposition,
+    "CONTRACT_AUTHORITY_CLOSED",
+    JSON.stringify(admitted)
+  );
+
+  const sourcePath = path.join(
+    workspacePath,
+    "governed-message-artifact-family",
+    "bin",
+    "run-message.mjs"
+  );
+  writeFileSync(
+    sourcePath,
+    readFileSync(sourcePath, "utf8").replace(
+      "process.stdout.statusCode",
+      "process.stderr.statusCode"
+    )
+  );
+  const escapedWrite = evaluateConformance({ contractPath, workspacePath });
+  assert.equal(
+    escapedWrite.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "EFFECT_BYPASSES_DECLARED_PORT" &&
+        finding.operation === "process.stderr.statusCode.$write"
+    ),
+    true,
+    JSON.stringify(escapedWrite.artifactFamily.findings)
+  );
+
+  projectArtifactFamily({ contractPath, workspacePath, mode: "write" });
+  writeFileSync(
+    sourcePath,
+    readFileSync(sourcePath, "utf8").replace(
+      "process.argv[2]",
+      "process.argv[3]"
+    )
+  );
+  const escapedSelector = evaluateConformance({
+    contractPath,
+    workspacePath
+  });
+  assert.equal(
+    escapedSelector.artifactFamily.findings.some(
+      (finding) =>
+        finding.findingId === "UNDECLARED_SEMANTIC_EDGE" &&
+        finding.observed?.operation === "process.argv.$computed.$read" &&
+        JSON.stringify(finding.observed.argumentExpressions) ===
+          JSON.stringify(["3"])
+    ),
+    true,
+    JSON.stringify(escapedSelector.artifactFamily.findings)
   );
 });
 

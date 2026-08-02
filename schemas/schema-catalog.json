@@ -38,7 +38,16 @@
       "contractVersions": [
         "1.13.0"
       ],
-      "digest": "sha256:93e112836bcadd4620733a11e88c0e24819731ab6d80c4b408838c2d85ae4ac7",
+      "digest": "sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b",
+      "relativePath": "catalog/sha256-1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b.schema.json",
+      "schemaId": "https://canonical.local/schemas/governed-artifact-contract.schema.json",
+      "status": "historical"
+    },
+    {
+      "contractVersions": [
+        "1.14.0"
+      ],
+      "digest": "sha256:beea2f82130ea5c4b419c70374deb0aaa0c7a98763a92eabac24894af635e8d4",
       "relativePath": "governed-artifact-contract.schema.json",
       "schemaId": "https://canonical.local/schemas/governed-artifact-contract.schema.json",
       "status": "current"

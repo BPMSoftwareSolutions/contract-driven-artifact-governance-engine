@@ -2,7 +2,7 @@
 
 > Governed review projection
 >
-> Contract: `procedural-dungeon-webpage.v1` | Version: `1.13.0` | Status: `admitted`
+> Contract: `procedural-dungeon-webpage.v1` | Version: `1.14.0` | Status: `admitted`
 
 ## Future-State Preview
 
@@ -31,15 +31,15 @@ flowchart LR
 | --- | --- |
 | Contract type | `governed-artifact-contract.v1` |
 | Contract ID | `procedural-dungeon-webpage.v1` |
-| Contract version | `1.13.0` |
+| Contract version | `1.14.0` |
 | Contract status | `admitted` |
-| Engine | `governed-artifact-engine.0.20.0` / `sha256:1c04ce5626b45359c19c046645ee9c54e64a463634c0a26dc151de5941d16fbd` |
+| Engine | `governed-artifact-engine.0.21.0` / `sha256:4013303f8428a5f3900396898d8e173cc889c9417632373d7a0e1e271f813107` |
 | Schema identity | `https://canonical.local/schemas/governed-artifact-contract.schema.json` |
-| Schema digest | `sha256:1243e31ec2fe9443fd355ab8ce4361d8046816b2924445dbf5c28337706b117b` |
+| Schema digest | `sha256:beea2f82130ea5c4b419c70374deb0aaa0c7a98763a92eabac24894af635e8d4` |
 | Conformance profile | `closed-world-artifact-conformance.v8` / `sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7` |
 | Projector registry | `governed-artifact-projector-registry.v1` / `sha256:1ab8ec48c80324c862cf598813554847fc4224ecb146e8dbddf7d9b1efdb2785` |
-| Verifier registry | `governed-artifact-verifier-registry.v1` / `sha256:9001a6ffe24768e4e0ffa8cbbf545e72343052e693e80736a5bd8ca818e89c14` |
-| Migration registry | `governed-artifact-migration-registry.v1` / `sha256:a9dbb25163dcbc8084a329a8ee3f27b44fde63a19bfa52c8ad2a75b2dffed433` |
+| Verifier registry | `governed-artifact-verifier-registry.v1` / `sha256:fb7df5deb813be792c2da1fd573f2456236c5af17594001c803d2fc10899c17a` |
+| Migration registry | `governed-artifact-migration-registry.v1` / `sha256:6953ebe870087cc7b19c3f4ce9f384e8c872b105f0463fdcfc8a346a668e6d26` |
 
 ## Semantic Subject
 
@@ -172,15 +172,15 @@ No effect authorities are declared.
 
 ## Source Authority Closures
 
-| Artifact | Responsibilities | Semantic edges | Decisions | Iterations | Failure policies | Projection mappings | Result contracts |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `movement-adapter.v1` | `movement-adapter-module.v1`, `resolve-movement.v1` | `bind-movement-bundle-data.v1-edge.v1`, `execute-resolve-movement-semantics.v1` |  |  |  |  | `movement-result.v1` |
-| `render-role-adapter.v1` | `render-role-adapter-module.v1`, `resolve-render-role.v1` | `bind-render-role-bundle-data.v1-edge.v1`, `execute-resolve-render-role-semantics.v1` |  |  |  |  | `render-role-result.v1` |
-| `keyboard-command-adapter.v1` | `keyboard-command-adapter-module.v1`, `resolve-keyboard-command.v1` | `bind-keyboard-command-bundle-data.v1-edge.v1`, `execute-resolve-keyboard-command-semantics.v1` |  |  |  |  | `keyboard-command-result.v1` |
-| `application-adapter.v1` | `application-adapter-module.v1`, `start-procedural-dungeon-page.v1` | `execute-browser-application-semantics.v1` |  |  | `browser-application-projection-failure.v1` | `browser-application-projection.v1` | `browser-application-result.v1` |
-| `topology-adapter.v1` | `topology-adapter-module.v1`, `resolve-topology.v1` | `bind-topology-bundle-data.v1-edge.v1`, `execute-resolve-topology-semantics.v1` |  |  |  |  | `topology-result.v1` |
-| `rasterize-adapter.v1` | `rasterize-adapter-module.v1`, `resolve-rasterization.v1` | `bind-rasterize-bundle-data.v1-edge.v1`, `execute-resolve-rasterization-semantics.v1` |  |  |  |  | `rasterize-result.v1` |
-| `visibility-adapter.v1` | `visibility-adapter-module.v1`, `resolve-visibility.v1` | `bind-visibility-bundle-data.v1-edge.v1`, `execute-resolve-visibility-semantics.v1` |  |  |  |  | `visibility-result.v1` |
+| Artifact | Object-graph closure | Responsibilities | Semantic edges | Decisions | Iterations | Failure policies | Projection mappings | Result contracts |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `movement-adapter.v1` | `invocation-only.v1` | `movement-adapter-module.v1`, `resolve-movement.v1` | `bind-movement-bundle-data.v1-edge.v1`, `execute-resolve-movement-semantics.v1` |  |  |  |  | `movement-result.v1` |
+| `render-role-adapter.v1` | `invocation-only.v1` | `render-role-adapter-module.v1`, `resolve-render-role.v1` | `bind-render-role-bundle-data.v1-edge.v1`, `execute-resolve-render-role-semantics.v1` |  |  |  |  | `render-role-result.v1` |
+| `keyboard-command-adapter.v1` | `invocation-only.v1` | `keyboard-command-adapter-module.v1`, `resolve-keyboard-command.v1` | `bind-keyboard-command-bundle-data.v1-edge.v1`, `execute-resolve-keyboard-command-semantics.v1` |  |  |  |  | `keyboard-command-result.v1` |
+| `application-adapter.v1` | `invocation-only.v1` | `application-adapter-module.v1`, `start-procedural-dungeon-page.v1` | `execute-browser-application-semantics.v1` |  |  | `browser-application-projection-failure.v1` | `browser-application-projection.v1` | `browser-application-result.v1` |
+| `topology-adapter.v1` | `invocation-only.v1` | `topology-adapter-module.v1`, `resolve-topology.v1` | `bind-topology-bundle-data.v1-edge.v1`, `execute-resolve-topology-semantics.v1` |  |  |  |  | `topology-result.v1` |
+| `rasterize-adapter.v1` | `invocation-only.v1` | `rasterize-adapter-module.v1`, `resolve-rasterization.v1` | `bind-rasterize-bundle-data.v1-edge.v1`, `execute-resolve-rasterization-semantics.v1` |  |  |  |  | `rasterize-result.v1` |
+| `visibility-adapter.v1` | `invocation-only.v1` | `visibility-adapter-module.v1`, `resolve-visibility.v1` | `bind-visibility-bundle-data.v1-edge.v1`, `execute-resolve-visibility-semantics.v1` |  |  |  |  | `visibility-result.v1` |
 
 ## Authority Closure Profile
 

@@ -13,7 +13,7 @@
     },
     {
       "verifierId": "authority-closure-verifier.v1",
-      "evidence": "dependency-import-declaration-invocation-and-syntax-authority"
+      "evidence": "dependency-import-declaration-object-graph-operation-and-syntax-authority"
     },
     {
       "verifierId": "command-exit-verifier.v1",

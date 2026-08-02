@@ -31,6 +31,10 @@
     {
       "disposition": "transformed",
       "pathPattern": "/interpretationBase/migrationRegistry/digest"
+    },
+    {
+      "disposition": "transformed",
+      "pathPattern": "/interpretationBase/verifierRegistry/digest"
     }
   ],
   "migrationId": "artifact-contract.1.9-to-1.10",

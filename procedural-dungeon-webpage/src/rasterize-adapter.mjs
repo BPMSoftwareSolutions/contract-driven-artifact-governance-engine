@@ -6,10 +6,10 @@
 // responsibility-id: executes-rasterize-resolution
 // projection-profile-id: javascript-semantic-execution-body.v1
 // semantic-authority-sha256: sha256:6684e8207945a9db806005508394064c0c43371448ba5f21d5184bfcca3a4a34
-// projection-authority-sha256: sha256:1c04ce5626b45359c19c046645ee9c54e64a463634c0a26dc151de5941d16fbd
-// lineage-sha256: sha256:f0e70afed9212ac41e12bac62c6347c7ac9a582cccac3b5f0b65e9d4a81dd7a6
+// projection-authority-sha256: sha256:4013303f8428a5f3900396898d8e173cc889c9417632373d7a0e1e271f813107
+// lineage-sha256: sha256:6ba6debb7d3844ef6a2ce422eb8ecd596f644c2342a9ad5c13b00e4dbcf7eed5
 // body-sha256: sha256:431fed1ec2ac1b8779e3fcfb49ab0559624b12fb660f43145387048651661e38
-// artifact-provenance-sha256: sha256:a028fae831e0414d9172c045ee8207b28076cef0c3ca00ca1dd30d1e8959efae
+// artifact-provenance-sha256: sha256:2b0fe63d8ab258fd1fb654f2dc8995246764f374ee39dbd9aafc7227f299f639
 //
 import { executeSemanticAuthority } from "contract-driven-artifact-governance-engine";
 import dungeonRasterizeBundle from "../contracts/dungeon-rasterize.bundle.json" with { type: "json" };

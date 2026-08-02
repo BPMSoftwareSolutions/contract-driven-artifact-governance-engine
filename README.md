@@ -134,7 +134,7 @@ Ambient operations such as process input and output require separate effect
 authorities bound to exact ports. Runtime operations such as `JSON.parse` and
 `new URL` require named runtime authorities.
 
-Invocation closure follows imported capabilities through immutable local
+Invocation closure follows imported capabilities through local
 bindings. For example, if `server` is initialized by `http.createServer()`,
 calls such as `server.listen()` and `server.close()` are normalized back to
 the `node:http` dependency and must appear in its `allowedInvocations` set.
@@ -144,6 +144,29 @@ constructors and operations such as `new Promise`, `Buffer.byteLength`, and
 matches declared operations on bound object capabilities; after an effect root
 such as `response` is declared, any undeclared sibling call on that root is an
 authority escape.
+
+Source authorities that set `objectGraphClosure` to `object-graph.v1` extend
+that exact closure from calls to the complete explicit object graph. Named and
+anonymous callbacks become deterministic function responsibilities
+(`callback1`, `callback2`, and so on), and the observer distinguishes member
+reads, member writes, and invocations. Read and write operation tokens use the
+canonical suffixes `.$read` and `.$write`; for example, `path.sep` becomes the
+dependency operation `default.sep.$read`, while
+`response.statusCode = 500` becomes the effect operation
+`response.statusCode.$write`. The existing `allowedInvocations` dependency
+field admits these exact operation tokens as well as calls; its name is retained
+for contract compatibility.
+
+Computed access uses the `$computed` segment and preserves the selector as an
+argument expression. Thus `routeBodies[dispatch.routeId]()` is observed as the
+invocation `routeBodies.$computed` with `dispatch.routeId` as its selector, and
+`values[index]` is observed as `values.$computed.$read` with `index`. Array
+literal methods are rooted at `Array`, call-result chains retain their origin,
+destructured parameter fields are explicit `$parameterN` reads, and imported
+return values retain dependency provenance through subsequent reads, writes,
+and calls. An explicit object-graph form that cannot be normalized produces
+`SOURCE_AUTHORITY_UNRESOLVED`; it is never silently omitted from an
+object-graph closure claim.
 
 The evaluator observes source structure before byte comparison. Undeclared
 paths, imports, package operations, functions, semantic edges, effects,

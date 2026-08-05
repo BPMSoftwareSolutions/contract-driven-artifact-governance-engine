@@ -2,11 +2,11 @@
   "archive": {
     "entryCount": 76,
     "fileName": "contract-driven-artifact-governance-engine-0.22.0.tgz",
-    "integrity": "sha512-SMcKzRMKud3yb3cGgMmO64vfQr/CSSMl5nyc4325M+Jmvhm84cGsCnIHIM1v62bKHgxnfjeU+cLX03UvBlG0Xw==",
-    "sha256": "sha256:b80d138cf3396d1f0dae660a93d0b0b5124af4d0efe4cbfb1453ad7395d51e99",
-    "shasum": "aa62c1a35f06d4c37f4bc09c7d6405181902fbec",
-    "size": 285572,
-    "unpackedSize": 3136665
+    "integrity": "sha512-kZCcfzGt6rOUT/2qClwLxqmeYFYf0OOlhLvQE0veIJLV7DhsUgVv6rAUydvfnSg681HAhBBe6PT9eG5X0k5Suw==",
+    "sha256": "sha256:2f4044bab997aaeda29822b0700d5a38fd018f24779e21a393c6a43c8f513b2f",
+    "shasum": "8fc59bec8fc5eb9b5038828e71e434420fed8c3b",
+    "size": 285558,
+    "unpackedSize": 3136464
   },
   "authorityClosure": {
     "admission": {
@@ -135,8 +135,8 @@
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.22.0.tgz",
         "releaseVersion": "0.22.0",
         "role": "current",
-        "sha256": "sha256:b80d138cf3396d1f0dae660a93d0b0b5124af4d0efe4cbfb1453ad7395d51e99",
-        "size": 285572
+        "sha256": "sha256:2f4044bab997aaeda29822b0700d5a38fd018f24779e21a393c6a43c8f513b2f",
+        "size": 285558
       },
       {
         "relativePath": "release/artifacts/contract-driven-artifact-governance-engine-0.3.0.tgz",
@@ -366,8 +366,8 @@
       {
         "mode": 420,
         "relativePath": "LICENSE",
-        "sha256": "sha256:f533a773c0612c1d90c2e8f02862079acbdf00e9f33f7daf6c37f66af5201f50",
-        "size": 11547
+        "sha256": "sha256:05f954ba2ee6013fb35064b953a536e48fcbd85fdbd0cd043f099aa30514d1db",
+        "size": 11346
       },
       {
         "mode": 420,

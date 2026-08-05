@@ -466,13 +466,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:14fab807d3312823aea49c1f6b28a06417e817c1f90e4461c69949d6b979714f",
+        "contentSha256": "sha256:cd63ffc54981c45a15c3d50ef55fc8a68098aa6e1a419e3662e33dbeb18668bc",
         "expectedByteLength": 1202,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Projects canonical message bytes from a validated value.",
@@ -537,6 +541,7 @@
           "WhileStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [
           {
             "fields": [
@@ -1073,13 +1078,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:51a4d64bfc007e06f4a2736088c94edc8f152e025bbb6a83a9263f875ebfc52a",
+        "contentSha256": "sha256:34040e95914702a4d5f08aac97823b3478d1f562db11d48dd5cfeefda1e5d461",
         "expectedByteLength": 1025,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Reads the declared message and writes its canonical bytes.",
@@ -1129,6 +1138,7 @@
           "WithStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [],
         "responsibilities": [
           {
@@ -1651,13 +1661,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:b83984c76f547479e01062cbefcf100818e0c7f4fe6159d3d2b9fd3a1ced16b6",
+        "contentSha256": "sha256:4d5d31f83846e6c79d4d4e5c0715b3bbfbc98a6dede3412bea1ea3cd6cd4efd9",
         "expectedByteLength": 1141,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Evaluates the declared message projection.",
@@ -1702,6 +1716,7 @@
           "WithStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [],
         "responsibilities": [
           {
@@ -1901,8 +1916,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:edb9c2813247152b0eccea71fdf7462ffdada33d1c2e5276e4186e95d24cf2cb",
-        "expectedByteLength": 24686,
+        "contentSha256": "sha256:6c41f9b92c730eab86f1b8f3d19451cbc15d490a68e037957da701de7035f27c",
+        "expectedByteLength": 25241,
         "requiredSections": [
           "# Governed Message Artifact Family",
           "## Future-State Preview",
@@ -2080,7 +2095,7 @@
   "contract": {
     "contractId": "governed-message-artifact-family.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.14.0",
+    "contractVersion": "1.15.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -2419,15 +2434,15 @@
   ],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
-      "identity": "closed-world-artifact-conformance.v8"
+      "digest": "sha256:7c7c0133bcdfcf9d159552a1cd94f1787eec998dbc049b0438142aac64a9f3c9",
+      "identity": "closed-world-artifact-conformance.v9"
     },
     "engine": {
-      "digest": "sha256:2fc2f89e1ec5402d34ff86655f554b3e8add78a4bc6f6ba07086a86e8e927ad3",
-      "identity": "governed-artifact-engine.0.21.0"
+      "digest": "sha256:25fdf0e88d26e77986ec3db8cf224f82028827a6ed4ed2bef8c4477f814ff1ba",
+      "identity": "governed-artifact-engine.0.22.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:7b4e0ee1074288b095d6f71d7430299447a9498c40ceb14106c858b2991a766b",
+      "digest": "sha256:4b1bcd84a8d87c0b0029dde0ff1a5fdc30dce8f8bbe96202d719a7ff082cd3cc",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
@@ -2435,11 +2450,11 @@
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {
-      "digest": "sha256:beea2f82130ea5c4b419c70374deb0aaa0c7a98763a92eabac24894af635e8d4",
+      "digest": "sha256:aa4b9f6af2a1dde5c241384f5abb7a5255dce85cebd5cfce9525297622d2d7f6",
       "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
     },
     "verifierRegistry": {
-      "digest": "sha256:fb7df5deb813be792c2da1fd573f2456236c5af17594001c803d2fc10899c17a",
+      "digest": "sha256:ce859620f2c1edae49f8ad58924f6b10780a1c3e55eb1de90619eeee3abc674c",
       "identity": "governed-artifact-verifier-registry.v1"
     }
   },

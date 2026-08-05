@@ -36,6 +36,22 @@
       "evidence": "ordered-required-section-headings"
     },
     {
+      "verifierId": "mechanic-authority-envelope-verifier.v1",
+      "evidence": "schema-valid-admitted-executable-mechanic-authority"
+    },
+    {
+      "verifierId": "mechanic-authority-closure-verifier.v1",
+      "evidence": "exact-occurrence-binding-and-canonical-lineage"
+    },
+    {
+      "verifierId": "responsibility-authority-query-verifier.v1",
+      "evidence": "closed-ordered-target-sufficient-responsibility-authority"
+    },
+    {
+      "verifierId": "projected-body-equivalence-verifier.v1",
+      "evidence": "result-terminal-failure-and-ordered-effect-equivalence"
+    },
+    {
       "verifierId": "relationship-verifier.v1",
       "evidence": "declared-artifact-reference-resolution"
     },

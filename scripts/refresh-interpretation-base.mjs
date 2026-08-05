@@ -20,8 +20,9 @@ const sortKeys = (value) =>
       : value;
 
 const enginePath = "lib/governed-artifact-engine.mjs";
-const profilePath = "profiles/closed-world-artifact-conformance.v8.json";
+const profilePath = "profiles/closed-world-artifact-conformance.v9.json";
 const schemaPath = "schemas/governed-artifact-contract.schema.json";
+const schemaCatalogPath = "schemas/schema-catalog.json";
 const registryPath = "registries/migration-registry.json";
 const contractPaths = [
   "examples/governed-message-artifact-family.contract.json",
@@ -31,6 +32,12 @@ const contractPaths = [
 const engineIdentity = /ENGINE_IDENTITY = "([^"]+)"/.exec(
   readFileSync(enginePath, "utf8")
 )[1];
+
+const schemaCatalog = JSON.parse(readFileSync(schemaCatalogPath, "utf8"));
+const currentSchema = schemaCatalog.schemas.find((entry) => entry.status === "current");
+if (!currentSchema) throw new Error("Schema catalog has no current entry.");
+currentSchema.digest = digest(schemaPath);
+writeFileSync(schemaCatalogPath, `${JSON.stringify(sortKeys(schemaCatalog), null, 2)}\n`);
 
 const registry = JSON.parse(readFileSync(registryPath, "utf8"));
 for (const entry of registry.migrations) {
@@ -48,7 +55,7 @@ head.targetInterpretationBase.conformanceProfile = {
   identity: JSON.parse(readFileSync(profilePath, "utf8")).profileId
 };
 head.targetSchemaDigest = digest(schemaPath);
-registry.schemaCatalog.digest = digest("schemas/schema-catalog.json");
+registry.schemaCatalog.digest = digest(schemaCatalogPath);
 writeFileSync(registryPath, `${JSON.stringify(sortKeys(registry), null, 2)}\n`);
 
 for (const contractPath of contractPaths) {

@@ -2294,13 +2294,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:fa4d41ebce19eeeefdf609a7c679072657c7fbc615bb6a719bc99f8a5570f188",
+        "contentSha256": "sha256:1c37583abc1e8330a24ddfd636aba121c8d7e58968818fb45b8dabbb09f43813",
         "expectedByteLength": 1094,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Binds one declared movement request to the trusted movement-resolution ontology.",
@@ -2335,6 +2339,7 @@
           "WhileStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [],
         "responsibilities": [
           {
@@ -2662,13 +2667,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:7c41c8e17f12f01362837eb2d661ca146d04bd74fc0d4e52741c5b6de56f2bba",
+        "contentSha256": "sha256:e3ebb85caafb9a327f44300041bcbd18c5ff904aa09a47eec7b3259cb4bfd05e",
         "expectedByteLength": 1110,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Binds one declared cell render request to the trusted render-role ontology.",
@@ -2703,6 +2712,7 @@
           "WhileStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [],
         "responsibilities": [
           {
@@ -3030,13 +3040,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:693779c6952652633d3831faf1a7260f6c6e5a49f3f885cd1d44b35b4ef4330d",
+        "contentSha256": "sha256:a85a35041b0e39bf0eb760d0eddd131b05b6042b27be40f67a914c20d9a935c4",
         "expectedByteLength": 1124,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Binds one declared keyboard request to the trusted keyboard-command ontology.",
@@ -3071,6 +3085,7 @@
           "WhileStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [],
         "responsibilities": [
           {
@@ -5073,13 +5088,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:fc894c3ed0dc4190554c3a95ce219b143f3b33faf0fefc390991294101b5fccb",
+        "contentSha256": "sha256:c6689c8f3aa363027719b88357513de836fec2fc86d695b8805f4197ca18bd61",
         "expectedByteLength": 1990,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Binds the one aggregate browser-context semantic projection authority to the trusted browser application executor and directly returns its result.",
@@ -5123,6 +5142,7 @@
           "WhileStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [
           {
             "fields": [
@@ -5291,8 +5311,8 @@
         "projectorId": "governed-artifact-contract-markdown-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:19e4d7d410f97e6beabc2484b5205baecdf4cfc1c9dcade3992d57abdf3543ad",
-        "expectedByteLength": 34740,
+        "contentSha256": "sha256:eb710cac49416e938c55ef40068949f23e9a407938839e9f33591e03e21b9912",
+        "expectedByteLength": 35987,
         "requiredSections": [
           "# Procedural Dungeon Generator: Governed Webpage Projection",
           "## Future-State Preview",
@@ -27133,13 +27153,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:c26cf38615538afd4d5adeebdf4ed3c9fed094555a3b5c1462f9df3febf1d14a",
+        "contentSha256": "sha256:c2d37fe1124a7b248be3792ea7473f09baeb3f600317109ca1ed36713b270045",
         "expectedByteLength": 1109,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Binds one declared region-partition request to the trusted BSP topology ontology.",
@@ -27174,6 +27198,7 @@
           "WhileStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [],
         "responsibilities": [
           {
@@ -27501,13 +27526,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:705b3e322bf124928808f982e32414546a2dd300288ace56e51f56397403bdc6",
+        "contentSha256": "sha256:8b0d1378325861cb1989ca22e59c003fa2e54182ce389456a6362392cf827eb8",
         "expectedByteLength": 1122,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Binds one declared paint-rectangle list to the trusted rasterization ontology.",
@@ -27542,6 +27571,7 @@
           "WhileStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [],
         "responsibilities": [
           {
@@ -27869,13 +27899,17 @@
         "projectorId": "provenance-sealed-source-projector.v1"
       },
       "proof": {
-        "contentSha256": "sha256:58132f4cb82bdbefffdef42e3671242586694e75c91828f5d95a1564e7d9ffc7",
+        "contentSha256": "sha256:80891b5f13330657e1a9fcc4db88850443f08d5212c6f165effd93f13f25ca2a",
         "expectedByteLength": 1106,
         "verifierIds": [
           "artifact-provenance-verifier.v1",
           "authority-closure-verifier.v1",
           "content-digest-verifier.v1",
-          "source-token-structure-verifier.v1"
+          "source-token-structure-verifier.v1",
+          "mechanic-authority-envelope-verifier.v1",
+          "mechanic-authority-closure-verifier.v1",
+          "responsibility-authority-query-verifier.v1",
+          "projected-body-equivalence-verifier.v1"
         ]
       },
       "purpose": "Binds one declared visibility-sweep request to the trusted Bresenham visibility ontology.",
@@ -27910,6 +27944,7 @@
           "WhileStatement"
         ],
         "iterations": [],
+        "mechanicAuthorities": [],
         "projectionMappings": [],
         "responsibilities": [
           {
@@ -28058,7 +28093,7 @@
   "contract": {
     "contractId": "procedural-dungeon-webpage.v1",
     "contractType": "governed-artifact-contract.v1",
-    "contractVersion": "1.14.0",
+    "contractVersion": "1.15.0",
     "status": "admitted"
   },
   "dependencies": [
@@ -28434,15 +28469,15 @@
   "exclusions": [],
   "interpretationBase": {
     "conformanceProfile": {
-      "digest": "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
-      "identity": "closed-world-artifact-conformance.v8"
+      "digest": "sha256:7c7c0133bcdfcf9d159552a1cd94f1787eec998dbc049b0438142aac64a9f3c9",
+      "identity": "closed-world-artifact-conformance.v9"
     },
     "engine": {
-      "digest": "sha256:2fc2f89e1ec5402d34ff86655f554b3e8add78a4bc6f6ba07086a86e8e927ad3",
-      "identity": "governed-artifact-engine.0.21.0"
+      "digest": "sha256:25fdf0e88d26e77986ec3db8cf224f82028827a6ed4ed2bef8c4477f814ff1ba",
+      "identity": "governed-artifact-engine.0.22.0"
     },
     "migrationRegistry": {
-      "digest": "sha256:7b4e0ee1074288b095d6f71d7430299447a9498c40ceb14106c858b2991a766b",
+      "digest": "sha256:4b1bcd84a8d87c0b0029dde0ff1a5fdc30dce8f8bbe96202d719a7ff082cd3cc",
       "identity": "governed-artifact-migration-registry.v1"
     },
     "projectorRegistry": {
@@ -28450,11 +28485,11 @@
       "identity": "governed-artifact-projector-registry.v1"
     },
     "schema": {
-      "digest": "sha256:beea2f82130ea5c4b419c70374deb0aaa0c7a98763a92eabac24894af635e8d4",
+      "digest": "sha256:aa4b9f6af2a1dde5c241384f5abb7a5255dce85cebd5cfce9525297622d2d7f6",
       "identity": "https://canonical.local/schemas/governed-artifact-contract.schema.json"
     },
     "verifierRegistry": {
-      "digest": "sha256:fb7df5deb813be792c2da1fd573f2456236c5af17594001c803d2fc10899c17a",
+      "digest": "sha256:ce859620f2c1edae49f8ad58924f6b10780a1c3e55eb1de90619eeee3abc674c",
       "identity": "governed-artifact-verifier-registry.v1"
     }
   },

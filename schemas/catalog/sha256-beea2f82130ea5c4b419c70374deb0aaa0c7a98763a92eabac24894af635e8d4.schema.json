@@ -526,7 +526,6 @@
         "failurePolicies",
         "projectionMappings",
         "resultContracts",
-        "mechanicAuthorities",
         "forbiddenSyntaxKinds"
       ],
       "properties": {
@@ -554,12 +553,6 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/semanticEdge"
-          }
-        },
-        "mechanicAuthorities": {
-          "type": "array",
-          "items": {
-            "$ref": "https://canonical.local/schemas/executable-mechanic-authority.schema.json"
           }
         },
         "decisions": {

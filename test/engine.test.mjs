@@ -18,6 +18,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import {
   DEFAULT_CONFORMANCE_PROFILE_PATH,
+  DEFAULT_MECHANIC_AUTHORITY_SCHEMA_PATH,
   DEFAULT_MIGRATION_REGISTRY_PATH,
   DEFAULT_SCHEMA_CATALOG_PATH,
   canonicalJsonBytes,
@@ -25,6 +26,7 @@ import {
   evaluateReceiptClaim,
   evaluateTrustClaim,
   inspectSourceAuthority,
+  MECHANIC_AUTHORITY_SCHEMA_DIGEST,
   migrateContract,
   projectArtifactFamily,
   projectGovernedArtifactContractMarkdown,
@@ -135,6 +137,63 @@ test("the admitted example contract is valid", () => {
   assert.equal(result.contractValidationDisposition, "CONTRACT_VALID");
   assert.equal(result.conformanceDisposition, "NOT_EVALUATED");
   assert.equal(result.trustPosture, "NOT_EVALUATED");
+});
+
+test("the v9 tuple and mechanic authority envelope cannot be bypassed", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const mismatchedPath = copyContract(workspacePath, (contract) => {
+    contract.contract.contractVersion = "1.14.0";
+  });
+  const mismatch = validateContract({ contractPath: mismatchedPath, workspacePath });
+  assert.equal(mismatch.contractValidationDisposition, "CONTRACT_INVALID");
+  assert.equal(mismatch.findings.some((finding) => finding.findingId === "mechanic-authority-interpretation-tuple-mismatch"), true);
+
+  const missingPath = copyContract(workspacePath, (contract) => {
+    const artifact = contract.artifacts.find((entry) => entry.sourceAuthority);
+    delete artifact.sourceAuthority.mechanicAuthorities;
+  });
+  const missing = validateContract({ contractPath: missingPath, workspacePath });
+  assert.equal(missing.contractValidationDisposition, "CONTRACT_INVALID");
+  assert.equal(missing.findings.some((finding) => finding.findingId === "contract-schema-validation"), true);
+});
+
+test("mechanic authority references resolve within their envelope", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const contractPath = copyContract(workspacePath, (contract) => {
+    const responsibility = contract.lineage.responsibilities.find((entry) =>
+      contract.artifacts.some((artifact) => artifact.sourceAuthority && artifact.artifactId === entry.artifactId)
+    );
+    const artifact = contract.artifacts.find((entry) => entry.artifactId === responsibility.artifactId);
+    const obligation = contract.lineage.obligations.find((entry) => entry.obligationId === responsibility.obligationId);
+    const scenario = contract.lineage.scenarios.find((entry) => entry.scenarioId === obligation.scenarioId);
+    artifact.sourceAuthority.mechanicAuthorities.push({
+      authorityType: "executable-mechanic-authority.v1",
+      mechanicAuthorityId: "dangling-branch-authority",
+      mechanicKind: "branch",
+      lineage: { featureId: scenario.featureId, scenarioId: scenario.scenarioId, obligationId: obligation.obligationId, responsibilityId: responsibility.responsibilityId, artifactId: artifact.artifactId },
+      semanticSubject: { subjectId: "dangling-branch", purpose: "Exercise reference closure." },
+      inputs: [{ valueId: "input", conceptId: "input-concept", required: true }],
+      authority: {
+        authorityKind: "decision-authority.v1",
+        inputs: ["input"],
+        rules: [{ ruleId: "rule", inputId: "missing-input", outcomeId: "matched" }],
+        outcomes: [{ outcomeId: "matched", outputId: "result", disposition: "MATCHED" }],
+        noMatchDisposition: "NO_MATCH"
+      },
+      outputs: [{ valueId: "result", conceptId: "result-concept", required: true }],
+      execution: { origin: "authority-first", sequence: 1, operations: [{ stepId: "execute", operation: "evaluate" }] },
+      proof: { requirementIds: ["reference-closure"] },
+      sourceEvidence: [],
+      lifecycle: { status: "admitted", admissionDisposition: "AUTHORITY_ADMITTED" }
+    });
+  });
+  const result = validateContract({ contractPath, workspacePath });
+  assert.equal(result.contractValidationDisposition, "CONTRACT_INVALID", JSON.stringify(result));
+  assert.equal(result.findings.some((finding) => finding.findingId === "mechanic-authority-reference-unresolved" && finding.referenceId === "missing-input"), true);
+});
+
+test("the externally referenced mechanic schema is digest-bound to the engine", () => {
+  assert.equal(sha256(readFileSync(DEFAULT_MECHANIC_AUTHORITY_SCHEMA_PATH)), MECHANIC_AUTHORITY_SCHEMA_DIGEST);
 });
 
 test("structured meaning hidden in opaque text is a conformance failure", (t) => {
@@ -413,7 +472,7 @@ test("historical schemas and digest-to-digest migration authority are durable", 
     registry.schemaCatalog.digest,
     sha256(readFileSync(DEFAULT_SCHEMA_CATALOG_PATH))
   );
-  assert.equal(registry.migrations.length, 8);
+  assert.equal(registry.migrations.length, 9);
   const edge = registry.migrations[0];
   for (const digest of [
     edge.sourceSchemaDigest,
@@ -617,7 +676,11 @@ test("ontology interpretation migration is admitted without schema churn", (t) =
     contractPath,
     workspacePath
   });
-  assert.equal(replay.migrationDisposition, "MIGRATION_NOT_REQUIRED");
+  assert.equal(
+    replay.migrationDisposition,
+    "MIGRATION_NOT_REQUIRED",
+    JSON.stringify(replay)
+  );
   assert.deepEqual(replay.diff, []);
 });
 
@@ -639,6 +702,7 @@ test("object-graph authority migration preserves historical 1.13 interpretation"
     };
     for (const artifact of contract.artifacts) {
       delete artifact.sourceAuthority?.objectGraphClosure;
+      delete artifact.sourceAuthority?.mechanicAuthorities;
     }
   });
   const preview = migrateContract({ contractPath, workspacePath });
@@ -662,13 +726,75 @@ test("object-graph authority migration preserves historical 1.13 interpretation"
     written.candidateContract.contract.contractVersion,
     "1.14.0"
   );
+  assert.equal(written.artifactProjectionDisposition, "NOT_PERFORMED");
+});
+
+test("mechanic authority migration is candidate-first, contract-only, and idempotent", (t) => {
+  const workspacePath = makeWorkspace(t);
+  const requiredVerifierIds = [
+    "mechanic-authority-envelope-verifier.v1",
+    "mechanic-authority-closure-verifier.v1",
+    "responsibility-authority-query-verifier.v1",
+    "projected-body-equivalence-verifier.v1"
+  ];
+  const contractPath = copyContract(workspacePath, (contract) => {
+    contract.contract.contractVersion = "1.14.0";
+    contract.interpretationBase.engine = {
+      digest:
+        "sha256:2fc2f89e1ec5402d34ff86655f554b3e8add78a4bc6f6ba07086a86e8e927ad3",
+      identity: "governed-artifact-engine.0.21.0"
+    };
+    contract.interpretationBase.schema.digest =
+      "sha256:beea2f82130ea5c4b419c70374deb0aaa0c7a98763a92eabac24894af635e8d4";
+    contract.interpretationBase.conformanceProfile = {
+      digest:
+        "sha256:e3362972b4629c285cb9ef5474936379b6b87b7f4124dc5670927792f049b1f7",
+      identity: "closed-world-artifact-conformance.v8"
+    };
+    for (const artifact of contract.artifacts) {
+      delete artifact.sourceAuthority?.mechanicAuthorities;
+      artifact.proof.verifierIds = artifact.proof.verifierIds.filter(
+        (verifierId) => !requiredVerifierIds.includes(verifierId)
+      );
+    }
+  });
+
+  const preview = migrateContract({ contractPath, workspacePath });
+  assert.equal(
+    preview.migrationDisposition,
+    "CONTRACT_MIGRATION_REQUIRED",
+    JSON.stringify(preview)
+  );
+  assert.equal(preview.migrationId, "artifact-contract.1.14-to-1.15");
+  assert.equal(preview.artifactProjectionDisposition, "NOT_PERFORMED");
+  assert.equal(
+    preview.candidateContract.artifacts
+      .filter((artifact) => artifact.sourceAuthority)
+      .every((artifact) =>
+        Array.isArray(artifact.sourceAuthority.mechanicAuthorities)
+      ),
+    true
+  );
+
+  const written = migrateContract({
+    contractPath,
+    workspacePath,
+    mode: "write"
+  });
+  assert.equal(written.migrationDisposition, "CONTRACT_MIGRATED");
+  assert.equal(written.candidateContract.contract.contractVersion, "1.15.0");
+  assert.equal(written.artifactProjectionDisposition, "NOT_PERFORMED");
   assert.equal(
     validateContract({ contractPath, workspacePath })
       .contractValidationDisposition,
     "CONTRACT_VALID"
   );
   const replay = migrateContract({ contractPath, workspacePath });
-  assert.equal(replay.migrationDisposition, "MIGRATION_NOT_REQUIRED");
+  assert.equal(
+    replay.migrationDisposition,
+    "MIGRATION_NOT_REQUIRED",
+    JSON.stringify(replay)
+  );
   assert.deepEqual(replay.diff, []);
 });
 
@@ -702,6 +828,7 @@ test("multi-observation primitive migration is admitted without schema churn", (
     );
     // A 1.9 contract predates both the lineage spine and the sealed projector.
     for (const artifact of contract.artifacts) {
+      delete artifact.sourceAuthority?.mechanicAuthorities;
       if (
         artifact.projection.projectorId ===
         "provenance-sealed-source-projector.v1"

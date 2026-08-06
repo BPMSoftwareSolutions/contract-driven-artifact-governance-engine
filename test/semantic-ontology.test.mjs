@@ -569,6 +569,48 @@ test("bounded arithmetic and seeded range draw close and execute deterministical
   assert.equal(lesser.diff, -48);
 });
 
+test("comparison authority admits large bounded operational quantities", () => {
+  const declaration = makeBoundedArithmeticSemanticAuthority();
+  const requestSchema = declaration.context.schemas.find(
+    (entry) => entry.schemaId === "coordinate-pair.schema.v1"
+  ).value;
+  requestSchema.properties.largeA = { type: "integer", minimum: 0, maximum: 2147483647 };
+  requestSchema.properties.largeB = { type: "integer", minimum: 0, maximum: 2147483647 };
+  requestSchema.required.push("largeA", "largeB");
+  declaration.context.schemas.push({
+    schemaId: "large-operational-count.schema.v1",
+    value: { type: "integer", minimum: 0, maximum: 2147483647 }
+  });
+  declaration.semanticLayer.concepts.push(
+    { conceptId: "large-a-value", conceptType: "domain-value", isA: [], abstract: false, schemaId: "large-operational-count.schema.v1" },
+    { conceptId: "large-b-value", conceptType: "domain-value", isA: [], abstract: false, schemaId: "large-operational-count.schema.v1" }
+  );
+  declaration.semanticLayer.properties.push(
+    { propertyId: "large-a", propertyKind: "observed", subjectConceptId: "coordinate-pair", valueConceptId: "large-a-value", cardinality: "exactly-one", resolutions: [{ subjectVariantConceptId: "coordinate-pair", path: ["largeA"] }] },
+    { propertyId: "large-b", propertyKind: "observed", subjectConceptId: "coordinate-pair", valueConceptId: "large-b-value", cardinality: "exactly-one", resolutions: [{ subjectVariantConceptId: "coordinate-pair", path: ["largeB"] }] }
+  );
+  const comparison = declaration.ontology.arithmeticOperations.find(
+    (operation) => operation.operation === "compare"
+  );
+  comparison.operandAConceptId = "large-a-value";
+  comparison.operandBConceptId = "large-b-value";
+
+  assert.deepEqual(validateBoundSemanticExecutionAuthority(declaration), []);
+  const bundle = projectBoundSemanticExecutionBundle(declaration);
+  assert.equal(
+    executeSemanticAuthority(bundle, { a: 1, b: 1, largeA: 8192, largeB: 4096 }).order,
+    "greater-than"
+  );
+  assert.throws(
+    () => executeSemanticAuthority(bundle, { a: 1, b: 1, largeA: -1, largeB: 4096 }),
+    (error) =>
+      error instanceof SemanticExecutionDispositionError &&
+      error.details.validationFindings[0].errors.some(
+        (finding) => finding.instancePath === "/largeA" && finding.keyword === "minimum"
+      )
+  );
+});
+
 test("unprovable arithmetic and invalid range-draw bounds fail closed", () => {
   const rangeUnprovenDeclaration = makeBoundedArithmeticSemanticAuthority();
   rangeUnprovenDeclaration.context.schemas.find(
